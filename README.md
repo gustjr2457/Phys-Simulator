@@ -15,7 +15,7 @@
 의존성 없는 순수 HTML/CSS/JS입니다. 둘 중 아무거나:
 
 ```bash
-node server.js
+node tools/dev-server.js
 ```
 → 브라우저에서 `http://localhost:5173`
 
@@ -77,7 +77,7 @@ node server.js
 Phys-Simulator/
 ├─ index.html          레이아웃(좌: 목록 / 중: 무대·그래프 / 우: 공식·값·측정값)
 ├─ vercel.json         정적 배포 설정 (빌드 과정 없음)
-├─ server.js           로컬 미리보기 전용 (배포본에서는 제외)
+├─ tools/dev-server.js 로컬 미리보기 전용 (배포본에서는 제외)
 ├─ css/style.css
 ├─ js/core.js          시뮬레이션 등록기, 좌표 변환, 드로잉 헬퍼(화살표·치수선·막대·스프링·댐퍼), 미니 그래프
 ├─ js/app.js           UI 생성, 트랙 전환, 강조 연동, 고정 시간 간격(1/480 s) 애니메이션 루프

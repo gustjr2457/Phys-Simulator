@@ -1,6 +1,7 @@
-/* 로컬 미리보기용 초간단 정적 서버:  node server.js  →  http://localhost:5173 */
+/* 로컬 미리보기용 초간단 정적 서버:  node tools/dev-server.js  →  http://localhost:5173
+   (배포는 Vercel 정적 호스팅이 담당하므로 이 파일은 .vercelignore로 제외됩니다) */
 const http = require('http'), fs = require('fs'), path = require('path');
-const ROOT = __dirname, PORT = process.env.PORT || 5173;
+const ROOT = path.join(__dirname, '..'), PORT = process.env.PORT || 5173;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json' };
 
 http.createServer((req, res) => {
