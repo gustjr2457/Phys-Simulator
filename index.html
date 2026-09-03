@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PhysLab — 물리 이론의 시각화</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<aside id="nav">
+  <div class="brand">
+    <div class="logo">Φ</div>
+    <div>
+      <h1>PhysLab</h1>
+      <p>물리 이론의 시각화 · 물리학Ⅰ</p>
+    </div>
+  </div>
+  <div class="modes">
+    <button class="mode on" data-mode="basic">기초 · 물리학Ⅰ</button>
+    <button class="mode" data-mode="adv">심화 · 공학</button>
+  </div>
+  <div id="simlist"></div>
+  <footer class="nav-foot">
+    <p><b>Space</b> 재생/정지 · <b>R</b> 처음으로</p>
+    <p>공식의 <span class="mini-term">기호</span>에 마우스를 올려보세요.</p>
+  </footer>
+</aside>
+
+<main id="main">
+  <header id="head">
+    <div>
+      <span class="chip" id="simCat"></span>
+      <h2 id="simTitle"></h2>
+      <p id="simTag"></p>
+    </div>
+  </header>
+
+  <section class="stage">
+    <canvas id="cv"></canvas>
+    <div class="stage-bar">
+      <button id="btnPlay" class="btn primary"><span class="ico">▶</span><span id="playLabel">재생</span></button>
+      <button id="btnReset" class="btn"><span class="ico">↺</span>처음으로</button>
+      <label class="speed">
+        속도 <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1">
+        <b id="speedVal">1.0×</b>
+      </label>
+      <div class="clock">t = <b id="clock">0.00</b> s</div>
+    </div>
+  </section>
+
+  <section id="graphs"></section>
+</main>
+
+<aside id="panel">
+  <section class="card" id="cardFormula">
+    <h3>공식</h3>
+    <div id="formulas"></div>
+  </section>
+
+  <section class="card">
+    <h3>값 바꿔보기</h3>
+    <div id="controls"></div>
+    <div id="presets" class="presets"></div>
+    <div id="termInfo" class="term-info">
+      <span class="ti-hint">공식의 기호나 위 슬라이더에 마우스를 올리면, 그 값이 화면 어디에서 작용하는지 여기에 알려줍니다.</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h3>측정값</h3>
+    <div id="readouts" class="readouts"></div>
+  </section>
+
+  <section class="card" id="cardNotes">
+    <h3>이것만은 알아두기</h3>
+    <ul id="notes"></ul>
+  </section>
+</aside>
+
+<script src="js/core.js"></script>
+
+<!-- 기초 · 물리학Ⅰ -->
+<script src="js/sims/kinematics.js"></script>
+<script src="js/sims/newton.js"></script>
+<script src="js/sims/momentum.js"></script>
+<script src="js/sims/energy.js"></script>
+<script src="js/sims/induction.js"></script>
+<script src="js/sims/wave.js"></script>
+
+<!-- 심화 · 공학 -->
+<script src="js/sims/adv/vib_free.js"></script>
+<script src="js/sims/adv/vib_forced.js"></script>
+<script src="js/sims/adv/sensor_strain.js"></script>
+<script src="js/sims/adv/sensor_response.js"></script>
+<script src="js/sims/adv/aero_lift.js"></script>
+<script src="js/sims/adv/space_orbit.js"></script>
+<script src="js/sims/adv/space_hohmann.js"></script>
+<script src="js/sims/adv/space_rocket.js"></script>
+<script src="js/sims/adv/ship_stability.js"></script>
+<script src="js/sims/adv/ship_autopilot.js"></script>
+
+<script src="js/app.js"></script>
+</body>
+</html>
