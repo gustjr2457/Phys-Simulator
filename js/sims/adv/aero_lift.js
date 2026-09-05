@@ -108,80 +108,138 @@
 
       /* ── 왼쪽: 날개 단면과 흐름 ─────────────── */
       const cx = w * .27, cy = h * .44, chord = Math.min(230, w * .26);
+      const cosA = Math.cos(rad), sinA = Math.sin(rad);
+      // 받음각이 +면 앞전(왼쪽)이 위로, 뒷전(오른쪽)이 아래로 기울어야 한다
+      const rot = (x, y) => [cx + x * cosA - y * sinA, cy + x * sinA + y * cosA];
+      const upperY = t => -(.17 * chord * Math.sqrt(Math.max(0, t)) * (1 - t) * 2.6 + .04 * chord * Math.sin(Math.PI * t));
+      const lowerY = t => .05 * chord * Math.sqrt(Math.max(0, t)) * (1 - t) * 2.6;
+
+      // 익형 표면을 x구간별 상·하한으로 만들어 흐름선이 날개를 뚫지 못하게 한다
+      const NB = 150, bx0 = cx - chord * .95, bx1 = cx + chord * 1.1, bwid = (bx1 - bx0) / NB;
+      const topB = new Array(NB).fill(Infinity), botB = new Array(NB).fill(-Infinity);
+      const upper = [], lower = [];
+      for (let i = 0; i <= 180; i++) {
+        const t = i / 180, xx = (t - .3) * chord;
+        const pu = rot(xx, upperY(t)), pl = rot(xx, lowerY(t));
+        if (i % 3 === 0) { upper.push(pu); lower.push(pl); }
+        [pu, pl].forEach(pt => {
+          const b = Math.floor((pt[0] - bx0) / bwid);
+          if (b >= 0 && b < NB) { topB[b] = Math.min(topB[b], pt[1]); botB[b] = Math.max(botB[b], pt[1]); }
+        });
+      }
+      // 구간 경계에서 흐름선이 계단처럼 꺾이지 않도록 표면 경계를 평활화
+      for (let pass = 0; pass < 2; pass++) {
+        const t0 = topB.slice(), b0 = botB.slice();
+        for (let i = 1; i < NB - 1; i++) {
+          if (t0[i - 1] < Infinity && t0[i] < Infinity && t0[i + 1] < Infinity) topB[i] = (t0[i - 1] + t0[i] + t0[i + 1]) / 3;
+          if (b0[i - 1] > -Infinity && b0[i] > -Infinity && b0[i + 1] > -Infinity) botB[i] = (b0[i - 1] + b0[i] + b0[i + 1]) / 3;
+        }
+      }
+      const bIdx = x => { const b = Math.floor((x - bx0) / bwid); return (b >= 0 && b < NB && topB[b] < Infinity) ? b : -1; };
+
+      // 흐름선의 변위 = 순환(앞쪽 상승류·뒤쪽 하강류) + 날개 두께에 의한 밀어냄 + 실속 시 박리 요동
+      const flowY = (x, y0) => {
+        const d = y0 - cy, rel = (x - cx) / chord, above = d < 0;
+        const circ = CL * chord * .062 * Math.exp(-Math.pow(d / (chord * .95), 2)) * Math.tanh(rel * 2.0);
+        const thick = (above ? -1 : 1) * chord * .05
+          * Math.exp(-Math.pow(d / (chord * .42), 2)) * Math.exp(-Math.pow(rel * 1.5, 2));
+        let yy = y0 + circ + thick;
+        if (stall && above && rel > -.15) {
+          const sev = clamp((p.a - ALPHA_STALL) / 9, 0, 1);
+          yy += Math.sin(x * .17 + st.flow * 9 + d * .05) * sev * 17
+            * clamp(rel + .15, 0, 1) * Math.exp(-Math.pow(d / (chord * .55), 2));
+        }
+        const b = bIdx(x);
+        if (b >= 0) { if (above) yy = Math.min(yy, topB[b] - 5); else yy = Math.max(yy, botB[b] + 5); }
+        return yy;
+      };
+
+      // 실속 시 박리 영역
+      if (stall) {
+        ctx.save();
+        ctx.fillStyle = 'rgba(251,113,133,.10)';
+        ctx.beginPath();
+        ctx.ellipse(cx + chord * .28, cy - chord * .22, chord * .55, chord * .26, -rad, 0, 7);
+        ctx.fill(); ctx.restore();
+      }
 
       // 유입 흐름선
-      const nStream = 9;
+      const xs = cx - chord * .95, xe = cx + chord * 1.1, NS = 11;
       ctx.save();
-      ctx.globalAlpha = clamp(rho / 1.225, .25, 1) * (hl === 'rho' ? 1 : .8);
-      for (let i = 0; i < nStream; i++) {
-        const y0 = cy - 96 + i * 24;
-        const bend = Math.exp(-Math.pow((y0 - cy) / 62, 2));      // 날개 근처에서 휘어짐
-        const up = -bend * (18 + p.a * 1.6) * (y0 < cy ? 1 : .45);
-        ctx.strokeStyle = i === 4 ? C.V : 'rgba(96,165,250,.45)';
-        ctx.lineWidth = i === 4 ? 2 : 1.3;
+      ctx.globalAlpha = clamp(rho / 1.225, .3, 1) * (hl === 'rho' || hl === 'alt' ? 1 : .85);
+      for (let i = 0; i < NS; i++) {
+        const y0 = cy - 108 + i * 22;
+        const above = y0 < cy;
+        const mid = Math.abs(y0 - cy) < 30;
+        ctx.strokeStyle = mid ? C.V : 'rgba(96,165,250,.42)';
+        ctx.lineWidth = mid ? 2 : 1.3;
         ctx.beginPath();
-        for (let s = 0; s <= 60; s++) {
-          const t = s / 60;
-          const x = cx - chord * .95 + t * chord * 2.1;
-          const rel = (x - cx) / chord;
-          let yy = y0;
-          if (rel > -.7) {
-            const shape = Math.exp(-Math.pow(rel * 1.5, 2));
-            yy = y0 + up * shape;
-            // 실속: 윗면 뒤쪽에서 흐름이 흐트러짐
-            if (stall && y0 < cy && rel > 0) {
-              yy += Math.sin((x + st.flow * 60) * .18 + i) * (p.a - ALPHA_STALL) * 1.6 * clamp(rel, 0, 1);
-            }
-          }
+        for (let s = 0; s <= 90; s++) {
+          const x = xs + (s / 90) * (xe - xs);
+          const yy = flowY(x, y0);
           s ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy);
         }
         ctx.stroke();
-        // 흐름 방향 점(속도감)
-        const ph = (st.flow * 3 + i * .37) % 1;
-        const xd = cx - chord * .95 + ph * chord * 2.1;
-        D.dot(ctx, xd, y0 + up * Math.exp(-Math.pow(((xd - cx) / chord) * 1.5, 2)), 2.2, i === 4 ? C.V : 'rgba(96,165,250,.5)');
+        // 흐름 방향 점 — 윗면 쪽이 더 빠르게 지나간다
+        const spd = above ? 1 + CL * .38 : 1 - CL * .13;
+        for (let k = 0; k < 3; k++) {
+          const ph = ((st.flow * 2.6 * spd + i * .21 + k / 3) % 1);
+          const xd = xs + ph * (xe - xs);
+          D.dot(ctx, xd, flowY(xd, y0), mid ? 3 : 2.3, mid ? C.V : 'rgba(96,165,250,.6)');
+        }
       }
       ctx.restore();
-      D.arrow(ctx, cx - chord * 1.05, cy + 118, 74, 0, { color: C.V, width: 3, hot: hl === 'V', label: 'V = ' + fmt(p.V, 0) + ' m/s', ly: 18 });
-      D.text(ctx, 'ρ = ' + fmt(rho, 3) + ' kg/m³  (고도 ' + fmt(p.alt, 0) + ' m)', cx - chord * 1.05, cy - 130,
+
+      const lx0 = Math.max(14, xs - 40);
+      D.arrow(ctx, lx0, cy + 132, 70, 0, { color: C.V, width: 3, hot: hl === 'V', label: 'V = ' + fmt(p.V, 0) + ' m/s', ly: 18 });
+      D.text(ctx, 'ρ = ' + fmt(rho, 3) + ' kg/m³  (고도 ' + fmt(p.alt, 0) + ' m)', lx0, cy - 142,
         { size: 11, color: hl === 'rho' || hl === 'alt' ? '#fff' : C.rho, bold: hl === 'rho' });
 
-      // 익형 (회전)
+      // 익형
       ctx.save();
-      ctx.translate(cx, cy); ctx.rotate(-rad);
       ctx.beginPath();
-      for (let i = 0; i <= 40; i++) {           // 윗면
-        const t = i / 40, x = (t - .3) * chord;
-        const th = .17 * chord * Math.sqrt(Math.max(0, t)) * (1 - t) * 2.6 + .04 * chord * Math.sin(Math.PI * t);
-        i ? ctx.lineTo(x, -th) : ctx.moveTo(x, -th);
-      }
-      for (let i = 40; i >= 0; i--) {           // 아랫면
-        const t = i / 40, x = (t - .3) * chord;
-        const th = .05 * chord * Math.sqrt(Math.max(0, t)) * (1 - t) * 2.6;
-        ctx.lineTo(x, th);
-      }
+      upper.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]));
+      for (let i = lower.length - 1; i >= 0; i--) ctx.lineTo(lower[i][0], lower[i][1]);
       ctx.closePath();
       if (hl === 'S') { ctx.shadowColor = C.S; ctx.shadowBlur = 20; }
-      const wg = ctx.createLinearGradient(0, -20, 0, 16);
+      const wg = ctx.createLinearGradient(0, cy - chord * .2, 0, cy + chord * .2);
       wg.addColorStop(0, hl === 'S' ? '#c4b5fd' : '#dbe4f6'); wg.addColorStop(1, '#8794b5');
       ctx.fillStyle = wg; ctx.fill();
       ctx.restore();
 
-      // 받음각 표시
-      D.line(ctx, cx - chord * .45, cy, cx + chord * .8, cy, { color: 'rgba(147,162,196,.4)', dash: [5, 5] });
+      // 압력 설명 (힘 화살표와 겹치지 않도록 왼쪽에)
+      if (!stall) {
+        D.text(ctx, '윗면: 빠름 → 압력 낮음', lx0, cy - chord * .52, { size: 10.5, color: '#93c5fd' });
+        D.text(ctx, '아랫면: 느림 → 압력 높음', lx0, cy + chord * .56, { size: 10.5, color: '#93a2c4' });
+      }
+
+      // 하강류(downwash) — 날개가 공기를 아래로 밀어낸 반작용이 곧 양력
+      if (CL > .1) {
+        const dwx = xe - 12, dwy = cy + chord * .12;
+        D.arrow(ctx, dwx, dwy, 12, clamp(CL * 34, 10, 60),
+          { color: 'rgba(96,165,250,.9)', width: 2.5, head: 9, hot: hl === 'L' || hl === 'CL' });
+        D.text(ctx, '하강류', dwx + 16, dwy + clamp(CL * 34, 10, 60) + 14,
+          { size: 10, color: '#60a5fa', align: 'center' });
+      }
+
+      // 받음각 표시 — 자유류(수평)와 시위선(앞전→뒷전) 사이의 각
+      const LE = rot(-.3 * chord, 0), TE = rot(.7 * chord, 0);
+      D.line(ctx, LE[0], LE[1], LE[0] + chord * .9, LE[1], { color: 'rgba(147,162,196,.45)', dash: [5, 5] });
+      D.line(ctx, LE[0], LE[1], TE[0], TE[1], { color: 'rgba(147,162,196,.6)', dash: [3, 4] });
       ctx.save();
       ctx.strokeStyle = C.a; ctx.lineWidth = hl === 'a' ? 3 : 2;
       if (hl === 'a') { ctx.shadowColor = C.a; ctx.shadowBlur = 12; }
-      ctx.beginPath(); ctx.arc(cx - chord * .3, cy, 46, -rad, 0); ctx.stroke();
-      ctx.restore();
-      D.tag(ctx, 'α = ' + fmt(p.a, 1) + '°', cx - chord * .3 + 66, cy - 20, C.a, hl === 'a');
+      ctx.beginPath();
+      ctx.arc(LE[0], LE[1], 52, Math.min(0, rad), Math.max(0, rad));
+      ctx.stroke(); ctx.restore();
+      D.tag(ctx, 'α = ' + fmt(p.a, 1) + '°', LE[0] + 74, LE[1] + (p.a >= 0 ? 20 : -20), C.a, hl === 'a');
 
       // 힘 화살표
       const FS = 90 / Math.max(1, W / 1000);      // 무게를 90 px로 정규화
       D.arrow(ctx, cx, cy - 16, 0, -clamp(L / 1000 * FS, 6, 190),
         { color: C.L, width: 5, hot: hl === 'L' || hl === 'CL', label: 'L = ' + fmt(L / 1000, 1) + ' kN', lx: 54 });
-      D.arrow(ctx, cx, cy + 6, clamp(Dr / 1000 * FS, 4, 120), 0,
-        { color: C.Dg, width: 3.5, hot: hl === 'Dg', label: 'D = ' + fmt(Dr / 1000, 2) + ' kN', ly: 22 });
+      D.arrow(ctx, cx + chord * .18, cy + chord * .30, clamp(Dr / 1000 * FS, 4, 120), 0,
+        { color: C.Dg, width: 3.5, hot: hl === 'Dg', label: 'D = ' + fmt(Dr / 1000, 2) + ' kN', ly: 20 });
       D.arrow(ctx, cx, cy + 16, 0, clamp(W / 1000 * FS, 6, 190),
         { color: C.W, width: 4, hot: hl === 'm', label: 'mg = ' + fmt(W / 1000, 1) + ' kN', lx: -58 });
 
