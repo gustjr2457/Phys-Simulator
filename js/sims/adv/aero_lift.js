@@ -135,32 +135,64 @@
           if (b0[i - 1] > -Infinity && b0[i] > -Infinity && b0[i + 1] > -Infinity) botB[i] = (b0[i - 1] + b0[i] + b0[i + 1]) / 3;
         }
       }
-      const bIdx = x => { const b = Math.floor((x - bx0) / bwid); return (b >= 0 && b < NB && topB[b] < Infinity) ? b : -1; };
-
-      // 흐름선의 변위 = 순환(앞쪽 상승류·뒤쪽 하강류) + 날개 두께에 의한 밀어냄 + 실속 시 박리 요동
-      const flowY = (x, y0) => {
-        const d = y0 - cy, rel = (x - cx) / chord, above = d < 0;
-        const circ = CL * chord * .062 * Math.exp(-Math.pow(d / (chord * .95), 2)) * Math.tanh(rel * 2.0);
-        const thick = (above ? -1 : 1) * chord * .05
-          * Math.exp(-Math.pow(d / (chord * .42), 2)) * Math.exp(-Math.pow(rel * 1.5, 2));
-        let yy = y0 + circ + thick;
-        if (stall && above && rel > -.15) {
-          const sev = clamp((p.a - ALPHA_STALL) / 9, 0, 1);
-          yy += Math.sin(x * .17 + st.flow * 9 + d * .05) * sev * 17
-            * clamp(rel + .15, 0, 1) * Math.exp(-Math.pow(d / (chord * .55), 2));
-        }
-        const b = bIdx(x);
-        if (b >= 0) { if (above) yy = Math.min(yy, topB[b] - 5); else yy = Math.max(yy, botB[b] + 5); }
-        return yy;
+      // 날개 바깥쪽 구간은 표면 높이를 부드럽게 0으로 감쇠 — 뒷전에서 흐름선이 튕겨 오르지 않게 한다
+      let i0 = -1, i1 = -1;
+      for (let i = 0; i < NB; i++) if (topB[i] < Infinity) { if (i0 < 0) i0 = i; i1 = i; }
+      const xOfBin = i => bx0 + (i + .5) * bwid;
+      const tSrc = topB[i0], tEnd = topB[i1], bSrc = botB[i0], bEnd = botB[i1];
+      for (let i = 0; i < NB; i++) {
+        if (topB[i] < Infinity) continue;
+        const src = i < i0 ? i0 : i1;
+        const dxr = (xOfBin(i) - xOfBin(src)) / (chord * .42);
+        const f = Math.exp(-dxr * dxr);
+        topB[i] = cy + ((src === i0 ? tSrc : tEnd) - cy) * f;
+        botB[i] = cy + ((src === i0 ? bSrc : bEnd) - cy) * f;
+      }
+      // cy 기준 표면 오프셋 (윗면은 음수)
+      const surf = (x, above) => {
+        const b = clamp(Math.floor((x - bx0) / bwid), 0, NB - 1);
+        return (above ? topB[b] : botB[b]) - cy;
       };
 
-      // 실속 시 박리 영역
+      // 실속 시 박리점 — 받음각이 커질수록 앞쪽으로 이동한다
+      const relSep = stall ? clamp(.7 - (p.a - ALPHA_STALL) / 9 * 1.0, -.28, .7) : 9;
+
+      /* 흐름선 변위
+         ① 순환: 날개 앞에서는 상승류, 뒤에서는 하강류
+         ② 표면 추종: 날개에 가까울수록 표면 모양을 그대로 따라간다 (잘라내지 않으므로 꺾임이 없다)
+         ③ 실속: 박리점 이후로는 표면을 따라가지 않고 떨어져 나가며 불규칙하게 요동한다 */
+      const flowY = (x, y0) => {
+        const d = y0 - cy, rel = (x - cx) / chord, above = d < 0;
+        const wBody = Math.exp(-Math.pow(d / (chord * .5), 2));
+        const circ = CL * chord * .062 * Math.exp(-Math.pow(d / (chord * .95), 2)) * Math.tanh(rel * 2.0);
+        let body = surf(x, above) * wBody;
+        let jit = 0;
+        if (stall && above && rel > relSep) {
+          body = surf(cx + relSep * chord, true) * wBody;      // 박리 지점 값에서 고정 → 표면을 따라 내려가지 않음
+          const sev = clamp((p.a - ALPHA_STALL) / 9, 0, 1);
+          const q = clamp((rel - relSep) * 2.2, 0, 1.5);
+          jit = (Math.sin(x * .21 + st.flow * 7 + d * .06)
+            + .62 * Math.sin(x * .38 - st.flow * 11 + 2.1)
+            + .38 * Math.sin(x * .085 + st.flow * 5 + 1.3)) * sev * 7.5 * q * wBody;
+        }
+        return y0 + circ + body + jit;
+      };
+
+      // 실속 시 박리 영역 — 떨어져 나간 흐름선과 날개 윗면 사이의 "죽은 공기" 구역
+      const TEx = rot(.7 * chord, 0)[0];
       if (stall) {
+        const sx = cx + relSep * chord;
+        const lidY = cy + surf(sx, true) - 4;      // 박리 후 거의 직진하는 흐름
         ctx.save();
-        ctx.fillStyle = 'rgba(251,113,133,.10)';
+        ctx.fillStyle = 'rgba(251,113,133,.13)';
         ctx.beginPath();
-        ctx.ellipse(cx + chord * .28, cy - chord * .22, chord * .55, chord * .26, -rad, 0, 7);
-        ctx.fill(); ctx.restore();
+        ctx.moveTo(sx, lidY);
+        ctx.lineTo(TEx, lidY);
+        for (let x = TEx; x >= sx; x -= 5) ctx.lineTo(x, cy + surf(x, true));
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
+        D.line(ctx, sx, cy + surf(sx, true) + 2, sx, lidY - 26, { color: '#fb7185', dash: [3, 3] });
+        D.text(ctx, '박리점', sx, lidY - 32, { size: 10, color: '#fb7185', align: 'center' });
       }
 
       // 유입 흐름선
@@ -174,21 +206,65 @@
         ctx.strokeStyle = mid ? C.V : 'rgba(96,165,250,.42)';
         ctx.lineWidth = mid ? 2 : 1.3;
         ctx.beginPath();
-        for (let s = 0; s <= 90; s++) {
-          const x = xs + (s / 90) * (xe - xs);
+        for (let s = 0; s <= 110; s++) {
+          const x = xs + (s / 110) * (xe - xs);
           const yy = flowY(x, y0);
           s ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy);
         }
         ctx.stroke();
-        // 흐름 방향 점 — 윗면 쪽이 더 빠르게 지나간다
-        const spd = above ? 1 + CL * .38 : 1 - CL * .13;
+        // 흐름 방향 점 — 윗면이 더 빠르다. 실속하면 윗면 흐름이 거의 정체된다
+        const near = Math.exp(-Math.pow((y0 - cy) / (chord * .5), 2));
+        const spd = above ? (stall ? 1 - .8 * near : 1 + CL * .38) : 1 - CL * .13;
         for (let k = 0; k < 3; k++) {
-          const ph = ((st.flow * 2.6 * spd + i * .21 + k / 3) % 1);
+          const ph = ((st.flow * 2.6 * spd + i * .21 + k / 3) % 1 + 1) % 1;
           const xd = xs + ph * (xe - xs);
           D.dot(ctx, xd, flowY(xd, y0), mid ? 3 : 2.3, mid ? C.V : 'rgba(96,165,250,.6)');
         }
       }
       ctx.restore();
+
+      // 박리 영역과 후류의 와류 — 뒤로 흘러가며 커지고, 위아래로 번갈아 떨어져 나간다
+      if (stall) {
+        const sev = clamp((p.a - ALPHA_STALL) / 9, 0, 1);
+        const sxS = cx + relSep * chord;
+        const lidY = cy + surf(sxS, true) - 4;
+        const N = 7, RUN = chord * 1.35;
+        for (let i = 0; i < N; i++) {
+          const ph = ((st.flow * .75 + i / N) % 1 + 1) % 1;
+          const vx = sxS + ph * RUN;
+          // 죽은 공기 구역의 중앙 → 뒷전 뒤로는 후류를 따라 흐른다
+          const sY = vx <= TEx ? cy + surf(vx, true) : cy + surf(TEx, true) + (vx - TEx) * .18;
+          const mid = (lidY + sY) / 2;
+          const alt = (i % 2 ? 1 : -1);                     // 위아래 교대 방출
+          const vy = mid + alt * Math.min(10, (sY - lidY) * .22);
+          const vr = clamp((sY - lidY) * .40 + ph * 18, 9, 30) * (.62 + .38 * sev);
+          const spin = st.flow * 6 * alt + i * 1.7;
+          const fade = Math.min(1, ph / .12) * Math.min(1, (1 - ph) / .18);
+          ctx.save();
+          ctx.globalAlpha = fade * (.55 + .45 * sev);
+          ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 1.9; ctx.lineCap = 'round';
+          ctx.beginPath();
+          // 2.4바퀴 감기는 나선 — 안쪽에서 시작해 바깥으로 풀린다
+          const TURN = 2.4 * 2 * Math.PI;
+          let ex = 0, ey = 0, epx = 0, epy = 0;
+          for (let a = 0; a <= TURN; a += .11) {
+            const rr = vr * Math.pow(a / TURN, .85);
+            const px2 = vx + Math.cos(alt * a + spin) * rr, py2 = vy + Math.sin(alt * a + spin) * rr;
+            if (!a) ctx.moveTo(px2, py2); else ctx.lineTo(px2, py2);
+            epx = ex; epy = ey; ex = px2; ey = py2;
+          }
+          ctx.stroke();
+          // 회전 방향을 알려주는 화살촉
+          const dx2 = ex - epx, dy2 = ey - epy, dl = Math.hypot(dx2, dy2) || 1;
+          ctx.fillStyle = '#fda4af';
+          ctx.beginPath();
+          ctx.moveTo(ex, ey);
+          ctx.lineTo(ex - dx2 / dl * 7 - dy2 / dl * 3.5, ey - dy2 / dl * 7 + dx2 / dl * 3.5);
+          ctx.lineTo(ex - dx2 / dl * 7 + dy2 / dl * 3.5, ey - dy2 / dl * 7 - dx2 / dl * 3.5);
+          ctx.closePath(); ctx.fill();
+          ctx.restore();
+        }
+      }
 
       const lx0 = Math.max(14, xs - 40);
       D.arrow(ctx, lx0, cy + 132, 70, 0, { color: C.V, width: 3, hot: hl === 'V', label: 'V = ' + fmt(p.V, 0) + ' m/s', ly: 18 });
