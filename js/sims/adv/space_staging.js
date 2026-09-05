@@ -123,8 +123,22 @@
         if (st.propLeft <= 0) {
           // ── 단 분리 ──
           if (st.idx < st.stages.length - 1) {
-            st.debris.push({ x: st.x, y: st.y, vx: st.vx, vy: st.vy, ang: 0, spin: (Math.random() - .5) * 3, age: 0, size: .8 + .5 * (st.stages.length - st.idx) });
-            if (st.debris.length > 3) st.debris.shift();
+            // 분리 직전 로켓에서 그 단이 차지하던 크기를 그대로 물려받아, 꼬리 위치에서 떨어져 나간다
+            const live = st.stages.slice(st.idx);
+            const massSum = live.reduce((a, q) => a + q.m, 0) + p.payload * 1000;
+            const rsb = st.viewRSbase || 100;
+            const rsNow = st.viewRS || 90;
+            const kk = st.viewK || 1e-4;
+            const tail = (rsNow * .5) / kk;                      // 꼬리까지의 거리(m)
+            const ux = v > 1 ? st.vx / v : ur[0], uy = v > 1 ? st.vy / v : ur[1];
+            st.debris.push({
+              x: st.x - ux * tail, y: st.y - uy * tail,
+              vx: st.vx - ux * 20, vy: st.vy - uy * 20,        // 분리 스프링
+              ang: Math.atan2(-uy, ux) + Math.PI / 2,
+              spin: (Math.random() - .5) * .9, age: 0,
+              hRel: (rsNow * (S.m / massSum) * .92) / rsb,
+              wRel: (rsNow * .17) / rsb
+            });
             st.m -= S.dry;
             st.idx++;
             st.propLeft = st.stages[st.idx].prop;
@@ -141,13 +155,14 @@
       st.vx += ax * dtp; st.vy += ay * dtp;
       st.x += st.vx * dtp; st.y += st.vy * dtp;
 
-      // 분리된 단은 중력만 받고 떨어진다
+      // 분리된 단은 중력만 받고 뒤처진다. 멀어지면 시야에서 사라진다
       st.debris.forEach(d => {
         const dr = Math.hypot(d.x, d.y), dg = MU / (dr * dr);
         d.vx += -dg * d.x / dr * dtp; d.vy += -dg * d.y / dr * dtp;
         d.x += d.vx * dtp; d.y += d.vy * dtp;
         d.ang += d.spin * dt; d.age += dt;
       });
+      st.debris = st.debris.filter(d => d.age < 7 && Math.hypot(d.x, d.y) > RE);
 
       const r2 = Math.hypot(st.x, st.y), h2 = r2 - RE;
       st.apogee = Math.max(st.apogee, h2);
@@ -291,7 +306,7 @@
           ctx.strokeStyle = 'rgba(147,162,196,.16)'; ctx.lineWidth = 1;
           ctx.beginPath(); ctx.arc(ecx, ecy, rr, angC - dAng, angC + dAng); ctx.stroke();
           const ly = yAtLeft(rr);
-          if (isFinite(ly) && ly > top + 6 && ly < bot)
+          if (isFinite(ly) && ly > top + 106 && ly < bot)      // HUD 영역과 겹치지 않게
             D.text(ctx, a >= 1000 ? fmt(a / 1000, a >= 10000 ? 0 : 1) + ' km' : fmt(a, 0) + ' m', LBL + 4, ly - 4,
               { size: 9.5, color: 'rgba(147,162,196,.55)' });
         }
@@ -300,7 +315,7 @@
         ctx.save(); ctx.strokeStyle = 'rgba(94,234,212,.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([7, 6]);
         ctx.beginPath(); ctx.arc(ecx, ecy, kr, angC - dAng, angC + dAng); ctx.stroke(); ctx.restore();
         const ky = yAtLeft(kr);
-        if (isFinite(ky) && ky > top + 6 && ky < bot)
+        if (isFinite(ky) && ky > top + 106 && ky < bot)
           D.text(ctx, '카르만 선 100 km', LBL + 4, ky - 6, { size: 10.5, color: '#5eead4' });
       }
 
@@ -322,81 +337,126 @@
         ctx.beginPath(); ctx.arc(sx, sy, rp, 0, 7); ctx.fill(); ctx.restore();
       });
 
-      /* 분리된 단 (텀블링하며 떨어짐) */
-      st.debris.forEach(d => {
-        const dx = X(d.x), dy = Y(d.y);
-        if (dx < -60 || dx > w + 60 || dy < -60 || dy > h + 60) return;
-        ctx.save();
-        ctx.globalAlpha = clamp(1 - d.age / 14, .15, 1);
-        ctx.translate(dx, dy); ctx.rotate(d.ang);
-        ctx.fillStyle = '#7c8aa8';
-        D.roundRect(ctx, -6 * d.size, -16 * d.size, 12 * d.size, 32 * d.size, 3); ctx.fill();
-        ctx.restore();
-      });
-
-      /* 로켓 (남은 단을 쌓아서 그린다) */
+      /* 로켓 자세와 크기 */
       const ur = [st.x / ob.r, st.y / ob.r];
       const v = ob.v, uv = v > 1 ? [st.vx / v, st.vy / v] : ur;
       const nose = st.burning && st.phase === 0 ? ur : uv;
       const ang = Math.atan2(-nose[1], nose[0]) + Math.PI / 2;
-      const RS = clamp(110 * Math.pow(3000 / span, .16), 24, 110) * clamp(Math.pow(st.m / M_TOT, .3), .42, 1);
+      const RSbase = clamp(110 * Math.pow(3000 / span, .16), 24, 110);
+      const RS = RSbase * clamp(Math.pow(st.m / M_TOT, .3), .42, 1);
       const RW = RS * .17;
-      const shake = st.burning ? (Math.random() - .5) * 2.4 : 0;
+      st.viewK = k; st.viewRS = RS; st.viewRSbase = RSbase;   // 분리 시점 계산에 쓴다
 
+      /* 동체 그리기 헬퍼 — 원통 + 단 이음부 + 엔진 노즐 */
+      const cylinder = (yBot, hh, halfW, tone) => {
+        const g2 = ctx.createLinearGradient(-halfW, 0, halfW, 0);
+        g2.addColorStop(0, tone[0]); g2.addColorStop(.38, tone[1]); g2.addColorStop(1, tone[2]);
+        ctx.fillStyle = g2;
+        ctx.fillRect(-halfW, yBot - hh, halfW * 2, hh);
+      };
+      const nozzles = (yBot, halfW, n, scale) => {
+        ctx.fillStyle = '#4a5878';
+        const nh = RSbase * .055 * scale;
+        for (let i = 0; i < n; i++) {
+          const ox = n === 1 ? 0 : (-halfW * .5 + i * halfW / (n - 1));
+          const nw = halfW * (n === 1 ? .5 : .34);
+          ctx.beginPath();
+          ctx.moveTo(ox - nw * .55, yBot);
+          ctx.lineTo(ox + nw * .55, yBot);
+          ctx.lineTo(ox + nw, yBot + nh);
+          ctx.lineTo(ox - nw, yBot + nh);
+          ctx.closePath(); ctx.fill();
+        }
+        return nh;
+      };
+
+      /* 분리된 단 — 방금까지 로켓의 일부였던 그 모양 그대로 떨어져 나간다 */
+      st.debris.forEach(d => {
+        const dx = X(d.x), dy = Y(d.y);
+        if (dx < -80 || dx > w + 80 || dy < -80 || dy > h + 80) return;
+        const hh = d.hRel * RSbase, halfW = d.wRel * RSbase;
+        ctx.save();
+        ctx.globalAlpha = clamp(1 - (d.age - 4) / 3, 0, 1);
+        ctx.translate(dx, dy); ctx.rotate(d.ang);
+        cylinder(hh / 2, hh, halfW, ['#5d6b88', '#98a6c2', '#4e5a75']);
+        ctx.strokeStyle = '#3c4763'; ctx.lineWidth = 1;
+        ctx.strokeRect(-halfW, -hh / 2, halfW * 2, hh);
+        nozzles(hh / 2, halfW, 2, 1);
+        ctx.restore();
+      });
+
+      /* 로켓 본체 */
+      const shake = st.burning ? (Math.random() - .5) * 2.4 : 0;
       ctx.save();
       ctx.translate(rsx + shake, rsy); ctx.rotate(ang);
-      // 화염
+
+      const live = S.slice(st.idx);
+      const massSum = live.reduce((a, q) => a + q.m, 0) + p.payload * 1000;
+
+      // 엔진 노즐 (현재 연소 중인 단)
+      const nozH = nozzles(RS / 2, RW, st.idx === 0 ? 3 : 1, RS / RSbase);
+
+      // 화염 — 노즐 끝에서 나온다
       if (st.burning) {
         const expand = 1 + 2.0 * (1 - Math.exp(-alt / 26000));
         const cur = S[st.idx];
         const fl = (RS * .3 + cur.Isp * .1 * (RS / 110)) * (.85 + .3 * Math.random());
-        const fg = ctx.createLinearGradient(0, RS / 2, 0, RS / 2 + fl);
+        const y0 = RS / 2 + nozH;
+        const fg = ctx.createLinearGradient(0, y0, 0, y0 + fl * 1.25);
         fg.addColorStop(0, 'rgba(255,255,235,.95)');
-        fg.addColorStop(.3, st.idx === 0 ? 'rgba(255,190,70,.85)' : 'rgba(160,200,255,.8)');
+        fg.addColorStop(.18, st.idx === 0 ? 'rgba(255,190,70,.88)' : 'rgba(160,200,255,.82)');
         fg.addColorStop(1, 'rgba(251,113,133,0)');
         ctx.fillStyle = fg;
         ctx.beginPath();
-        ctx.moveTo(-RW * .8, RS / 2);
-        ctx.quadraticCurveTo(-RW * .8 * expand * 2.2, RS / 2 + fl * .72, 0, RS / 2 + fl * 1.1);
-        ctx.quadraticCurveTo(RW * .8 * expand * 2.2, RS / 2 + fl * .72, RW * .8, RS / 2);
+        ctx.moveTo(-RW * .75, y0);
+        ctx.quadraticCurveTo(-RW * .75 * expand * 1.5, y0 + fl * .7, 0, y0 + fl * 1.25);
+        ctx.quadraticCurveTo(RW * .75 * expand * 1.5, y0 + fl * .7, RW * .75, y0);
         ctx.closePath(); ctx.fill();
       }
-      // 남은 단들: 아래(현재 단)부터 위로 쌓는다
-      const live = S.slice(st.idx);
-      const massSum = live.reduce((a, q) => a + q.m, 0) + p.payload * 1000;
+
+      // 남은 단들 (아래 = 현재 연소 중인 단)
       let yCur = RS / 2;
       live.forEach((q, i) => {
-        const frac = q.m / massSum;
-        const hh = RS * frac * .92;
+        const hh = RS * (q.m / massSum) * .92;
         const isCur = i === 0;
-        ctx.fillStyle = isCur ? '#f1f5fb' : '#b9c6de';
-        D.roundRect(ctx, -RW, yCur - hh, RW * 2, hh, 2); ctx.fill();
-        // 남은 추진제
+        cylinder(yCur, hh, RW, isCur ? ['#8fa0c0', '#f4f8ff', '#7d8cab'] : ['#7b89a8', '#d8e2f4', '#6d7b98']);
+        // 남은 추진제 (현재 단만)
         if (isCur) {
+          // 탱크 유리창처럼 가운데 좁은 띠로만 남은 연료를 보여 준다
           const pf = clamp(st.propLeft / q.prop, 0, 1);
-          ctx.fillStyle = C.lam; ctx.globalAlpha = .85;
-          ctx.fillRect(-RW + 1.5, yCur - hh * pf, RW * 2 - 3, hh * pf);
-          ctx.globalAlpha = 1;
+          const sw = RW * .34;
+          ctx.save();
+          ctx.globalAlpha = .30; ctx.fillStyle = '#0b1220';
+          ctx.fillRect(-sw, yCur - hh, sw * 2, hh);
+          ctx.globalAlpha = .8; ctx.fillStyle = C.lam;
+          ctx.fillRect(-sw, yCur - hh * pf, sw * 2, hh * pf);
+          ctx.restore();
         }
-        // 단 구분선
-        ctx.strokeStyle = '#5b6a8d'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(-RW, yCur - hh); ctx.lineTo(RW, yCur - hh); ctx.stroke();
+        // 단 이음부(인터스테이지) — 어두운 띠
+        ctx.fillStyle = '#48546f';
+        ctx.fillRect(-RW * 1.04, yCur - hh - RSbase * .012, RW * 2.08, RSbase * .024);
         yCur -= hh;
       });
-      // 탑재체 + 페어링
-      const ph = RS * (p.payload * 1000 / massSum) * .92;
-      ctx.fillStyle = C.pay;
-      D.roundRect(ctx, -RW * .9, yCur - ph, RW * 1.8, ph, 2); ctx.fill();
-      ctx.fillStyle = '#dbe4f6';
+
+      // 탑재체 + 페어링 (오자이브 노즈)
+      const payH = RS * (p.payload * 1000 / massSum) * .92;
+      const RWp = RW * .88;
+      cylinder(yCur, payH, RWp, ['#1f7a5a', '#4ade9f', '#1a6b4f']);
+      const noseH = RS * .19;
       ctx.beginPath();
-      ctx.moveTo(0, yCur - ph - RS * .16);
-      ctx.lineTo(RW * .9, yCur - ph); ctx.lineTo(-RW * .9, yCur - ph);
-      ctx.closePath(); ctx.fill();
+      ctx.moveTo(-RWp, yCur - payH);
+      ctx.quadraticCurveTo(-RWp * .82, yCur - payH - noseH * .72, 0, yCur - payH - noseH);
+      ctx.quadraticCurveTo(RWp * .82, yCur - payH - noseH * .72, RWp, yCur - payH);
+      ctx.closePath();
+      const ng = ctx.createLinearGradient(-RWp, 0, RWp, 0);
+      ng.addColorStop(0, '#9fadc8'); ng.addColorStop(.38, '#eef3fb'); ng.addColorStop(1, '#8b99b6');
+      ctx.fillStyle = ng; ctx.fill();
+
       // 핀 (1단이 남아 있을 때만)
       if (st.idx === 0) {
-        ctx.fillStyle = '#8794b5';
-        ctx.beginPath(); ctx.moveTo(-RW, RS / 2 - RS * .16); ctx.lineTo(-RW - RS * .1, RS / 2 + RS * .04); ctx.lineTo(-RW, RS / 2); ctx.fill();
-        ctx.beginPath(); ctx.moveTo(RW, RS / 2 - RS * .16); ctx.lineTo(RW + RS * .1, RS / 2 + RS * .04); ctx.lineTo(RW, RS / 2); ctx.fill();
+        ctx.fillStyle = '#6b7896';
+        ctx.beginPath(); ctx.moveTo(-RW, RS / 2 - RS * .17); ctx.lineTo(-RW - RS * .12, RS / 2 + RS * .03); ctx.lineTo(-RW, RS / 2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(RW, RS / 2 - RS * .17); ctx.lineTo(RW + RS * .12, RS / 2 + RS * .03); ctx.lineTo(RW, RS / 2); ctx.fill();
       }
       ctx.restore();
 
