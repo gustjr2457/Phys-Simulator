@@ -223,46 +223,63 @@
       }
       ctx.restore();
 
-      // 박리 영역과 후류의 와류 — 뒤로 흘러가며 커지고, 위아래로 번갈아 떨어져 나간다
+      /* 실속 유동 — 실제로 일어나는 두 가지만 그린다
+         ① 날개 위 박리 거품 안에서 제자리로 도는 재순환 (표면 근처는 오히려 뒤로 흐른다)
+         ② 뒷전에서 전단층이 안쪽으로 말려 들어가며 떨어져 나가는 와류 (로그 나선) */
       if (stall) {
         const sev = clamp((p.a - ALPHA_STALL) / 9, 0, 1);
         const sxS = cx + relSep * chord;
         const lidY = cy + surf(sxS, true) - 4;
-        const N = 7, RUN = chord * 1.35;
-        for (let i = 0; i < N; i++) {
-          const ph = ((st.flow * .75 + i / N) % 1 + 1) % 1;
-          const vx = sxS + ph * RUN;
-          // 죽은 공기 구역의 중앙 → 뒷전 뒤로는 후류를 따라 흐른다
-          const sY = vx <= TEx ? cy + surf(vx, true) : cy + surf(TEx, true) + (vx - TEx) * .18;
-          const mid = (lidY + sY) / 2;
-          const alt = (i % 2 ? 1 : -1);                     // 위아래 교대 방출
-          const vy = mid + alt * Math.min(10, (sY - lidY) * .22);
-          const vr = clamp((sY - lidY) * .40 + ph * 18, 9, 30) * (.62 + .38 * sev);
-          const spin = st.flow * 6 * alt + i * 1.7;
-          const fade = Math.min(1, ph / .12) * Math.min(1, (1 - ph) / .18);
-          ctx.save();
-          ctx.globalAlpha = fade * (.55 + .45 * sev);
-          ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 1.9; ctx.lineCap = 'round';
-          ctx.beginPath();
-          // 2.4바퀴 감기는 나선 — 안쪽에서 시작해 바깥으로 풀린다
-          const TURN = 2.4 * 2 * Math.PI;
-          let ex = 0, ey = 0, epx = 0, epy = 0;
-          for (let a = 0; a <= TURN; a += .11) {
-            const rr = vr * Math.pow(a / TURN, .85);
-            const px2 = vx + Math.cos(alt * a + spin) * rr, py2 = vy + Math.sin(alt * a + spin) * rr;
-            if (!a) ctx.moveTo(px2, py2); else ctx.lineTo(px2, py2);
-            epx = ex; epy = ey; ex = px2; ey = py2;
-          }
-          ctx.stroke();
-          // 회전 방향을 알려주는 화살촉
-          const dx2 = ex - epx, dy2 = ey - epy, dl = Math.hypot(dx2, dy2) || 1;
-          ctx.fillStyle = '#fda4af';
-          ctx.beginPath();
-          ctx.moveTo(ex, ey);
-          ctx.lineTo(ex - dx2 / dl * 7 - dy2 / dl * 3.5, ey - dy2 / dl * 7 + dx2 / dl * 3.5);
-          ctx.lineTo(ex - dx2 / dl * 7 + dy2 / dl * 3.5, ey - dy2 / dl * 7 - dx2 / dl * 3.5);
+        const surfY = x => cy + surf(Math.min(x, TEx), true);
+
+        // ① 재순환 와류 (제자리)
+        const bx2 = (sxS + TEx) / 2 + (TEx - sxS) * .10;
+        const by2 = (lidY + surfY(bx2)) / 2;
+        const brx = Math.max(14, (TEx - sxS) * .33);
+        const bry = clamp((surfY(bx2) - lidY) * .34, 8, 26);
+        ctx.save();
+        ctx.globalAlpha = .45 + .35 * sev;
+        ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 1.7;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.ellipse(bx2, by2, brx, bry, 0, 0, 7); ctx.stroke();
+        ctx.setLineDash([]);
+        // 회전 방향(시계 방향): 위는 뒤로, 아래는 앞으로
+        ctx.fillStyle = '#fda4af';
+        const head = (hx, hy, dx3, dy3) => {
+          const dl = Math.hypot(dx3, dy3) || 1, ux2 = dx3 / dl, uy2 = dy3 / dl;
+          ctx.beginPath(); ctx.moveTo(hx, hy);
+          ctx.lineTo(hx - ux2 * 8 - uy2 * 4, hy - uy2 * 8 + ux2 * 4);
+          ctx.lineTo(hx - ux2 * 8 + uy2 * 4, hy - uy2 * 8 - ux2 * 4);
           ctx.closePath(); ctx.fill();
-          ctx.restore();
+        };
+        head(bx2 + brx * .5, by2 - bry * .87, 1, 0);      // 위쪽: 오른쪽으로
+        head(bx2 - brx * .5, by2 + bry * .87, -1, 0);     // 아래쪽: 왼쪽으로(역류)
+        for (let i = 0; i < 4; i++) {
+          const a = st.flow * 1.5 + i * Math.PI / 2;
+          D.dot(ctx, bx2 + Math.cos(a) * brx, by2 + Math.sin(a) * bry, 2.6, '#fda4af');
+        }
+        ctx.restore();
+
+        // ② 뒷전에서 말려 나가는 와류
+        for (let i = 0; i < 3; i++) {
+          const ph = ((st.flow * .5 + i / 3) % 1 + 1) % 1;
+          const vx = TEx - chord * .05 + ph * chord * 1.05;
+          const vy = lidY + 7 + ph * 15;
+          const R = (7 + ph * 14) * (.65 + .35 * sev);
+          const fade = Math.min(1, ph / .12) * Math.min(1, (1 - ph) / .28);
+          ctx.save();
+          ctx.globalAlpha = fade * (.7 + .3 * sev);
+          ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+          ctx.beginPath();
+          // 전단층에서 흘러 들어오는 꼬리
+          ctx.moveTo(vx - R * 3.0, vy - R * .5);
+          ctx.quadraticCurveTo(vx - R * 1.7, vy - R * .55, vx - R, vy);
+          // 안쪽으로 말려 들어가는 로그 나선 (시계 방향, 약 2바퀴)
+          for (let a = 0; a <= 2.05 * 2 * Math.PI; a += .1) {
+            const rr = R * Math.exp(-.185 * a);
+            ctx.lineTo(vx + Math.cos(Math.PI + a) * rr, vy + Math.sin(Math.PI + a) * rr);
+          }
+          ctx.stroke(); ctx.restore();
         }
       }
 
@@ -319,7 +336,7 @@
       D.arrow(ctx, cx, cy + 16, 0, clamp(W / 1000 * FS, 6, 190),
         { color: C.W, width: 4, hot: hl === 'm', label: 'mg = ' + fmt(W / 1000, 1) + ' kN', lx: -58 });
 
-      if (stall) D.tag(ctx, '⚠ 실속 (STALL) — 윗면 흐름 박리', cx, cy - 150, '#fb7185', true);
+      if (stall) D.tag(ctx, '⚠ 실속 (STALL) — 윗면 흐름 박리 · 역류 · 후류 와류', cx, cy - 150, '#fb7185', true);
 
       /* ── 오른쪽: C_L 곡선 ──────────────────── */
       const px = w * .62, py = 56, pw = w - px - 34, ph = h * .5;
