@@ -313,7 +313,8 @@ const PS = (function () {
     D.text(ctx, fmt(ymax, 1), L - 5, T + 8, { size: 9.5, color: '#61719a', align: 'right' });
     D.text(ctx, fmt(ymin, 1), L - 5, T + ph, { size: 9.5, color: '#61719a', align: 'right' });
     D.text(ctx, fmt(x0, 1), L, h - 5, { size: 9.5, color: '#61719a' });
-    D.text(ctx, fmt(xmax, 1) + ' ' + (g.xUnit || 's'), L + pw, h - 5, { size: 9.5, color: '#61719a', align: 'right' });
+    const xUnit = g.xUnit === undefined ? 's' : g.xUnit;   // 빈 문자열이면 단위 없이
+    D.text(ctx, fmt(xmax, 1) + (xUnit ? ' ' + xUnit : ''), L + pw, h - 5, { size: 9.5, color: '#61719a', align: 'right' });
 
     g.series.forEach(s => {
       const hot = hlKey === s.key;

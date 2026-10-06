@@ -33,9 +33,38 @@
   }
   window.addEventListener('resize', resizeAll);
 
-  /* ── 네비게이션 (기초 / 심화 트랙) ──────────── */
+  /* ── 네비게이션: 대분류(group) → 중분류(mode) → 소분류(category) ── */
+  const GROUPS = [
+    { id: 'core', label: '기초 과정', modes: ['concept', 'basic', 'general'] },
+    { id: 'modern', label: '실험과 현대물리', modes: ['exp', 'quantum'] },
+    { id: 'applied', label: '응용 분야', modes: ['space', 'adv'] }
+  ];
+  const groupOf = m => (GROUPS.find(g => g.modes.indexOf(m) >= 0) || GROUPS[0]).id;
+
+  let group = 'core';
   let mode = 'concept';
   const lastOf = { concept: null, basic: null, general: null, exp: null, quantum: null, space: null, adv: null };
+  const lastModeOf = { core: 'concept', modern: 'exp', applied: 'space' };
+
+  // 선택된 대분류에 속한 중분류 버튼만 보여 준다
+  function syncTabs() {
+    document.querySelectorAll('.group').forEach(b => b.classList.toggle('on', b.dataset.group === group));
+    document.querySelectorAll('.mode').forEach(b => {
+      b.classList.toggle('off', b.dataset.group !== group);
+      b.classList.toggle('on', b.dataset.mode === mode);
+    });
+  }
+
+  function setMode(m) {
+    mode = m;
+    group = groupOf(m);
+    lastModeOf[group] = m;
+    syncTabs();
+    buildNav();
+    const first = PS.sims.find(s => (s.mode || 'basic') === mode);
+    load(lastOf[mode] || (first && first.id));
+    $('#simlist').scrollTop = 0;
+  }
 
   function buildNav() {
     const list = $('#simlist'), groups = {};
@@ -281,7 +310,9 @@
     const s = PS.byId[id];
     if (!s) return;
     mode = s.mode || 'basic';
-    document.querySelectorAll('.mode').forEach(x => x.classList.toggle('on', x.dataset.mode === mode));
+    group = groupOf(mode);
+    lastModeOf[group] = mode;
+    syncTabs();
     buildNav();
     load(id);
     $('#simlist').scrollTop = 0;
@@ -297,7 +328,13 @@
     formulaIndexBuilt = true;
     const wrap = $('#formulaListWrap');
     wrap.innerHTML = '';
-    TRACK_ORDER.forEach(trackMode => {
+    GROUPS.forEach(g => {
+      if (!PS.sims.some(s => g.modes.indexOf(s.mode || 'basic') >= 0)) return;
+      wrap.appendChild(el('div', 'fx-group-title', g.label));
+      g.modes.forEach(buildTrackBox);
+    });
+
+    function buildTrackBox(trackMode) {
       const inTrack = PS.sims.filter(s => (s.mode || 'basic') === trackMode);
       if (!inTrack.length) return;
       const trackBox = el('div', 'fx-track');
@@ -323,7 +360,7 @@
         });
       });
       wrap.appendChild(trackBox);
-    });
+    }
   }
 
   function filterFormulas(q) {
@@ -431,19 +468,21 @@
     if (e.key === 'Escape' && !$('#formulaModal').classList.contains('hidden')) closeFormulaModal();
   });
 
-  document.querySelectorAll('.mode').forEach(b => {
+  document.querySelectorAll('.group').forEach(b => {
     b.onclick = () => {
-      if (mode === b.dataset.mode) return;
-      mode = b.dataset.mode;
-      document.querySelectorAll('.mode').forEach(x => x.classList.toggle('on', x.dataset.mode === mode));
-      buildNav();
-      const first = PS.sims.find(s => (s.mode || 'basic') === mode);
-      load(lastOf[mode] || (first && first.id));
-      $('#simlist').scrollTop = 0;
+      const g = b.dataset.group;
+      if (group === g) return;
+      const gd = GROUPS.find(x => x.id === g);
+      setMode(lastModeOf[g] || (gd && gd.modes[0]));
     };
   });
 
+  document.querySelectorAll('.mode').forEach(b => {
+    b.onclick = () => { if (mode !== b.dataset.mode) setMode(b.dataset.mode); };
+  });
+
   markEmptyModes();
+  syncTabs();
   buildNav();
   load(PS.sims[0].id);
   requestAnimationFrame(frame);

@@ -45,7 +45,19 @@ button{font-family:inherit}
   background:linear-gradient(135deg,var(--acc),var(--acc2));
   box-shadow:0 6px 18px rgba(94,234,212,.25);
 }
+/* 대분류 */
+.groups{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 12px 7px}
+.group{
+  cursor:pointer;background:transparent;border:none;border-bottom:2px solid #22304f;
+  color:var(--tx3);font-size:10.5px;padding:6px 2px 7px;transition:.14s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px 6px 0 0;
+}
+.group:hover{color:var(--tx2);background:rgba(255,255,255,.03)}
+.group.on{color:var(--acc);border-bottom-color:var(--acc);font-weight:700;background:rgba(94,234,212,.07)}
+
+/* 중분류 */
 .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 12px 10px}
+.mode.off{display:none}
 .mode{
   cursor:pointer;background:#101a30;border:1px solid #22304f;color:var(--tx3);
   font-size:10.5px;padding:7px 3px;border-radius:9px;transition:.14s;white-space:nowrap;
@@ -86,6 +98,13 @@ button{font-family:inherit}
 }
 .modal-close:hover{color:var(--tx);background:#16223d}
 .modal-body{overflow-y:auto;padding:6px 18px 20px}
+.fx-group-title{
+  font-size:13px;font-weight:800;color:var(--tx);letter-spacing:.5px;
+  margin:26px 0 2px;padding:7px 11px;border-radius:9px;
+  background:linear-gradient(90deg,rgba(94,234,212,.14),transparent);
+  border-left:3px solid var(--acc);
+}
+.fx-group-title:first-child{margin-top:10px}
 .fx-track-title{
   font-size:11.5px;letter-spacing:1.4px;color:var(--acc);text-transform:uppercase;
   margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line);
@@ -310,6 +329,10 @@ input[type=range]::-moz-range-thumb{
   #nav{flex-direction:row;align-items:center;border-right:none;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
   .brand{padding:10px 14px}
   .brand p{display:none}
+  .groups{grid-template-columns:repeat(3,auto);padding:0 6px 4px;gap:2px}
+  .group{font-size:9.5px;padding:5px 6px 6px}
+  .modes{grid-template-columns:repeat(3,auto);padding:0 8px 0 0;gap:3px}
+  .mode{padding:6px 8px}
   #simlist{display:flex;gap:6px;flex:1;padding:8px;overflow-x:auto}
   .nav-group{display:none}
   .nav-item{width:auto;white-space:nowrap;margin:0}
