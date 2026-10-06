@@ -48,7 +48,9 @@
 
   // 선택된 대분류에 속한 중분류 버튼만 보여 준다
   function syncTabs() {
-    document.querySelectorAll('.group').forEach(b => b.classList.toggle('on', b.dataset.group === group));
+    const gd = GROUPS.find(g => g.id === group);
+    $('#groupLabel').textContent = gd ? gd.label : '';
+    document.querySelectorAll('.group-card').forEach(b => b.classList.toggle('on', b.dataset.group === group));
     document.querySelectorAll('.mode').forEach(b => {
       b.classList.toggle('off', b.dataset.group !== group);
       b.classList.toggle('on', b.dataset.mode === mode);
@@ -468,13 +470,32 @@
     if (e.key === 'Escape' && !$('#formulaModal').classList.contains('hidden')) closeFormulaModal();
   });
 
-  document.querySelectorAll('.group').forEach(b => {
-    b.onclick = () => {
-      const g = b.dataset.group;
-      if (group === g) return;
-      const gd = GROUPS.find(x => x.id === g);
-      setMode(lastModeOf[g] || (gd && gd.modes[0]));
-    };
+  /* ── 대분류 선택 메뉴 ─────────────────────── */
+  function buildGroupMenu() {
+    const box = $('#groupList');
+    box.innerHTML = '';
+    GROUPS.forEach(g => {
+      const n = PS.sims.filter(s => g.modes.indexOf(s.mode || 'basic') >= 0).length;
+      const subs = g.modes.map(m => TRACK_LABEL[m] || m).join(' · ');
+      const card = el('button', 'group-card', '');
+      card.dataset.group = g.id;
+      card.innerHTML = '<div class="gc-top"><b>' + g.label + '</b><span class="gc-n">' + n + '종</span></div>' +
+        '<div class="gc-sub">' + subs + '</div>';
+      card.onclick = () => {
+        closeGroupModal();
+        if (group !== g.id) setMode(lastModeOf[g.id] || g.modes[0]);
+      };
+      box.appendChild(card);
+    });
+  }
+  function openGroupModal() { buildGroupMenu(); syncTabs(); $('#groupModal').classList.remove('hidden'); }
+  function closeGroupModal() { $('#groupModal').classList.add('hidden'); }
+
+  $('#btnGroupMenu').onclick = openGroupModal;
+  $('#btnCloseGroups').onclick = closeGroupModal;
+  $('#groupModal').onclick = e => { if (e.target.id === 'groupModal') closeGroupModal(); };
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !$('#groupModal').classList.contains('hidden')) closeGroupModal();
   });
 
   document.querySelectorAll('.mode').forEach(b => {

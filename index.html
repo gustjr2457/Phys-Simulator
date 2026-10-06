@@ -16,11 +16,9 @@
       <p>물리 이론의 시각화</p>
     </div>
   </div>
-  <div class="groups">
-    <button class="group on" data-group="core" title="난이도 순으로 올라가는 기본 과정">기초 과정</button>
-    <button class="group" data-group="modern" title="이론이 어떻게 증명됐는가, 그리고 미시세계">실험과 현대물리</button>
-    <button class="group" data-group="applied" title="배운 물리가 실제로 쓰이는 곳">응용 분야</button>
-  </div>
+  <button id="btnGroupMenu" class="group-menu-btn" title="분야 선택">
+    <span class="gm-ico">☰</span><span id="groupLabel">기초 과정</span><span class="gm-caret">▾</span>
+  </button>
   <div class="modes">
     <button class="mode on" data-mode="concept" data-group="core" title="초급·개념 — 공식 없이 감 잡기">초급</button>
     <button class="mode" data-mode="basic" data-group="core" title="고등물리 — 물리학Ⅰ">고등물리</button>
@@ -93,6 +91,16 @@
     <ul id="notes"></ul>
   </section>
 </aside>
+
+<div id="groupModal" class="modal-overlay hidden">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <h2>분야 선택</h2>
+      <button id="btnCloseGroups" class="modal-close" title="닫기(Esc)">✕</button>
+    </div>
+    <div class="modal-body" id="groupList"></div>
+  </div>
+</div>
 
 <div id="formulaModal" class="modal-overlay hidden">
   <div class="modal">

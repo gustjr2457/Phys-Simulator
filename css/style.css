@@ -45,15 +45,31 @@ button{font-family:inherit}
   background:linear-gradient(135deg,var(--acc),var(--acc2));
   box-shadow:0 6px 18px rgba(94,234,212,.25);
 }
-/* 대분류 */
-.groups{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 12px 7px}
-.group{
-  cursor:pointer;background:transparent;border:none;border-bottom:2px solid #22304f;
-  color:var(--tx3);font-size:10.5px;padding:6px 2px 7px;transition:.14s;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:6px 6px 0 0;
+/* 대분류 — 햄버거 메뉴로 선택 */
+.group-menu-btn{
+  display:flex;align-items:center;gap:8px;width:calc(100% - 24px);margin:0 12px 9px;
+  padding:9px 11px;border-radius:10px;border:1px solid #2c4675;
+  background:linear-gradient(135deg,#16294a,#131d36);color:var(--tx);
+  font-size:12.5px;font-weight:700;cursor:pointer;transition:.14s;text-align:left;
 }
-.group:hover{color:var(--tx2);background:rgba(255,255,255,.03)}
-.group.on{color:var(--acc);border-bottom-color:var(--acc);font-weight:700;background:rgba(94,234,212,.07)}
+.group-menu-btn:hover{border-color:var(--acc);background:#1a3148}
+.gm-ico{font-size:13px;color:var(--acc);flex:none}
+#groupLabel{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gm-caret{color:var(--tx3);font-size:10px;flex:none}
+
+.modal-sm{width:min(440px,100%)}
+.group-card{
+  display:block;width:100%;text-align:left;cursor:pointer;margin-bottom:9px;
+  background:#0a132a;border:1px solid #1d2a4a;border-radius:11px;padding:12px 14px;
+  color:var(--tx2);transition:.14s;font-family:inherit;
+}
+.group-card:hover{border-color:var(--acc2);background:#0e1a38}
+.group-card.on{border-color:var(--acc);background:rgba(94,234,212,.08)}
+.gc-top{display:flex;align-items:baseline;gap:9px;margin-bottom:4px}
+.gc-top b{font-size:14px;color:var(--tx)}
+.group-card.on .gc-top b{color:var(--acc)}
+.gc-n{margin-left:auto;font-size:11px;color:var(--tx3)}
+.gc-sub{font-size:11.5px;color:var(--tx3);line-height:1.5}
 
 /* 중분류 */
 .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 12px 10px}
@@ -329,8 +345,8 @@ input[type=range]::-moz-range-thumb{
   #nav{flex-direction:row;align-items:center;border-right:none;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
   .brand{padding:10px 14px}
   .brand p{display:none}
-  .groups{grid-template-columns:repeat(3,auto);padding:0 6px 4px;gap:2px}
-  .group{font-size:9.5px;padding:5px 6px 6px}
+  .group-menu-btn{width:auto;margin:0 8px 0 0;padding:7px 10px;font-size:11px}
+  .gm-caret{display:none}
   .modes{grid-template-columns:repeat(3,auto);padding:0 8px 0 0;gap:3px}
   .mode{padding:6px 8px}
   #simlist{display:flex;gap:6px;flex:1;padding:8px;overflow-x:auto}

@@ -77,7 +77,8 @@
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
       const cw = 130, cx = w * .38;
-      const baseY = h - 74, topY = 56;
+      // 피스톤이 끝까지 올라가도 그 위의 추가 화면 밖으로 나가지 않도록 위쪽 여백을 확보한다
+      const baseY = h - 74, topY = 104;
       const pxPerV = (baseY - topY) / VMAX;
       const pistonY = baseY - st.V * pxPerV;
 
@@ -103,16 +104,17 @@
       D.roundRect(ctx, cx - cw / 2 - 6, pistonY - pistonH, cw + 12, pistonH, 4);
       ctx.fillStyle = '#c8d3ef'; ctx.fill();
       ctx.restore();
-      D.line(ctx, cx, topY - 30, cx, pistonY - pistonH, { color: 'rgba(147,162,196,.4)', width: 2, dash: [3, 5] });
-
-      // 추(무게 = P)
-      const wSize = 26 + p.P * 9;
+      // 추(무게 = P) — 피스톤 위에 얹혀 함께 올라간다
+      const wSize = 20 + p.P * 7;
+      const wTop = Math.max(6, pistonY - pistonH - wSize);
       ctx.save();
       if (hl === 'P') { ctx.shadowColor = C.P; ctx.shadowBlur = 16; }
-      D.roundRect(ctx, cx - wSize / 2, topY - 30 - wSize, wSize, wSize, 6);
+      D.roundRect(ctx, cx - wSize / 2, wTop, wSize, wSize, 6);
       ctx.fillStyle = C.P; ctx.fill();
       ctx.restore();
-      D.text(ctx, 'P', cx, topY - 30 - wSize / 2 + 4, { size: 12, color: '#08101f', align: 'center', bold: true });
+      D.text(ctx, 'P', cx, wTop + wSize / 2 + 4, { size: 12, color: '#08101f', align: 'center', bold: true });
+      D.text(ctx, '추의 무게 = 압력', cx + wSize / 2 + 10, wTop + wSize / 2 + 4,
+        { size: 10, color: hl === 'P' ? '#fff' : C.P, bold: hl === 'P' });
 
       // 부피 치수선
       D.dim(ctx, cx + cw / 2 + 24, baseY, cx + cw / 2 + 24, pistonY, 'V=' + fmt(st.V, 1), '#93a2c4', hl === 'V');
