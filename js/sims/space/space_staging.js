@@ -46,7 +46,7 @@
   }
 
   PS.register({
-    id: 'space-staging', mode: 'adv', category: '항공우주공학',
+    id: 'space-staging', mode: 'space', category: '추진과 로켓',
     title: '다단 로켓과 단 분리',
     sub: 'Δv = Σ Isp·g₀·ln(m₀/m_f)',
     tagline: '똑같은 질량, 똑같은 연료인데 단을 나누기만 하면 Δv가 훌쩍 뜁니다. 다 쓴 껍데기를 계속 지고 갈 이유가 없기 때문입니다.',

@@ -11,7 +11,7 @@
   const ttof = p => Math.PI * Math.sqrt(Math.pow((r1of(p) + r2of(p)) / 2, 3) / MU);
 
   PS.register({
-    id: 'space-hohmann', mode: 'adv', category: '항공우주공학',
+    id: 'space-hohmann', mode: 'space', category: '궤도와 이동',
     title: '호만 전이 궤도',
     sub: 'Δv₁ + Δv₂',
     tagline: '낮은 궤도에서 높은 궤도로 옮겨 가는 가장 연료가 적게 드는 방법. 정지위성은 모두 이 길로 갑니다.',

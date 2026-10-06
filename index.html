@@ -13,13 +13,19 @@
     <div class="logo">Φ</div>
     <div>
       <h1>PhysLab</h1>
-      <p>물리 이론의 시각화 · 물리학Ⅰ</p>
+      <p>물리 이론의 시각화</p>
     </div>
   </div>
   <div class="modes">
-    <button class="mode on" data-mode="basic">기초 · 물리학Ⅰ</button>
-    <button class="mode" data-mode="adv">심화 · 공학</button>
+    <button class="mode on" data-mode="concept" title="초급·개념 — 공식 없이 감 잡기">초급</button>
+    <button class="mode" data-mode="basic" title="고등물리 — 물리학Ⅰ">고등물리</button>
+    <button class="mode" data-mode="general" title="일반물리 — 대학 기초">일반물리</button>
+    <button class="mode" data-mode="exp" title="유명한 실험 — 이론이 실제로 어떻게 증명됐는지">실험실</button>
+    <button class="mode" data-mode="quantum" title="양자역학 — 미시세계(준비 중)">양자역학</button>
+    <button class="mode" data-mode="space" title="우주선의 원리">우주선</button>
+    <button class="mode" data-mode="adv" title="공학 응용 — 심화">공학응용</button>
   </div>
+  <button id="btnFormulaIndex" class="formula-index-btn" title="등록된 모든 시뮬레이션의 공식을 트랙별로 모아봅니다">Σ 전체 공식 모음</button>
   <div id="simlist"></div>
   <footer class="nav-foot">
     <p><b>Space</b> 재생/정지 · <b>R</b> 처음으로</p>
@@ -50,6 +56,11 @@
   </section>
 
   <section id="graphs"></section>
+
+  <section id="questRoom" class="quest-room hidden">
+    <div class="quest-head"><span class="quest-icon">🎯</span><h3>문제방</h3><span class="quest-sub">이 시뮬레이션의 도전 과제</span></div>
+    <div id="challenges" class="quest-list"></div>
+  </section>
 </main>
 
 <aside id="panel">
@@ -78,26 +89,69 @@
   </section>
 </aside>
 
+<div id="formulaModal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Σ 전체 공식 모음</h2>
+      <input type="text" id="formulaSearch" placeholder="공식 이름, 시뮬레이션 이름으로 검색…" autocomplete="off">
+      <button id="btnCloseFormulas" class="modal-close" title="닫기(Esc)">✕</button>
+    </div>
+    <div id="formulaListWrap" class="modal-body"></div>
+  </div>
+</div>
+
 <script src="js/core.js"></script>
 
-<!-- 기초 · 물리학Ⅰ -->
+<!-- 초급 · 개념 -->
+<script src="js/sims/concept/energy_intro.js"></script>
+<script src="js/sims/concept/force_intro.js"></script>
+<script src="js/sims/concept/wave_intro.js"></script>
+<script src="js/sims/concept/particle_intro.js"></script>
+<script src="js/sims/concept/atom_intro.js"></script>
+<script src="js/sims/concept/light_intro.js"></script>
+<script src="js/sims/concept/heat_intro.js"></script>
+<script src="js/sims/concept/entropy_intro.js"></script>
+<script src="js/sims/concept/gravity_time.js"></script>
+<script src="js/sims/concept/gravity_compare.js"></script>
+<script src="js/sims/concept/compact_objects.js"></script>
+
+<!-- 고등물리 · 물리학Ⅰ -->
 <script src="js/sims/kinematics.js"></script>
 <script src="js/sims/newton.js"></script>
 <script src="js/sims/momentum.js"></script>
 <script src="js/sims/energy.js"></script>
 <script src="js/sims/induction.js"></script>
 <script src="js/sims/wave.js"></script>
+<script src="js/sims/refraction.js"></script>
 
-<!-- 심화 · 공학 -->
+<!-- 일반물리 -->
+<script src="js/sims/general/rotation.js"></script>
+<script src="js/sims/general/shm.js"></script>
+<script src="js/sims/general/lens.js"></script>
+<script src="js/sims/general/thermo1.js"></script>
+<script src="js/sims/general/entropy2.js"></script>
+<script src="js/sims/general/relativity.js"></script>
+
+<!-- 유명한 실험 -->
+<script src="js/sims/exp/young_doubleslit.js"></script>
+<script src="js/sims/exp/photoelectric.js"></script>
+<script src="js/sims/exp/rutherford_scattering.js"></script>
+<script src="js/sims/exp/dark_matter.js"></script>
+
+<!-- 양자역학 (준비 중 — 아직 등록된 시뮬레이션 없음) -->
+
+<!-- 우주선의 원리 -->
+<script src="js/sims/space/space_orbit.js"></script>
+<script src="js/sims/space/space_hohmann.js"></script>
+<script src="js/sims/space/space_rocket.js"></script>
+<script src="js/sims/space/space_staging.js"></script>
+
+<!-- 공학응용 · 심화 -->
 <script src="js/sims/adv/vib_free.js"></script>
 <script src="js/sims/adv/vib_forced.js"></script>
 <script src="js/sims/adv/sensor_strain.js"></script>
 <script src="js/sims/adv/sensor_response.js"></script>
 <script src="js/sims/adv/aero_lift.js"></script>
-<script src="js/sims/adv/space_orbit.js"></script>
-<script src="js/sims/adv/space_hohmann.js"></script>
-<script src="js/sims/adv/space_rocket.js"></script>
-<script src="js/sims/adv/space_staging.js"></script>
 <script src="js/sims/adv/ship_stability.js"></script>
 <script src="js/sims/adv/ship_autopilot.js"></script>
 

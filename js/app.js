@@ -34,14 +34,18 @@
   window.addEventListener('resize', resizeAll);
 
   /* ── 네비게이션 (기초 / 심화 트랙) ──────────── */
-  let mode = 'basic';
-  const lastOf = { basic: null, adv: null };
+  let mode = 'concept';
+  const lastOf = { concept: null, basic: null, general: null, exp: null, quantum: null, space: null, adv: null };
 
   function buildNav() {
     const list = $('#simlist'), groups = {};
     list.innerHTML = '';
-    PS.sims.filter(s => (s.mode || 'basic') === mode)
-      .forEach(s => (groups[s.category] = groups[s.category] || []).push(s));
+    const inMode = PS.sims.filter(s => (s.mode || 'basic') === mode);
+    if (!inMode.length) {
+      list.appendChild(el('div', 'simlist-empty', '이 트랙은 아직 콘텐츠를 채우는 중입니다.<br>먼저 다른 트랙을 둘러봐 주세요.'));
+      return;
+    }
+    inMode.forEach(s => (groups[s.category] = groups[s.category] || []).push(s));
     Object.keys(groups).forEach(cat => {
       list.appendChild(el('div', 'nav-group', cat));
       groups[cat].forEach(s => {
@@ -53,14 +57,28 @@
     });
   }
 
-  /* ── 공식 렌더링: "{a}" → 색이 있는 항 ───────── */
-  function renderFormula(tpl) {
-    return tpl.replace(/\{(\w+)\}/g, (m, k) => {
-      const v = sim.vars[k];
-      if (!v) return k;
-      return '<span class="term" data-term="' + k + '" style="color:' + v.color + '">' + v.symbol + '</span>';
+  // 트랙별로 등록된 시뮬레이션이 하나도 없으면 탭에 '준비 중' 표시
+  function markEmptyModes() {
+    const has = {};
+    PS.sims.forEach(s => { has[s.mode || 'basic'] = true; });
+    document.querySelectorAll('.mode').forEach(b => {
+      b.classList.toggle('empty', !has[b.dataset.mode]);
     });
   }
+
+  /* ── 공식 렌더링: "{a}" → 색이 있는 항 ───────── */
+  // vars를 인자로 받는 버전(전체 공식 모음 모달처럼 "현재 열려 있지 않은 다른 시뮬레이션"의
+  // 공식을 그릴 때 씀) + 현재 sim.vars를 쓰는 기존 버전(우측 패널의 클릭 가능한 공식용).
+  function renderFormulaWithVars(tpl, vars, interactive) {
+    return tpl.replace(/\{(\w+)\}/g, (m, k) => {
+      const v = vars[k];
+      if (!v) return k;
+      return interactive
+        ? '<span class="term" data-term="' + k + '" style="color:' + v.color + '">' + v.symbol + '</span>'
+        : '<span class="term-inline" style="color:' + v.color + '">' + v.symbol + '</span>';
+    });
+  }
+  function renderFormula(tpl) { return renderFormulaWithVars(tpl, sim.vars, true); }
 
   function showTerm(k) {
     const box = $('#termInfo');
@@ -151,6 +169,48 @@
     });
   }
 
+  /* ── 도전 과제(챌린지): 지금 슬라이더·시뮬레이션 상태가 목표를 만족하는지 매 프레임 확인 ── */
+  let challengeSig = '';
+  const challengeAchieved = {}; // simId -> Set(challengeId) — 세션 동안 "한 번이라도 성공"을 기억(새로고침하면 초기화)
+  function updateChallenges() {
+    const list = sim.challenges || [];
+    const card = $('#questRoom'), box = $('#challenges');
+    if (!list.length) { card.classList.add('hidden'); return; }
+    card.classList.remove('hidden');
+    const sig = sim.id + '|' + list.map(c => c.id).join('|');
+    if (sig !== challengeSig) {
+      challengeSig = sig;
+      box.innerHTML = '';
+      list.forEach(c => {
+        const d = el('div', 'challenge');
+        d.innerHTML =
+          '<div class="ch-head"><span class="ch-badge" data-badge>·</span><b>' + c.title + '</b></div>' +
+          '<div class="ch-desc">' + c.desc + '</div>' +
+          (c.hint ? '<button type="button" class="ch-hint-btn" data-hintbtn>힌트 보기</button><div class="ch-hint" data-hint hidden>' + c.hint + '</div>' : '');
+        box.appendChild(d);
+      });
+      box.querySelectorAll('[data-hintbtn]').forEach(btn => {
+        btn.onclick = () => {
+          const hbox = btn.nextElementSibling;
+          hbox.hidden = !hbox.hidden;
+          btn.textContent = hbox.hidden ? '힌트 보기' : '힌트 감추기';
+        };
+      });
+    }
+    const achieved = challengeAchieved[sim.id] || (challengeAchieved[sim.id] = new Set());
+    list.forEach((c, i) => {
+      let ok = false;
+      try { ok = !!c.check({ P: P, st: st, t: st.t }); } catch (e) { ok = false; }
+      if (ok) achieved.add(c.id);
+      const node = box.children[i];
+      if (!node) return;
+      node.classList.toggle('ch-ok', ok);
+      node.classList.toggle('ch-done-ever', achieved.has(c.id) && !ok);
+      const badge = node.querySelector('[data-badge]');
+      badge.textContent = ok ? '✅' : (achieved.has(c.id) ? '✔' : '·');
+    });
+  }
+
   let roSig = '';
   function updateReadouts() {
     const box = $('#readouts');
@@ -175,14 +235,31 @@
   }
 
   /* ── 시뮬레이션 전환 / 리셋 ─────────────────── */
+  function loadEmpty() {
+    sim = null; st = null; playing = false;
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('on'));
+    $('#simCat').className = 'chip';
+    $('#simCat').textContent = '준비 중';
+    $('#simTitle').textContent = '이 트랙은 아직 준비 중입니다';
+    $('#simTag').textContent = '다른 트랙에서 먼저 둘러봐 주세요. 곧 채워질 예정입니다.';
+    $('#formulas').innerHTML = ''; $('#controls').innerHTML = ''; $('#presets').innerHTML = '';
+    $('#readouts').innerHTML = ''; $('#notes').innerHTML = '';
+    $('#challenges').innerHTML = ''; $('#questRoom').classList.add('hidden'); challengeSig = '';
+    $('#graphs').innerHTML = ''; graphCanvases = [];
+    D.bg(ctx, W, H);
+    syncPlay();
+  }
+
   function load(id) {
+    if (!id) { loadEmpty(); return; }
     sim = PS.byId[id];
     P = {}; sim.params.forEach(p => P[p.key] = p.value);
     pinned = null; hl = null;
     lastOf[sim.mode || 'basic'] = id;
     document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('on', b.dataset.id === id));
+    const modePrefix = { concept: '초급 · ', basic: '', general: '일반물리 · ', exp: '유명한 실험 · ', quantum: '양자역학 · ', space: '우주선 · ', adv: '공학응용 · ' };
     $('#simCat').className = 'chip' + (sim.mode === 'adv' ? ' adv' : '');
-    $('#simCat').textContent = (sim.mode === 'adv' ? '심화 · ' : '') + sim.category;
+    $('#simCat').textContent = (modePrefix[sim.mode] || '') + sim.category;
     $('#simTitle').textContent = sim.title;
     $('#simTag').textContent = sim.tagline;
     buildPanel(); buildGraphs();
@@ -198,6 +275,92 @@
     updateReadouts();
     draw();
   }
+
+  // 트랙(mode)을 안 가리고 특정 시뮬레이션으로 바로 이동(전체 공식 모음 모달에서 사용)
+  function switchToSim(id) {
+    const s = PS.byId[id];
+    if (!s) return;
+    mode = s.mode || 'basic';
+    document.querySelectorAll('.mode').forEach(x => x.classList.toggle('on', x.dataset.mode === mode));
+    buildNav();
+    load(id);
+    $('#simlist').scrollTop = 0;
+  }
+
+  /* ── 전체 공식 모음 모달 ─────────────────────── */
+  const TRACK_LABEL = { concept: '초급 · 개념', basic: '고등물리', general: '일반물리', exp: '유명한 실험', quantum: '양자역학', space: '우주선의 원리', adv: '공학응용' };
+  const TRACK_ORDER = ['concept', 'basic', 'general', 'exp', 'quantum', 'space', 'adv'];
+  let formulaIndexBuilt = false;
+
+  function buildFormulaIndex() {
+    if (formulaIndexBuilt) return;
+    formulaIndexBuilt = true;
+    const wrap = $('#formulaListWrap');
+    wrap.innerHTML = '';
+    TRACK_ORDER.forEach(trackMode => {
+      const inTrack = PS.sims.filter(s => (s.mode || 'basic') === trackMode);
+      if (!inTrack.length) return;
+      const trackBox = el('div', 'fx-track');
+      trackBox.appendChild(el('h3', 'fx-track-title', TRACK_LABEL[trackMode] || trackMode));
+      const groups = {};
+      inTrack.forEach(s => (groups[s.category] = groups[s.category] || []).push(s));
+      Object.keys(groups).forEach(cat => {
+        trackBox.appendChild(el('div', 'fx-cat', cat));
+        groups[cat].forEach(s => {
+          const simBox = el('div', 'fx-sim');
+          const searchText = [s.title, s.sub, cat].concat((s.formulas || []).map(f => f.name + ' ' + f.tpl)).join(' ').toLowerCase();
+          simBox.dataset.search = searchText;
+          simBox.appendChild(el('div', 'fx-sim-head',
+            '<b>' + s.title + '</b><span class="fx-sub">' + s.sub + '</span><span class="fx-jump">열기 →</span>'));
+          (s.formulas || []).forEach(f => {
+            const fRow = el('div', 'fx-formula');
+            fRow.appendChild(el('div', 'fx-fname', f.name));
+            fRow.appendChild(el('div', 'fx-fbody', renderFormulaWithVars(f.tpl, s.vars || {}, false)));
+            simBox.appendChild(fRow);
+          });
+          simBox.onclick = () => { closeFormulaModal(); switchToSim(s.id); };
+          trackBox.appendChild(simBox);
+        });
+      });
+      wrap.appendChild(trackBox);
+    });
+  }
+
+  function filterFormulas(q) {
+    q = q.trim().toLowerCase();
+    document.querySelectorAll('.fx-sim').forEach(node => {
+      node.style.display = (!q || node.dataset.search.includes(q)) ? '' : 'none';
+    });
+    document.querySelectorAll('.fx-cat').forEach(catEl => {
+      let node = catEl.nextElementSibling, anyVisible = false;
+      while (node && !node.classList.contains('fx-cat')) {
+        if (node.classList.contains('fx-sim') && node.style.display !== 'none') anyVisible = true;
+        node = node.nextElementSibling;
+      }
+      catEl.style.display = anyVisible ? '' : 'none';
+    });
+    document.querySelectorAll('.fx-track').forEach(trackEl => {
+      const anyVisible = Array.from(trackEl.querySelectorAll('.fx-sim')).some(n => n.style.display !== 'none');
+      trackEl.style.display = anyVisible ? '' : 'none';
+    });
+    const wrap = $('#formulaListWrap');
+    let empty = wrap.querySelector('.fx-empty');
+    const anyAtAll = Array.from(wrap.querySelectorAll('.fx-track')).some(t => t.style.display !== 'none');
+    if (!anyAtAll && q) {
+      if (!empty) { empty = el('div', 'fx-empty', '검색 결과가 없습니다.'); wrap.appendChild(empty); }
+    } else if (empty) {
+      empty.remove();
+    }
+  }
+
+  function openFormulaModal() {
+    buildFormulaIndex();
+    $('#formulaModal').classList.remove('hidden');
+    $('#formulaSearch').value = '';
+    filterFormulas('');
+    $('#formulaSearch').focus();
+  }
+  function closeFormulaModal() { $('#formulaModal').classList.add('hidden'); }
 
   function sample() {
     if (!sim.sample) return;
@@ -216,6 +379,7 @@
     D.bg(ctx, W, H);
     sim.draw(ctx, st, P, { w: W, h: H, hl: hl, playing: playing });
     updateReadouts();
+    updateChallenges();
     graphCanvases.forEach(g => PS.drawGraph(g.ctx, g.w, g.h, g.def, hist, hl));
     $('#clock').textContent = st.t.toFixed(2);
   }
@@ -246,16 +410,25 @@
 
   /* ── 컨트롤 바 ──────────────────────────────── */
   $('#btnPlay').onclick = () => {
+    if (!sim || !st) return;
     if (st.done) { reset(); playing = true; }
     else playing = !playing;
     syncPlay();
   };
-  $('#btnReset').onclick = () => { reset(); playing = true; syncPlay(); };
+  $('#btnReset').onclick = () => { if (!sim) return; reset(); playing = true; syncPlay(); };
   $('#speed').oninput = e => { speed = parseFloat(e.target.value); $('#speedVal').textContent = speed.toFixed(1) + '×'; };
   window.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') return;
     if (e.code === 'Space') { e.preventDefault(); $('#btnPlay').click(); }
     if (e.key === 'r' || e.key === 'R') $('#btnReset').click();
+  });
+
+  $('#btnFormulaIndex').onclick = openFormulaModal;
+  $('#btnCloseFormulas').onclick = closeFormulaModal;
+  $('#formulaModal').onclick = e => { if (e.target.id === 'formulaModal') closeFormulaModal(); };
+  $('#formulaSearch').oninput = e => filterFormulas(e.target.value);
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !$('#formulaModal').classList.contains('hidden')) closeFormulaModal();
   });
 
   document.querySelectorAll('.mode').forEach(b => {
@@ -270,6 +443,7 @@
     };
   });
 
+  markEmptyModes();
   buildNav();
   load(PS.sims[0].id);
   requestAnimationFrame(frame);
