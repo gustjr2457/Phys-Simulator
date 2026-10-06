@@ -22,7 +22,7 @@
   }
 
   PS.register({
-    id: 'c-entropy', mode: 'concept', category: '거시세계',
+    id: 'c-entropy', mode: 'concept', category: '열과 무질서',
     title: '엔트로피란 무엇인가?',
     sub: '흩어지는 쪽으로만 저절로 진행된다',
     tagline: '입자들이 처음엔 모두 왼쪽 칸에 모여 있습니다. 가운데 칸막이를 치우면 어떻게 될까요? 재생을 눌러 지켜보세요 — 입자들은 저절로 상자 전체로 퍼지지만, 아무리 오래 기다려도 저절로 다시 왼쪽에만 모이는 일은 일어나지 않습니다.',

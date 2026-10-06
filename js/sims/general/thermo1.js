@@ -12,7 +12,7 @@
   function tCap(p) { return (VMAX - V0) / rate(p); }
 
   PS.register({
-    id: 'g-thermo1', mode: 'general', category: '열역학',
+    id: 'g-thermo1', mode: 'general', category: '열과 통계',
     title: '열역학 제1법칙',
     sub: 'ΔU = Q − W',
     tagline: '피스톤 위 추의 무게가 기체 압력 P를 일정하게 유지합니다. 아래에서 열을 가하면 기체는 팽창하며 피스톤을 밀어 올립니다 — 들어간 열(Q) 중 일부는 기체 자체가 뜨거워지는 데(ΔU), 나머지는 피스톤을 미는 일(W)에 쓰입니다.',

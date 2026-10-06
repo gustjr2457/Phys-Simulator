@@ -7,6 +7,7 @@
 
   PS.register({
     id: 'momentum',
+    mode: 'basic',
     category: '역학과 에너지',
     title: '운동량과 충격량 (충돌)',
     sub: 'p = mv,  I = FΔt = Δp',

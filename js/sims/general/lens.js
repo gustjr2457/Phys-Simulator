@@ -15,7 +15,7 @@
   }
 
   PS.register({
-    id: 'g-lens', mode: 'general', category: '광학',
+    id: 'g-lens', mode: 'general', category: '파동과 광학',
     title: '렌즈와 상',
     sub: '1/f = 1/u + 1/v',
     tagline: '물체를 렌즈에 가까이(또는 멀리) 옮기면서 상이 어디에, 어떤 크기와 방향으로 맺히는지 보세요. f를 음수로 두면 오목렌즈(항상 작고 바로 선 허상)가 됩니다.',

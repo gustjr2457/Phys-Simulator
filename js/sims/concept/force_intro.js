@@ -9,7 +9,7 @@
   const D2R = Math.PI / 180;
 
   PS.register({
-    id: 'c-force', mode: 'concept', category: '거시세계',
+    id: 'c-force', mode: 'concept', category: '힘과 운동',
     title: '힘이란 무엇인가?',
     sub: '크기와 방향을 가진 화살표 — 여러 힘은 하나로 더해진다',
     tagline: '파란 힘과 분홍 힘, 두 힘을 동시에 걸어 보세요. 상자는 그 둘을 더한 "알짜힘"(노란 화살표) 방향으로만 움직입니다. 두 힘을 정확히 반대로 걸면 상자는 꼼짝하지 않습니다.',

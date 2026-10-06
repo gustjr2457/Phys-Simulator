@@ -5,7 +5,7 @@
   const M = 1; // 점질량 모형: 팔 끝에 달린 질량(단순화를 위해 1로 고정)
 
   PS.register({
-    id: 'g-rotation', mode: 'general', category: '회전운동',
+    id: 'g-rotation', mode: 'general', category: '역학과 진동',
     title: '회전운동과 각운동량',
     sub: 'L = Iω',
     tagline: '피겨스케이팅 선수가 팔을 오므리면 왜 더 빨리 돌까요? 팔의 길이(r) 슬라이더를 줄여 보면서 회전 속도가 어떻게 반응하는지 보세요. 각운동량 L은 그대로인데, 팔을 오므리면 관성모멘트 I가 줄어 각속도 ω가 커집니다.',

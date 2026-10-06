@@ -1,11 +1,11 @@
-/* [센서공학] 1차 지연계의 응답 — τ·ẏ + y = u,  샘플링과 노이즈 */
+/* [공학응용·센서와 계측] 1차 지연계의 응답 — τ·ẏ + y = u,  샘플링과 노이즈 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { tau: '#fbbf24', u: '#fb7185', y: '#5eead4', ns: '#a78bfa', Ts: '#60a5fa', fc: '#fbbf24' };
   const Y0 = 20;   // 초기 온도(상온)
 
   PS.register({
-    id: 'sensor-response', mode: 'adv', category: '센서공학',
+    id: 'sensor-response', mode: 'adv', category: '신호와 응답',
     title: '센서의 응답 속도와 샘플링',
     sub: 'τ·ẏ + y = u',
     tagline: '센서는 진짜 값을 즉시 알려주지 않습니다. 시정수 τ만큼 늦고, 샘플링 간격만큼 뚝뚝 끊깁니다.',

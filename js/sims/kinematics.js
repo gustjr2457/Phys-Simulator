@@ -21,6 +21,7 @@
 
   PS.register({
     id: 'kinematics',
+    mode: 'basic',
     category: '역학과 에너지',
     title: '등가속도 직선 운동',
     sub: 'v = v₀ + at',

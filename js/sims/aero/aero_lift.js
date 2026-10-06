@@ -1,4 +1,4 @@
-/* [항공우주공학] 양력과 실속 — L = ½ρV²S·C_L */
+/* [항공우주공학·비행역학] 양력과 실속 — L = ½ρV²S·C_L */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { a: '#fbbf24', V: '#60a5fa', rho: '#5eead4', S: '#a78bfa', L: '#34d399', Dg: '#fb7185', CL: '#fbbf24', W: '#f472b6' };
@@ -15,7 +15,7 @@
   const rhoOf = alt => 1.225 * Math.exp(-alt / 8500);
 
   PS.register({
-    id: 'aero-lift', mode: 'adv', category: '항공우주공학',
+    id: 'aero-lift', mode: 'aero', category: '비행역학',
     title: '양력과 실속',
     sub: 'L = ½ρV²S·C_L',
     tagline: '비행기를 띄우는 것은 속도일까요 각도일까요? 받음각을 올리다 보면 어느 순간 양력이 무너집니다.',

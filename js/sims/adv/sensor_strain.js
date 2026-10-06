@@ -1,4 +1,4 @@
-/* [센서공학] 스트레인 게이지 & 휘트스톤 브리지 — Vo = Vs·GF·ε/4 */
+/* [공학응용·센서와 계측] 스트레인 게이지 & 휘트스톤 브리지 — Vo = Vs·GF·ε/4 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { F: '#34d399', GF: '#fbbf24', Vs: '#f472b6', A: '#a78bfa', eps: '#5eead4', Vo: '#60a5fa', Vout: '#60a5fa' };
@@ -11,7 +11,7 @@
   const vbridge = (F, p) => p.Vs * p.GF * strain(F) / 4;
 
   PS.register({
-    id: 'sensor-strain', mode: 'adv', category: '센서공학',
+    id: 'sensor-strain', mode: 'adv', category: '센서와 계측',
     title: '스트레인 게이지와 브리지 회로',
     sub: 'Vo = Vs·GF·ε/4',
     tagline: '눈에 보이지 않는 0.02%의 변형을 어떻게 전압으로 바꿀까요? 로드셀(전자저울)의 심장입니다.',

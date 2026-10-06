@@ -13,7 +13,7 @@
   function lnOmega(N, k) { return lnFact(N) - lnFact(k) - lnFact(N - k); }
 
   PS.register({
-    id: 'g-entropy2', mode: 'general', category: '열역학',
+    id: 'g-entropy2', mode: 'general', category: '열과 통계',
     title: '통계적 엔트로피',
     sub: 'S = ln Ω  (Ω = 미시상태의 수)',
     tagline: 'N개의 입자가 왼쪽·오른쪽 칸을 무작위로 오갑니다(에렌페스트 항아리 모형). 왼쪽에 정확히 k개가 있는 "거시상태"를 만들 수 있는 방법의 수 Ω = C(N,k)를 직접 세어, 그 로그값 S = ln Ω가 시간에 따라 어떻게 변하는지 봅니다.',

@@ -15,7 +15,7 @@
   }
 
   PS.register({
-    id: 'c-wave', mode: 'concept', category: '거시세계',
+    id: 'c-wave', mode: 'concept', category: '파동과 빛',
     title: '파동이란 무엇인가?',
     sub: '흔들림이 전달되는 것 — 알갱이 자체는 이동하지 않는다',
     tagline: '노란 점 하나에 집중해 보세요. 파동(청록색 무늬)은 오른쪽으로 계속 나아가지만, 그 점은 제자리에서 위아래(또는 앞뒤)로만 왔다 갔다 합니다.',

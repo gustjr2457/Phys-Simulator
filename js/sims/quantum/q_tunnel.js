@@ -23,7 +23,7 @@
   }
 
   PS.register({
-    id: 'q-tunnel', mode: 'quantum', category: '파동이면 당연한 것',
+    id: 'q-tunnel', mode: 'quantum', category: '파동이기에 생기는 일',
     title: '터널링 — 벽을 통과하는 확률',
     sub: 'T ≈ e^(−2κd)',
     tagline: '고전역학에서는 에너지가 모자라면 벽을 절대 못 넘습니다. 그런데 파동은 벽 안에서 곧바로 0이 되지 않고 조금씩 줄어들 뿐이어서, 벽이 얇으면 반대편에 일부가 남습니다. 태양이 타는 것도, USB 메모리가 작동하는 것도 이 덕분입니다.',

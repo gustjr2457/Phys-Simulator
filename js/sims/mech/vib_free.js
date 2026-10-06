@@ -1,4 +1,4 @@
-/* [진동공학] 1자유도계 감쇠 자유진동 — mẍ + cẋ + kx = 0 */
+/* [기계공학·진동공학] 1자유도계 감쇠 자유진동 — mẍ + cẋ + kx = 0 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { m: '#f472b6', k: '#5eead4', c: '#fb7185', x0: '#a78bfa', x: '#60a5fa', wn: '#fbbf24', z: '#fb7185', Td: '#fbbf24' };
@@ -7,7 +7,7 @@
   const zeta = p => p.c / (2 * Math.sqrt(p.k * p.m));
 
   PS.register({
-    id: 'vib-free', mode: 'adv', category: '진동공학',
+    id: 'vib-free', mode: 'mech', category: '진동공학',
     title: '감쇠 자유진동',
     sub: 'mẍ + cẋ + kx = 0',
     tagline: '건드린 뒤 내버려 둔 기계는 어떻게 멈출까요? 감쇠비 ζ 하나가 진동의 성격을 전부 결정합니다.',

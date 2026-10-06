@@ -16,7 +16,7 @@
   }
 
   PS.register({
-    id: 'c-energy', mode: 'concept', category: '거시세계',
+    id: 'c-energy', mode: 'concept', category: '힘과 운동',
     title: '에너지란 무엇인가?',
     sub: '형태는 바뀌어도 총량은 그대로',
     tagline: '공을 떨어뜨려 보세요. 높이 있을 때의 "에너지"가 떨어지면서 "빠르기의 에너지"로 바뀝니다. 튈 때마다 조금씩 소리와 열로 빠져나가는 걸 막대에서 확인하세요.',

@@ -347,7 +347,7 @@ input[type=range]::-moz-range-thumb{
   .brand p{display:none}
   .group-menu-btn{width:auto;margin:0 8px 0 0;padding:7px 10px;font-size:11px}
   .gm-caret{display:none}
-  .modes{grid-template-columns:repeat(3,auto);padding:0 8px 0 0;gap:3px}
+  .modes{display:flex;flex-wrap:nowrap;padding:0 8px 0 0;gap:3px}
   .mode{padding:6px 8px}
   #simlist{display:flex;gap:6px;flex:1;padding:8px;overflow-x:auto}
   .nav-group{display:none}

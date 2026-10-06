@@ -44,7 +44,7 @@
   const ratio = r => (r.sx * 1e-9) * (HBAR * r.sk * 1e9) / (HBAR / 2);
 
   PS.register({
-    id: 'q-uncertainty', mode: 'quantum', category: '파동이면 당연한 것',
+    id: 'q-uncertainty', mode: 'quantum', category: '파동이기에 생기는 일',
     title: '불확정성 원리',
     sub: 'Δx · Δp ≥ ħ/2',
     tagline: '위치를 좁히려면 여러 파장을 섞어야 하고, 파장을 하나로 맞추면 위치가 무한히 퍼집니다. 신비로운 규칙이 아니라 — 짧은 북소리에 여러 음이 섞이는 것과 똑같은, 모든 파동의 성질입니다.',

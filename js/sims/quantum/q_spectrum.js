@@ -29,7 +29,7 @@
   }
 
   PS.register({
-    id: 'q-spectrum', mode: 'quantum', category: '원자와 빛',
+    id: 'q-spectrum', mode: 'quantum', category: '에너지는 띄엄띄엄하다',
     title: '에너지 준위와 스펙트럼',
     sub: 'Eₙ = −13.6Z²/n²',
     tagline: '네온사인·불꽃놀이·별빛의 색은 모두 "전자가 어느 준위에서 어느 준위로 떨어졌는가"로 정해집니다. 준위 간격이 곧 광자 하나의 에너지이고, 그게 곧 색입니다.',

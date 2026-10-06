@@ -6,6 +6,7 @@
 
   PS.register({
     id: 'refraction',
+    mode: 'basic',
     category: '파동과 정보통신',
     title: '빛의 굴절과 전반사',
     sub: 'n₁sinθ₁ = n₂sinθ₂',

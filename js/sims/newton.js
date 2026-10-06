@@ -13,6 +13,7 @@
 
   PS.register({
     id: 'newton',
+    mode: 'basic',
     category: '역학과 에너지',
     title: '뉴턴 운동 제2법칙',
     sub: 'F = ma',

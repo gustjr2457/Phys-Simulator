@@ -1,4 +1,4 @@
-/* [자율운항시스템공학] 선박의 복원성 — GM = KB + BM − KG,  GZ = (GM + ½BM·tan²θ)·sinθ */
+/* [선박공학·복원성] 선박의 복원성 — GM = KB + BM − KG,  GZ = (GM + ½BM·tan²θ)·sinθ */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { B: '#5eead4', d: '#60a5fa', KG: '#f472b6', th: '#fbbf24', GM: '#34d399', GZ: '#a78bfa', BM: '#5eead4' };
@@ -14,7 +14,7 @@
   }
 
   PS.register({
-    id: 'ship-stability', mode: 'adv', category: '자율운항시스템공학',
+    id: 'ship-stability', mode: 'marine', category: '복원성',
     title: '선박의 복원성 (GM)',
     sub: 'GM = KB + BM − KG',
     tagline: '배는 왜 기울어도 다시 일어설까요? 무게중심 G와 메타센터 M의 높이 차이 하나가 전복을 가릅니다.',

@@ -8,7 +8,7 @@
   const En = (nn, Lnm) => nn * nn * H * H / (8 * ME * Math.pow(Lnm * 1e-9, 2)) / QE;
 
   PS.register({
-    id: 'q-box', mode: 'quantum', category: '양자화',
+    id: 'q-box', mode: 'quantum', category: '에너지는 띄엄띄엄하다',
     title: '상자 속 전자',
     sub: 'Eₙ = n²h² / 8mL²',
     tagline: '기타 줄이 아무 음이나 내지 못하듯, 좁은 곳에 갇힌 전자도 아무 에너지나 가질 수 없습니다. 양쪽 끝이 고정된 파동은 "반파장의 정수배"만 들어갈 수 있기 때문입니다.',

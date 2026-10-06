@@ -32,7 +32,7 @@
   }
 
   PS.register({
-    id: 'q-whichpath', mode: 'quantum', category: '측정이라는 것',
+    id: 'q-whichpath', mode: 'quantum', category: '측정이 결과를 바꾼다',
     title: '관측하면 달라진다',
     sub: '어느 슬릿으로 갔나?',
     tagline: '전자를 하나씩 쏘면 스크린에는 점이 하나씩 찍힙니다. 그런데 아무것도 묻지 않으면 그 점들이 쌓여 줄무늬가 되고, "어느 슬릿으로 갔는지" 알아내려 하면 줄무늬가 사라지고 두 덩어리만 남습니다.',

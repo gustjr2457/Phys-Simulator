@@ -26,7 +26,7 @@
   }
 
   PS.register({
-    id: 'c-particle', mode: 'concept', category: '미시세계',
+    id: 'c-particle', mode: 'concept', category: '물질의 구성',
     title: '입자란 무엇인가?',
     sub: '모든 물질은 끊임없이 움직이는 작은 알갱이로 되어 있다',
     tagline: '눈에는 안 보이지만, 물질은 전부 작은 알갱이(입자)의 집합입니다. 온도 슬라이더를 올려서 알갱이들이 점점 더 활발히 움직이며 고체 → 액체 → 기체로 바뀌는 걸 보세요.',

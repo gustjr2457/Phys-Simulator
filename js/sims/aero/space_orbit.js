@@ -5,7 +5,7 @@
   const MU = 3.986e14, RE = 6.371e6, TS = 500;      // TS: 실제 시간 배속
 
   PS.register({
-    id: 'space-orbit', mode: 'space', category: '궤도와 이동',
+    id: 'space-orbit', mode: 'aero', category: '궤도역학',
     title: '인공위성의 궤도',
     sub: 'v² = μ(2/r − 1/a)',
     tagline: '조금 빠르면 타원, 딱 맞으면 원, √2배면 지구를 떠납니다. 궤도는 속도가 결정합니다.',

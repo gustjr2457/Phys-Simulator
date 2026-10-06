@@ -22,7 +22,7 @@
   }
 
   PS.register({
-    id: 'c-atom', mode: 'concept', category: '미시세계',
+    id: 'c-atom', mode: 'concept', category: '물질의 구성',
     title: '원자란 무엇인가?',
     sub: '알갱이(입자) 그 자체도 더 작은 구조로 되어 있다',
     tagline: '가운데 뭉친 알갱이가 원자핵(양성자+중성자), 그 둘레를 도는 작은 점이 전자입니다. 양성자 수를 바꿔서 서로 다른 원소가 되는 걸 확인하세요.',

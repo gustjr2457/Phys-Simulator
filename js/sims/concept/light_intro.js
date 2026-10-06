@@ -32,7 +32,7 @@
   }
 
   PS.register({
-    id: 'c-light', mode: 'concept', category: '미시세계',
+    id: 'c-light', mode: 'concept', category: '파동과 빛',
     title: '빛이란 무엇인가?',
     sub: '파동이면서 동시에 알갱이(광자)의 흐름',
     tagline: '빛은 물결처럼 "파동"이기도 하고, 낱알처럼 "광자"라는 알갱이가 쏟아지는 흐름이기도 합니다. 파장을 바꿔 색이 변하는 것과, 광자 하나의 에너지가 달라지는 것을 함께 보세요.',

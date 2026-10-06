@@ -8,6 +8,7 @@
 
   PS.register({
     id: 'wave',
+    mode: 'basic',
     category: '파동과 정보통신',
     title: '파동의 표현',
     sub: 'v = fλ',

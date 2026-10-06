@@ -22,6 +22,7 @@
 
   PS.register({
     id: 'energy',
+    mode: 'basic',
     category: '역학과 에너지',
     title: '역학적 에너지 보존',
     sub: 'E = ½mv² + mgh',

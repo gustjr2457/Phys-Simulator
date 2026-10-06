@@ -25,7 +25,7 @@
   }
 
   PS.register({
-    id: 'space-rocket', mode: 'space', category: '추진과 로켓',
+    id: 'space-rocket', mode: 'aero', category: '로켓 추진',
     title: '로켓 방정식과 궤도 진입',
     sub: 'Δv = Isp·g₀·ln(m₀/m_f)',
     tagline: '똑바로 위로만 쏘면 아무리 힘이 좋아도 반드시 떨어집니다. 궤도는 높이가 아니라 옆으로 가는 속도입니다.',

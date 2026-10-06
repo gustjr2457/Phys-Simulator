@@ -1,4 +1,4 @@
-/* [진동공학] 강제 진동과 공진 — 진폭 배율 M = 1/√((1−r²)² + (2ζr)²) */
+/* [기계공학·진동공학] 강제 진동과 공진 — 진폭 배율 M = 1/√((1−r²)² + (2ζr)²) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { F0: '#34d399', f: '#f472b6', fn: '#fbbf24', z: '#fb7185', X: '#60a5fa', r: '#f472b6', M: '#60a5fa', ph: '#a78bfa' };
@@ -11,7 +11,7 @@
   const phase = (r, z) => Math.atan2(2 * z * r, 1 - r * r);
 
   PS.register({
-    id: 'vib-forced', mode: 'adv', category: '진동공학',
+    id: 'vib-forced', mode: 'mech', category: '진동공학',
     title: '강제 진동과 공진',
     sub: 'M = 1/√((1−r²)²+(2ζr)²)',
     tagline: '가진 진동수를 고유진동수에 맞추는 순간 진폭이 폭발합니다. 다리와 기계가 무너지는 이유입니다.',

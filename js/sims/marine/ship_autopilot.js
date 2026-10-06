@@ -1,4 +1,4 @@
-/* [자율운항시스템공학] 자동 침로 제어 — 노모토 모델 + PID */
+/* [선박공학·운항 제어] 자동 침로 제어 — 노모토 모델 + PID */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { psid: '#fbbf24', Kp: '#34d399', Kd: '#60a5fa', Ki: '#a78bfa', U: '#5eead4', dist: '#fb7185', psi: '#5eead4', dl: '#f472b6' };
@@ -6,7 +6,7 @@
   const DMAX = 35, DRATE = 4;         // 타각 한계와 타기 속도 (°/s)
 
   PS.register({
-    id: 'ship-autopilot', mode: 'adv', category: '자율운항시스템공학',
+    id: 'ship-autopilot', mode: 'marine', category: '운항 제어',
     title: '자율운항 침로 제어',
     sub: 'δ = Kp·e + Ki∫e + Kd·ė',
     tagline: '자율운항선의 첫걸음은 "목표 방향을 스스로 유지하는 것"입니다. 게인 3개로 배가 어떻게 달라지는지 보세요.',

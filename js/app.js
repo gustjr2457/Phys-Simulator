@@ -37,14 +37,20 @@
   const GROUPS = [
     { id: 'core', label: '기초 과정', modes: ['concept', 'basic', 'general'] },
     { id: 'modern', label: '실험과 현대물리', modes: ['exp', 'quantum'] },
-    { id: 'applied', label: '응용 분야', modes: ['space', 'adv'] }
+    { id: 'applied', label: '응용 분야', modes: ['aero', 'marine', 'mech', 'chem', 'elec', 'adv'] }
   ];
   const groupOf = m => (GROUPS.find(g => g.modes.indexOf(m) >= 0) || GROUPS[0]).id;
+  const TRACK_LABEL = {
+    concept: '초급 과정', basic: '고등물리', general: '일반물리',
+    exp: '유명한 실험', quantum: '양자역학',
+    aero: '항공우주공학', marine: '선박공학', mech: '기계공학',
+    chem: '화학공학', elec: '전기공학', adv: '공학응용'
+  };
 
   let group = 'core';
   let mode = 'concept';
-  const lastOf = { concept: null, basic: null, general: null, exp: null, quantum: null, space: null, adv: null };
-  const lastModeOf = { core: 'concept', modern: 'exp', applied: 'space' };
+  const lastOf = {};
+  const lastModeOf = { core: 'concept', modern: 'exp', applied: 'aero' };
 
   // 선택된 대분류에 속한 중분류 버튼만 보여 준다
   function syncTabs() {
@@ -288,9 +294,8 @@
     pinned = null; hl = null;
     lastOf[sim.mode || 'basic'] = id;
     document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('on', b.dataset.id === id));
-    const modePrefix = { concept: '초급 · ', basic: '', general: '일반물리 · ', exp: '유명한 실험 · ', quantum: '양자역학 · ', space: '우주선 · ', adv: '공학응용 · ' };
-    $('#simCat').className = 'chip' + (sim.mode === 'adv' ? ' adv' : '');
-    $('#simCat').textContent = (modePrefix[sim.mode] || '') + sim.category;
+    $('#simCat').className = 'chip' + (groupOf(sim.mode || 'basic') === 'applied' ? ' adv' : '');
+    $('#simCat').textContent = (TRACK_LABEL[sim.mode] ? TRACK_LABEL[sim.mode] + ' · ' : '') + sim.category;
     $('#simTitle').textContent = sim.title;
     $('#simTag').textContent = sim.tagline;
     buildPanel(); buildGraphs();
@@ -321,8 +326,6 @@
   }
 
   /* ── 전체 공식 모음 모달 ─────────────────────── */
-  const TRACK_LABEL = { concept: '초급 · 개념', basic: '고등물리', general: '일반물리', exp: '유명한 실험', quantum: '양자역학', space: '우주선의 원리', adv: '공학응용' };
-  const TRACK_ORDER = ['concept', 'basic', 'general', 'exp', 'quantum', 'space', 'adv'];
   let formulaIndexBuilt = false;
 
   function buildFormulaIndex() {

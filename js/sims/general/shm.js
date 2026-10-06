@@ -6,7 +6,7 @@
   const omega = p => Math.sqrt(p.k / p.m);
 
   PS.register({
-    id: 'g-shm', mode: 'general', category: '진동과 파동',
+    id: 'g-shm', mode: 'general', category: '역학과 진동',
     title: '단진동(SHM)',
     sub: 'x(t) = A cos(ωt)',
     tagline: '공학응용 트랙의 "감쇠 자유진동"에서 대시포트(감쇠기)를 완전히 없앤 가장 이상적인 경우입니다. 감쇠가 없으니 스프링의 에너지와 운동에너지가 정확히 주고받히며 총량은 절대 변하지 않습니다.',

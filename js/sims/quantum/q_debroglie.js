@@ -23,7 +23,7 @@
   const lamOf = p => H / (objOf(p).m * Math.pow(10, p.vexp));
 
   PS.register({
-    id: 'q-debroglie', mode: 'quantum', category: '물질파',
+    id: 'q-debroglie', mode: 'quantum', category: '물질도 파동이다',
     title: '드브로이 파장',
     sub: 'λ = h / mv',
     tagline: '전자만 파동인 게 아니라 야구공에도 파장이 있습니다. 다만 그 파장이 10⁻³⁴ m — 원자핵보다 10²⁰배나 작아서 절대 드러나지 않을 뿐입니다. 양자역학이 일상에서 안 보이는 이유가 바로 이것입니다.',

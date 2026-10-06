@@ -10,6 +10,7 @@
 
   PS.register({
     id: 'induction',
+    mode: 'basic',
     category: '물질과 전자기장',
     title: '전자기 유도',
     sub: 'V = −N ΔΦ/Δt',
