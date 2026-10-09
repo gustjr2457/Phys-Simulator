@@ -161,9 +161,11 @@
       if (sw > 150) {
         const L0 = 370, L1 = 780;
         const SX = l => sx + clamp((l - L0) / (L1 - L0), 0, 1) * sw;
-        D.text(ctx, '은하의 스펙트럼 — 선 무늬 전체가 통째로 밀린다', sx, sy - 9, { size: 10.5, color: '#61719a' });
+        // sy 기준 세로 배치: 제목 −10 / 라벨 +8, +72 / 띠 +14, +78 (높이 30) / 선 이름 +55, +119
+        const BAND = 30, ROW = 64, bandY = r => sy + 14 + r * ROW;
+        D.text(ctx, '은하의 스펙트럼 — 선 무늬 전체가 통째로 밀린다', sx, sy - 10, { size: 10.5, color: '#61719a' });
         [[0, '정지 상태 (실험실)'], [1, '관측된 이 은하']].forEach(([row, lab]) => {
-          const yy = sy + row * 46;
+          const yy = bandY(row);
           // 연속 스펙트럼 띠
           for (let l = L0; l <= L1; l += 4) {
             let r = 0, g = 0, b = 0;
@@ -171,7 +173,7 @@
             else if (l < 510) { g = 1; b = -(l - 510) / 20; } else if (l < 580) { r = (l - 510) / 70; g = 1; }
             else if (l < 645) { r = 1; g = -(l - 645) / 65; } else { r = 1; }
             ctx.fillStyle = 'rgba(' + (r * 255 | 0) + ',' + (g * 255 | 0) + ',' + (b * 255 | 0) + ',.5)';
-            ctx.fillRect(SX(l), yy, Math.max(1, SX(l + 4) - SX(l)) + .5, 30);
+            ctx.fillRect(SX(l), yy, Math.max(1, SX(l + 4) - SX(l)) + .5, BAND);
           }
           // 흡수선
           LINES.forEach(([l0, nm]) => {
@@ -179,23 +181,23 @@
             if (l > L1) return;
             ctx.save();
             if (row && hl === 'z') { ctx.shadowColor = C.z; ctx.shadowBlur = 8; }
-            ctx.fillStyle = '#0a1120'; ctx.fillRect(SX(l) - 1.4, yy, 2.8, 30); ctx.restore();
-            if (nm === 'Hα') D.text(ctx, nm, SX(l), yy + 41, { size: 8.5, color: row ? C.z : '#93a2c4', align: 'center' });
+            ctx.fillStyle = '#0a1120'; ctx.fillRect(SX(l) - 1.4, yy, 2.8, BAND); ctx.restore();
+            if (nm === 'Hα') D.text(ctx, nm, SX(l), yy + BAND + 11, { size: 8.5, color: row ? C.z : '#93a2c4', align: 'center' });
           });
-          D.text(ctx, lab, sx, yy - 3, { size: 9.5, color: row ? C.z : '#93a2c4' });
+          D.text(ctx, lab, sx, yy - 6, { size: 9.5, color: row ? C.z : '#93a2c4' });
         });
         // 이동량 표시
         const l0 = 656.3;
         if (l0 * (1 + z) <= L1 && SX(l0 * (1 + z)) - SX(l0) > 6) {
-          D.arrow(ctx, SX(l0), sy + 96, SX(l0 * (1 + z)) - SX(l0), 0,
+          D.arrow(ctx, SX(l0), sy + 134, SX(l0 * (1 + z)) - SX(l0), 0,
             { color: C.z, width: 2, head: 7, hot: hl === 'z' });
-          D.text(ctx, '적색편이 z = ' + fmt(z, 4), (SX(l0) + SX(l0 * (1 + z))) / 2, sy + 112,
+          D.text(ctx, '적색편이 z = ' + fmt(z, 4), (SX(l0) + SX(l0 * (1 + z))) / 2, sy + 150,
             { size: 10.5, color: hl === 'z' ? '#fff' : C.z, align: 'center', bold: true });
         }
       }
 
       /* ── 허블 다이어그램 ── */
-      const gx = 60, gy = Math.max(uy + uh + 56, h - 210), gw = Math.min(w - 120, 520), gh = Math.min(h - gy - 46, 150);
+      const gx = 60, gy = Math.max(uy + uh + 56, sy + 166, h - 210), gw = Math.min(w - 120, 520), gh = Math.min(h - gy - 46, 150);
       if (gh > 60) {
         D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
         D.text(ctx, '허블 다이어그램 — 관측한 은하들', gx + 4, gy - 8, { size: 10.5, color: '#61719a' });
@@ -218,8 +220,9 @@
         // 현재 은하
         ctx.save(); ctx.shadowColor = C.v; ctx.shadowBlur = 14;
         D.dot(ctx, GX(p.d), GY(v), 5, C.v, true); ctx.restore();
-        D.text(ctx, fmt(v, 0) + ' km/s', GX(p.d) + 8, GY(v) - 6,
-          { size: 10.5, color: hl === 'v' ? '#fff' : C.v, bold: true });
+        const right = GX(p.d) > gx + gw * .72;        // 오른쪽 끝에서는 라벨을 왼쪽으로
+        D.text(ctx, fmt(v, 0) + ' km/s', GX(p.d) + (right ? -8 : 8), GY(v) + (right ? 16 : -6),
+          { size: 10.5, color: hl === 'v' ? '#fff' : C.v, bold: true, align: right ? 'right' : 'left' });
         D.text(ctx, '거리 (Mpc) →', gx + gw, gy + gh + 15, { size: 9, color: '#61719a', align: 'right' });
         D.text(ctx, '후퇴 속도', gx + 4, gy + 13, { size: 9, color: '#61719a' });
         D.text(ctx, 'H₀ = ' + fmt(p.H0, 1) + '  →  우주 나이 ' + fmt(ageOf(p), 2) + ' 십억 년',

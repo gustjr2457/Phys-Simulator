@@ -201,9 +201,9 @@
         D.text(ctx, '시선속도 K', bx, by + 10, { size: 10, color: C.K });
         D.roundRect(ctx, bx, by + 16, 170, 9, 4); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
         ctx.fillStyle = 'rgba(52,211,153,.3)'; ctx.fillRect(KX(1), by + 16, bx + 170 - KX(1), 9);
-        [[1, 'HARPS'], [.25, 'ESPRESSO']].forEach(([v, lab]) => {
-          D.line(ctx, KX(v), by + 12, KX(v), by + 29, { color: '#93a2c4', width: 1.2 });
-          D.text(ctx, lab, KX(v), by + 40, { size: 8, color: '#93a2c4', align: 'center' });
+        [[1, 'HARPS', 0], [.25, 'ESPRESSO', 1]].forEach(([v, lab, row]) => {
+          D.line(ctx, KX(v), by + 12, KX(v), by + 29 + row * 9, { color: '#93a2c4', width: 1.2 });
+          D.text(ctx, lab, KX(v), by + 40 + row * 10, { size: 8, color: '#93a2c4', align: 'center' });
         });
         ctx.save(); ctx.shadowColor = C.K; ctx.shadowBlur = 10;
         D.dot(ctx, KX(K), by + 20.5, 5, C.K, true); ctx.restore();

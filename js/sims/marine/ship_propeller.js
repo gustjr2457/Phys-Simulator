@@ -150,7 +150,8 @@
       D.text(ctx, '수면', 12, sea - 7, { size: 10, color: 'rgba(125,190,255,.8)' });
 
       /* ── 프로펠러 (뒤에서 본 모습) ── */
-      const PXM = clamp((h - sea - 70) / 18, 6, 15);           // 1 m → px
+      // 축이 깊어도 아래 캐비테이션 선도(h−110부터)를 침범하지 않도록 축척을 잡는다
+      const PXM = clamp((h - sea - 190) / 18, 4, 15);           // 1 m → px
       const cx = w * .26, cy = sea + p.hs * PXM;
       const R = p.Dp / 2 * PXM;
       // 축 깊이
@@ -242,7 +243,7 @@
       ctx.fillRect(bx + bw * clamp(tc / MAXT, 0, 1), by, bw * (1 - clamp(tc / MAXT, 0, 1)), 13);
       D.line(ctx, bx + bw * clamp(tc / MAXT, 0, 1), by - 6, bx + bw * clamp(tc / MAXT, 0, 1), by + 19,
         { color: '#fff', width: 2 });
-      D.text(ctx, 'τ_c = ' + fmt(tc, 3), bx + bw * clamp(tc / MAXT, 0, 1), by - 10,
+      D.text(ctx, 'τ_c = ' + fmt(tc, 3), bx + bw * clamp(tc / MAXT, 0, 1), by + 32,
         { size: 9, color: '#e8eefc', align: 'center' });
       ctx.save(); ctx.shadowColor = cav ? '#fb7185' : '#34d399'; ctx.shadowBlur = 12;
       D.dot(ctx, bx + bw * clamp(tau / MAXT, 0, 1), by + 6.5, 6, cav ? '#fb7185' : '#34d399', true); ctx.restore();

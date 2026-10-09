@@ -212,9 +212,10 @@
           if (up) { ctx.moveTo(GX(v), Y); up = false; } else ctx.lineTo(GX(v), Y);
         }
         ctx.stroke(); ctx.restore();
-        const lv = i === 1 ? VLO + (VHI - VLO) * .08 : VHI - (VHI - VLO) * .06;
-        D.text(ctx, lab, GX(lv), clamp(GY(fn(lv)) - 6, gy + 10, gy + gh - 4),
-          { size: 9, color: cc, align: i === 1 ? 'left' : 'right' });
+        // 세 곡선의 라벨을 서로 다른 지점에 찍는다 (고속에서 유해·합이 겹치므로)
+        const lv = [VHI - (VHI - VLO) * .06, VLO + (VHI - VLO) * .08, VLO + (VHI - VLO) * .30][i];
+        D.text(ctx, lab, GX(lv), clamp(GY(fn(lv)) + (i === 2 ? -9 : 14), gy + 10, gy + gh - 4),
+          { size: 9, color: cc, align: i === 0 ? 'right' : 'left' });
       });
       // 최적 속도 · 실속 속도 · 현재
       D.line(ctx, GX(best), gy, GX(best), gy + gh, { color: '#34d399', dash: [4, 4], width: 1.8 });

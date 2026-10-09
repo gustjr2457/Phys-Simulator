@@ -152,7 +152,9 @@
       const ex2 = ox - Math.cos(ph) * au, ey2 = oy - Math.sin(ph) * au * .42;
       D.dot(ctx, ex, ey, 5, '#60a5fa', true);
       D.dot(ctx, ex2, ey2, 4, 'rgba(96,165,250,.35)', false);
-      D.text(ctx, '지구', ex + 8, ey + 4, { size: 9, color: '#60a5fa' });
+      // 라벨을 궤도 바깥쪽으로 — 태양 라벨과 겹치지 않게
+      D.text(ctx, '지구', ex + (Math.cos(ph) >= 0 ? 9 : -9), ey + (Math.sin(ph) > .3 ? 14 : (Math.sin(ph) < -.3 ? -6 : 4)),
+        { size: 9, color: '#60a5fa', align: Math.cos(ph) >= 0 ? 'left' : 'right' });
       D.dim(ctx, ox, oy + au * .42 + 18, ox + au, oy + au * .42 + 18, '1 AU', '#93a2c4', false);
 
       // 별 (오른쪽) + 두 시선 — 거리가 멀수록 두 시선이 평행해진다

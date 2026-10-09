@@ -202,7 +202,7 @@
       const lx = 52, ly = h - 96, lw = Math.min(w - 104, 500);
       const fmax = Math.max(p.f * 1.25, fnOf(p, NMODE) * 1.05);
       const LX = f => lx + clamp(f / fmax, 0, 1) * lw;
-      D.text(ctx, '고유진동수 사다리 — 이 눈금 위에서만 크게 흔들린다', lx, ly - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '고유진동수 사다리 — 이 눈금 위에서만 크게 흔들린다', lx, ly - 26, { size: 10.5, color: '#61719a' });
       D.line(ctx, lx, ly + 16, lx + lw, ly + 16, { color: 'rgba(147,162,196,.25)', width: 2 });
       for (let k = 1; k <= NMODE; k++) {
         const fn = fnOf(p, k);

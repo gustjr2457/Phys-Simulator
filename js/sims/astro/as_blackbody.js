@@ -253,8 +253,8 @@
       });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.line(ctx, BX(p.T), by - 7, BX(p.T), by + 23, { color: '#fff', width: 2.4 }); ctx.restore();
-      D.text(ctx, '40000 K', bx, by + 29, { size: 9, color: '#4b5a80' });
-      D.text(ctx, '2500 K', bx + bw, by + 29, { size: 9, color: '#4b5a80', align: 'right' });
+      D.text(ctx, '40000 K', bx, by + 44, { size: 9, color: '#4b5a80' });
+      D.text(ctx, '2500 K', bx + bw, by + 44, { size: 9, color: '#4b5a80', align: 'right' });
 
       /* ── 광도 요약 ── */
       D.text(ctx, 'L = ' + (L >= 1 ? fmt(L, L > 100 ? 0 : 2) : L.toExponential(1)) + ' L☉',

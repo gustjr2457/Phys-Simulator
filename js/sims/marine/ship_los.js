@@ -217,7 +217,7 @@
       ctx.beginPath(); ctx.arc(X(st.x), Y(st.y), p.look * SC, 0, 7); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(X(st.x), Y(st.y)); ctx.lineTo(X(lx), Y(ly)); ctx.stroke(); ctx.restore();
       D.dot(ctx, X(lx), Y(ly), 4, C.look, hl === 'look');
-      D.text(ctx, 'Δ = ' + fmt(p.look, 0) + ' m', X(lx) + 8, Y(ly) - 6,
+      D.text(ctx, 'Δ = ' + fmt(p.look, 0) + ' m', X(lx) + 10, Y(ly) + 18,
         { size: 10, color: hl === 'look' ? '#fff' : C.look });
 
       /* ── 횡방향 오차 ── */

@@ -204,7 +204,10 @@
       D.line(ctx, x0 - 6, GY(PATM), x0 + pw + 6, GY(PATM), { color: 'rgba(147,162,196,.35)', dash: [4, 5] });
       D.text(ctx, '1 기압', x0 + pw + 10, GY(PATM) + 4, { size: 9, color: '#93a2c4' });
       D.line(ctx, x0 - 6, GY(PVAP), x0 + pw + 6, GY(PVAP), { color: 'rgba(251,113,133,.45)', dash: [3, 3] });
-      D.text(ctx, '증기압', x0 + pw + 10, GY(PVAP) + 4, { size: 9, color: '#fb7185' });
+      // 두 기준선이 붙으면 라벨을 아래로 밀고, 그래도 겹치면 선만 남긴다
+      const gapPV = GY(PVAP) - GY(PATM);
+      if (gapPV > 20) D.text(ctx, '증기압', x0 + pw + 10, GY(PVAP) + 4, { size: 9, color: '#fb7185' });
+      else if (gapPV > -20) D.text(ctx, '증기압', x0 + pw + 10, GY(PATM) + 18, { size: 9, color: '#fb7185' });
       // 압력 곡선
       ctx.save();
       ctx.strokeStyle = C.dp; ctx.lineWidth = 2.2;

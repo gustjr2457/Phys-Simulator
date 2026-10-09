@@ -172,20 +172,21 @@
       if (Math.abs(Bx - Gx) > 6) D.tag(ctx, 'GZ = ' + fmt(GZ, 2) + ' m', (Gx + Bx) / 2, Gy - 16, C.GZ, hl === 'GZ');
 
       // 점 표시
-      const pt = (x, y, label, col, hot) => {
+      // B·G·M은 직립일 때 같은 수직선에 모이므로 라벨을 좌/우로 갈라 둔다
+      const pt = (x, y, label, col, hot, side) => {
         D.dot(ctx, x, y, hot ? 7 : 5, col, hot);
-        D.text(ctx, label, x + 10, y + 4, { size: 12, color: col, bold: true, glow: hot });
+        D.text(ctx, label, x + side * 11, y + 4,
+          { size: 12, color: col, bold: true, glow: hot, align: side < 0 ? 'right' : 'left' });
       };
-      pt(Bx, By, 'B', C.B, hl === 'KB' || hl === 'BM');
-      pt(Gx, Gy, 'G', C.KG, hl === 'KG');
-      pt(Mx, My, 'M', C.GM, hl === 'GM' || hl === 'BM');
+      pt(Bx, By, 'B', C.B, hl === 'KB' || hl === 'BM', 1);
+      pt(Gx, Gy, 'G', C.KG, hl === 'KG', -1);
+      pt(Mx, My, 'M', C.GM, hl === 'GM' || hl === 'BM', 1);
 
       // GM 표시 (G ↔ M)
       D.dim(ctx, Gx - 26, Gy, Mx - 26, My, 'GM = ' + fmt(GM, 2) + ' m', GM > 0 ? C.GM : '#fb7185', hl === 'GM');
 
-      // 경사각 표시
-      D.text(ctx, 'θ = ' + fmt(th * 180 / Math.PI, 1) + '°', ox, oy + 34,
-        { size: 13, color: hl === 'th' ? '#fff' : C.th, align: 'center', bold: hl === 'th' });
+      // 경사각 표시 — 선체가 기울면 B·K·G 라벨이 움직이므로, 겹치지 않는 화면 아래쪽에 둔다
+      D.tag(ctx, 'θ = ' + fmt(th * 180 / Math.PI, 1) + '°', ox, h - 20, C.th, hl === 'th');
 
       /* ── GZ 곡선 ──────────────────────────── */
       const px = w * .58, py = 60, pw = w - px - 34, ph = h * .46;

@@ -243,7 +243,7 @@
       /* ── 일생 막대 ── */
       const bx = 44, by = h - 62, bw = Math.min(w - 88, 540);
       const tot = totLife(p.M) * 10;
-      D.text(ctx, '일생 — 전체 ' + (tot > 100 ? fmt(tot, 0) : fmt(tot, 2)) + ' 억 년', bx, by - 9, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '일생 — 전체 ' + (tot > 100 ? fmt(tot, 0) : fmt(tot, 2)) + ' 억 년', bx, by - 26, { size: 10.5, color: '#61719a' });
       D.roundRect(ctx, bx, by, bw, 16, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       [[0, .02, '#93a2c4'], [.02, .80, '#34d399'], [.80, .94, '#fb7185'], [.94, 1, '#a78bfa']].forEach(([a, b, cc]) => {
         ctx.fillStyle = cc; ctx.globalAlpha = .45;

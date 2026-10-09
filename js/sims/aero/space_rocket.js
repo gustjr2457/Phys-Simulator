@@ -286,9 +286,11 @@
           ctx.strokeStyle = 'rgba(147,162,196,.16)'; ctx.lineWidth = 1;
           ctx.beginPath(); ctx.arc(ecx, ecy, rr, angC - dAng, angC + dAng); ctx.stroke();
           const ly2 = yAtLeft(rr);
-          if (isFinite(ly2) && ly2 > top + 6 && ly2 < bot)
+          // 왼쪽 위 상태 표시·아래 이벤트 로그·카르만 선 라벨과 겹치지 않을 때만 숫자를 붙인다
+          if (isFinite(ly2) && ly2 > top + 104 && ly2 < bot - 62 && Math.abs(a - 100000) > stepA * .6) {
             D.text(ctx, a >= 1000 ? fmt(a / 1000, a >= 10000 ? 0 : 1) + ' km' : fmt(a, 0) + ' m',
               LBL + 4, ly2 - 4, { size: 9.5, color: 'rgba(147,162,196,.55)' });
+          }
         }
         ctx.restore();
         // 카르만 선
@@ -299,7 +301,7 @@
         ctx.restore();
         const ky2 = yAtLeft(kr);
         if (isFinite(ky2) && ky2 > top + 6 && ky2 < bot)
-          D.text(ctx, '카르만 선 100 km — 우주의 경계', LBL + 4, ky2 - 6, { size: 10.5, color: '#5eead4' });
+          if (ky2 > top + 110) D.text(ctx, '카르만 선 100 km — 우주의 경계', LBL + 4, ky2 - 6, { size: 10.5, color: '#5eead4' });
       }
 
       /* ── 비행 자취 ── */

@@ -232,7 +232,7 @@
       const bx = 56, byy = Math.min(h - 150, sea + draftPx + 70), bw = Math.min(w * .42, 280);
       if (byy + 56 < h) {
         const rmax = Math.max(rt, 1) * 1.1;
-        D.text(ctx, '저항의 구성', bx, byy - 8, { size: 10.5, color: '#61719a' });
+        D.text(ctx, '저항의 구성', bx, byy - 24, { size: 10.5, color: '#61719a' });
         [['R_F 마찰', rf, C.RF, hl === 'RF'], ['R_W 조파', rw, C.RW, hl === 'RW']].forEach(([lab, v, col, hot], k) => {
           D.bar(ctx, bx, byy + k * 30, bw, 15, v, rmax, col, lab + '  ' + fmt(v / 1000, 1) + ' kN', hot);
         });

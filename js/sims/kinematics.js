@@ -107,10 +107,15 @@
 
       // 1초 간격 잔상 (시간의 시각화)
       const hotT = hl === 't';
+      let lastLbl = -1e9;                       // 잔상이 촘촘해지면 숫자는 건너뛴다
       st.marks.forEach(m => {
-        car(ctx, X(m.x), gy, 46, 26, '#3b4a6b', hotT ? .85 : .45);
-        D.line(ctx, X(m.x), gy, X(m.x), gy - 46, { color: hotT ? C.t : 'rgba(147,162,196,.25)', dash: [3, 4] });
-        D.text(ctx, m.n + 's', X(m.x), gy - 52, { size: 10, color: hotT ? C.t : '#3f4d6e', align: 'center', bold: hotT });
+        const mx = X(m.x);
+        car(ctx, mx, gy, 46, 26, '#3b4a6b', hotT ? .85 : .45);
+        D.line(ctx, mx, gy, mx, gy - 46, { color: hotT ? C.t : 'rgba(147,162,196,.25)', dash: [3, 4] });
+        if (mx - lastLbl > 22) {
+          D.text(ctx, m.n + 's', mx, gy - 52, { size: 10, color: hotT ? C.t : '#3f4d6e', align: 'center', bold: hotT });
+          lastLbl = mx;
+        }
       });
 
       // 출발선 + 초기 속도

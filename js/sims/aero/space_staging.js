@@ -306,9 +306,11 @@
           ctx.strokeStyle = 'rgba(147,162,196,.16)'; ctx.lineWidth = 1;
           ctx.beginPath(); ctx.arc(ecx, ecy, rr, angC - dAng, angC + dAng); ctx.stroke();
           const ly = yAtLeft(rr);
-          if (isFinite(ly) && ly > top + 106 && ly < bot)      // HUD 영역과 겹치지 않게
+          // 왼쪽 위 HUD·아래 이벤트 로그·카르만 선 라벨과 겹치지 않을 때만 숫자를 붙인다
+          if (isFinite(ly) && ly > top + 106 && ly < bot - 62 && Math.abs(a - 100000) > stepA * .6) {
             D.text(ctx, a >= 1000 ? fmt(a / 1000, a >= 10000 ? 0 : 1) + ' km' : fmt(a, 0) + ' m', LBL + 4, ly - 4,
               { size: 9.5, color: 'rgba(147,162,196,.55)' });
+          }
         }
         ctx.restore();
         const kr = (RE + 100000) * k;
@@ -316,7 +318,7 @@
         ctx.beginPath(); ctx.arc(ecx, ecy, kr, angC - dAng, angC + dAng); ctx.stroke(); ctx.restore();
         const ky = yAtLeft(kr);
         if (isFinite(ky) && ky > top + 106 && ky < bot)
-          D.text(ctx, '카르만 선 100 km', LBL + 4, ky - 6, { size: 10.5, color: '#5eead4' });
+          if (ky > top + 110) D.text(ctx, '카르만 선 100 km', LBL + 4, ky - 6, { size: 10.5, color: '#5eead4' });
       }
 
       /* 자취 */
