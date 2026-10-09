@@ -20,17 +20,16 @@
     <span class="gm-ico">☰</span><span id="groupLabel">기초 과정</span><span class="gm-caret">▾</span>
   </button>
   <div class="modes">
-    <button class="mode on" data-mode="concept" data-group="core" title="초급·개념 — 공식 없이 감 잡기">초급</button>
+    <button class="mode on" data-mode="concept" data-group="core" title="초급 과정 — 공식 없이 감 잡기">초급</button>
     <button class="mode" data-mode="basic" data-group="core" title="고등물리 — 물리학Ⅰ">고등물리</button>
-    <button class="mode" data-mode="general" data-group="core" title="일반물리 — 대학 기초">일반물리</button>
+    <button class="mode" data-mode="general" data-group="core" title="일반물리 — 역학 · 유체 · 열 · 전자기 · 파동 · 상대성">일반물리</button>
     <button class="mode" data-mode="exp" data-group="modern" title="유명한 실험 — 이론이 실제로 어떻게 증명됐는지">실험실</button>
     <button class="mode" data-mode="quantum" data-group="modern" title="양자역학 — 미시세계">양자역학</button>
-    <button class="mode" data-mode="aero" data-group="applied" title="항공우주공학 — 비행역학 · 궤도역학 · 로켓 추진">항공우주</button>
-    <button class="mode" data-mode="marine" data-group="applied" title="선박공학(자율운항시스템공학) — 저항 · 복원성 · 운항 제어">선박</button>
+    <button class="mode" data-mode="astro" data-group="modern" title="천문학 — 별빛 읽기 · 별의 일생 · 우주의 크기 · 외계행성">천문학</button>
+    <button class="mode" data-mode="aero" data-group="applied" title="항공우주공학 — 비행역학 · 궤도역학 · 로켓 추진 · 재진입">항공우주</button>
+    <button class="mode" data-mode="marine" data-group="applied" title="선박공학(자율운항시스템공학) — 저항·추진 · 복원성 · 내항성 · 운항 제어">선박</button>
     <button class="mode" data-mode="mech" data-group="applied" title="기계공학 — 고체역학 · 파괴역학 · 열공학 · 진동공학">기계</button>
-    <button class="mode" data-mode="chem" data-group="applied" title="화학공학 — 반응공학 · 유체와 수송">화학</button>
-    <button class="mode" data-mode="elec" data-group="applied" title="전기공학 — 회로이론 · 전력공학">전기</button>
-    <button class="mode" data-mode="adv" data-group="applied" title="공학응용 — 여러 분야에 공통인 계측·신호">공학응용</button>
+    <button class="mode" data-mode="adv" data-group="applied" title="공학응용 — 분야 공통 계측·신호">공학응용</button>
   </div>
   <button id="btnFormulaIndex" class="formula-index-btn" title="등록된 모든 시뮬레이션의 공식을 트랙별로 모아봅니다">Σ 전체 공식 모음</button>
   <div id="simlist"></div>
@@ -138,16 +137,27 @@
 <script src="js/sims/newton.js"></script>
 <script src="js/sims/momentum.js"></script>
 <script src="js/sims/energy.js"></script>
+<script src="js/sims/b_massenergy.js"></script>
+<script src="js/sims/b_heatengine.js"></script>
 <script src="js/sims/induction.js"></script>
+<script src="js/sims/b_semiconductor.js"></script>
 <script src="js/sims/wave.js"></script>
 <script src="js/sims/refraction.js"></script>
 
 <!-- 일반물리 -->
 <script src="js/sims/general/rotation.js"></script>
 <script src="js/sims/general/shm.js"></script>
+<script src="js/sims/general/g_coriolis.js"></script>
+<script src="js/sims/general/g_bernoulli.js"></script>
 <script src="js/sims/general/thermo1.js"></script>
 <script src="js/sims/general/entropy2.js"></script>
+<script src="js/sims/general/g_efield.js"></script>
+<script src="js/sims/general/g_lorentz.js"></script>
+<script src="js/sims/general/g_emwave.js"></script>
 <script src="js/sims/general/lens.js"></script>
+<script src="js/sims/general/g_diffraction.js"></script>
+<script src="js/sims/general/g_doppler.js"></script>
+<script src="js/sims/general/g_standingwave.js"></script>
 <script src="js/sims/general/relativity.js"></script>
 
 <!-- ═══ 실험과 현대물리 ═══ -->
@@ -165,18 +175,33 @@
 <script src="js/sims/quantum/q_tunnel.js"></script>
 <script src="js/sims/quantum/q_whichpath.js"></script>
 
-<!-- ═══ 응용 분야 ═══ -->
+<!-- 천문학 -->
+<script src="js/sims/astro/as_blackbody.js"></script>
+<script src="js/sims/astro/as_telescope.js"></script>
+<script src="js/sims/astro/as_hr.js"></script>
+<script src="js/sims/astro/as_parallax.js"></script>
+<script src="js/sims/astro/as_hubble.js"></script>
+<script src="js/sims/astro/as_exoplanet.js"></script>
+
+<!-- ═══ 공학 응용 ═══ -->
 <!-- 항공우주공학 -->
 <script src="js/sims/aero/aero_lift.js"></script>
+<script src="js/sims/aero/aero_drag.js"></script>
+<script src="js/sims/aero/aero_mach.js"></script>
 <script src="js/sims/aero/space_orbit.js"></script>
 <script src="js/sims/aero/space_hohmann.js"></script>
+<script src="js/sims/aero/aero_swingby.js"></script>
 <script src="js/sims/aero/space_rocket.js"></script>
 <script src="js/sims/aero/space_staging.js"></script>
+<script src="js/sims/aero/aero_reentry.js"></script>
 
 <!-- 선박공학 (자율운항시스템공학) -->
 <script src="js/sims/marine/ship_resistance.js"></script>
+<script src="js/sims/marine/ship_propeller.js"></script>
 <script src="js/sims/marine/ship_stability.js"></script>
+<script src="js/sims/marine/ship_seakeeping.js"></script>
 <script src="js/sims/marine/ship_autopilot.js"></script>
+<script src="js/sims/marine/ship_los.js"></script>
 
 <!-- 기계공학 -->
 <script src="js/sims/mech/me_stress.js"></script>
@@ -186,15 +211,7 @@
 <script src="js/sims/mech/vib_free.js"></script>
 <script src="js/sims/mech/vib_forced.js"></script>
 
-<!-- 화학공학 -->
-<script src="js/sims/chem/ch_arrhenius.js"></script>
-<script src="js/sims/chem/ch_reactor.js"></script>
-<script src="js/sims/chem/ch_pipeflow.js"></script>
 
-<!-- 전기공학 -->
-<script src="js/sims/elec/ee_rc.js"></script>
-<script src="js/sims/elec/ee_rlc.js"></script>
-<script src="js/sims/elec/ee_transmission.js"></script>
 
 <!-- 공학응용 · 공통 계측 -->
 <script src="js/sims/adv/sensor_strain.js"></script>

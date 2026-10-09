@@ -35,16 +35,15 @@
 
   /* ── 네비게이션: 대분류(group) → 중분류(mode) → 소분류(category) ── */
   const GROUPS = [
-    { id: 'core', label: '기초 과정', modes: ['concept', 'basic', 'general'] },
-    { id: 'modern', label: '실험과 현대물리', modes: ['exp', 'quantum'] },
-    { id: 'applied', label: '응용 분야', modes: ['aero', 'marine', 'mech', 'chem', 'elec', 'adv'] }
+    { id: 'core', label: '기초 물리학', modes: ['concept', 'basic', 'general'] },
+    { id: 'modern', label: '현대물리와 우주', modes: ['exp', 'quantum', 'astro'] },
+    { id: 'applied', label: '공학 응용', modes: ['aero', 'marine', 'mech', 'adv'] }
   ];
   const groupOf = m => (GROUPS.find(g => g.modes.indexOf(m) >= 0) || GROUPS[0]).id;
   const TRACK_LABEL = {
     concept: '초급 과정', basic: '고등물리', general: '일반물리',
-    exp: '유명한 실험', quantum: '양자역학',
-    aero: '항공우주공학', marine: '선박공학', mech: '기계공학',
-    chem: '화학공학', elec: '전기공학', adv: '공학응용'
+    exp: '유명한 실험', quantum: '양자역학', astro: '천문학',
+    aero: '항공우주공학', marine: '선박공학', mech: '기계공학', adv: '공학응용'
   };
 
   let group = 'core';
