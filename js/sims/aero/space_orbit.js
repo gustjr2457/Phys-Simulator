@@ -1,7 +1,7 @@
 /* [항공우주공학] 인공위성 궤도 — 비스비바 v² = μ(2/r − 1/a), 케플러 법칙 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { h: '#5eead4', vr: '#fbbf24', v: '#60a5fa', r: '#a78bfa', mu: '#f472b6', T: '#fbbf24', e: '#34d399' };
+  const C = { h: '#68b8b0', vr: '#ffb020', v: '#6f9fc4', r: '#a98cc4', mu: '#c08098', T: '#ffb020', e: '#7fb894' };
   const MU = 3.986e14, RE = 6.371e6, TS = 500;      // TS: 실제 시간 배속
 
   PS.register({
@@ -92,12 +92,12 @@
         { label: '현재 고도', value: (r - RE) / 1000, unit: 'km', color: C.h, dec: 0 },
         { label: '현재 속력 v', value: v / 1000, unit: 'km/s', color: C.v },
         { label: '이 높이의 원궤도 속도', value: vc / 1000, unit: 'km/s' },
-        { label: '탈출 속도', value: Math.SQRT2 * vc / 1000, unit: 'km/s', color: '#fb7185' },
+        { label: '탈출 속도', value: Math.SQRT2 * vc / 1000, unit: 'km/s', color: '#c4705f' },
         { label: '이심률 e', value: e, unit: '', color: C.e, dec: 3 },
         { label: '공전 주기 T', value: isFinite(a) ? 2 * Math.PI * Math.sqrt(a * a * a / MU) / 60 : NaN, unit: '분', color: C.T, dec: 1 },
         { label: '근지점 고도', value: isFinite(a) ? (a * (1 - e) - RE) / 1000 : NaN, unit: 'km', dec: 0 },
         { label: '원지점 고도', value: isFinite(a) ? (a * (1 + e) - RE) / 1000 : NaN, unit: 'km', dec: 0 },
-        { label: '궤도 형태', wide: true, color: !isFinite(a) ? '#fb7185' : (e < .02 ? '#34d399' : '#fbbf24'),
+        { label: '궤도 형태', wide: true, color: !isFinite(a) ? '#c4705f' : (e < .02 ? '#7fb894' : '#ffb020'),
           value: !isFinite(a) ? '탈출 궤도 (포물선/쌍곡선)' : (e < .02 ? '원 궤도' : '타원 궤도') }
       ];
     },
@@ -140,10 +140,10 @@
       const RP = RE * k;
       ctx.save();
       const eg = ctx.createRadialGradient(X(0) - RP * .3, Y(0) - RP * .3, RP * .1, X(0), Y(0), RP);
-      eg.addColorStop(0, '#4a9de0'); eg.addColorStop(.7, '#1e5a94'); eg.addColorStop(1, '#0d2f52');
+      eg.addColorStop(0, '#669ac4'); eg.addColorStop(.7, '#345a7e'); eg.addColorStop(1, '#2d2f32');
       ctx.fillStyle = eg;
       ctx.beginPath(); ctx.arc(X(0), Y(0), RP, 0, 7); ctx.fill();
-      ctx.strokeStyle = 'rgba(94,234,212,.35)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(122,206,193,.35)'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(X(0), Y(0), RP * 1.04, 0, 7); ctx.stroke();   // 대기권
       ctx.restore();
       D.text(ctx, '지구', X(0), Y(0) + 4, { size: 12, color: 'rgba(255,255,255,.55)', align: 'center' });
@@ -153,7 +153,7 @@
         if (sec.length < 3) return;
         ctx.save();
         ctx.globalAlpha = i === st.sectors.length ? .45 : .28;
-        ctx.fillStyle = i % 2 ? '#fbbf24' : '#f472b6';
+        ctx.fillStyle = i % 2 ? '#ffb020' : '#c08098';
         ctx.beginPath(); ctx.moveTo(X(0), Y(0));
         sec.forEach(q => ctx.lineTo(X(q[0]), Y(q[1])));
         ctx.closePath(); ctx.fill();
@@ -162,7 +162,7 @@
 
       // 궤도 자취
       ctx.save();
-      ctx.strokeStyle = 'rgba(94,234,212,.75)'; ctx.lineWidth = 1.8;
+      ctx.strokeStyle = 'rgba(122,206,193,.75)'; ctx.lineWidth = 1.8;
       ctx.beginPath();
       st.trail.forEach((q, i) => i ? ctx.lineTo(X(q[0]), Y(q[1])) : ctx.moveTo(X(q[0]), Y(q[1])));
       ctx.stroke(); ctx.restore();
@@ -191,11 +191,11 @@
       // 상단 정보
       D.text(ctx, '속도 배율 k = ' + fmt(p.vr, 2) + ' × 원궤도 속도', 18, 24,
         { size: 12, color: hl === 'vr' ? '#fff' : C.vr, bold: hl === 'vr' });
-      D.text(ctx, '(√2 = 1.41 이상이면 탈출)', 18, 42, { size: 10.5, color: '#4a5878' });
-      D.text(ctx, '같은 색 부채꼴 = 같은 시간 동안 쓸고 간 넓이 (케플러 2법칙)', 18, h - 16, { size: 10.5, color: '#61719a' });
-      D.text(ctx, '시간 배속 ×' + TS, w - 18, 24, { size: 10.5, color: '#4a5878', align: 'right' });
+      D.text(ctx, '(√2 = 1.41 이상이면 탈출)', 18, 42, { size: 10.5, color: '#4a4d55' });
+      D.text(ctx, '같은 색 부채꼴 = 같은 시간 동안 쓸고 간 넓이 (케플러 2법칙)', 18, h - 16, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '시간 배속 ×' + TS, w - 18, 24, { size: 10.5, color: '#4a4d55', align: 'right' });
 
-      if (st.done) D.tag(ctx, st.msg + ' — ↺ 처음으로', w / 2, 26, '#fb7185', true);
+      if (st.done) D.tag(ctx, st.msg + ' — ↺ 처음으로', w / 2, 26, '#c4705f', true);
     }
   });
 })();

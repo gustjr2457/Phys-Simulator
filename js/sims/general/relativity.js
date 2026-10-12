@@ -5,7 +5,7 @@
    모든 식은 특수 상대성이론의 정확한 식이며(근사 없음), β=v/c 하나로 전부 결정된다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { beta: '#60a5fa', gamma: '#fbbf24', L: '#5eead4', KE: '#f472b6' };
+  const C = { beta: '#6f9fc4', gamma: '#ffb020', L: '#68b8b0', KE: '#c08098' };
   const L0 = 4; // 정지 길이(고유 길이) — 임의 단위
 
   function gammaOf(beta) { return 1 / Math.sqrt(Math.max(1e-9, 1 - beta * beta)); }
@@ -23,8 +23,8 @@
     vars: {
       gamma: { symbol: 'γ', label: '로런츠 인자', unit: '', color: C.gamma, where: '상대성이론 효과의 크기를 나타내는 핵심 숫자입니다. β=0이면 γ=1(효과 없음), β→1이면 γ→∞(효과가 무한히 커짐).' },
       L: { symbol: 'L', label: '관측되는 길이', unit: '', color: C.L, where: '정지해 있는 관측자가 보는, <b>움직이는 우주선의 길이</b>입니다. 우주선 안의 승무원에게는 여전히 원래 길이(L₀)로 보입니다 — "짧아지는 건 밖에서 볼 때뿐"입니다.' },
-      dtau: { symbol: 'Δτ', label: '우주선 시계가 잰 시간', unit: '', color: '#a78bfa', where: '우주선 <b>안</b>의 시계가 잰 시간입니다.' },
-      dtref: { symbol: 'Δt', label: '기준 시계가 잰 시간', unit: '', color: '#e8eefc', where: '정지한 관측자(지구)의 시계가 잰 시간입니다.' }
+      dtau: { symbol: 'Δτ', label: '우주선 시계가 잰 시간', unit: '', color: '#a98cc4', where: '우주선 <b>안</b>의 시계가 잰 시간입니다.' },
+      dtref: { symbol: 'Δt', label: '기준 시계가 잰 시간', unit: '', color: '#e6e7ea', where: '정지한 관측자(지구)의 시계가 잰 시간입니다.' }
     },
     formulas: [
       { name: '로런츠 인자', tpl: '{gamma} = 1 ⁄ √(1 − {beta}²)' },
@@ -52,8 +52,8 @@
       return [
         { label: '로런츠 인자(γ)', value: g, dec: 2, color: C.gamma },
         { label: '관측되는 길이', value: L0 * factor, dec: 2, color: C.L },
-        { label: '우주선 시계 경과', value: st.dtau, dec: 2, color: '#a78bfa' },
-        { label: '기준 시계 경과', value: st.t, dec: 2, color: '#e8eefc' },
+        { label: '우주선 시계 경과', value: st.dtau, dec: 2, color: '#a98cc4' },
+        { label: '기준 시계 경과', value: st.t, dec: 2, color: '#e6e7ea' },
         { label: '운동에너지 ⁄ 정지에너지', value: g - 1, dec: 2, color: C.KE, wide: true }
       ];
     },
@@ -88,12 +88,12 @@
       const V = PS.view(w, h, { x0: -6.2, x1: 6.2, y0: -3.4, y1: 3.4, pad: 24, uniform: false });
       const g = gammaOf(p.beta), factor = Math.sqrt(Math.max(0, 1 - p.beta * p.beta));
 
-      D.text(ctx, '정지한 관측자가 보는 우주선', w / 2, 22, { size: 12, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '정지한 관측자가 보는 우주선', w / 2, 22, { size: 12, color: '#9a9da6', align: 'center' });
 
       // 정지 길이(점선, 기준) vs 실제 관측되는 길이(실선)
       const cy = V.Y(1.4);
-      D.line(ctx, V.X(-L0 / 2), cy, V.X(L0 / 2), cy, { color: 'rgba(147,162,196,.35)', width: 1.4, dash: [5, 5] });
-      D.text(ctx, '정지했을 때 길이(L₀)', V.X(0), cy - 12, { size: 10, color: '#61719a', align: 'center' });
+      D.line(ctx, V.X(-L0 / 2), cy, V.X(L0 / 2), cy, { color: 'rgba(167,170,176,.35)', width: 1.4, dash: [5, 5] });
+      D.text(ctx, '정지했을 때 길이(L₀)', V.X(0), cy - 12, { size: 10, color: '#6a6e78', align: 'center' });
 
       const cy2 = V.Y(0.5);
       const halfL = (L0 * factor) / 2;
@@ -107,12 +107,12 @@
       // 날아가는 우주선(장식 애니메이션 — β에 비례한 속도로 이동)
       const shipY = V.Y(-1.3);
       const shipX = V.X(st.x);
-      D.dot(ctx, shipX, shipY, 6, '#e8eefc', hl === 'beta');
+      D.dot(ctx, shipX, shipY, 6, '#e6e7ea', hl === 'beta');
       D.arrow(ctx, shipX - 18, shipY, 30, 0, { color: C.beta, width: 2.4, hot: hl === 'beta' });
 
       // γ 곡선(정적 함수 그래프) — 우측 하단에 작게
       const gx0 = w - 190, gy0 = h - 150, gw = 160, gh = 110;
-      D.text(ctx, 'γ(β) 곡선', gx0 + gw / 2, gy0 - 8, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, 'γ(β) 곡선', gx0 + gw / 2, gy0 - 8, { size: 10.5, color: '#6a6e78', align: 'center' });
       ctx.save();
       ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
       ctx.strokeRect(gx0, gy0, gw, gh);
@@ -129,8 +129,8 @@
       const dotX = gx0 + gw * (curB / .999), dotY = gy0 + gh - gh * ((curG - 1) / (GMAX - 1));
       D.dot(ctx, dotX, dotY, 4, C.gamma, hl === 'gamma');
       ctx.restore();
-      D.text(ctx, 'β=0', gx0, gy0 + gh + 12, { size: 9.5, color: '#61719a' });
-      D.text(ctx, 'β→1', gx0 + gw, gy0 + gh + 12, { size: 9.5, color: '#61719a', align: 'right' });
+      D.text(ctx, 'β=0', gx0, gy0 + gh + 12, { size: 9.5, color: '#6a6e78' });
+      D.text(ctx, 'β→1', gx0 + gw, gy0 + gh + 12, { size: 9.5, color: '#6a6e78', align: 'right' });
     }
   });
 })();

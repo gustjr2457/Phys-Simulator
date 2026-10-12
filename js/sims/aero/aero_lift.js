@@ -1,7 +1,7 @@
 /* [항공우주공학·비행역학] 양력과 실속 — L = ½ρV²S·C_L */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { a: '#fbbf24', V: '#60a5fa', rho: '#5eead4', S: '#a78bfa', L: '#34d399', Dg: '#fb7185', CL: '#fbbf24', W: '#f472b6' };
+  const C = { a: '#ffb020', V: '#6f9fc4', rho: '#68b8b0', S: '#a98cc4', L: '#7fb894', Dg: '#c4705f', CL: '#ffb020', W: '#c08098' };
   const ALPHA_STALL = 15;          // 실속 받음각(도)
   const CL0 = 0.25, SLOPE = 0.10;  // C_L = CL0 + 0.10·α (1/도)
 
@@ -79,7 +79,7 @@
         { label: '양항비 L/D', value: CL / CDof(p.a), unit: '', color: C.Dg },
         { label: '실속 속도 V_s', value: Vs, unit: 'm/s', color: C.V },
         { label: '하중 배수 L/W', value: L / W, unit: '배' },
-        { label: '비행 상태', wide: true, color: stall ? '#fb7185' : (L > W * 1.05 ? '#34d399' : (L < W * .95 ? '#fbbf24' : '#5eead4')),
+        { label: '비행 상태', wide: true, color: stall ? '#c4705f' : (L > W * 1.05 ? '#7fb894' : (L < W * .95 ? '#ffb020' : '#68b8b0')),
           value: stall ? '⚠ 실속 — 흐름 박리, 양력 급감' : (L > W * 1.05 ? '상승' : (L < W * .95 ? '하강 (양력 부족)' : '수평 비행 (L = mg)')) }
       ];
     },
@@ -184,15 +184,15 @@
         const sx = cx + relSep * chord;
         const lidY = cy + surf(sx, true) - 4;      // 박리 후 거의 직진하는 흐름
         ctx.save();
-        ctx.fillStyle = 'rgba(251,113,133,.13)';
+        ctx.fillStyle = 'rgba(216,148,158,.13)';
         ctx.beginPath();
         ctx.moveTo(sx, lidY);
         ctx.lineTo(TEx, lidY);
         for (let x = TEx; x >= sx; x -= 5) ctx.lineTo(x, cy + surf(x, true));
         ctx.closePath(); ctx.fill();
         ctx.restore();
-        D.line(ctx, sx, cy + surf(sx, true) + 2, sx, lidY - 26, { color: '#fb7185', dash: [3, 3] });
-        D.text(ctx, '박리점', sx, lidY - 32, { size: 10, color: '#fb7185', align: 'center' });
+        D.line(ctx, sx, cy + surf(sx, true) + 2, sx, lidY - 26, { color: '#c4705f', dash: [3, 3] });
+        D.text(ctx, '박리점', sx, lidY - 32, { size: 10, color: '#c4705f', align: 'center' });
       }
 
       // 유입 흐름선
@@ -203,7 +203,7 @@
         const y0 = cy - 108 + i * 22;
         const above = y0 < cy;
         const mid = Math.abs(y0 - cy) < 30;
-        ctx.strokeStyle = mid ? C.V : 'rgba(96,165,250,.42)';
+        ctx.strokeStyle = mid ? C.V : 'rgba(135,169,211,.42)';
         ctx.lineWidth = mid ? 2 : 1.3;
         ctx.beginPath();
         for (let s = 0; s <= 110; s++) {
@@ -218,7 +218,7 @@
         for (let k = 0; k < 3; k++) {
           const ph = ((st.flow * 2.6 * spd + i * .21 + k / 3) % 1 + 1) % 1;
           const xd = xs + ph * (xe - xs);
-          D.dot(ctx, xd, flowY(xd, y0), mid ? 3 : 2.3, mid ? C.V : 'rgba(96,165,250,.6)');
+          D.dot(ctx, xd, flowY(xd, y0), mid ? 3 : 2.3, mid ? C.V : 'rgba(135,169,211,.6)');
         }
       }
       ctx.restore();
@@ -239,12 +239,12 @@
         const bry = clamp((surfY(bx2) - lidY) * .34, 8, 26);
         ctx.save();
         ctx.globalAlpha = .45 + .35 * sev;
-        ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 1.7;
+        ctx.strokeStyle = '#d49a8e'; ctx.lineWidth = 1.7;
         ctx.setLineDash([5, 4]);
         ctx.beginPath(); ctx.ellipse(bx2, by2, brx, bry, 0, 0, 7); ctx.stroke();
         ctx.setLineDash([]);
         // 회전 방향(시계 방향): 위는 뒤로, 아래는 앞으로
-        ctx.fillStyle = '#fda4af';
+        ctx.fillStyle = '#d49a8e';
         const head = (hx, hy, dx3, dy3) => {
           const dl = Math.hypot(dx3, dy3) || 1, ux2 = dx3 / dl, uy2 = dy3 / dl;
           ctx.beginPath(); ctx.moveTo(hx, hy);
@@ -256,7 +256,7 @@
         head(bx2 - brx * .5, by2 + bry * .87, -1, 0);     // 아래쪽: 왼쪽으로(역류)
         for (let i = 0; i < 4; i++) {
           const a = st.flow * 1.5 + i * Math.PI / 2;
-          D.dot(ctx, bx2 + Math.cos(a) * brx, by2 + Math.sin(a) * bry, 2.6, '#fda4af');
+          D.dot(ctx, bx2 + Math.cos(a) * brx, by2 + Math.sin(a) * bry, 2.6, '#d49a8e');
         }
         ctx.restore();
 
@@ -269,7 +269,7 @@
           const fade = Math.min(1, ph / .12) * Math.min(1, (1 - ph) / .28);
           ctx.save();
           ctx.globalAlpha = fade * (.7 + .3 * sev);
-          ctx.strokeStyle = '#fda4af'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+          ctx.strokeStyle = '#d49a8e'; ctx.lineWidth = 2; ctx.lineCap = 'round';
           ctx.beginPath();
           // 전단층에서 흘러 들어오는 꼬리
           ctx.moveTo(vx - R * 3.0, vy - R * .5);
@@ -296,29 +296,29 @@
       ctx.closePath();
       if (hl === 'S') { ctx.shadowColor = C.S; ctx.shadowBlur = 20; }
       const wg = ctx.createLinearGradient(0, cy - chord * .2, 0, cy + chord * .2);
-      wg.addColorStop(0, hl === 'S' ? '#c4b5fd' : '#dbe4f6'); wg.addColorStop(1, '#8794b5');
+      wg.addColorStop(0, hl === 'S' ? '#bdb0d4' : '#e0e6f1'); wg.addColorStop(1, '#878d99');
       ctx.fillStyle = wg; ctx.fill();
       ctx.restore();
 
       // 압력 설명 (힘 화살표와 겹치지 않도록 왼쪽에)
       if (!stall) {
-        D.text(ctx, '윗면: 빠름 → 압력 낮음', lx0, cy - chord * .52, { size: 10.5, color: '#93c5fd' });
-        D.text(ctx, '아랫면: 느림 → 압력 높음', lx0, cy + chord * .56, { size: 10.5, color: '#93a2c4' });
+        D.text(ctx, '윗면: 빠름 → 압력 낮음', lx0, cy - chord * .52, { size: 10.5, color: '#afc7e1' });
+        D.text(ctx, '아랫면: 느림 → 압력 높음', lx0, cy + chord * .56, { size: 10.5, color: '#9a9da6' });
       }
 
       // 하강류(downwash) — 날개가 공기를 아래로 밀어낸 반작용이 곧 양력
       if (CL > .1) {
         const dwx = xe - 12, dwy = cy + chord * .12;
         D.arrow(ctx, dwx, dwy, 12, clamp(CL * 34, 10, 60),
-          { color: 'rgba(96,165,250,.9)', width: 2.5, head: 9, hot: hl === 'L' || hl === 'CL' });
+          { color: 'rgba(135,169,211,.9)', width: 2.5, head: 9, hot: hl === 'L' || hl === 'CL' });
         D.text(ctx, '하강류', dwx + 16, dwy + clamp(CL * 34, 10, 60) + 14,
-          { size: 10, color: '#60a5fa', align: 'center' });
+          { size: 10, color: '#6f9fc4', align: 'center' });
       }
 
       // 받음각 표시 — 자유류(수평)와 시위선(앞전→뒷전) 사이의 각
       const LE = rot(-.3 * chord, 0), TE = rot(.7 * chord, 0);
-      D.line(ctx, LE[0], LE[1], LE[0] + chord * .9, LE[1], { color: 'rgba(147,162,196,.45)', dash: [5, 5] });
-      D.line(ctx, LE[0], LE[1], TE[0], TE[1], { color: 'rgba(147,162,196,.6)', dash: [3, 4] });
+      D.line(ctx, LE[0], LE[1], LE[0] + chord * .9, LE[1], { color: 'rgba(167,170,176,.45)', dash: [5, 5] });
+      D.line(ctx, LE[0], LE[1], TE[0], TE[1], { color: 'rgba(167,170,176,.6)', dash: [3, 4] });
       ctx.save();
       ctx.strokeStyle = C.a; ctx.lineWidth = hl === 'a' ? 3 : 2;
       if (hl === 'a') { ctx.shadowColor = C.a; ctx.shadowBlur = 12; }
@@ -336,7 +336,7 @@
       D.arrow(ctx, cx, cy + 16, 0, clamp(W / 1000 * FS, 6, 190),
         { color: C.W, width: 4, hot: hl === 'm', label: 'mg = ' + fmt(W / 1000, 1) + ' kN', lx: -58 });
 
-      if (stall) D.tag(ctx, '⚠ 실속 (STALL) — 윗면 흐름 박리 · 역류 · 후류 와류', cx, cy - 150, '#fb7185', true);
+      if (stall) D.tag(ctx, '⚠ 실속 (STALL) — 윗면 흐름 박리 · 역류 · 후류 와류', cx, cy - 150, '#c4705f', true);
 
       /* ── 오른쪽: C_L 곡선 ──────────────────── */
       const px = w * .62, py = 56, pw = w - px - 34, ph = h * .5;
@@ -345,16 +345,16 @@
       D.roundRect(ctx, px, py, pw, ph, 8);
       ctx.fillStyle = 'rgba(255,255,255,.025)'; ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.stroke();
-      D.text(ctx, '양력 계수 곡선  C_L – α', px, py - 12, { size: 11.5, color: '#93a2c4' });
+      D.text(ctx, '양력 계수 곡선  C_L – α', px, py - 12, { size: 11.5, color: '#9a9da6' });
       for (let a = 0; a <= 24; a += 6) {
         D.line(ctx, AX(a), py, AX(a), py + ph, { color: 'rgba(255,255,255,.05)' });
-        D.text(ctx, a + '°', AX(a), py + ph + 14, { size: 9.5, color: '#61719a', align: 'center' });
+        D.text(ctx, a + '°', AX(a), py + ph + 14, { size: 9.5, color: '#6a6e78', align: 'center' });
       }
       // 실속 영역
-      ctx.save(); ctx.fillStyle = 'rgba(251,113,133,.08)';
+      ctx.save(); ctx.fillStyle = 'rgba(216,148,158,.08)';
       ctx.fillRect(AX(ALPHA_STALL), py, px + pw - AX(ALPHA_STALL), ph); ctx.restore();
-      D.line(ctx, AX(ALPHA_STALL), py, AX(ALPHA_STALL), py + ph, { color: '#fb7185', dash: [5, 5] });
-      D.text(ctx, '실속 영역', AX(ALPHA_STALL) + 6, py + 14, { size: 10, color: '#fb7185' });
+      D.line(ctx, AX(ALPHA_STALL), py, AX(ALPHA_STALL), py + ph, { color: '#c4705f', dash: [5, 5] });
+      D.text(ctx, '실속 영역', AX(ALPHA_STALL) + 6, py + 14, { size: 10, color: '#c4705f' });
 
       ctx.save();
       ctx.strokeStyle = C.CL; ctx.lineWidth = hl === 'CL' || hl === 'a' ? 3 : 2.2;
@@ -371,7 +371,7 @@
       // 양력 = 무게 비교 막대
       const bx = px, byy = py + ph + 40;
       const maxF = Math.max(L, W) * 1.15 / 1000;
-      D.text(ctx, '양력과 무게의 균형', bx, byy - 8, { size: 11, color: '#61719a' });
+      D.text(ctx, '양력과 무게의 균형', bx, byy - 8, { size: 11, color: '#6a6e78' });
       D.bar(ctx, bx, byy, pw, 12, L / 1000, maxF, C.L, null, hl === 'L');
       D.text(ctx, '양력 ' + fmt(L / 1000, 1) + ' kN', bx + pw + 6, byy + 11, { size: 10.5, color: C.L, align: 'right' });
       D.bar(ctx, bx, byy + 20, pw, 12, W / 1000, maxF, C.W, null, hl === 'm');

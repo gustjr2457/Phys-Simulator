@@ -1,7 +1,7 @@
 /* [고등물리 · 물리학Ⅰ] 빛의 굴절과 전반사 — n₁sinθ₁ = n₂sinθ₂ */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { n1: '#60a5fa', n2: '#34d399', t1: '#fbbf24', t2: '#f472b6', tc: '#fb7185' };
+  const C = { n1: '#6f9fc4', n2: '#7fb894', t1: '#ffb020', t2: '#c08098', tc: '#c4705f' };
   const D2R = Math.PI / 180;
 
   PS.register({
@@ -73,10 +73,10 @@
 
       // 매질 배경(위: n2, 아래: n1)
       ctx.save();
-      ctx.fillStyle = 'rgba(52,211,153,.08)'; ctx.fillRect(0, 0, w, oy);
-      ctx.fillStyle = 'rgba(96,165,250,.08)'; ctx.fillRect(0, oy, w, h - oy);
+      ctx.fillStyle = 'rgba(82,181,145,.08)'; ctx.fillRect(0, 0, w, oy);
+      ctx.fillStyle = 'rgba(135,169,211,.08)'; ctx.fillRect(0, oy, w, h - oy);
       ctx.restore();
-      D.line(ctx, 0, oy, w, oy, { color: 'rgba(147,162,196,.5)', width: 2 });
+      D.line(ctx, 0, oy, w, oy, { color: 'rgba(167,170,176,.5)', width: 2 });
       D.text(ctx, 'n₂ = ' + fmt(p.n2, 2), 14, oy - 14, { size: 12, color: hl === 'n2' ? '#fff' : C.n2, bold: hl === 'n2' });
       D.text(ctx, 'n₁ = ' + fmt(p.n1, 2), 14, oy + 20, { size: 12, color: hl === 'n1' ? '#fff' : C.n1, bold: hl === 'n1' });
 
@@ -113,7 +113,7 @@
         D.text(ctx, '임계각 θ_c = ' + fmt(thetaC / D2R, 1) + '°', ox + 60, oy - V.S(2.6),
           { size: 12, color: hl === 'tc' ? '#fff' : C.tc, bold: hl === 'tc' });
       } else {
-        D.text(ctx, '이 방향(n₁ ≤ n₂)은 전반사가 없습니다', ox + 60, oy - V.S(2.6), { size: 11, color: '#61719a' });
+        D.text(ctx, '이 방향(n₁ ≤ n₂)은 전반사가 없습니다', ox + 60, oy - V.S(2.6), { size: 11, color: '#6a6e78' });
       }
     }
   });

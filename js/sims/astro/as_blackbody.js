@@ -6,7 +6,7 @@
    별의 분광형(OBAFGKM)은 결국 이 봉우리가 어디 있느냐의 분류다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { T: '#fb7185', R: '#5eead4', lam: '#fbbf24', lmax: '#f472b6', L: '#a78bfa', F: '#fb923c' };
+  const C = { T: '#c4705f', R: '#68b8b0', lam: '#ffb020', lmax: '#c08098', L: '#a98cc4', F: '#d1824a' };
   const HCK = 1.43878e7;          // hc/k [nm·K]
   const WIEN = 2.8978e6;          // 빈의 상수 [nm·K]
   const TSUN = 5772, SCAN = 16;   // 태양 유효온도 / 분광 스캔 시간(초)
@@ -87,7 +87,7 @@
       title: '분광기가 그리는 스펙트럼 (세기 – 파장)', xKey: 'lam', xUnit: 'nm', xMin: LAM0, xMax: LAM1, y0: 0,
       series: [
         { key: 'I', label: '이 별', color: C.T },
-        { key: 'Isun', label: '태양 (비교)', color: '#93a2c4' }
+        { key: 'Isun', label: '태양 (비교)', color: '#9a9da6' }
       ]
     }],
     sample(st, p) {
@@ -106,13 +106,13 @@
         { label: '봉우리 파장 λ_max', value: lm, unit: 'nm', color: C.lmax, dec: 0 },
         { label: '분광형', value: cls[1] + '형', color: rgb(bbRGB(p.T)) },
         { label: '색', value: cls[2], wide: true, color: rgb(bbRGB(p.T)) },
-        { label: '봉우리가 있는 영역', wide: true, color: lm < 380 ? '#a78bfa' : (lm > 750 ? '#fb7185' : '#34d399'),
+        { label: '봉우리가 있는 영역', wide: true, color: lm < 380 ? '#a98cc4' : (lm > 750 ? '#c4705f' : '#7fb894'),
           value: lm < 380 ? '자외선 — 눈에 보이는 빛은 꼬리뿐' : (lm > 750 ? '적외선 — 대부분의 에너지가 눈에 안 보인다' : '가시광선 안') },
         { label: '표면 플럭스 σT⁴', value: F / 1e6, unit: 'MW/m²', color: C.F, dec: 2 },
         { label: '광도 L', value: L, unit: 'L☉', color: C.L, dec: L > 100 ? 0 : (L > 1 ? 2 : 5) },
         { label: '태양의 몇 배로 밝은가', wide: true, color: C.L,
           value: L >= 1 ? fmt(L, L > 100 ? 0 : 1) + ' 배' : '1/' + fmt(1 / L, 0) + ' 배' },
-        { label: '가시광선이 차지하는 비율', value: vis / tot * 100, unit: '%', dec: 1, color: '#fbbf24' },
+        { label: '가시광선이 차지하는 비율', value: vis / tot * 100, unit: '%', dec: 1, color: '#ffb020' },
         { label: '관측 중인 파장', value: scanLam(st), unit: 'nm', color: C.lam, dec: 0 }
       ];
     },
@@ -175,12 +175,12 @@
         { size: 10.5, color: hl === 'lgR' ? '#fff' : C.R, align: 'center', bold: hl === 'lgR' });
       // 태양 크기 비교 원
       const rsun = clamp(14 + 30, 5, 60);
-      D.line(ctx, sx - rsun, sy + rad + 56, sx + rsun, sy + rad + 56, { color: 'rgba(251,191,36,.5)', width: 2 });
-      D.text(ctx, '태양 크기', sx, sy + rad + 70, { size: 9, color: 'rgba(251,191,36,.7)', align: 'center' });
+      D.line(ctx, sx - rsun, sy + rad + 56, sx + rsun, sy + rad + 56, { color: 'rgba(227,180,60,.5)', width: 2 });
+      D.text(ctx, '태양 크기', sx, sy + rad + 70, { size: 9, color: 'rgba(227,180,60,.7)', align: 'center' });
 
       /* ── 분광기: 프리즘 + 스펙트럼 띠 ── */
       const px = sx + rad + 46;
-      D.poly(ctx, [[px, sy - 18], [px + 26, sy], [px, sy + 18]], { fill: 'rgba(200,211,239,.18)', stroke: 'rgba(200,211,239,.5)', width: 1.5 });
+      D.poly(ctx, [[px, sy - 18], [px + 26, sy], [px, sy + 18]], { fill: 'rgba(207,214,232,.18)', stroke: 'rgba(207,214,232,.5)', width: 1.5 });
       D.line(ctx, sx + rad, sy, px, sy, { color: rgb(col, .8), width: 3 });
 
       /* ── 스펙트럼 곡선 ── */
@@ -195,14 +195,14 @@
         ctx.fillStyle = 'rgba(' + c2[0] + ',' + c2[1] + ',' + c2[2] + ',.14)';
         ctx.fillRect(GX(l), gy, Math.max(1, GX(l + 4) - GX(l)) + .5, gh);
       }
-      D.text(ctx, '가시광선', GX(565), gy + gh + 15, { size: 9, color: '#93a2c4', align: 'center' });
-      D.text(ctx, '자외선', GX(LAM0) + 3, gy + gh + 15, { size: 9, color: '#a78bfa' });
-      D.text(ctx, '적외선 →', GX(LAM1) - 3, gy + gh + 15, { size: 9, color: '#fb7185', align: 'right' });
+      D.text(ctx, '가시광선', GX(565), gy + gh + 15, { size: 9, color: '#9a9da6', align: 'center' });
+      D.text(ctx, '자외선', GX(LAM0) + 3, gy + gh + 15, { size: 9, color: '#a98cc4' });
+      D.text(ctx, '적외선 →', GX(LAM1) - 3, gy + gh + 15, { size: 9, color: '#c4705f', align: 'right' });
       D.roundRect(ctx, gx, gy, gw, gh, 5);
       ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1; ctx.stroke();
 
       // 태양 기준 곡선
-      ctx.save(); ctx.strokeStyle = 'rgba(147,162,196,.45)'; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]);
+      ctx.save(); ctx.strokeStyle = 'rgba(167,170,176,.45)'; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]);
       ctx.beginPath();
       for (let i = 0; i <= 160; i++) { const l = LAM0 + (LAM1 - LAM0) * i / 160; const X = GX(l), Y = GY(planck(l, TSUN)); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
       ctx.stroke(); ctx.restore();
@@ -237,7 +237,7 @@
 
       /* ── 분광형 띠 ── */
       const bx = 44, by = h - 74, bw = Math.min(w - 88, 520);
-      D.text(ctx, '분광형 — 뜨거운 쪽에서 차가운 쪽으로', bx, by - 9, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '분광형 — 뜨거운 쪽에서 차가운 쪽으로', bx, by - 9, { size: 10.5, color: '#6a6e78' });
       const TLO = Math.log10(2500), THI = Math.log10(40000);
       const BX = T => bx + bw * (1 - (Math.log10(clamp(T, 2500, 40000)) - TLO) / (THI - TLO));
       for (let i = 0; i <= 90; i++) {
@@ -248,13 +248,13 @@
       ['O', 'B', 'A', 'F', 'G', 'K', 'M'].forEach((nm, i) => {
         const edges = [30000, 10000, 7500, 6000, 5200, 3700, 2500];
         const lo = i === 0 ? 40000 : edges[i - 1], hi2 = edges[i];
-        D.text(ctx, nm, (BX(lo) + BX(hi2)) / 2, by + 29, { size: 10.5, color: '#93a2c4', align: 'center', bold: true });
-        if (i) D.line(ctx, BX(lo), by, BX(lo), by + 16, { color: 'rgba(10,17,32,.7)', width: 1.5 });
+        D.text(ctx, nm, (BX(lo) + BX(hi2)) / 2, by + 29, { size: 10.5, color: '#9a9da6', align: 'center', bold: true });
+        if (i) D.line(ctx, BX(lo), by, BX(lo), by + 16, { color: 'rgba(20,21,22,.7)', width: 1.5 });
       });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.line(ctx, BX(p.T), by - 7, BX(p.T), by + 23, { color: '#fff', width: 2.4 }); ctx.restore();
-      D.text(ctx, '40000 K', bx, by + 44, { size: 9, color: '#4b5a80' });
-      D.text(ctx, '2500 K', bx + bw, by + 44, { size: 9, color: '#4b5a80', align: 'right' });
+      D.text(ctx, '40000 K', bx, by + 44, { size: 9, color: '#4a4d55' });
+      D.text(ctx, '2500 K', bx + bw, by + 44, { size: 9, color: '#4a4d55', align: 'right' });
 
       /* ── 광도 요약 ── */
       D.text(ctx, 'L = ' + (L >= 1 ? fmt(L, L > 100 ? 0 : 2) : L.toExponential(1)) + ' L☉',

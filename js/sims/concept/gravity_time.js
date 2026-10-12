@@ -9,7 +9,7 @@
    경과 시간을 누적하므로(수치적분이 아니라 매 dt마다 해석식을 직접 곱해 더함) 오차가 쌓이지 않는다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { v: '#60a5fa', x: '#f472b6', ref: '#e8eefc' };
+  const C = { v: '#6f9fc4', x: '#c08098', ref: '#e6e7ea' };
   const PERIOD = 3; // 시계 바늘이 한 바퀴 도는 데 걸리는 "경과 시간" 단위(연출용)
 
   function factorV(v) { return Math.sqrt(Math.max(0, 1 - v * v)); }
@@ -19,13 +19,13 @@
     const ang = (elapsed / PERIOD) * Math.PI * 2 - Math.PI / 2;
     ctx.save();
     if (hot) { ctx.shadowColor = color; ctx.shadowBlur = 16; }
-    ctx.strokeStyle = 'rgba(147,162,196,.5)'; ctx.lineWidth = 2.4;
+    ctx.strokeStyle = 'rgba(167,170,176,.5)'; ctx.lineWidth = 2.4;
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
     for (let i = 0; i < 12; i++) {
       const a = (i / 12) * Math.PI * 2 - Math.PI / 2;
       D.line(ctx, cx + Math.cos(a) * (r - 7), cy + Math.sin(a) * (r - 7),
         cx + Math.cos(a) * (r - 1.5), cy + Math.sin(a) * (r - 1.5),
-        { color: 'rgba(147,162,196,.4)', width: 1.4 });
+        { color: 'rgba(167,170,176,.4)', width: 1.4 });
     }
     ctx.strokeStyle = color; ctx.lineWidth = hot ? 4 : 3; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(ang) * (r - 15), cy + Math.sin(ang) * (r - 15)); ctx.stroke();
@@ -114,23 +114,23 @@
       const cxL = w / 2 - gap, cxM = w / 2, cxR = w / 2 + gap;
       const fv = factorV(p.v), fx = factorX(p.x);
 
-      D.text(ctx, '같은 시간 동안 세 시계를 나란히 비교합니다', w / 2, 22, { size: 12.5, color: '#e8eefc', align: 'center', bold: true });
+      D.text(ctx, '같은 시간 동안 세 시계를 나란히 비교합니다', w / 2, 22, { size: 12.5, color: '#e6e7ea', align: 'center', bold: true });
 
       drawClock(ctx, cxL, cy, r, st.tauV, C.v, hl === 'v' || hl === 'tauV');
       drawClock(ctx, cxM, cy, r, st.t, C.ref, hl === 'tref');
       drawClock(ctx, cxR, cy, r, st.tauX, C.x, hl === 'x' || hl === 'tauX');
 
       D.text(ctx, '로켓 시계 (β=' + fmt(p.v, 3) + 'c)', cxL, cy + r + 22, { size: 11.5, color: C.v, align: 'center', bold: hl === 'v' });
-      D.text(ctx, '느려진 비율: ' + fmt((1 - fv) * 100, 2) + '%', cxL, cy + r + 38, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '느려진 비율: ' + fmt((1 - fv) * 100, 2) + '%', cxL, cy + r + 38, { size: 10.5, color: '#6a6e78', align: 'center' });
 
       D.text(ctx, '기준 시계 (지구)', cxM, cy + r + 22, { size: 11.5, color: C.ref, align: 'center', bold: hl === 'tref' });
-      D.text(ctx, '항상 그대로 흐름', cxM, cy + r + 38, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '항상 그대로 흐름', cxM, cy + r + 38, { size: 10.5, color: '#6a6e78', align: 'center' });
 
       D.text(ctx, '중력 속 시계 (x=' + fmt(p.x, 2) + ')', cxR, cy + r + 22, { size: 11.5, color: C.x, align: 'center', bold: hl === 'x' });
-      D.text(ctx, '느려진 비율: ' + fmt((1 - fx) * 100, 2) + '%', cxR, cy + r + 38, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '느려진 비율: ' + fmt((1 - fx) * 100, 2) + '%', cxR, cy + r + 38, { size: 10.5, color: '#6a6e78', align: 'center' });
 
       const baseY = h - 62;
-      D.text(ctx, '경과 시간(임의 단위) — 막대가 길수록 그 시계 입장에서 더 많은 시간이 흐른 것', w / 2, baseY - 14, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '경과 시간(임의 단위) — 막대가 길수록 그 시계 입장에서 더 많은 시간이 흐른 것', w / 2, baseY - 14, { size: 10.5, color: '#6a6e78', align: 'center' });
       const barW = Math.min(150, gap * .6), maxE = Math.max(st.t, 0.6);
       D.bar(ctx, cxL - barW / 2, baseY, barW, 12, st.tauV, maxE, C.v, null, hl === 'v' || hl === 'tauV');
       D.bar(ctx, cxM - barW / 2, baseY, barW, 12, st.t, maxE, C.ref, null, hl === 'tref');

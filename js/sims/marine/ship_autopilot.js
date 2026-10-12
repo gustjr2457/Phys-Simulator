@@ -1,7 +1,7 @@
 /* [선박공학·운항 제어] 자동 침로 제어 — 노모토 모델 + PID */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { psid: '#fbbf24', Kp: '#34d399', Kd: '#60a5fa', Ki: '#a78bfa', U: '#5eead4', dist: '#fb7185', psi: '#5eead4', dl: '#f472b6' };
+  const C = { psid: '#ffb020', Kp: '#7fb894', Kd: '#6f9fc4', Ki: '#a98cc4', U: '#68b8b0', dist: '#c4705f', psi: '#68b8b0', dl: '#c08098' };
   const K_N = 0.12, T_N = 7;          // 노모토 계수 (선회성 / 추종성)
   const DMAX = 35, DRATE = 4;         // 타각 한계와 타기 속도 (°/s)
 
@@ -28,7 +28,7 @@
     vars: {
       psi: { symbol: 'ψ', label: '현재 침로', unit: '°', color: C.psi,
         where: '배의 <b>실제 뱃머리 방향</b>입니다. 선체와 청록색 화살표가 가리키는 방향입니다.' },
-      e: { symbol: 'e', label: '침로 오차', unit: '°', color: '#fb7185',
+      e: { symbol: 'e', label: '침로 오차', unit: '°', color: '#c4705f',
         where: '목표 − 현재. 제어기가 없애려고 하는 값이며, 아래 그래프에서 두 선의 간격입니다.' },
       dl: { symbol: 'δ', label: '타각', unit: '°', color: C.dl,
         where: '<b>방향타가 꺾인 각도</b>입니다. 선미의 분홍색 타와 아래 막대로 표시되며, ±35°를 넘지 못합니다(포화).' },
@@ -80,12 +80,12 @@
       return [
         { label: '현재 침로 ψ', value: st.psi, unit: '°', color: C.psi },
         { label: '목표 침로 ψd', value: p.psid, unit: '°', color: C.psid },
-        { label: '침로 오차 e', value: e, unit: '°', color: Math.abs(e) < 1 ? '#34d399' : '#fb7185' },
+        { label: '침로 오차 e', value: e, unit: '°', color: Math.abs(e) < 1 ? '#7fb894' : '#c4705f' },
         { label: '타각 δ', value: st.dl, unit: '°', color: C.dl },
         { label: '선회 각속도 r', value: st.r, unit: '°/s', color: C.Kd },
-        { label: '정착 시간', value: st.settle > 0 ? fmt(st.settle, 1) + ' s' : '제어 중…', color: st.settle > 0 ? '#34d399' : '#fbbf24' },
+        { label: '정착 시간', value: st.settle > 0 ? fmt(st.settle, 1) + ' s' : '제어 중…', color: st.settle > 0 ? '#7fb894' : '#ffb020' },
         { label: '항주 거리', value: Math.hypot(st.x, st.y), unit: 'm', dec: 0 },
-        { label: '타각 포화', value: Math.abs(st.dl) > DMAX - .5 ? '⚠ 포화 (±35°)' : '정상', color: Math.abs(st.dl) > DMAX - .5 ? '#fb7185' : '#93a2c4' }
+        { label: '타각 포화', value: Math.abs(st.dl) > DMAX - .5 ? '⚠ 포화 (±35°)' : '정상', color: Math.abs(st.dl) > DMAX - .5 ? '#c4705f' : '#9a9da6' }
       ];
     },
 
@@ -111,8 +111,8 @@
 
       /* ── 바다 ─────────────────────────────── */
       ctx.save();
-      ctx.fillStyle = 'rgba(20,52,86,.35)'; ctx.fillRect(0, 0, w, h);
-      ctx.strokeStyle = 'rgba(120,180,220,.10)'; ctx.lineWidth = 1;
+      ctx.fillStyle = 'rgba(50,52,56,.35)'; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = 'rgba(139,176,201,.10)'; ctx.lineWidth = 1;
       const gsz = 60;
       const offx = (-st.x * PPM) % gsz, offy = (st.y * PPM) % gsz;
       ctx.beginPath();
@@ -122,7 +122,7 @@
 
       /* ── 항적 ─────────────────────────────── */
       ctx.save();
-      ctx.strokeStyle = 'rgba(94,234,212,.5)'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+      ctx.strokeStyle = 'rgba(122,206,193,.5)'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
       ctx.beginPath();
       st.trail.forEach((q, i) => {
         const sx = cx + (q[0] - st.x) * PPM, sy = cy - (q[1] - st.y) * PPM;
@@ -138,14 +138,14 @@
 
       // 오차 부채꼴
       ctx.save();
-      ctx.fillStyle = 'rgba(251,113,133,.14)';
+      ctx.fillStyle = 'rgba(216,148,158,.14)';
       ctx.beginPath(); ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, 96, Math.min(-rd, -rp), Math.max(-rd, -rp));
       ctx.closePath(); ctx.fill(); ctx.restore();
       const em = (p.psid + st.psi) / 2 * Math.PI / 180;
       if (Math.abs(p.psid - st.psi) > 2)
         D.text(ctx, 'e = ' + fmt(p.psid - st.psi, 1) + '°', cx + Math.cos(em) * 116, cy - Math.sin(em) * 116,
-          { size: 11, color: '#fb7185', align: 'center', bold: hl === 'e' });
+          { size: 11, color: '#c4705f', align: 'center', bold: hl === 'e' });
 
       /* ── 선박 ─────────────────────────────── */
       ctx.save();
@@ -155,11 +155,11 @@
       ctx.moveTo(46, 0); ctx.lineTo(16, -14); ctx.lineTo(-34, -13); ctx.lineTo(-40, 0);
       ctx.lineTo(-34, 13); ctx.lineTo(16, 14); ctx.closePath();
       const sg = ctx.createLinearGradient(0, -14, 0, 14);
-      sg.addColorStop(0, '#e6edf9'); sg.addColorStop(1, '#96a5c4');
+      sg.addColorStop(0, '#eaeef5'); sg.addColorStop(1, '#a9abb1');
       ctx.fillStyle = sg; ctx.fill();
-      ctx.strokeStyle = '#5b6a8d'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.strokeStyle = '#6e727a'; ctx.lineWidth = 1.5; ctx.stroke();
       // 선교
-      ctx.fillStyle = '#4d6ba0';
+      ctx.fillStyle = '#5d6f90';
       D.roundRect(ctx, -18, -8, 20, 16, 3); ctx.fill();
       // 타 (선미)
       ctx.save();
@@ -187,7 +187,7 @@
 
       /* ── 타각 막대 ────────────────────────── */
       const bx = w - 230, by = h - 74, bw = 200;
-      D.text(ctx, '타각 δ (좌 −35° ~ 우 +35°)', bx, by - 10, { size: 11, color: hl === 'dl' ? '#fff' : '#61719a', bold: hl === 'dl' });
+      D.text(ctx, '타각 δ (좌 −35° ~ 우 +35°)', bx, by - 10, { size: 11, color: hl === 'dl' ? '#fff' : '#6a6e78', bold: hl === 'dl' });
       D.roundRect(ctx, bx, by, bw, 14, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       const zero = bx + bw / 2, len = (st.dl / DMAX) * (bw / 2);
       ctx.save();
@@ -200,7 +200,7 @@
 
       // 게인 요약
       const gx = 18, gy = h - 74;
-      D.text(ctx, 'PID 게인', gx, gy - 10, { size: 11, color: '#61719a' });
+      D.text(ctx, 'PID 게인', gx, gy - 10, { size: 11, color: '#6a6e78' });
       [['Kp', p.Kp, C.Kp], ['Ki', p.Ki, C.Ki], ['Kd', p.Kd, C.Kd]].forEach((q, i) => {
         D.text(ctx, q[0] + ' = ' + fmt(q[1], 2), gx, gy + 12 + i * 17,
           { size: 11.5, color: hl === q[0] ? '#fff' : q[2], bold: hl === q[0] });
@@ -208,7 +208,7 @@
       if (Math.abs(p.dist) > .01 && p.Ki < .02)
         D.tag(ctx, '외란이 있는데 Ki = 0 → 정상상태 오차가 남습니다', w / 2, h - 16, C.Ki, hl === 'Ki');
       else if (st.settle > 0)
-        D.tag(ctx, '침로 유지 중 (정착 ' + fmt(st.settle, 1) + ' s)', w / 2, h - 16, '#34d399', false);
+        D.tag(ctx, '침로 유지 중 (정착 ' + fmt(st.settle, 1) + ' s)', w / 2, h - 16, '#7fb894', false);
     }
   });
 })();

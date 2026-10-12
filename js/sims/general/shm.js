@@ -1,7 +1,7 @@
 /* [일반물리] 단진동(SHM) — F = −kx,  x(t) = A cos(ωt) (감쇠 없는 이상적인 경우) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { k: '#5eead4', m: '#f472b6', A: '#a78bfa', w: '#fbbf24', T: '#fbbf24', U: '#a78bfa', K: '#60a5fa' };
+  const C = { k: '#68b8b0', m: '#c08098', A: '#a98cc4', w: '#ffb020', T: '#ffb020', U: '#a98cc4', K: '#6f9fc4' };
 
   const omega = p => Math.sqrt(p.k / p.m);
 
@@ -80,8 +80,8 @@
       const bx = eq + st.x * PPM;
 
       // 벽
-      D.line(ctx, 60, top, 60, h - 60, { color: 'rgba(147,162,196,.5)', width: 3 });
-      for (let i = 0; i < 12; i++) D.line(ctx, 60, top + i * ((h - 120) / 11), 48, top + 10 + i * ((h - 120) / 11), { color: 'rgba(147,162,196,.25)' });
+      D.line(ctx, 60, top, 60, h - 60, { color: 'rgba(167,170,176,.5)', width: 3 });
+      for (let i = 0; i < 12; i++) D.line(ctx, 60, top + i * ((h - 120) / 11), 48, top + 10 + i * ((h - 120) / 11), { color: 'rgba(167,170,176,.25)' });
 
       // 스프링(가로)
       const bw = 46 + p.m * 10, bh = 46 + p.m * 6;
@@ -89,8 +89,8 @@
       D.text(ctx, 'k = ' + fmt(p.k, 0), (60 + bx - bw / 2) / 2, midY - 34, { size: 11, color: C.k, align: 'center', bold: hl === 'k' });
 
       // 평형선 · 진폭 안내선
-      D.line(ctx, eq, top, eq, h - 60, { color: 'rgba(147,162,196,.3)', dash: [5, 6] });
-      D.text(ctx, '평형', eq, top - 8, { size: 10, color: '#61719a', align: 'center' });
+      D.line(ctx, eq, top, eq, h - 60, { color: 'rgba(167,170,176,.3)', dash: [5, 6] });
+      D.text(ctx, '평형', eq, top - 8, { size: 10, color: '#6a6e78', align: 'center' });
       const hotA = hl === 'A';
       D.line(ctx, eq + p.A * PPM, top, eq + p.A * PPM, h - 60, { color: C.A, dash: [4, 5], hot: hotA });
       D.line(ctx, eq - p.A * PPM, top, eq - p.A * PPM, h - 60, { color: C.A, dash: [4, 5], hot: hotA });
@@ -100,10 +100,10 @@
       if (hl === 'm') { ctx.shadowColor = C.m; ctx.shadowBlur = 20; }
       D.roundRect(ctx, bx - bw / 2, midY - bh / 2, bw, bh, 8);
       const g = ctx.createLinearGradient(0, midY - bh / 2, 0, midY + bh / 2);
-      g.addColorStop(0, hl === 'm' ? '#f9a8d4' : '#8ba4d8'); g.addColorStop(1, hl === 'm' ? '#be5a92' : '#4a6ba8');
+      g.addColorStop(0, hl === 'm' ? '#cfa2b2' : '#8a95a8'); g.addColorStop(1, hl === 'm' ? '#a06a86' : '#5a7a96');
       ctx.fillStyle = g; ctx.fill();
       ctx.restore();
-      D.text(ctx, fmt(p.m, 1) + ' kg', bx, midY + 4, { size: 12, color: '#0a1120', align: 'center', bold: true });
+      D.text(ctx, fmt(p.m, 1) + ' kg', bx, midY + 4, { size: 12, color: '#0a0b0c', align: 'center', bold: true });
 
       // 변위 치수선
       D.dim(ctx, eq, midY + bh / 2 + 26, bx, midY + bh / 2 + 26, 'x = ' + fmt(st.x, 2), C.A, hl === 'A');
@@ -113,13 +113,13 @@
       const top2 = 34, bot2 = h - 34, bh2 = bot2 - top2;
       const bxx = w - BW + 24, bwid = 46;
       const uh = bh2 * clamp(U / maxE, 0, 1), kh = bh2 * clamp(K / maxE, 0, 1 - U / maxE);
-      D.text(ctx, '에너지', bxx + bwid / 2, top2 - 20, { size: 11, color: '#61719a', align: 'center' });
+      D.text(ctx, '에너지', bxx + bwid / 2, top2 - 20, { size: 11, color: '#6a6e78', align: 'center' });
       D.roundRect(ctx, bxx, top2, bwid, bh2, 6); ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.fill();
       ctx.save(); if (hl === 'U') { ctx.shadowColor = C.U; ctx.shadowBlur = 16; }
       ctx.fillStyle = C.U; ctx.fillRect(bxx, bot2 - uh, bwid, uh); ctx.restore();
       ctx.save(); if (hl === 'K') { ctx.shadowColor = C.K; ctx.shadowBlur = 16; }
       ctx.fillStyle = C.K; ctx.fillRect(bxx, bot2 - uh - kh, bwid, kh); ctx.restore();
-      D.text(ctx, '총량 항상 일정', bxx + bwid + 10, top2 + 8, { size: 9.5, color: '#61719a' });
+      D.text(ctx, '총량 항상 일정', bxx + bwid + 10, top2 + 8, { size: 9.5, color: '#6a6e78' });
     }
   });
 })();

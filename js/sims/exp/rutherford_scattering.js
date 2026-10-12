@@ -8,7 +8,7 @@
    무엇인가?'에서 다룬 단순화된 보어 모형이 왜 그렇게 생겼는지의 역사적 근거. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { Z: '#fbbf24', E: '#60a5fa', rate: '#a78bfa', dmin: '#34d399', back: '#fb7185' };
+  const C = { Z: '#ffb020', E: '#6f9fc4', rate: '#a98cc4', dmin: '#7fb894', back: '#c4705f' };
   const K = 8.99e9, ECH = 1.602e-19, Z_ALPHA = 2;
   const BINS = 36; // 5˚씩 0~180˚
 
@@ -99,8 +99,8 @@
       const bmax = bMax_m();
 
       // 금박(과녁) 표시
-      D.line(ctx, nucX, nucY - 150, nucX, nucY + 150, { color: 'rgba(251,191,36,.18)', width: 26 });
-      D.text(ctx, (p.Z === 79 ? '금박' : 'Z=' + p.Z + ' 박막'), nucX, nucY - 162, { size: 11, color: '#93a2c4', align: 'center' });
+      D.line(ctx, nucX, nucY - 150, nucX, nucY + 150, { color: 'rgba(227,180,60,.18)', width: 26 });
+      D.text(ctx, (p.Z === 79 ? '금박' : 'Z=' + p.Z + ' 박막'), nucX, nucY - 162, { size: 11, color: '#9a9da6', align: 'center' });
 
       // 원자핵
       ctx.save();
@@ -118,7 +118,7 @@
         const sign = i > 0 ? 1 : -1;
         const pxOffset = sign * (Math.abs(i) / (N_EX / 2)) * 46;
         const big = th > Math.PI / 2;
-        const col = big ? C.back : 'rgba(147,209,255,.55)';
+        const col = big ? C.back : 'rgba(176,205,226,.55)';
         ctx.save();
         if (big) { ctx.shadowColor = C.back; ctx.shadowBlur = 8; }
         ctx.strokeStyle = col; ctx.lineWidth = big ? 2 : 1.3;
@@ -132,7 +132,7 @@
       }
 
       // 빔 방향 화살표
-      D.arrow(ctx, nucX - travel - 26, nucY, 20, 0, { color: '#93a2c4', width: 2, label: '알파 입자 빔' });
+      D.arrow(ctx, nucX - travel - 26, nucY, 20, 0, { color: '#9a9da6', width: 2, label: '알파 입자 빔' });
 
       // 오른쪽: 산란각 분포(막대가 각도 방향으로 뻗어나가는 극좌표 히스토그램)
       const detX = w * .74, detY = nucY, R = Math.min(140, w * .2);
@@ -144,9 +144,9 @@
       [0, 45, 90, 135, 180].forEach(deg => {
         const a = -deg * Math.PI / 180;
         D.line(ctx, detX, detY, detX + Math.cos(a) * R, detY + Math.sin(a) * R, { color: 'rgba(255,255,255,.08)' });
-        D.text(ctx, deg + '˚', detX + Math.cos(a) * (R + 14), detY + Math.sin(a) * (R + 14), { size: 9.5, color: '#61719a', align: 'center' });
+        D.text(ctx, deg + '˚', detX + Math.cos(a) * (R + 14), detY + Math.sin(a) * (R + 14), { size: 9.5, color: '#6a6e78', align: 'center' });
       });
-      D.text(ctx, '검출기 각도 분포(막대 길이 = log 눈금)', detX, detY - R - 26, { size: 11, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '검출기 각도 분포(막대 길이 = log 눈금)', detX, detY - R - 26, { size: 11, color: '#9a9da6', align: 'center' });
 
       const maxBin = Math.max(1, ...st.hist);
       for (let i = 0; i < BINS; i++) {
@@ -165,7 +165,7 @@
         ctx.stroke();
         ctx.restore();
       }
-      D.dot(ctx, detX, detY, 4, '#e8eefc', false);
+      D.dot(ctx, detX, detY, 4, '#e6e7ea', false);
 
       // 방금 튕긴 입자가 큰 각도였다면 강조 표시
       if (st.lastTheta !== null && st.t - st.lastT < .3 && st.lastTheta > Math.PI / 2) {
@@ -173,7 +173,7 @@
       }
 
       D.text(ctx, 'd_min = ' + fmt(dmin_fm, 1) + ' fm  ·  누적 ' + st.total + '개  ·  90˚+ ' + st.back + '개',
-        16, h - 14, { size: 10.5, color: '#93a2c4' });
+        16, h - 14, { size: 10.5, color: '#9a9da6' });
     }
   });
 })();

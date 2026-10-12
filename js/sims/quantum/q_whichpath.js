@@ -1,7 +1,7 @@
 /* [양자역학] 관측하면 달라진다 — 어느 슬릿으로 갔나 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { det: '#fb7185', d: '#5eead4', rate: '#fbbf24', vis: '#60a5fa', hit: '#a78bfa' };
+  const C = { det: '#c4705f', d: '#68b8b0', rate: '#ffb020', vis: '#6f9fc4', hit: '#a98cc4' };
   const NB = 96;                              // 스크린 막대 개수
 
   // 간섭무늬 세기 (슬릿 간격 d가 클수록 무늬가 촘촘)
@@ -91,7 +91,7 @@
         { label: '예상 대비 1 − f', value: 1 - p.det / 100, unit: '', color: C.vis, dec: 2 },
         {
           label: '지금 스크린에 보이는 것', wide: true,
-          color: p.det <= 5 ? '#34d399' : (p.det >= 95 ? '#fb7185' : '#fbbf24'),
+          color: p.det <= 5 ? '#7fb894' : (p.det >= 95 ? '#c4705f' : '#ffb020'),
           value: p.det <= 5 ? '또렷한 줄무늬 — 어느 쪽으로 갔는지 묻지 않았습니다'
             : p.det >= 95 ? '두 덩어리 — 경로를 전부 알아냈습니다'
               : '흐릿한 줄무늬 — ' + p.det + '%만 알아냈으므로 그만큼만 사라졌습니다'
@@ -141,16 +141,16 @@
       const Y = u => cy + u * half;
 
       /* ── 전자총 ── */
-      ctx.fillStyle = '#4d5f7d';
+      ctx.fillStyle = '#60636a';
       D.roundRect(ctx, srcX - 26, cy - 15, 34, 30, 5); ctx.fill();
-      D.text(ctx, '전자총', srcX - 9, cy + 34, { size: 10, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '전자총', srcX - 9, cy + 34, { size: 10, color: '#9a9da6', align: 'center' });
       D.text(ctx, fmt(p.rate, 0) + ' 개/s', srcX - 9, cy - 24,
         { size: 10, color: hl === 'rate' ? '#fff' : C.rate, align: 'center', bold: hl === 'rate' });
 
       /* ── 슬릿 벽 ── */
       const gap = half * .14, off = half * .10 * p.d;
       ctx.save();
-      ctx.fillStyle = '#2a3652';
+      ctx.fillStyle = '#3b3d41';
       ctx.fillRect(slitX - 5, cy - half - 30, 10, (half + 30) - off - gap / 2);
       ctx.fillRect(slitX - 5, cy - off + gap / 2, 10, (off * 2 - gap));
       ctx.fillRect(slitX - 5, cy + off + gap / 2, 10, (half + 30) - off - gap / 2);
@@ -165,17 +165,17 @@
       const fresh = st.t - st.flash < .12;
       ctx.save();
       ctx.globalAlpha = on ? 1 : .35;
-      ctx.fillStyle = on ? (fresh ? '#fecdd3' : C.det) : '#3a4663';
+      ctx.fillStyle = on ? (fresh ? '#f1dadd' : C.det) : '#4b4d52';
       D.roundRect(ctx, slitX + 14, cy - off - 13, 22, 26, 5); ctx.fill();
       D.roundRect(ctx, slitX + 14, cy + off - 13, 22, 26, 5); ctx.fill();
       ctx.restore();
       D.text(ctx, on ? '검출기 ON — ' + p.det + '%' : '검출기 OFF', slitX + 25, cy - half - 30,
-        { size: 10.5, color: on ? C.det : '#4a5878', align: 'center', bold: hl === 'det' });
-      if (on && fresh) { D.dot(ctx, slitX + 25, cy - off, 16, 'rgba(251,113,133,.35)'); }
+        { size: 10.5, color: on ? C.det : '#4a4d55', align: 'center', bold: hl === 'det' });
+      if (on && fresh) { D.dot(ctx, slitX + 25, cy - off, 16, 'rgba(216,148,158,.35)'); }
 
       /* ── 전자 경로(장식) ── */
       ctx.save();
-      ctx.strokeStyle = 'rgba(147,162,196,.14)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(167,170,176,.14)'; ctx.lineWidth = 1;
       for (let i = -3; i <= 3; i++) {
         ctx.beginPath(); ctx.moveTo(srcX + 10, cy);
         ctx.lineTo(slitX, cy + (i % 2 ? off : -off));
@@ -186,18 +186,18 @@
 
       /* ── 스크린 ── */
       ctx.save();
-      ctx.fillStyle = '#070b16';
+      ctx.fillStyle = '#0e0f11';
       ctx.fillRect(scrX, cy - half - 20, w - scrX - 24, (half + 20) * 2);
-      ctx.strokeStyle = 'rgba(147,162,196,.35)'; ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(167,170,176,.35)'; ctx.lineWidth = 1.5;
       ctx.strokeRect(scrX, cy - half - 20, w - scrX - 24, (half + 20) * 2);
       ctx.restore();
-      D.text(ctx, '스크린 — 점이 하나씩 쌓인다', scrX, cy - half - 28, { size: 10.5, color: '#93a2c4' });
+      D.text(ctx, '스크린 — 점이 하나씩 쌓인다', scrX, cy - half - 28, { size: 10.5, color: '#9a9da6' });
 
       // 쌓인 점
       const sw = w - scrX - 24;
       ctx.save();
       st.dots.forEach(dt => {
-        ctx.fillStyle = dt.o ? 'rgba(251,113,133,.85)' : 'rgba(167,139,250,.85)';
+        ctx.fillStyle = dt.o ? 'rgba(216,148,158,.85)' : 'rgba(181,167,222,.85)';
         ctx.fillRect(scrX + 4 + dt.j * (sw - 8), Y(dt.u), 2.1, 2.1);
       });
       ctx.restore();
@@ -224,12 +224,12 @@
         D.text(ctx, '무늬 대비 V = ' + fmt(v, 2) + '  (예상 ' + fmt(1 - p.det / 100, 2) + ')',
           24, h - 34, { size: 11, color: hl === 'vis' ? '#fff' : C.vis, bold: hl === 'vis' });
       } else {
-        D.text(ctx, '아직 점이 적어 무작위처럼 보입니다 — 더 쌓아 보세요', 24, h - 34, { size: 11, color: '#61719a' });
+        D.text(ctx, '아직 점이 적어 무작위처럼 보입니다 — 더 쌓아 보세요', 24, h - 34, { size: 11, color: '#6a6e78' });
       }
       D.tag(ctx, p.det <= 5 ? '어느 쪽인지 묻지 않음 → 줄무늬'
         : p.det >= 95 ? '경로를 전부 알아냄 → 두 덩어리'
           : '일부만 알아냄 → 그만큼 흐려짐',
-        w * .5, h - 16, p.det <= 5 ? '#34d399' : (p.det >= 95 ? '#fb7185' : '#fbbf24'), hl === 'det');
+        w * .5, h - 16, p.det <= 5 ? '#7fb894' : (p.det >= 95 ? '#c4705f' : '#ffb020'), hl === 'det');
     }
   });
 })();

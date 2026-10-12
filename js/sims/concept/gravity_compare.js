@@ -12,7 +12,7 @@
    반지름 r_s이며, 이는 초급의 "중력과 시간"에서 이미 다룬 x = r_s/r와 같은 양이다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { M: '#fbbf24', F: '#60a5fa', body: '#5eead4', grid: 'rgba(147,162,196,.35)' };
+  const C = { M: '#ffb020', F: '#6f9fc4', body: '#68b8b0', grid: 'rgba(167,170,176,.35)' };
   const G_SIM = 1, m_SIM = 1;   // 임의 단위계(교육용) — G와 물체 질량을 1로 둠
   const C_SIM = 3;              // 임의 단위계에서의 "빛의 속력"(슈바르츠실트 반지름이 슬라이더 범위 안에서 보이도록 설정)
   const R0 = 2.2;               // 궤도 반지름(고정) — 시각적 비교를 쉽게 하려고 원 궤도로 고정
@@ -43,9 +43,9 @@
     ],
     vars: {
       F: { symbol: 'F', label: '중력(뉴턴)', unit: '', color: C.F, where: '왼쪽 그림의 <b>파란 화살표</b>. 두 물체가 서로 당기는 힘의 크기입니다.' },
-      r: { symbol: 'r', label: '두 물체 사이 거리', unit: '', color: '#93a2c4', where: '가운데 천체와 도는 물체 사이의 거리입니다.' },
+      r: { symbol: 'r', label: '두 물체 사이 거리', unit: '', color: '#9a9da6', where: '가운데 천체와 도는 물체 사이의 거리입니다.' },
       m: { symbol: 'm', label: '도는 물체의 질량', unit: '', color: C.body, where: '궤도를 도는 <b>청록색 점</b>의 질량입니다(이 시뮬레이션에서는 고정된 값).' },
-      rs: { symbol: 'r_s', label: '슈바르츠실트 반지름', unit: '', color: '#f472b6', where: '이 반지름보다 더 작게 압축되면 빛조차 못 빠져나가는 블랙홀이 됩니다 — "중력과 시간"에서 다룬 x=r_s/r의 그 r_s입니다.' }
+      rs: { symbol: 'r_s', label: '슈바르츠실트 반지름', unit: '', color: '#c08098', where: '이 반지름보다 더 작게 압축되면 빛조차 못 빠져나가는 블랙홀이 됩니다 — "중력과 시간"에서 다룬 x=r_s/r의 그 r_s입니다.' }
     },
     formulas: [
       { name: '뉴턴의 중력', tpl: '{F} = G{M}{m} ⁄ {r}²' },
@@ -70,9 +70,9 @@
       const F = G_SIM * p.M * m_SIM / (r * r);
       const rs = 2 * G_SIM * p.M / (C_SIM * C_SIM);
       return [
-        { label: '두 물체 사이 거리', value: r, dec: 2, color: '#93a2c4' },
+        { label: '두 물체 사이 거리', value: r, dec: 2, color: '#9a9da6' },
         { label: '뉴턴의 중력(F)', value: F, dec: 2, color: C.F },
-        { label: '슈바르츠실트 반지름', value: rs, dec: 3, color: '#f472b6' },
+        { label: '슈바르츠실트 반지름', value: rs, dec: 3, color: '#c08098' },
         { label: '지금 상태', value: rs < r ? '보통의 중력(둘이 다른 답을 주지 않음)' : '만약 이만큼 압축된다면 블랙홀!', wide: true }
       ];
     },
@@ -109,8 +109,8 @@
       const RX = x => halfW + vR.X(x), RY = y => vR.Y(y);
 
       D.line(ctx, halfW, 0, halfW, h, { color: 'rgba(255,255,255,.1)', width: 1 });
-      D.text(ctx, '뉴턴: 끌어당기는 힘', halfW / 2, 20, { size: 12.5, color: '#e8eefc', align: 'center', bold: true });
-      D.text(ctx, '아인슈타인: 휘어진 시공간', halfW + halfW / 2, 20, { size: 12.5, color: '#e8eefc', align: 'center', bold: true });
+      D.text(ctx, '뉴턴: 끌어당기는 힘', halfW / 2, 20, { size: 12.5, color: '#e6e7ea', align: 'center', bold: true });
+      D.text(ctx, '아인슈타인: 휘어진 시공간', halfW + halfW / 2, 20, { size: 12.5, color: '#e6e7ea', align: 'center', bold: true });
 
       const r = Math.hypot(st.pos.x, st.pos.y);
       const bodyR = 8 + Math.sqrt(p.M) * 3.4;
@@ -123,7 +123,7 @@
       const fx = -st.pos.x / r, fy = -st.pos.y / r;
       D.arrow(ctx, LX(st.pos.x), LY(st.pos.y), vL.S(fx * clamp(F * 6, .3, 2.4)), -vL.S(fy * clamp(F * 6, .3, 2.4)),
         { color: C.F, width: 3, hot: hl === 'F', label: 'F' });
-      ctx.strokeStyle = 'rgba(147,162,196,.3)'; ctx.setLineDash([4, 5]); ctx.lineWidth = 1.2;
+      ctx.strokeStyle = 'rgba(167,170,176,.3)'; ctx.setLineDash([4, 5]); ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.arc(LX(0), LY(0), vL.S(R0), 0, 7); ctx.stroke(); ctx.setLineDash([]);
       D.dot(ctx, LX(st.pos.x), LY(st.pos.y), 7, C.body, hl === 'r');
       ctx.restore();
@@ -159,7 +159,7 @@
       D.dot(ctx, RX(st.pos.x), RY(st.pos.y), 7, C.body, hl === 'r');
       ctx.restore();
 
-      D.text(ctx, '두 그림의 파란(청록) 점은 완전히 같은 물체, 같은 궤적입니다', w / 2, h - 14, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '두 그림의 파란(청록) 점은 완전히 같은 물체, 같은 궤적입니다', w / 2, h - 14, { size: 10.5, color: '#6a6e78', align: 'center' });
     }
   });
 })();

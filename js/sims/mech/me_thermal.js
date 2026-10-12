@@ -5,8 +5,8 @@
    뜨거운 커피 한 잔으로 확인한다. 열교환기·보온재·엔진 냉각 설계의 출발점. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { ins: '#5eead4', k: '#60a5fa', hout: '#a78bfa', Tout: '#93a2c4',
-              T: '#fb7185', R: '#fbbf24', Q: '#fb923c', tau: '#f472b6' };
+  const C = { ins: '#68b8b0', k: '#6f9fc4', hout: '#a98cc4', Tout: '#9a9da6',
+              T: '#c4705f', R: '#ffb020', Q: '#d1824a', tau: '#c08098' };
 
   const AREA = .035;        // 컵의 방열 면적 m²
   const CAP = 836;          // 물 200 mL의 열용량 J/K
@@ -62,7 +62,7 @@
       title: '커피 온도 – 시간', xmin: 60, xUnit: '분', y0: 0,
       series: [
         { key: 'T', label: 'T (°C)', color: C.T },
-        { key: 'dk', label: '마시기 좋은 60°C', color: '#fbbf24' },
+        { key: 'dk', label: '마시기 좋은 60°C', color: '#ffb020' },
         { key: 'ta', label: '주변 온도', color: C.Tout }
       ]
     }],
@@ -84,9 +84,9 @@
         { label: '시간상수 τ = RC', value: tau, unit: '분', color: C.tau, dec: 1 },
         { label: '현재 온도 T', value: st.T, unit: '°C', color: C.T, dec: 1 },
         { label: '지금 빠져나가는 열 Q', value: Q, unit: 'W', color: C.Q, dec: 2 },
-        { label: '경과 시간', value: st.t, unit: '분', dec: 0, color: '#93a2c4' },
-        { label: '60 °C까지', value: isFinite(tDrink) ? fmt(tDrink, 0) + ' 분' : '이미 60 °C 이하', wide: true, color: '#fbbf24' },
-        { label: '약점은 어디인가', wide: true, color: insFrac >= 50 ? '#5eead4' : '#a78bfa',
+        { label: '경과 시간', value: st.t, unit: '분', dec: 0, color: '#9a9da6' },
+        { label: '60 °C까지', value: isFinite(tDrink) ? fmt(tDrink, 0) + ' 분' : '이미 60 °C 이하', wide: true, color: '#ffb020' },
+        { label: '약점은 어디인가', wide: true, color: insFrac >= 50 ? '#68b8b0' : '#a98cc4',
           value: insFrac >= 50 ? '단열층이 지배 — 더 두껍게 하면 효과가 있다' : '외부 대류가 지배 — 바람을 막는 쪽이 효과적' }
       ];
     },
@@ -141,18 +141,18 @@
       const liqTop = cupTop + 22;
       const cg = ctx.createLinearGradient(0, liqTop, 0, cupTop + cupH);
       cg.addColorStop(0, 'rgba(' + Math.round(120 + 135 * hotF) + ',' + Math.round(90 - 20 * hotF) + ',60,.75)');
-      cg.addColorStop(1, 'rgba(70,40,30,.8)');
+      cg.addColorStop(1, 'rgba(62,44,38,.8)');
       ctx.save();
       if (hl === 'T') { ctx.shadowColor = C.T; ctx.shadowBlur = 20; }
       ctx.fillStyle = cg;
       ctx.fillRect(cupX, liqTop, cupW, cupTop + cupH - liqTop);
       ctx.restore();
       D.text(ctx, fmt(st.T, 1) + ' °C', cupX + cupW / 2, liqTop + 34,
-        { size: 15, color: hl === 'T' ? '#fff' : '#ffe8d8', align: 'center', bold: true });
+        { size: 15, color: hl === 'T' ? '#fff' : '#fae9dd', align: 'center', bold: true });
       D.text(ctx, '커피 200 mL', cupX + cupW / 2, liqTop + 52, { size: 9.5, color: 'rgba(255,255,255,.55)', align: 'center' });
 
       // 컵 벽
-      ctx.fillStyle = 'rgba(200,211,239,.55)';
+      ctx.fillStyle = 'rgba(207,214,232,.55)';
       ctx.fillRect(cupX + cupW, cupTop, wallPx, cupH);
       ctx.fillRect(cupX - wallPx, cupTop, wallPx, cupH);
       ctx.fillRect(cupX - wallPx, cupTop + cupH, cupW + wallPx * 2, wallPx);
@@ -161,7 +161,7 @@
       if (insPx > 0) {
         ctx.save();
         if (hl === 'ins' || hl === 'k') { ctx.shadowColor = C.ins; ctx.shadowBlur = 16; }
-        ctx.fillStyle = 'rgba(94,234,212,' + clamp(.14 + .5 * (.6 - p.k), .14, .45) + ')';
+        ctx.fillStyle = 'rgba(122,206,193,' + clamp(.14 + .5 * (.6 - p.k), .14, .45) + ')';
         ctx.fillRect(cupX + cupW + wallPx, cupTop, insPx, cupH);
         ctx.strokeStyle = C.ins; ctx.lineWidth = 1.4;
         ctx.strokeRect(cupX + cupW + wallPx, cupTop, insPx, cupH);
@@ -169,7 +169,7 @@
         D.dim(ctx, cupX + cupW + wallPx, cupTop - 14, cupX + cupW + wallPx + insPx, cupTop - 14,
           fmt(p.ins, 0) + 'mm', C.ins, hl === 'ins');
       } else {
-        D.text(ctx, '단열 없음', cupX + cupW + 12, cupTop - 10, { size: 10, color: '#fb7185' });
+        D.text(ctx, '단열 없음', cupX + cupW + 12, cupTop - 10, { size: 10, color: '#c4705f' });
       }
 
       // 김 (뜨거울 때)
@@ -213,12 +213,12 @@
       }
       ctx.lineTo(px2 + 10, TY(p.Tout));
       ctx.stroke(); ctx.restore();
-      D.line(ctx, px0, tTop, px0, tTop + tH, { color: 'rgba(200,211,239,.3)', dash: [3, 4] });
-      D.line(ctx, px1, tTop, px1, tTop + tH, { color: 'rgba(94,234,212,.4)', dash: [3, 4] });
+      D.line(ctx, px0, tTop, px0, tTop + tH, { color: 'rgba(207,214,232,.3)', dash: [3, 4] });
+      D.line(ctx, px1, tTop, px1, tTop + tH, { color: 'rgba(122,206,193,.4)', dash: [3, 4] });
       D.line(ctx, cupX - 10, TY(p.Tout), px2 + 10, TY(p.Tout), { color: C.Tout, dash: [4, 5], hot: hl === 'Tout' });
       D.text(ctx, 'T_∞ = ' + fmt(p.Tout, 0) + '°C', px2 + 12, TY(p.Tout) + 4,
         { size: 10, color: hl === 'Tout' ? '#fff' : C.Tout, bold: hl === 'Tout' });
-      D.text(ctx, '온도 분포 — 저항이 큰 층에서 많이 떨어진다', cupX - 10, tTop - 7, { size: 10, color: '#61719a' });
+      D.text(ctx, '온도 분포 — 저항이 큰 층에서 많이 떨어진다', cupX - 10, tTop - 7, { size: 10, color: '#6a6e78' });
       D.text(ctx, '단열층', (px0 + px1) / 2, tTop + tH + 14, { size: 9, color: C.ins, align: 'center' });
       D.text(ctx, '대류 경계층', (px1 + px2) / 2, tTop + tH + 14, { size: 9, color: C.hout, align: 'center' });
 
@@ -232,7 +232,7 @@
 
       /* ── 열저항 직렬 회로 ── */
       const rx = Math.min(w - 300, w * .52), ry = 80, rw = 250;
-      D.text(ctx, '열저항 회로 (전기회로와 똑같다)', rx, ry - 12, { size: 11, color: '#61719a' });
+      D.text(ctx, '열저항 회로 (전기회로와 똑같다)', rx, ry - 12, { size: 11, color: '#6a6e78' });
       const total = Math.max(rt, 1e-6);
       const w1 = rw * (ri / total), w2 = rw * (rc / total);
       D.line(ctx, rx - 16, ry + 16, rx, ry + 16, { color: C.T, width: 2.4 });
@@ -260,7 +260,7 @@
         { size: 11.5, color: hl === 'R' ? '#fff' : C.R, bold: true });
       D.text(ctx, 'τ = R·C = ' + fmt(tauOf(p) / 60, 1) + ' 분', rx, ry + 88,
         { size: 11.5, color: hl === 'tau' ? '#fff' : C.tau, bold: hl === 'tau' });
-      D.text(ctx, '(화면 1초 = 실제 1분)', rx + 134, ry + 88, { size: 9.5, color: '#61719a' });
+      D.text(ctx, '(화면 1초 = 실제 1분)', rx + 134, ry + 88, { size: 9.5, color: '#6a6e78' });
     }
   });
 })();

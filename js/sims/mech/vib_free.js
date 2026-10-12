@@ -1,7 +1,7 @@
 /* [기계공학·진동공학] 1자유도계 감쇠 자유진동 — mẍ + cẋ + kx = 0 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { m: '#f472b6', k: '#5eead4', c: '#fb7185', x0: '#a78bfa', x: '#60a5fa', wn: '#fbbf24', z: '#fb7185', Td: '#fbbf24' };
+  const C = { m: '#c08098', k: '#68b8b0', c: '#c4705f', x0: '#a98cc4', x: '#6f9fc4', wn: '#ffb020', z: '#c4705f', Td: '#ffb020' };
 
   const wn = p => Math.sqrt(p.k / p.m);
   const zeta = p => p.c / (2 * Math.sqrt(p.k * p.m));
@@ -69,7 +69,7 @@
         { label: '감쇠 주기 T_d', value: wd > 0 ? 2 * Math.PI / wd : 0, unit: 's', color: C.Td },
         { label: '현재 변위 x', value: st.x, unit: 'm', color: C.x, dec: 3 },
         { label: '임계 감쇠계수 c_c = 2√(mk)', value: 2 * Math.sqrt(p.k * p.m), unit: 'N·s/m' },
-        { label: '감쇠 상태', value: kind, wide: true, color: z < .999 ? '#60a5fa' : (z < 1.001 ? '#34d399' : '#fbbf24') }
+        { label: '감쇠 상태', value: kind, wide: true, color: z < .999 ? '#6f9fc4' : (z < 1.001 ? '#7fb894' : '#ffb020') }
       ];
     },
 
@@ -96,8 +96,8 @@
       const z = zeta(p), wnv = wn(p);
 
       // 천장
-      D.line(ctx, cx - 130, top, cx + 90, top, { color: 'rgba(147,162,196,.5)', width: 3 });
-      for (let i = 0; i < 11; i++) D.line(ctx, cx - 128 + i * 20, top, cx - 138 + i * 20, top - 10, { color: 'rgba(147,162,196,.25)' });
+      D.line(ctx, cx - 130, top, cx + 90, top, { color: 'rgba(167,170,176,.5)', width: 3 });
+      for (let i = 0; i < 11; i++) D.line(ctx, cx - 128 + i * 20, top, cx - 138 + i * 20, top - 10, { color: 'rgba(167,170,176,.25)' });
 
       // 스프링 · 대시포트
       const bh = 34 + p.m * 2.4, bw = 78 + p.m * 2;
@@ -107,8 +107,8 @@
       D.text(ctx, 'c = ' + fmt(p.c, 0), cx + 22, top - 16, { size: 11, color: C.c, align: 'center', bold: hl === 'c' });
 
       // 평형선
-      D.line(ctx, cx - 170, eq, cx + 160, eq, { color: 'rgba(147,162,196,.35)', dash: [6, 6] });
-      D.text(ctx, '평형 위치', cx + 164, eq + 4, { size: 10, color: '#61719a' });
+      D.line(ctx, cx - 170, eq, cx + 160, eq, { color: 'rgba(167,170,176,.35)', dash: [6, 6] });
+      D.text(ctx, '평형 위치', cx + 164, eq + 4, { size: 10, color: '#6a6e78' });
 
       // 초기 변위 기준선
       const hotX0 = hl === 'x0';
@@ -120,10 +120,10 @@
       if (hl === 'm') { ctx.shadowColor = C.m; ctx.shadowBlur = 22; }
       D.roundRect(ctx, cx - bw / 2, by - bh / 2, bw, bh, 7);
       const g = ctx.createLinearGradient(0, by - bh / 2, 0, by + bh / 2);
-      g.addColorStop(0, hl === 'm' ? '#f9a8d4' : '#8ba4d8'); g.addColorStop(1, hl === 'm' ? '#be5a92' : '#4a6ba8');
+      g.addColorStop(0, hl === 'm' ? '#cfa2b2' : '#8a95a8'); g.addColorStop(1, hl === 'm' ? '#a06a86' : '#5a7a96');
       ctx.fillStyle = g; ctx.fill();
       ctx.restore();
-      D.text(ctx, fmt(p.m, 1) + ' kg', cx, by + 4, { size: 12, color: '#0a1120', align: 'center', bold: true });
+      D.text(ctx, fmt(p.m, 1) + ' kg', cx, by + 4, { size: 12, color: '#0a0b0c', align: 'center', bold: true });
 
       // 변위 치수선
       D.dim(ctx, cx - bw / 2 - 26, eq, cx - bw / 2 - 26, by, 'x = ' + fmt(st.x, 3), C.x, hl === 'x');
@@ -132,16 +132,16 @@
       const gx = w - 210, gy = 60, gw = 170;
       D.text(ctx, '감쇠비 ζ = ' + fmt(z, 3), gx, gy - 10, { size: 12, color: hl === 'z' ? '#fff' : C.z, bold: hl === 'z' });
       D.roundRect(ctx, gx, gy, gw, 9, 4); ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fill();
-      ['#60a5fa', '#34d399', '#fbbf24'].forEach((col, i) => {
+      ['#6f9fc4', '#7fb894', '#ffb020'].forEach((col, i) => {
         ctx.fillStyle = col; ctx.globalAlpha = .35;
         ctx.fillRect(gx + gw * (i === 0 ? 0 : i === 1 ? .48 : .52), gy, gw * (i === 0 ? .48 : i === 1 ? .04 : .48), 9);
         ctx.globalAlpha = 1;
       });
       const zp = gx + gw * clamp(z / 2, 0, 1);   // 게이지는 ζ = 0 ~ 2, 가운데가 ζ = 1
       D.line(ctx, zp, gy - 5, zp, gy + 14, { color: '#fff', width: 2, hot: hl === 'z' });
-      D.text(ctx, '부족감쇠', gx, gy + 26, { size: 9.5, color: '#60a5fa' });
-      D.text(ctx, 'ζ=1', gx + gw * .5, gy + 26, { size: 9.5, color: '#34d399', align: 'center' });
-      D.text(ctx, '과감쇠', gx + gw, gy + 26, { size: 9.5, color: '#fbbf24', align: 'right' });
+      D.text(ctx, '부족감쇠', gx, gy + 26, { size: 9.5, color: '#6f9fc4' });
+      D.text(ctx, 'ζ=1', gx + gw * .5, gy + 26, { size: 9.5, color: '#7fb894', align: 'center' });
+      D.text(ctx, '과감쇠', gx + gw, gy + 26, { size: 9.5, color: '#ffb020', align: 'right' });
 
       // 요약
       D.text(ctx, 'ωₙ = ' + fmt(wnv, 2) + ' rad/s   (fₙ = ' + fmt(wnv / 6.2832, 2) + ' Hz)', gx, gy + 56,

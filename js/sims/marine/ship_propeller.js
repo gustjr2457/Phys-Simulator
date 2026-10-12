@@ -6,8 +6,8 @@
    캐비테이션. 그 기포가 터지며 금속을 깎아 내는 것이 프로펠러 설계의 최대 적이다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { n: '#fb7185', Dp: '#5eead4', Va: '#60a5fa', hs: '#a78bfa',
-              J: '#fbbf24', T: '#f472b6', eta: '#34d399', sig: '#fb923c' };
+  const C = { n: '#c4705f', Dp: '#68b8b0', Va: '#6f9fc4', hs: '#a98cc4',
+              J: '#ffb020', T: '#c08098', eta: '#7fb894', sig: '#d1824a' };
   const RHO = 1025, PATM = 101325, PVAP = 2340, G = 9.81, KN = .5144;
 
   const nrps = p => p.n / 60;
@@ -65,7 +65,7 @@
       title: '프로펠러 성능 곡선 (전진비 J에 대하여)', xKey: 'Jx', xUnit: '', xMin: 0, xMax: 1.1, y0: 0,
       series: [
         { key: 'kt', label: 'K_T ×10', color: C.T },
-        { key: 'kq', label: 'K_Q ×100', color: '#a78bfa' },
+        { key: 'kq', label: 'K_Q ×100', color: '#a98cc4' },
         { key: 'ef', label: '효율 η₀', color: C.eta }
       ]
     }],
@@ -83,19 +83,19 @@
       return [
         { label: '전진비 J', value: J, unit: '', color: C.J, dec: 3 },
         { label: '추력계수 K_T', value: ktOf(p), unit: '', color: C.T, dec: 4 },
-        { label: '토크계수 K_Q', value: kqOf(p), unit: '', dec: 4, color: '#a78bfa' },
+        { label: '토크계수 K_Q', value: kqOf(p), unit: '', dec: 4, color: '#a98cc4' },
         { label: '추력 T', value: T / 1000, unit: 'kN', color: C.T, dec: 1 },
-        { label: '토크 Q', value: Q / 1000, unit: 'kN·m', dec: 1, color: '#a78bfa' },
-        { label: '전달 동력', value: Pd / 1e6, unit: 'MW', dec: 2, color: '#fbbf24' },
+        { label: '토크 Q', value: Q / 1000, unit: 'kN·m', dec: 1, color: '#a98cc4' },
+        { label: '전달 동력', value: Pd / 1e6, unit: 'MW', dec: 2, color: '#ffb020' },
         { label: '프로펠러 효율 η₀', value: e * 100, unit: '%', color: C.eta, dec: 1 },
         { label: '날개 0.7R 지점 속도', value: tip, unit: 'm/s', dec: 1, color: C.n },
         { label: '캐비테이션 수 σ', value: sig, unit: '', color: C.sig, dec: 3 },
         { label: '추력 하중 τ', value: tau, unit: '', dec: 4, color: C.sig },
-        { label: '캐비테이션 한계 τ_c', value: tc, unit: '', dec: 4, color: '#fb7185' },
-        { label: '캐비테이션', wide: true, color: cavit(p) ? '#fb7185' : (tau > tc * .8 ? '#fbbf24' : '#34d399'),
+        { label: '캐비테이션 한계 τ_c', value: tc, unit: '', dec: 4, color: '#c4705f' },
+        { label: '캐비테이션', wide: true, color: cavit(p) ? '#c4705f' : (tau > tc * .8 ? '#ffb020' : '#7fb894'),
           value: cavit(p) ? '발생! 날개 뒷면에서 물이 끓는다 — 침식·소음·추력 손실' :
                  (tau > tc * .8 ? '한계 근처 — 조금만 더 올리면 발생' : '없음 (안전)') },
-        { label: '운전 영역', wide: true, color: J < .3 ? '#fbbf24' : (J > .9 ? '#fb7185' : '#34d399'),
+        { label: '운전 영역', wide: true, color: J < .3 ? '#ffb020' : (J > .9 ? '#c4705f' : '#7fb894'),
           value: J < .3 ? '과부하 — 물만 휘젓는다 (예인·저속)' :
                  (J > .9 ? '공회전에 가깝다 — 추력이 거의 없다' : '정상 운전 영역') }
       ];
@@ -144,10 +144,10 @@
 
       /* ── 물 ── */
       const sea = 46;
-      ctx.save(); ctx.fillStyle = 'rgba(37,99,164,.10)';
+      ctx.save(); ctx.fillStyle = 'rgba(61,100,140,.10)';
       ctx.fillRect(0, sea, w, h - sea); ctx.restore();
-      D.line(ctx, 0, sea, w, sea, { color: 'rgba(125,190,255,.5)', width: 2 });
-      D.text(ctx, '수면', 12, sea - 7, { size: 10, color: 'rgba(125,190,255,.8)' });
+      D.line(ctx, 0, sea, w, sea, { color: 'rgba(160,190,220,.5)', width: 2 });
+      D.text(ctx, '수면', 12, sea - 7, { size: 10, color: 'rgba(160,190,220,.8)' });
 
       /* ── 프로펠러 (뒤에서 본 모습) ── */
       // 축이 깊어도 아래 캐비테이션 선도(h−110부터)를 침범하지 않도록 축척을 잡는다
@@ -167,8 +167,8 @@
         ctx.quadraticCurveTo(R * .55, -R * .42, R * .96, -R * .12);
         ctx.quadraticCurveTo(R * .72, R * .22, 0, 5);
         ctx.closePath();
-        ctx.fillStyle = 'rgba(200,211,239,.45)'; ctx.fill();
-        ctx.strokeStyle = hl === 'Dp' ? '#5eead4' : '#c8d3ef'; ctx.lineWidth = 1.6; ctx.stroke();
+        ctx.fillStyle = 'rgba(207,214,232,.45)'; ctx.fill();
+        ctx.strokeStyle = hl === 'Dp' ? '#68b8b0' : '#c8cad2'; ctx.lineWidth = 1.6; ctx.stroke();
         // 캐비테이션 기포 (날개 뒷면)
         if (cav) {
           const amt = clamp((tauOf(p) / tauCrit(p) - 1) * 2.2, .1, 1);
@@ -184,7 +184,7 @@
       }
       ctx.restore();
       ctx.save(); if (hl === 'n') { ctx.shadowColor = C.n; ctx.shadowBlur = 16; }
-      D.dot(ctx, cx, cy, 8, '#8aa0c8', true); ctx.restore();
+      D.dot(ctx, cx, cy, 8, '#96a3bc', true); ctx.restore();
       D.dim(ctx, cx - R, cy + R + 22, cx + R, cy + R + 22, 'D = ' + fmt(p.Dp, 2) + ' m', C.Dp, hl === 'Dp');
       // 회전 방향
       ctx.save(); ctx.strokeStyle = C.n; ctx.lineWidth = 2;
@@ -195,7 +195,7 @@
       for (let k = -2; k <= 2; k++) {
         const yy = cy + k * R * .4;
         const u = (st.t * .6 + (k + 2) * .2) % 1;
-        D.arrow(ctx, cx - R - 70 + u * 30, yy, 22, 0, { color: 'rgba(96,165,250,.6)', width: 2, head: 6 });
+        D.arrow(ctx, cx - R - 70 + u * 30, yy, 22, 0, { color: 'rgba(135,169,211,.6)', width: 2, head: 6 });
       }
       D.text(ctx, 'V_a = ' + fmt(p.Va, 1) + ' kn', cx - R - 56, cy + R + 6,
         { size: 10.5, color: hl === 'Va' ? '#fff' : C.Va, align: 'center', bold: hl === 'Va' });
@@ -203,18 +203,18 @@
       D.arrow(ctx, cx + R + 16, cy, clamp(18 + T / 1e5, 18, 70), 0,
         { color: C.T, width: 4, head: 10, hot: hl === 'T' });
       D.tag(ctx, 'T = ' + fmt(T / 1000, 0) + ' kN', cx + R + 60, cy - 24, C.T, hl === 'T');
-      if (cav) D.tag(ctx, '캐비테이션 발생 — 침식·소음·추력 손실', cx, cy + R + 50, '#fb7185', true);
+      if (cav) D.tag(ctx, '캐비테이션 발생 — 침식·소음·추력 손실', cx, cy + R + 50, '#c4705f', true);
 
       /* ── 성능 곡선 ── */
       const gx = Math.min(w - 280, cx + R + 110), gy = sea + 24;
       const gw = Math.min(w - gx - 44, 250), gh = Math.min(h * .40, 170);
       if (gw > 150) {
         D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-        D.text(ctx, '성능 곡선 (전진비 J)', gx + 4, gy - 8, { size: 10.5, color: '#61719a' });
+        D.text(ctx, '성능 곡선 (전진비 J)', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
         const GX = j => gx + gw * clamp(j / 1.1, 0, 1);
         const GY = v => gy + gh - clamp(v, 0, 1) * (gh - 6) - 3;
         [[(j) => Math.max(0, .42 - .38 * j) * 2, C.T, 'K_T'],
-         [(j) => Math.max(1e-4, .055 - .042 * j) * 14, '#a78bfa', 'K_Q'],
+         [(j) => Math.max(1e-4, .055 - .042 * j) * 14, '#a98cc4', 'K_Q'],
          [(j) => { const kt = Math.max(0, .42 - .38 * j), kq = Math.max(1e-4, .055 - .042 * j); return clamp(j * kt / (2 * Math.PI * kq), 0, 1); }, C.eta, 'η₀']
         ].forEach(([fn, cc, lab]) => {
           ctx.save(); ctx.strokeStyle = cc; ctx.lineWidth = 2; ctx.beginPath();
@@ -234,21 +234,21 @@
       /* ── 캐비테이션 선도 ── */
       const bx = 48, by = h - 76, bw = Math.min(w - 96, 440);
       D.text(ctx, '캐비테이션 선도 — 추력 하중 τ 가 한계 τ_c 를 넘으면 발생', bx, by - 10,
-        { size: 10.5, color: '#61719a' });
+        { size: 10.5, color: '#6a6e78' });
       D.roundRect(ctx, bx, by, bw, 13, 6); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       const tc = tauCrit(p), tau = tauOf(p);
       const MAXT = Math.max(tc * 2.2, tau * 1.2);
-      ctx.fillStyle = 'rgba(52,211,153,.25)'; ctx.fillRect(bx, by, bw * clamp(tc / MAXT, 0, 1), 13);
-      ctx.fillStyle = 'rgba(251,113,133,.25)';
+      ctx.fillStyle = 'rgba(82,181,145,.25)'; ctx.fillRect(bx, by, bw * clamp(tc / MAXT, 0, 1), 13);
+      ctx.fillStyle = 'rgba(216,148,158,.25)';
       ctx.fillRect(bx + bw * clamp(tc / MAXT, 0, 1), by, bw * (1 - clamp(tc / MAXT, 0, 1)), 13);
       D.line(ctx, bx + bw * clamp(tc / MAXT, 0, 1), by - 6, bx + bw * clamp(tc / MAXT, 0, 1), by + 19,
         { color: '#fff', width: 2 });
       D.text(ctx, 'τ_c = ' + fmt(tc, 3), bx + bw * clamp(tc / MAXT, 0, 1), by + 32,
-        { size: 9, color: '#e8eefc', align: 'center' });
-      ctx.save(); ctx.shadowColor = cav ? '#fb7185' : '#34d399'; ctx.shadowBlur = 12;
-      D.dot(ctx, bx + bw * clamp(tau / MAXT, 0, 1), by + 6.5, 6, cav ? '#fb7185' : '#34d399', true); ctx.restore();
-      D.text(ctx, '안전', bx + 6, by + 10, { size: 9, color: 'rgba(52,211,153,.9)' });
-      D.text(ctx, '캐비테이션', bx + bw - 6, by + 10, { size: 9, color: 'rgba(251,113,133,.9)', align: 'right' });
+        { size: 9, color: '#e6e7ea', align: 'center' });
+      ctx.save(); ctx.shadowColor = cav ? '#c4705f' : '#7fb894'; ctx.shadowBlur = 12;
+      D.dot(ctx, bx + bw * clamp(tau / MAXT, 0, 1), by + 6.5, 6, cav ? '#c4705f' : '#7fb894', true); ctx.restore();
+      D.text(ctx, '안전', bx + 6, by + 10, { size: 9, color: 'rgba(82,181,145,.9)' });
+      D.text(ctx, '캐비테이션', bx + bw - 6, by + 10, { size: 9, color: 'rgba(216,148,158,.9)', align: 'right' });
       D.text(ctx, 'σ = ' + fmt(sigOf(p), 3) + '   ·   τ = ' + fmt(tau, 4),
         bx, by + 34, { size: 11, color: hl === 'sig' ? '#fff' : C.sig });
     }

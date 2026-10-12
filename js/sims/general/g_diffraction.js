@@ -6,7 +6,7 @@
    망원경의 분해능 한계도, 전파가 건물 뒤로 돌아 들어가는 것도 전부 이 식이다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { a: '#5eead4', lam: '#fbbf24', Ls: '#93a2c4', th: '#f472b6', wid: '#fb7185' };
+  const C = { a: '#68b8b0', lam: '#ffb020', Ls: '#9a9da6', th: '#c08098', wid: '#c4705f' };
 
   const ratio = p => (p.lam * 1e-9) / (p.a * 1e-6);              // λ/a
   const th1 = p => { const r = ratio(p); return r >= 1 ? Math.PI / 2 : Math.asin(r); };   // 첫 어두운 무늬 각
@@ -77,17 +77,17 @@
         { label: '첫 어두운 무늬 각 θ₁', value: spread ? 90 : th1(p) * 180 / Math.PI, unit: '°', color: C.th, dec: 2 },
         { label: '중앙 무늬 폭 W', value: isFinite(W) ? W * 1000 : Infinity, unit: 'mm', color: C.wid, dec: 2 },
         { label: '슬릿 폭은 파장의 몇 배', value: 1 / r, unit: '배', dec: 1, color: C.a },
-        { label: '보이는 어두운 무늬 개수 (한쪽)', value: spread ? 0 : Math.floor(1 / r), unit: '개', dec: 0, color: '#93a2c4' },
+        { label: '보이는 어두운 무늬 개수 (한쪽)', value: spread ? 0 : Math.floor(1 / r), unit: '개', dec: 0, color: '#9a9da6' },
         { label: '중앙 무늬에 들어오는 빛', value: 90.3, unit: '%', dec: 1, color: C.lam },
-        { label: '첫 번째 곁무늬의 밝기', value: 4.7, unit: '%', dec: 1, color: '#93a2c4' },
-        { label: '회절 정도', wide: true, color: spread ? '#fb7185' : (r > .05 ? '#fbbf24' : '#34d399'),
+        { label: '첫 번째 곁무늬의 밝기', value: 4.7, unit: '%', dec: 1, color: '#9a9da6' },
+        { label: '회절 정도', wide: true, color: spread ? '#c4705f' : (r > .05 ? '#ffb020' : '#7fb894'),
           value: spread ? '모든 방향으로 퍼진다 — 슬릿이 파장보다 좁아 "직진"이 의미 없다' :
                  (r > .05 ? '뚜렷하게 퍼진다 — 파동성이 눈에 보인다' :
                   (r > .005 ? '약간 퍼진다' : '거의 직진 — 기하광학 근사가 잘 맞는다')) },
         { label: '같은 슬릿에 붉은빛(700 nm)이면 W', value: isFinite(W) ? 2 * p.Ls * Math.tan(Math.asin(Math.min(.999, 700e-9 / (p.a * 1e-6)))) * 1000 : Infinity,
-          unit: 'mm', dec: 2, color: '#fb7185' },
+          unit: 'mm', dec: 2, color: '#c4705f' },
         { label: '같은 슬릿에 보랏빛(400 nm)이면 W', value: 2 * p.Ls * Math.tan(Math.asin(Math.min(.999, 400e-9 / (p.a * 1e-6)))) * 1000,
-          unit: 'mm', dec: 2, color: '#a78bfa' }
+          unit: 'mm', dec: 2, color: '#a98cc4' }
       ];
     },
 
@@ -151,7 +151,7 @@
 
       /* ── 슬릿 ── */
       const slitPx = clamp(p.a * .9, 2.5, 52);
-      ctx.fillStyle = 'rgba(147,162,196,.65)';
+      ctx.fillStyle = 'rgba(167,170,176,.65)';
       ctx.fillRect(sx - 4, cy - 110, 8, 110 - slitPx / 2);
       ctx.fillRect(sx - 4, cy + slitPx / 2, 8, 110 - slitPx / 2);
       ctx.save(); if (hl === 'a') { ctx.shadowColor = C.a; ctx.shadowBlur = 14; }
@@ -187,12 +187,12 @@
           { size: 11, color: hl === 'th' ? '#fff' : C.th, bold: true });
       } else {
         D.text(ctx, '어두운 무늬가 없다 — 모든 방향으로 퍼진다', sx + 14, cy - 92,
-          { size: 11, color: '#fb7185', bold: true });
+          { size: 11, color: '#c4705f', bold: true });
       }
 
       /* ── 스크린 ── */
       const scH = Math.min(h * .52, 230);
-      D.line(ctx, scrX, cy - scH / 2, scrX, cy + scH / 2, { color: 'rgba(200,211,239,.5)', width: 3 });
+      D.line(ctx, scrX, cy - scH / 2, scrX, cy + scH / 2, { color: 'rgba(207,214,232,.5)', width: 3 });
       const halfM = Math.min(isFinite(W) ? W * 1.9 : p.Ls * 2, p.Ls * 2);   // 표시하는 스크린 반폭 [m]
       const PY = y => cy + y / halfM * (scH / 2);
       for (let i = 0; i <= 120; i++) {
@@ -201,7 +201,7 @@
         ctx.fillStyle = rgbS(clamp(Math.pow(I, .55), 0, 1) * .95);
         ctx.fillRect(scrX + 3, PY(y) - scH / 240 - .5, 16, scH / 120 + 1);
       }
-      D.text(ctx, '스크린', scrX + 11, cy - scH / 2 - 10, { size: 10.5, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '스크린', scrX + 11, cy - scH / 2 - 10, { size: 10.5, color: '#9a9da6', align: 'center' });
       if (isFinite(W)) {
         D.dim(ctx, scrX + 26, PY(-W / 2), scrX + 26, PY(W / 2),
           'W = ' + fmt(W * 1000, 1) + ' mm', C.wid, hl === 'wid');
@@ -211,7 +211,7 @@
       /* ── 세기 곡선 ── */
       const gx = 48, gy = h - 122, gw = Math.min(w - 96, 480), gh = 86;
       D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-      D.text(ctx, '세기 분포 I(θ) = (sin β / β)²  — 중앙 봉우리에 90.3%', gx + 4, gy - 8, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '세기 분포 I(θ) = (sin β / β)²  — 중앙 봉우리에 90.3%', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
       ctx.save();
       ctx.strokeStyle = rgbS(.95); ctx.lineWidth = 2.2;
       if (hl === 'lam') { ctx.shadowColor = rgbS(1); ctx.shadowBlur = 12; }

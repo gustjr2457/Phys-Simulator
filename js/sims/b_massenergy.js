@@ -6,15 +6,15 @@
    (물리학Ⅰ '질량과 에너지' 단원) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { rxn: '#fbbf24', lgm: '#5eead4', E: '#fb7185', dm: '#a78bfa' };
+  const C = { rxn: '#ffb020', lgm: '#68b8b0', E: '#c4705f', dm: '#a98cc4' };
   const CC = 2.99792458e8, C2 = CC * CC;
 
   const RXN = [
-    { n: '석탄 연소 (화학)', eta: 3.56e-10, c: '#93a2c4', d: '탄소 원자끼리 결합을 바꿀 뿐 — 원자핵은 그대로' },
-    { n: '핵분열 (우라늄-235)', eta: 9.1e-4, c: '#5eead4', d: '무거운 핵이 쪼개지며 결합에너지 차이가 풀려난다' },
-    { n: '핵융합 (중수소-삼중수소)', eta: 3.75e-3, c: '#fbbf24', d: '가벼운 핵이 합쳐진다 — 같은 질량으로 핵분열의 4배' },
-    { n: '태양의 수소 연소 (p-p)', eta: 7.0e-3, c: '#fb923c', d: '수소 4개가 헬륨 1개로 — 질량의 0.7%가 빛이 된다' },
-    { n: '반물질 소멸', eta: 1, c: '#f472b6', d: '질량이 통째로 에너지가 된다 — 이론상 최대' }
+    { n: '석탄 연소 (화학)', eta: 3.56e-10, c: '#9a9da6', d: '탄소 원자끼리 결합을 바꿀 뿐 — 원자핵은 그대로' },
+    { n: '핵분열 (우라늄-235)', eta: 9.1e-4, c: '#68b8b0', d: '무거운 핵이 쪼개지며 결합에너지 차이가 풀려난다' },
+    { n: '핵융합 (중수소-삼중수소)', eta: 3.75e-3, c: '#ffb020', d: '가벼운 핵이 합쳐진다 — 같은 질량으로 핵분열의 4배' },
+    { n: '태양의 수소 연소 (p-p)', eta: 7.0e-3, c: '#d1824a', d: '수소 4개가 헬륨 1개로 — 질량의 0.7%가 빛이 된다' },
+    { n: '반물질 소멸', eta: 1, c: '#c08098', d: '질량이 통째로 에너지가 된다 — 이론상 최대' }
   ];
   const rOf = p => RXN[clamp(Math.round(p.rxn), 0, RXN.length - 1)];
   const massOf = p => Math.pow(10, p.lgm);                 // kg
@@ -68,10 +68,10 @@
         { label: '사라지는 질량 Δm', value: dm * 1e6, unit: 'mg', color: C.dm, dec: dm * 1e6 < 1 ? 6 : 3 },
         { label: '나오는 에너지 E', value: E, unit: 'J', color: C.E, dec: 0 },
         { label: '전력량으로', value: kwh, unit: 'kWh', dec: kwh > 1000 ? 0 : 2, color: C.E },
-        { label: 'TNT 환산', value: tnt, unit: '톤', dec: tnt > 100 ? 0 : 3, color: '#fb923c' },
-        { label: '4인 가구 몇 년치 전기 (연 3,500 kWh)', value: kwh / 3500, unit: '년', dec: 1, color: '#34d399' },
-        { label: '0 °C 물을 끓일 수 있는 양', value: E / (4186 * 100 + 2.26e6) / 1000, unit: '톤', dec: 2, color: '#60a5fa' },
-        { label: '같은 질량의 석탄 대비', value: r.eta / RXN[0].eta, unit: '배', dec: 0, color: '#fbbf24' },
+        { label: 'TNT 환산', value: tnt, unit: '톤', dec: tnt > 100 ? 0 : 3, color: '#d1824a' },
+        { label: '4인 가구 몇 년치 전기 (연 3,500 kWh)', value: kwh / 3500, unit: '년', dec: 1, color: '#7fb894' },
+        { label: '0 °C 물을 끓일 수 있는 양', value: E / (4186 * 100 + 2.26e6) / 1000, unit: '톤', dec: 2, color: '#6f9fc4' },
+        { label: '같은 질량의 석탄 대비', value: r.eta / RXN[0].eta, unit: '배', dec: 0, color: '#ffb020' },
         { label: '이 반응은', value: r.d, wide: true, color: r.c }
       ];
     },
@@ -120,13 +120,13 @@
       /* ── 저울: 반응 전 / 반응 후 ── */
       const cy = h * .30, bx = 86;
       const frac = r.eta * st.prog;
-      D.text(ctx, '반응 전', bx, cy - 76, { size: 11, color: '#93a2c4', align: 'center' });
-      D.text(ctx, '반응 후', bx + 170, cy - 76, { size: 11, color: '#93a2c4', align: 'center' });
-      [[0, 1, '#93a2c4'], [170, 1 - frac, r.c]].forEach(([off, mm, cc]) => {
+      D.text(ctx, '반응 전', bx, cy - 76, { size: 11, color: '#9a9da6', align: 'center' });
+      D.text(ctx, '반응 후', bx + 170, cy - 76, { size: 11, color: '#9a9da6', align: 'center' });
+      [[0, 1, '#9a9da6'], [170, 1 - frac, r.c]].forEach(([off, mm, cc]) => {
         const bw = 64, bh = 48;
         // 저울 접시
-        D.line(ctx, bx + off - 44, cy + 34, bx + off + 44, cy + 34, { color: 'rgba(147,162,196,.6)', width: 3 });
-        D.line(ctx, bx + off, cy + 34, bx + off, cy + 52, { color: 'rgba(147,162,196,.4)', width: 2 });
+        D.line(ctx, bx + off - 44, cy + 34, bx + off + 44, cy + 34, { color: 'rgba(167,170,176,.6)', width: 3 });
+        D.line(ctx, bx + off, cy + 34, bx + off, cy + 52, { color: 'rgba(167,170,176,.4)', width: 2 });
         ctx.save();
         if (hl === 'lgm' || (off && hl === 'dm')) { ctx.shadowColor = cc; ctx.shadowBlur = 16; }
         D.roundRect(ctx, bx + off - bw / 2, cy + 34 - bh, bw, bh, 5);
@@ -134,7 +134,7 @@
         ctx.strokeStyle = cc; ctx.globalAlpha = 1; ctx.lineWidth = 2; ctx.stroke();
         ctx.restore();
         D.text(ctx, fmt(m * mm, m < 1 ? 4 : 3) + ' kg', bx + off, cy + 12,
-          { size: 11.5, color: '#e8eefc', align: 'center', bold: true });
+          { size: 11.5, color: '#e6e7ea', align: 'center', bold: true });
       });
       // 사라진 질량
       D.arrow(ctx, bx + 52, cy + 10, 62, 0, { color: C.dm, width: 2.6, head: 8, hot: hl === 'dm' });
@@ -148,11 +148,11 @@
       if (st.prog > .02) {
         ctx.save();
         const g = ctx.createRadialGradient(ex, cy, 0, ex, cy, 56);
-        g.addColorStop(0, 'rgba(255,240,200,' + (.75 * st.prog) + ')');
-        g.addColorStop(.5, 'rgba(251,146,60,' + (.4 * st.prog) + ')');
-        g.addColorStop(1, 'rgba(251,113,133,0)');
+        g.addColorStop(0, 'rgba(248,237,207,' + (.75 * st.prog) + ')');
+        g.addColorStop(.5, 'rgba(230,148,81,' + (.4 * st.prog) + ')');
+        g.addColorStop(1, 'rgba(216,148,158,0)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ex, cy, 56, 0, 7); ctx.fill();
-        ctx.strokeStyle = 'rgba(255,220,150,' + (.5 * st.prog) + ')'; ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(242,216,163,' + (.5 * st.prog) + ')'; ctx.lineWidth = 2;
         for (let k = 0; k < 10; k++) {
           const a = k * Math.PI / 5 + st.t * .7;
           ctx.beginPath();
@@ -167,10 +167,10 @@
 
       /* ── 반응별 변환율 비교 ── */
       const lx = 48, ly = h - 150, lw = Math.min(w - 96, 480);
-      D.text(ctx, '반응별 질량→에너지 변환율 (로그 눈금)', lx, ly - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '반응별 질량→에너지 변환율 (로그 눈금)', lx, ly - 10, { size: 10.5, color: '#6a6e78' });
       const LO = Math.log10(1e-10), HI = 0;
       const LX = e => lx + lw * clamp((Math.log10(e) - LO) / (HI - LO), 0, 1);
-      D.line(ctx, lx, ly + 16, lx + lw, ly + 16, { color: 'rgba(147,162,196,.25)', width: 2 });
+      D.line(ctx, lx, ly + 16, lx + lw, ly + 16, { color: 'rgba(167,170,176,.25)', width: 2 });
       RXN.forEach((rr, i) => {
         const on = rr === r;
         ctx.save(); if (on) { ctx.shadowColor = rr.c; ctx.shadowBlur = 14; }
@@ -178,16 +178,16 @@
           { color: rr.c, width: on ? 3.4 : 1.8 });
         ctx.restore();
         D.text(ctx, rr.n.split(' ')[0], LX(rr.eta), ly + (i % 2 ? 42 : 30),
-          { size: 8.5, color: on ? rr.c : '#4b5a80', align: 'center', bold: on });
+          { size: 8.5, color: on ? rr.c : '#4a4d55', align: 'center', bold: on });
       });
-      D.text(ctx, '10⁻¹⁰', lx, ly + 58, { size: 9, color: '#4b5a80' });
-      D.text(ctx, '100% (반물질)', lx + lw, ly + 58, { size: 9, color: '#4b5a80', align: 'right' });
+      D.text(ctx, '10⁻¹⁰', lx, ly + 58, { size: 9, color: '#4a4d55' });
+      D.text(ctx, '100% (반물질)', lx + lw, ly + 58, { size: 9, color: '#4a4d55', align: 'right' });
 
       /* ── 에너지 크기 비교 ── */
       const qy = h - 62;
       const MARKS = [[3.6e6, '1 kWh'], [1.3e8, '휘발유 1 L'], [4.184e9, 'TNT 1톤'],
                      [6.3e13, '히로시마 원폭'], [1.26e16, '서울 1년 전력']];
-      D.text(ctx, '이 에너지는 얼마나 큰가', lx, qy - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '이 에너지는 얼마나 큰가', lx, qy - 10, { size: 10.5, color: '#6a6e78' });
       const QLO = Math.log10(1e5), QHI = Math.log10(1e18);
       const QX = e => lx + lw * clamp((Math.log10(Math.max(e, 1e5)) - QLO) / (QHI - QLO), 0, 1);
       D.roundRect(ctx, lx, qy, lw, 10, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
@@ -195,8 +195,8 @@
       ctx.fillStyle = C.E; ctx.globalAlpha = .7;
       ctx.fillRect(lx, qy, QX(E) - lx, 10); ctx.restore();
       MARKS.forEach(([e, lab], i) => {
-        D.line(ctx, QX(e), qy - 4, QX(e), qy + 14, { color: 'rgba(147,162,196,.45)', width: 1.2 });
-        D.text(ctx, lab, QX(e), qy + (i % 2 ? 36 : 26), { size: 8.5, color: '#93a2c4', align: 'center' });
+        D.line(ctx, QX(e), qy - 4, QX(e), qy + 14, { color: 'rgba(167,170,176,.45)', width: 1.2 });
+        D.text(ctx, lab, QX(e), qy + (i % 2 ? 36 : 26), { size: 8.5, color: '#9a9da6', align: 'center' });
       });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.dot(ctx, QX(E), qy + 5, 5.5, '#fff', true); ctx.restore();

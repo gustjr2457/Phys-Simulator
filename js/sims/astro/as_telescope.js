@@ -6,7 +6,7 @@
    (시상)이 그 한계보다 먼저 가로막는다 — 허블을 우주로 올린 이유다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { lgD: '#5eead4', lam: '#fbbf24', lgsep: '#f472b6', seeing: '#fb7185', th: '#a78bfa' };
+  const C = { lgD: '#68b8b0', lam: '#ffb020', lgsep: '#c08098', seeing: '#c4705f', th: '#a98cc4' };
   const ARC = 206265;                     // 1 rad [arcsec]
   const EYE = .007;                       // 사람 눈 동공 7 mm
 
@@ -78,14 +78,14 @@
         { label: '회절 한계 (밀리초각)', value: td * 1000, unit: 'mas', color: C.th, dec: 1 },
         { label: '유효 분해능 (대기 포함)', value: te, unit: '″', color: C.seeing, dec: te < .1 ? 4 : 3 },
         { label: '두 별의 각거리', value: sep, unit: '″', color: C.lgsep, dec: sep < .1 ? 4 : 3 },
-        { label: '집광력 (사람 눈 대비)', value: gather(p), unit: '배', dec: 0, color: '#fbbf24' },
-        { label: '한계 등급 (대략)', value: 6 + 2.5 * Math.log10(gather(p)), unit: '등급', dec: 1, color: '#fbbf24' },
-        { label: '무엇이 한계인가', wide: true, color: limited ? '#fb7185' : '#34d399',
+        { label: '집광력 (사람 눈 대비)', value: gather(p), unit: '배', dec: 0, color: '#ffb020' },
+        { label: '한계 등급 (대략)', value: 6 + 2.5 * Math.log10(gather(p)), unit: '등급', dec: 1, color: '#ffb020' },
+        { label: '무엇이 한계인가', wide: true, color: limited ? '#c4705f' : '#7fb894',
           value: limited ? '대기(시상)가 한계 — 구경을 더 키워도 소용없다' : '회절이 한계 — 구경을 키우면 좋아진다' },
-        { label: '분해 결과', wide: true, color: resolved(p) ? '#34d399' : '#fb7185',
+        { label: '분해 결과', wide: true, color: resolved(p) ? '#7fb894' : '#c4705f',
           value: resolved(p) ? '✔ 두 별로 보인다' : '✘ 하나로 뭉쳐 보인다' },
-        { label: '달 표면에서 구분 가능한 크기', value: te / ARC * 3.844e8, unit: 'm', dec: 0, color: '#93a2c4' },
-        { label: '1 pc 거리에서 구분 가능한 크기', value: te, unit: 'AU', dec: 3, color: '#93a2c4' }
+        { label: '달 표면에서 구분 가능한 크기', value: te / ARC * 3.844e8, unit: 'm', dec: 0, color: '#9a9da6' },
+        { label: '1 pc 거리에서 구분 가능한 크기', value: te, unit: 'AU', dec: 3, color: '#9a9da6' }
       ];
     },
 
@@ -137,32 +137,32 @@
       const S = a => a / span * vr;
       ctx.save();
       ctx.beginPath(); ctx.arc(vx, vy, vr, 0, 7);
-      ctx.fillStyle = 'rgba(6,11,24,.9)'; ctx.fill();
-      ctx.strokeStyle = 'rgba(147,162,196,.35)'; ctx.lineWidth = 1.4; ctx.stroke();
+      ctx.fillStyle = 'rgba(14,15,16,.9)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(167,170,176,.35)'; ctx.lineWidth = 1.4; ctx.stroke();
       ctx.clip();
       [-1, 1].forEach(s => {
         const px = vx + S(sep / 2) * s;
         const g = ctx.createRadialGradient(px, vy, 0, px, vy, Math.max(3, S(te * 1.4)));
         g.addColorStop(0, 'rgba(255,255,255,.95)');
-        g.addColorStop(.35, 'rgba(210,228,255,.55)');
-        g.addColorStop(1, 'rgba(160,200,255,0)');
+        g.addColorStop(.35, 'rgba(222,230,243,.55)');
+        g.addColorStop(1, 'rgba(186,204,229,0)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, vy, Math.max(3, S(te * 1.4)), 0, 7); ctx.fill();
         // 시상이 없으면 에어리 고리를 그린다
         if (p.seeing < td * .3) {
-          ctx.strokeStyle = 'rgba(190,215,255,.22)'; ctx.lineWidth = 1;
+          ctx.strokeStyle = 'rgba(208,219,237,.22)'; ctx.lineWidth = 1;
           [1.63, 2.68].forEach(k => { ctx.beginPath(); ctx.arc(px, vy, S(td * k), 0, 7); ctx.stroke(); });
         }
       });
       ctx.restore();
-      D.text(ctx, '망원경으로 본 쌍성', vx, vy - vr - 11, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '망원경으로 본 쌍성', vx, vy - vr - 11, { size: 10.5, color: '#6a6e78', align: 'center' });
       D.text(ctx, ok ? '두 별로 보인다' : '하나로 뭉쳐 보인다', vx, vy + vr + 17,
-        { size: 11.5, color: ok ? '#34d399' : '#fb7185', align: 'center', bold: true });
+        { size: 11.5, color: ok ? '#7fb894' : '#c4705f', align: 'center', bold: true });
 
       /* ── 세기 단면 ── */
       const px0 = Math.min(w * .52, vx + vr + 44), py0 = 56;
       const pw = Math.max(170, w - px0 - 44), phh = Math.min(h * .34, 160);
       D.roundRect(ctx, px0, py0, pw, phh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-      D.text(ctx, '세기 단면 — 두 봉우리가 갈라지는가', px0 + 4, py0 - 9, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '세기 단면 — 두 봉우리가 갈라지는가', px0 + 4, py0 - 9, { size: 10.5, color: '#6a6e78' });
       const PX = a => px0 + pw * (a / (2 * span) + .5);
       const N = 150;
       // 시상이 있으면 가우시안 번짐을 더해 유효 분해능으로 환산한 프로파일을 쓴다
@@ -175,14 +175,14 @@
       const PY = v => py0 + phh - clamp(v / peak, 0, 1) * (phh - 8) - 4;
       // 각 별의 기여
       [-1, 1].forEach(s => {
-        ctx.save(); ctx.strokeStyle = 'rgba(147,162,196,.35)'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]);
+        ctx.save(); ctx.strokeStyle = 'rgba(167,170,176,.35)'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]);
         ctx.beginPath();
         for (let i = 0; i <= N; i++) { const a = -span + 2 * span * i / N; const X = PX(a), Y = PY(prof(a - s * sep / 2)); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
         ctx.stroke(); ctx.restore();
       });
       // 합
       ctx.save();
-      ctx.strokeStyle = ok ? '#34d399' : '#fb7185'; ctx.lineWidth = 2.4;
+      ctx.strokeStyle = ok ? '#7fb894' : '#c4705f'; ctx.lineWidth = 2.4;
       if (hl === 'th') { ctx.shadowColor = C.th; ctx.shadowBlur = 12; }
       ctx.beginPath();
       for (let i = 0; i <= N; i++) { const a = -span + 2 * span * i / N; const X = PX(a), Y = PY(tot(a)); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
@@ -198,13 +198,13 @@
 
       /* ── 망원경 비교 ── */
       const bx = 48, by = h - 112, bw = Math.min(w - 96, 500);
-      D.text(ctx, '구경 비교 — 분해능은 1/D, 집광력은 D²', bx, by - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '구경 비교 — 분해능은 1/D, 집광력은 D²', bx, by - 10, { size: 10.5, color: '#6a6e78' });
       const LO = Math.log10(.005), HI = Math.log10(45);
       const BX = d => bx + bw * clamp((Math.log10(clamp(d, .005, 45)) - LO) / (HI - LO), 0, 1);
-      D.line(ctx, bx, by + 10, bx + bw, by + 10, { color: 'rgba(147,162,196,.25)', width: 2 });
+      D.line(ctx, bx, by + 10, bx + bw, by + 10, { color: 'rgba(167,170,176,.25)', width: 2 });
       SCOPES.forEach(([d, nm], i) => {
-        D.line(ctx, BX(d), by + 5, BX(d), by + 15, { color: 'rgba(147,162,196,.5)', width: 1.4 });
-        D.text(ctx, nm, BX(d), by + (i % 2 ? 28 : -2), { size: 8.5, color: '#93a2c4', align: 'center' });
+        D.line(ctx, BX(d), by + 5, BX(d), by + 15, { color: 'rgba(167,170,176,.5)', width: 1.4 });
+        D.text(ctx, nm, BX(d), by + (i % 2 ? 28 : -2), { size: 8.5, color: '#9a9da6', align: 'center' });
       });
       ctx.save(); ctx.shadowColor = C.lgD; ctx.shadowBlur = 12;
       D.dot(ctx, BX(Dof(p)), by + 10, 6, C.lgD, true); ctx.restore();
@@ -213,13 +213,13 @@
       D.text(ctx, 'λ = ' + fmt(p.lam, 0) + ' nm', bx + 150, by + 48,
         { size: 11, color: hl === 'lam' ? '#fff' : C.lam });
       D.text(ctx, p.seeing > 0 ? '시상 ' + fmt(p.seeing, 2) + '″ (지상)' : '대기 없음 (우주)',
-        bx + 280, by + 48, { size: 11, color: p.seeing > td ? C.seeing : '#34d399' });
+        bx + 280, by + 48, { size: 11, color: p.seeing > td ? C.seeing : '#7fb894' });
       if (p.seeing > td)
         D.text(ctx, '→ 대기가 회절보다 ' + fmt(p.seeing / td, 0) + '배 큰 한계 — 구경을 키워도 소용없다',
           bx, by + 68, { size: 10.5, color: C.seeing });
       else
         D.text(ctx, '→ 회절 한계에 도달 — 구경을 키우면 그만큼 좋아진다',
-          bx, by + 68, { size: 10.5, color: '#34d399' });
+          bx, by + 68, { size: 10.5, color: '#7fb894' });
     }
   });
 })();

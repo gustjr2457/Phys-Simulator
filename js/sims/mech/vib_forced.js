@@ -1,7 +1,7 @@
 /* [기계공학·진동공학] 강제 진동과 공진 — 진폭 배율 M = 1/√((1−r²)² + (2ζr)²) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { F0: '#34d399', f: '#f472b6', fn: '#fbbf24', z: '#fb7185', X: '#60a5fa', r: '#f472b6', M: '#60a5fa', ph: '#a78bfa' };
+  const C = { F0: '#7fb894', f: '#c08098', fn: '#ffb020', z: '#c4705f', X: '#6f9fc4', r: '#c08098', M: '#6f9fc4', ph: '#a98cc4' };
   const M_KG = 2;
 
   const kOf = p => M_KG * Math.pow(2 * Math.PI * p.fn, 2);
@@ -57,8 +57,8 @@
       title: '변위 – 시간', xmin: 4, window: 8,
       series: [
         { key: 'x', label: 'x (m)', color: C.X },
-        { key: 'xp', label: '정상상태 진폭 ±X', color: 'rgba(96,165,250,.45)' },
-        { key: 'xn', label: '', color: 'rgba(96,165,250,.45)' }
+        { key: 'xp', label: '정상상태 진폭 ±X', color: 'rgba(135,169,211,.45)' },
+        { key: 'xn', label: '', color: 'rgba(135,169,211,.45)' }
       ]
     }],
     sample(st, p) {
@@ -76,7 +76,7 @@
         { label: '정적 처짐 F₀/k', value: (p.F0 / k) * 1000, unit: 'mm' },
         { label: '위상차 φ', value: phase(r, p.z) * 180 / Math.PI, unit: '°', color: C.ph },
         { label: '공진 최대 배율 1/2ζ', value: 1 / (2 * p.z), unit: '배', color: C.z },
-        { label: '상태', wide: true, color: Math.abs(r - 1) < .08 ? '#fb7185' : (r < 1 ? '#34d399' : '#60a5fa'),
+        { label: '상태', wide: true, color: Math.abs(r - 1) < .08 ? '#c4705f' : (r < 1 ? '#7fb894' : '#6f9fc4'),
           value: Math.abs(r - 1) < .08 ? '⚠ 공진 영역 — 진폭 급증' : (r < 1 ? '저진동수 영역 (힘과 같은 방향)' : '고진동수 영역 (진동 절연)') }
       ];
     },
@@ -105,12 +105,12 @@
       const eq = top + 150;
       const by = eq + clamp(st.x * PPM, -130, 130);
 
-      D.line(ctx, cx - 90, top, cx + 70, top, { color: 'rgba(147,162,196,.5)', width: 3 });
-      for (let i = 0; i < 8; i++) D.line(ctx, cx - 88 + i * 20, top, cx - 98 + i * 20, top - 10, { color: 'rgba(147,162,196,.25)' });
-      D.spring(ctx, cx - 34, top, cx - 34, by - 20, { coils: 8, amp: 11, color: '#5eead4', hot: hl === 'fn' });
+      D.line(ctx, cx - 90, top, cx + 70, top, { color: 'rgba(167,170,176,.5)', width: 3 });
+      for (let i = 0; i < 8; i++) D.line(ctx, cx - 88 + i * 20, top, cx - 98 + i * 20, top - 10, { color: 'rgba(167,170,176,.25)' });
+      D.spring(ctx, cx - 34, top, cx - 34, by - 20, { coils: 8, amp: 11, color: '#68b8b0', hot: hl === 'fn' });
       D.dashpot(ctx, cx + 26, top, cx + 26, by - 20, { color: C.z, hot: hl === 'z' });
 
-      D.line(ctx, cx - 100, eq, cx + 100, eq, { color: 'rgba(147,162,196,.3)', dash: [5, 5] });
+      D.line(ctx, cx - 100, eq, cx + 100, eq, { color: 'rgba(167,170,176,.3)', dash: [5, 5] });
       // 정상상태 진폭 포락선
       D.line(ctx, cx - 74, eq - X * PPM, cx + 74, eq - X * PPM, { color: C.X, dash: [3, 4], hot: hl === 'X' });
       D.line(ctx, cx - 74, eq + X * PPM, cx + 74, eq + X * PPM, { color: C.X, dash: [3, 4], hot: hl === 'X' });
@@ -118,9 +118,9 @@
 
       ctx.save();
       D.roundRect(ctx, cx - 44, by - 20, 88, 40, 6);
-      ctx.fillStyle = '#4a6ba8'; ctx.fill();
+      ctx.fillStyle = '#5a7a96'; ctx.fill();
       ctx.restore();
-      D.text(ctx, M_KG + ' kg', cx, by + 5, { size: 11, color: '#0a1120', align: 'center', bold: true });
+      D.text(ctx, M_KG + ' kg', cx, by + 5, { size: 11, color: '#0a0b0c', align: 'center', bold: true });
 
       // 가진력 화살표
       const F = p.F0 * Math.cos(2 * Math.PI * p.f * st.t);
@@ -136,29 +136,29 @@
       D.roundRect(ctx, px, py, pw, ph, 8);
       ctx.fillStyle = 'rgba(255,255,255,.025)'; ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 1; ctx.stroke();
-      D.text(ctx, '주파수 응답 곡선 (진폭 배율 M vs 진동수비 r)', px, py - 12, { size: 11.5, color: '#93a2c4' });
+      D.text(ctx, '주파수 응답 곡선 (진폭 배율 M vs 진동수비 r)', px, py - 12, { size: 11.5, color: '#9a9da6' });
 
       // 격자
       for (let i = 0; i <= 3; i++) {
         D.line(ctx, GX(i), py, GX(i), py + ph, { color: 'rgba(255,255,255,.05)' });
-        D.text(ctx, i + '', GX(i), py + ph + 14, { size: 9.5, color: '#61719a', align: 'center' });
+        D.text(ctx, i + '', GX(i), py + ph + 14, { size: 9.5, color: '#6a6e78', align: 'center' });
       }
-      D.text(ctx, 'r = f/fₙ', px + pw, py + ph + 14, { size: 10, color: '#61719a', align: 'right' });
+      D.text(ctx, 'r = f/fₙ', px + pw, py + ph + 14, { size: 10, color: '#6a6e78', align: 'right' });
       D.line(ctx, px, GY(1), px + pw, GY(1), { color: 'rgba(255,255,255,.18)', dash: [4, 4] });
-      D.text(ctx, 'M = 1', px + 4, GY(1) - 5, { size: 9.5, color: '#61719a' });
+      D.text(ctx, 'M = 1', px + 4, GY(1) - 5, { size: 9.5, color: '#6a6e78' });
 
       // 공진선 r = 1
       D.line(ctx, GX(1), py, GX(1), py + ph, { color: C.fn, dash: [5, 5], width: hl === 'fn' ? 2 : 1.2, hot: hl === 'fn' });
       D.text(ctx, '공진 r=1', GX(1) + 5, py + 13, { size: 10, color: C.fn, bold: hl === 'fn' });
       // 절연 영역 r > √2
       ctx.save();
-      ctx.fillStyle = 'rgba(52,211,153,.06)';
+      ctx.fillStyle = 'rgba(82,181,145,.06)';
       ctx.fillRect(GX(Math.SQRT2), py, px + pw - GX(Math.SQRT2), ph);
       ctx.restore();
-      D.text(ctx, '진동 절연 영역 (r > √2)', px + pw - 6, py + ph - 8, { size: 9.5, color: '#34d399', align: 'right' });
+      D.text(ctx, '진동 절연 영역 (r > √2)', px + pw - 6, py + ph - 8, { size: 9.5, color: '#7fb894', align: 'right' });
 
       // 곡선(현재 ζ) + 비교용 곡선들
-      [[.05, 'rgba(251,113,133,.25)'], [.2, 'rgba(251,113,133,.18)'], [.7, 'rgba(251,113,133,.12)']].forEach(([zz, col]) => {
+      [[.05, 'rgba(216,148,158,.25)'], [.2, 'rgba(216,148,158,.18)'], [.7, 'rgba(216,148,158,.12)']].forEach(([zz, col]) => {
         ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.beginPath();
         for (let i = 0; i <= 240; i++) { const rr = i / 240 * RMAX; const yy = GY(mag(rr, zz)); i ? ctx.lineTo(GX(rr), yy) : ctx.moveTo(GX(rr), yy); }
         ctx.stroke(); ctx.restore();
@@ -176,7 +176,7 @@
       D.dot(ctx, opx, opy, 6, '#fff', true);
       D.tag(ctx, 'r = ' + fmt(r, 2) + ' , M = ' + fmt(M, 2) + '배', opx, opy - 20, C.M, hl === 'M' || hl === 'r' || hl === 'f');
 
-      if (Math.abs(r - 1) < .08) D.tag(ctx, '⚠ 공진! 진폭이 급격히 커집니다', px + pw / 2, py + ph + 34, '#fb7185', true);
+      if (Math.abs(r - 1) < .08) D.tag(ctx, '⚠ 공진! 진폭이 급격히 커집니다', px + pw / 2, py + ph + 34, '#c4705f', true);
       else D.text(ctx, '위상차 φ = ' + fmt(phase(r, z) * 180 / Math.PI, 0) + '°', px + pw / 2, py + ph + 38,
         { size: 11, color: hl === 'ph' ? '#fff' : C.ph, align: 'center', bold: hl === 'ph' });
     }

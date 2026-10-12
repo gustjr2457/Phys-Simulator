@@ -5,8 +5,8 @@
    항공우주·선박·기계 모든 구조설계가 이 선도의 '어디까지 쓸 것인가'로 결정된다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { E: '#5eead4', sy: '#fbbf24', A: '#60a5fa', rate: '#93a2c4',
-              sig: '#fb7185', eps: '#a78bfa', F: '#f472b6' };
+  const C = { E: '#68b8b0', sy: '#ffb020', A: '#6f9fc4', rate: '#9a9da6',
+              sig: '#c4705f', eps: '#a98cc4', F: '#c08098' };
 
   const EPS_U = .12;   // 인장강도(최대하중)에 도달하는 변형률
   const EPS_F = .20;   // 파단 변형률
@@ -30,7 +30,7 @@
   const stageOf = (p, e) =>
     e < epsY(p) ? 0 : (e < EPS_U ? 1 : (e < EPS_F ? 2 : 3));
   const STAGE = ['탄성 (돌아온다)', '항복 후 — 소성 (영구 변형)', '네킹 — 한 곳만 가늘어짐', '파단'];
-  const SCOL = ['#60a5fa', '#fbbf24', '#fb923c', '#fb7185'];
+  const SCOL = ['#6f9fc4', '#ffb020', '#d1824a', '#c4705f'];
 
   PS.register({
     id: 'me-stress', mode: 'mech', category: '고체역학',
@@ -76,7 +76,7 @@
       series: [
         { key: 'sig', label: 'σ (MPa)', color: C.sig },
         { key: 'syl', label: 'σ_y', color: C.sy },
-        { key: 'utsl', label: '인장강도', color: '#fb923c' }
+        { key: 'utsl', label: '인장강도', color: '#d1824a' }
       ]
     }],
     sample(st, p) { return { epsPct: st.eps * 100, sig: st.sig, syl: p.sy, utsl: uts(p) }; },
@@ -90,9 +90,9 @@
         { label: '하중 F', value: st.sig * p.A / 1000, unit: 'kN', color: C.F, dec: 1 },
         { label: '항복 변형률 ε_y', value: epsY(p) * 100, unit: '%', color: C.sy, dec: 3 },
         { label: '항복 하중 (F = σ_y A)', value: p.sy * p.A / 1000, unit: 'kN', color: C.sy, dec: 1 },
-        { label: '인장강도', value: uts(p), unit: 'MPa', color: '#fb923c', dec: 0 },
+        { label: '인장강도', value: uts(p), unit: 'MPa', color: '#d1824a', dec: 0 },
         { label: '현재 안전율 (σ_y/σ)', value: st.sig > 1 ? p.sy / st.sig : Infinity, dec: 2,
-          color: st.sig < p.sy ? '#34d399' : '#fb7185' },
+          color: st.sig < p.sy ? '#7fb894' : '#c4705f' },
         { label: '지금 당김을 풀면', wide: true, color: SCOL[stg],
           value: stg === 0 ? '원래 길이로 완전히 복귀' :
                  (stg === 3 ? '이미 끊어졌다' : '영구 변형 ' + fmt(plastic * 100, 2) + '% 남음') },
@@ -175,7 +175,7 @@
       [-1, 1].forEach(s => {
         const gx = cx + s * (L / 2 + gap / 2);
         D.roundRect(ctx, gx + (s < 0 ? -34 : 0), cy - w0 * .85, 34, w0 * 1.7, 4);
-        ctx.fillStyle = 'rgba(147,162,196,.5)'; ctx.fill();
+        ctx.fillStyle = 'rgba(167,170,176,.5)'; ctx.fill();
       });
 
       // 하중 화살표
@@ -187,14 +187,14 @@
 
       // 원래 길이 L₀ 기준선 + 늘어난 길이
       const oy = cy + w0 * .9 + 30;
-      D.line(ctx, cx - L0 / 2, oy - 7, cx - L0 / 2, oy + 7, { color: 'rgba(147,162,196,.5)', width: 2 });
-      D.line(ctx, cx + L0 / 2, oy - 7, cx + L0 / 2, oy + 7, { color: 'rgba(147,162,196,.5)', width: 2 });
-      D.dim(ctx, cx - L0 / 2, oy, cx + L0 / 2, oy, 'L₀', '#61719a', false);
+      D.line(ctx, cx - L0 / 2, oy - 7, cx - L0 / 2, oy + 7, { color: 'rgba(167,170,176,.5)', width: 2 });
+      D.line(ctx, cx + L0 / 2, oy - 7, cx + L0 / 2, oy + 7, { color: 'rgba(167,170,176,.5)', width: 2 });
+      D.dim(ctx, cx - L0 / 2, oy, cx + L0 / 2, oy, 'L₀', '#6a6e78', false);
       D.dim(ctx, cx - L / 2 - gap / 2, oy + 30, cx + L / 2 + gap / 2, oy + 30,
         'ΔL/L₀ = ' + fmt(st.eps * 100, 2) + ' %', C.eps, hl === 'eps');
 
-      if (broken) D.tag(ctx, '파단', cx, cy, '#fb7185', true);
-      if (neckAmt > .05 && !broken) D.text(ctx, '네킹', cx, cy - halfW(0) - 10, { size: 11, color: '#fb923c', align: 'center', bold: true });
+      if (broken) D.tag(ctx, '파단', cx, cy, '#c4705f', true);
+      if (neckAmt > .05 && !broken) D.text(ctx, '네킹', cx, cy - halfW(0) - 10, { size: 11, color: '#d1824a', align: 'center', bold: true });
 
       /* ── 응력 막대 (오른쪽) ── */
       const bx = w - 76, bTop = 46, bBot = h - 56, bH = bBot - bTop, bW = 32;
@@ -210,11 +210,11 @@
       D.line(ctx, bx - 8, yOf(p.sy), bx + bW + 8, yOf(p.sy), { color: C.sy, width: 2, hot: hl === 'sy' });
       D.text(ctx, 'σ_y ' + fmt(p.sy, 0), bx - 12, yOf(p.sy) + 4,
         { size: 10.5, color: hl === 'sy' ? '#fff' : C.sy, align: 'right', bold: hl === 'sy' });
-      D.line(ctx, bx - 5, yOf(uts(p)), bx + bW + 5, yOf(uts(p)), { color: '#fb923c', width: 1.5, dash: [4, 4] });
-      D.text(ctx, '인장강도', bx - 12, yOf(uts(p)) + 4, { size: 10, color: '#fb923c', align: 'right' });
+      D.line(ctx, bx - 5, yOf(uts(p)), bx + bW + 5, yOf(uts(p)), { color: '#d1824a', width: 1.5, dash: [4, 4] });
+      D.text(ctx, '인장강도', bx - 12, yOf(uts(p)) + 4, { size: 10, color: '#d1824a', align: 'right' });
       D.text(ctx, 'σ = ' + fmt(st.sig, 0), bx + bW / 2, bTop - 12,
         { size: 11.5, color: hl === 'sig' ? '#fff' : C.sig, align: 'center', bold: true });
-      D.text(ctx, 'MPa', bx + bW / 2, h - 38, { size: 10, color: '#61719a', align: 'center' });
+      D.text(ctx, 'MPa', bx + bW / 2, h - 38, { size: 10, color: '#6a6e78', align: 'center' });
 
       /* ── 선도(미니) — 탄성 직선과 현재 위치 ── */
       const gx = 36, gy = h - 128, gw = Math.min(300, w * .40), gh = 96;
@@ -223,17 +223,17 @@
       const GY = s => gy + gh - clamp(s / smax, 0, 1) * gh;
       // 전체 선도
       ctx.save();
-      ctx.strokeStyle = 'rgba(251,113,133,.55)'; ctx.lineWidth = 1.8; ctx.beginPath();
+      ctx.strokeStyle = 'rgba(216,148,158,.55)'; ctx.lineWidth = 1.8; ctx.beginPath();
       for (let i = 0; i <= 120; i++) { const e = EPS_F * i / 120; const X = GX(e), Y = GY(sigOf(p, e)); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
       ctx.stroke();
       // 훅의 법칙 직선을 그대로 연장해 보여 준다 — 어디서부터 어긋나는지
-      ctx.strokeStyle = 'rgba(94,234,212,.5)'; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(122,206,193,.5)'; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]);
       ctx.beginPath(); ctx.moveTo(GX(0), GY(0));
       ctx.lineTo(GX(Math.min(EPS_F, smax / (p.E * 1000))), GY(Math.min(smax, p.E * 1000 * EPS_F)));
       ctx.stroke(); ctx.restore();
       D.line(ctx, GX(ey), gy, GX(ey), gy + gh, { color: C.sy, dash: [3, 4], hot: hl === 'sy' });
       D.dot(ctx, GX(st.eps), GY(st.sig), 4, col, true);
-      D.text(ctx, 'σ – ε 선도', gx + 4, gy - 6, { size: 10.5, color: '#61719a' });
+      D.text(ctx, 'σ – ε 선도', gx + 4, gy - 6, { size: 10.5, color: '#6a6e78' });
       D.text(ctx, 'σ = Eε (훅)', GX(0) + 6, GY(0) - 8, { size: 9.5, color: C.E });
       D.text(ctx, '항복', GX(ey) + 4, gy + 12, { size: 9.5, color: C.sy });
 

@@ -5,7 +5,7 @@
    실제 양자역학적 궤도가 아니라 이해를 돕기 위한 단순화된(보어) 모형이다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { Z: '#fbbf24', p: '#fb7185', n: '#93a2c4', e: '#60a5fa' };
+  const C = { Z: '#ffb020', p: '#c4705f', n: '#9a9da6', e: '#6f9fc4' };
 
   // Z(양성자 수) → [원소이름, 기호, 가장 흔한 동위원소의 중성자 수]
   const TABLE = {
@@ -90,7 +90,7 @@
       sh.forEach((cnt, i) => {
         const r = shellR[i];
         ctx.save();
-        ctx.strokeStyle = 'rgba(96,165,250,.25)'; ctx.lineWidth = 1.5;
+        ctx.strokeStyle = 'rgba(135,169,211,.25)'; ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
         ctx.restore();
         for (let k = 0; k < cnt; k++) {
@@ -113,8 +113,8 @@
         D.dot(ctx, px, py, 6.5, kind === 'p' ? C.p : C.n, (kind === 'p' && hl === 'p') || (kind === 'n' && hl === 'n'));
       });
 
-      D.text(ctx, info[0] + ' (' + info[1] + ')', cx, cy - shellR[sh.length - 1] - 30, { size: 16, color: '#e8eefc', align: 'center', bold: true });
-      D.text(ctx, '양성자 ' + Z + ' · 중성자 ' + nNeu + ' · 전자 ' + Z, cx, cy - shellR[sh.length - 1] - 10, { size: 11, color: '#93a2c4', align: 'center' });
+      D.text(ctx, info[0] + ' (' + info[1] + ')', cx, cy - shellR[sh.length - 1] - 30, { size: 16, color: '#e6e7ea', align: 'center', bold: true });
+      D.text(ctx, '양성자 ' + Z + ' · 중성자 ' + nNeu + ' · 전자 ' + Z, cx, cy - shellR[sh.length - 1] - 10, { size: 11, color: '#9a9da6', align: 'center' });
     }
   });
 })();

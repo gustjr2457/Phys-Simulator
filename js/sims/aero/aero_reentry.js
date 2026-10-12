@@ -6,8 +6,8 @@
    덜 뜨거워진다 — 아폴로 캡슐이 뾰족하지 않고 접시처럼 생긴 이유다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { V0: '#fb7185', gam: '#fbbf24', beta: '#5eead4',
-              h: '#60a5fa', V: '#fb7185', g: '#a78bfa', q: '#fb923c' };
+  const C = { V0: '#c4705f', gam: '#ffb020', beta: '#68b8b0',
+              h: '#6f9fc4', V: '#c4705f', g: '#a98cc4', q: '#d1824a' };
   const RHO0 = 1.225, HS = 7200, G0 = 9.81, RN = .9;        // 기준 밀도 / 척도고도 / 중력 / 노즈 반지름
   const TSCALE = 10;                                         // 화면 1초 = 실제 10초
   const H0 = 120000;                                         // 진입 고도 120 km
@@ -97,7 +97,7 @@
       return [
         { label: '고도', value: st.h / 1000, unit: 'km', color: C.h, dec: 1 },
         { label: '속도', value: st.V / 1000, unit: 'km/s', color: C.V, dec: 3 },
-        { label: '마하수 (대략)', value: st.V / 300, unit: '', dec: 1, color: '#93a2c4' },
+        { label: '마하수 (대략)', value: st.V / 300, unit: '', dec: 1, color: '#9a9da6' },
         { label: '현재 감속도', value: g, unit: 'g', color: C.g, dec: 2 },
         { label: '최대 감속도', value: st.maxG, unit: 'g', color: C.g, dec: 2 },
         { label: '최대 감속 고도', value: st.hMaxG / 1000, unit: 'km', dec: 1, color: C.h },
@@ -105,15 +105,15 @@
         { label: '최대 가열률', value: st.maxQ / 1e6, unit: 'MW/m²', color: C.q, dec: 3 },
         { label: '누적 열부하', value: st.heat / 1e6, unit: 'MJ/m²', dec: 0, color: C.q },
         { label: '버려야 할 운동에너지', value: ke0 / 1e6, unit: 'MJ/kg', dec: 1, color: C.V0 },
-        { label: '통신 블랙아웃', wide: true, color: blackout ? '#fb7185' : '#34d399',
+        { label: '통신 블랙아웃', wide: true, color: blackout ? '#c4705f' : '#7fb894',
           value: blackout ? '차단 중 — 플라즈마가 전파를 막는다' : '통신 가능' },
         { label: '유인 귀환 적합성', wide: true,
-          color: st.maxG <= 10 ? '#34d399' : (st.maxG <= 15 ? '#fbbf24' : '#fb7185'),
+          color: st.maxG <= 10 ? '#7fb894' : (st.maxG <= 15 ? '#ffb020' : '#c4705f'),
           value: st.maxG === 0 ? '진입 중…' :
                  (st.maxG <= 4 ? '✔ 매우 완만 (아폴로 수준)' :
                   (st.maxG <= 10 ? '✔ 유인 가능' :
                    (st.maxG <= 15 ? '△ 훈련된 승무원만' : '✘ 치명적 — 무인 전용'))) },
-        { label: '상태', wide: true, color: st.landed ? '#34d399' : '#fbbf24',
+        { label: '상태', wide: true, color: st.landed ? '#7fb894' : '#ffb020',
           value: st.landed ? '감속 완료 — 낙하산 전개 고도 도달' : '재진입 중' }
       ];
     },
@@ -170,25 +170,25 @@
       for (let i = 0; i < 60; i++) {
         const hh = H0 * (1 - i / 60);
         const d = rhoOf(hh) / RHO0;
-        ctx.fillStyle = 'rgba(96,165,250,' + (.03 + .30 * Math.pow(d, .45)) + ')';
+        ctx.fillStyle = 'rgba(135,169,211,' + (.03 + .30 * Math.pow(d, .45)) + ')';
         ctx.fillRect(ax, AY(hh), aw, aH / 60 + 1);
       }
-      ctx.strokeStyle = 'rgba(147,162,196,.3)'; ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(167,170,176,.3)'; ctx.lineWidth = 1;
       ctx.strokeRect(ax, aTop, aw, aH);
       // 지표
-      D.line(ctx, ax - 6, AY(0), ax + aw + 6, AY(0), { color: 'rgba(147,162,196,.7)', width: 3 });
+      D.line(ctx, ax - 6, AY(0), ax + aw + 6, AY(0), { color: 'rgba(167,170,176,.7)', width: 3 });
       [0, 25, 50, 75, 100, 120].forEach(km => {
-        D.line(ctx, ax - 5, AY(km * 1000), ax, AY(km * 1000), { color: 'rgba(147,162,196,.4)' });
-        D.text(ctx, km + ' km', ax - 8, AY(km * 1000) + 4, { size: 8.5, color: '#4b5a80', align: 'right' });
+        D.line(ctx, ax - 5, AY(km * 1000), ax, AY(km * 1000), { color: 'rgba(167,170,176,.4)' });
+        D.text(ctx, km + ' km', ax - 8, AY(km * 1000) + 4, { size: 8.5, color: '#4a4d55', align: 'right' });
       });
       // 블랙아웃 구간
-      ctx.save(); ctx.fillStyle = 'rgba(251,113,133,.08)';
+      ctx.save(); ctx.fillStyle = 'rgba(216,148,158,.08)';
       ctx.fillRect(ax, AY(90000), aw, AY(25000) - AY(90000)); ctx.restore();
-      D.text(ctx, '통신 블랙아웃 구간', ax + 5, AY(88000) + 10, { size: 8.5, color: 'rgba(251,113,133,.75)' });
+      D.text(ctx, '통신 블랙아웃 구간', ax + 5, AY(88000) + 10, { size: 8.5, color: 'rgba(216,148,158,.75)' });
 
       // 궤적
       if (st.trail.length > 1) {
-        ctx.save(); ctx.strokeStyle = 'rgba(251,146,60,.6)'; ctx.lineWidth = 2;
+        ctx.save(); ctx.strokeStyle = 'rgba(230,148,81,.6)'; ctx.lineWidth = 2;
         ctx.beginPath();
         st.trail.forEach((t, i) => {
           const X = ax + aw * (1 - t[1] / (p.V0 * 1000)) * .85 + aw * .08;
@@ -202,13 +202,13 @@
       if (hot > .01) {
         ctx.save();
         const g2 = ctx.createRadialGradient(cxp, cyp, 0, cxp, cyp, 10 + hot * 26);
-        g2.addColorStop(0, 'rgba(255,255,220,' + (.5 + .45 * hot) + ')');
-        g2.addColorStop(.4, 'rgba(255,150,60,' + (.4 * hot) + ')');
-        g2.addColorStop(1, 'rgba(251,113,133,0)');
+        g2.addColorStop(0, 'rgba(251,251,224,' + (.5 + .45 * hot) + ')');
+        g2.addColorStop(.4, 'rgba(231,152,84,' + (.4 * hot) + ')');
+        g2.addColorStop(1, 'rgba(216,148,158,0)');
         ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(cxp, cyp, 10 + hot * 26, 0, 7); ctx.fill();
         ctx.restore();
         // 플라즈마 꼬리
-        ctx.save(); ctx.strokeStyle = 'rgba(255,170,90,' + (.25 + .4 * hot) + ')'; ctx.lineWidth = 2;
+        ctx.save(); ctx.strokeStyle = 'rgba(234,171,111,' + (.25 + .4 * hot) + ')'; ctx.lineWidth = 2;
         for (let k = 0; k < 4; k++) {
           ctx.beginPath(); ctx.moveTo(cxp, cyp);
           ctx.lineTo(cxp - 14 - k * 9 + Math.sin(st.t * 9 + k) * 4, cyp - 16 - k * 11);
@@ -218,10 +218,10 @@
       }
       ctx.save(); if (hl === 'beta') { ctx.shadowColor = C.beta; ctx.shadowBlur = 14; }
       D.poly(ctx, [[cxp - 7, cyp - 5], [cxp + 7, cyp - 5], [cxp + 4, cyp + 5], [cxp - 4, cyp + 5]],
-        { fill: 'rgba(200,211,239,.75)', stroke: '#e8eefc', width: 1.4 });
+        { fill: 'rgba(207,214,232,.75)', stroke: '#e6e7ea', width: 1.4 });
       ctx.restore();
-      D.text(ctx, '← 속도', ax + aw - 4, aTop + 14, { size: 9, color: '#61719a', align: 'right' });
-      D.text(ctx, '고도 ↑', ax + 4, aTop + 14, { size: 9, color: '#61719a' });
+      D.text(ctx, '← 속도', ax + aw - 4, aTop + 14, { size: 9, color: '#6a6e78', align: 'right' });
+      D.text(ctx, '고도 ↑', ax + 4, aTop + 14, { size: 9, color: '#6a6e78' });
 
       /* ── 계기 ── */
       const mx = ax + aw + 56, mw = Math.min(w - mx - 44, 250);
@@ -238,16 +238,16 @@
         row(aTop + 52, '고도', fmt(st.h / 1000, 1) + ' km', st.h / H0, C.h, hl === 'h');
         row(aTop + 94, '감속도 (최대 ' + fmt(st.maxG, 1) + ' g)', fmt(gl, 2) + ' g', gl / 16, C.g, hl === 'g');
         // 10 g 한계선
-        D.line(ctx, mx + mw * 10 / 16, aTop + 90, mx + mw * 10 / 16, aTop + 110, { color: '#fb7185', width: 2 });
-        D.text(ctx, '10 g (유인 한계)', mx + mw * 10 / 16, aTop + 124, { size: 8.5, color: '#fb7185', align: 'center' });
+        D.line(ctx, mx + mw * 10 / 16, aTop + 90, mx + mw * 10 / 16, aTop + 110, { color: '#c4705f', width: 2 });
+        D.text(ctx, '10 g (유인 한계)', mx + mw * 10 / 16, aTop + 124, { size: 8.5, color: '#c4705f', align: 'center' });
         row(aTop + 146, '가열률 (최대 ' + fmt(st.maxQ / 1e6, 2) + ')', fmt(q / 1e6, 2) + ' MW/m²', q / 8e6, C.q, hl === 'q');
         D.text(ctx, '탄도계수 β = ' + fmt(p.beta, 0) + ' kg/m²', mx, aTop + 196,
           { size: 11.5, color: hl === 'beta' ? '#fff' : C.beta, bold: true });
         D.text(ctx, '진입각 γ = ' + fmt(p.gam, 1) + '°   ·   진입 속도 ' + fmt(p.V0, 1) + ' km/s',
-          mx, aTop + 216, { size: 11, color: '#93a2c4' });
-        D.text(ctx, '화면 1초 = 실제 10초', mx, aTop + 236, { size: 9.5, color: '#4b5a80' });
+          mx, aTop + 216, { size: 11, color: '#9a9da6' });
+        D.text(ctx, '화면 1초 = 실제 10초', mx, aTop + 236, { size: 9.5, color: '#4a4d55' });
         if (st.landed) D.tag(ctx, '감속 완료 — 최대 ' + fmt(st.maxG, 1) + ' g, ' + fmt(st.maxQ / 1e6, 2) + ' MW/m²',
-          mx + mw / 2, aTop + 264, st.maxG <= 10 ? '#34d399' : '#fb7185', true);
+          mx + mw / 2, aTop + 264, st.maxG <= 10 ? '#7fb894' : '#c4705f', true);
       }
     }
   });

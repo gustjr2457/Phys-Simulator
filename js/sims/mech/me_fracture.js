@@ -5,8 +5,8 @@
    압력용기 사고가 모두 이 식을 몰라서 일어났다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { sig: '#fb7185', a: '#fbbf24', KIC: '#5eead4', sy: '#a78bfa',
-              K: '#f472b6', ac: '#60a5fa' };
+  const C = { sig: '#c4705f', a: '#ffb020', KIC: '#68b8b0', sy: '#a98cc4',
+              K: '#c08098', ac: '#6f9fc4' };
 
   const KofA = (sig, aMM) => sig * Math.sqrt(Math.PI * aMM / 1000);   // MPa√m (중앙균열, Y=1)
   const acOf = p => 1000 * (p.KIC / p.sig) * (p.KIC / p.sig) / Math.PI;   // 임계 균열 길이 mm
@@ -68,12 +68,12 @@
         { label: '파괴인성 K_IC', value: p.KIC, unit: 'MPa√m', color: C.KIC, dec: 0 },
         { label: '임계 균열 길이 a_c', value: ac, unit: 'mm', color: C.ac, dec: 1 },
         { label: '현재 균열 a', value: st.a, unit: 'mm', color: C.a, dec: 1 },
-        { label: '안전율 (K_IC / K_I)', value: sr, dec: 2, color: sr >= 1.5 ? '#34d399' : (sr >= 1 ? '#fbbf24' : '#fb7185') },
+        { label: '안전율 (K_IC / K_I)', value: sr, dec: 2, color: sr >= 1.5 ? '#7fb894' : (sr >= 1 ? '#ffb020' : '#c4705f') },
         { label: '응력 / 항복강도', value: p.sig / p.sy * 100, unit: '%', color: C.sy, dec: 0 },
-        { label: '균열 끝 소성역 r_p', value: rpOf(K, p.sy), unit: 'mm', dec: 3, color: '#93a2c4' },
-        { label: '균열이 없었다면', wide: true, color: p.sig < p.sy ? '#34d399' : '#fb7185',
+        { label: '균열 끝 소성역 r_p', value: rpOf(K, p.sy), unit: 'mm', dec: 3, color: '#9a9da6' },
+        { label: '균열이 없었다면', wide: true, color: p.sig < p.sy ? '#7fb894' : '#c4705f',
           value: p.sig < p.sy ? '항복강도의 ' + fmt(p.sig / p.sy * 100, 0) + '% — 멀쩡했다' : '균열 없이도 항복' },
-        { label: '상태', wide: true, color: st.broke ? '#fb7185' : (sr >= 1.5 ? '#34d399' : '#fbbf24'),
+        { label: '상태', wide: true, color: st.broke ? '#c4705f' : (sr >= 1.5 ? '#7fb894' : '#ffb020'),
           value: st.broke ? '불안정 파괴 — 균열이 폭주해 판이 쪼개졌다' :
                  (sr >= 1.5 ? '안전 (안전율 1.5 이상)' : '위험 — 임계에 근접') }
       ];
@@ -126,8 +126,8 @@
 
       // 판
       D.roundRect(ctx, cx - pw / 2, cy - ph / 2, pw, ph, 3);
-      ctx.fillStyle = 'rgba(147,162,196,.10)'; ctx.fill();
-      ctx.strokeStyle = 'rgba(147,162,196,.45)'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = 'rgba(167,170,176,.10)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(167,170,176,.45)'; ctx.lineWidth = 1.5; ctx.stroke();
 
       // 응력 흐름선 — 균열을 피해 돌아가며 끝에서 몰린다
       const nLine = 13;
@@ -138,7 +138,7 @@
         const d = Math.abs(x0 - cx);                          // 균열 중심으로부터의 거리
         const inside = d < aPx;
         ctx.beginPath();
-        ctx.strokeStyle = inside ? 'rgba(96,165,250,.10)' : 'rgba(96,165,250,.34)';
+        ctx.strokeStyle = inside ? 'rgba(135,169,211,.10)' : 'rgba(135,169,211,.34)';
         ctx.lineWidth = inside ? 1 : 1.3;
         for (let j = 0; j <= 40; j++) {
           const t = j / 40, y = cy - ph / 2 + t * ph;
@@ -157,13 +157,13 @@
       // 균열(렌즈 모양 — 응력으로 벌어진다)
       const open = clamp(K / Math.max(1, p.KIC) * 5, 1.5, 11);
       ctx.save();
-      if (hl === 'a' || crit) { ctx.shadowColor = crit ? '#fb7185' : C.a; ctx.shadowBlur = 18; }
+      if (hl === 'a' || crit) { ctx.shadowColor = crit ? '#c4705f' : C.a; ctx.shadowBlur = 18; }
       ctx.beginPath();
       ctx.moveTo(cx - aPx, cy);
       ctx.quadraticCurveTo(cx, cy - open, cx + aPx, cy);
       ctx.quadraticCurveTo(cx, cy + open, cx - aPx, cy);
       ctx.closePath();
-      ctx.fillStyle = crit ? 'rgba(251,113,133,.85)' : C.a; ctx.fill();
+      ctx.fillStyle = crit ? 'rgba(216,148,158,.85)' : C.a; ctx.fill();
       ctx.restore();
 
       // 균열 끝 소성역 + 응력집중 표시
@@ -171,16 +171,16 @@
       [-1, 1].forEach(s => {
         const tx = cx + s * aPx;
         ctx.save();
-        ctx.strokeStyle = 'rgba(232,238,252,.75)'; ctx.lineWidth = 1.2; ctx.setLineDash([2, 3]);
+        ctx.strokeStyle = 'rgba(236,240,248,.75)'; ctx.lineWidth = 1.2; ctx.setLineDash([2, 3]);
         ctx.beginPath(); ctx.arc(tx, cy, rp, 0, 7); ctx.stroke(); ctx.restore();
         // 응력 집중을 방사형 빛으로
         ctx.save();
         const g = ctx.createRadialGradient(tx, cy, 0, tx, cy, rp * 3.4);
-        g.addColorStop(0, crit ? 'rgba(251,113,133,.55)' : 'rgba(244,114,182,.45)');
-        g.addColorStop(1, 'rgba(244,114,182,0)');
+        g.addColorStop(0, crit ? 'rgba(216,148,158,.55)' : 'rgba(214,144,181,.45)');
+        g.addColorStop(1, 'rgba(214,144,181,0)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(tx, cy, rp * 3.4, 0, 7); ctx.fill(); ctx.restore();
       });
-      D.text(ctx, '소성역 r_p', cx + aPx + rp + 6, cy - rp - 4, { size: 9, color: 'rgba(232,238,252,.6)' });
+      D.text(ctx, '소성역 r_p', cx + aPx + rp + 6, cy - rp - 4, { size: 9, color: 'rgba(236,240,248,.6)' });
       D.dim(ctx, cx - aPx, cy + ph * .22, cx + aPx, cy + ph * .22, '2a = ' + fmt(st.a * 2, 1) + ' mm', C.a, hl === 'a');
 
       // 임계 균열 길이 점선
@@ -202,7 +202,7 @@
       D.tag(ctx, 'σ = ' + fmt(p.sig, 0) + ' MPa  (σ_y의 ' + fmt(p.sig / p.sy * 100, 0) + '%)',
         cx, cy - ph / 2 - al - 26, C.sig, hl === 'sig');
 
-      if (st.broke) D.tag(ctx, '불안정 파괴 — 멈출 수 없다', cx, cy + ph / 2 + al + 26, '#fb7185', true);
+      if (st.broke) D.tag(ctx, '불안정 파괴 — 멈출 수 없다', cx, cy + ph / 2 + al + 26, '#c4705f', true);
 
       /* ── K – a 선도 ── */
       const gx = w - 232, gy = 56, gw = 196, gh = 150;
@@ -211,7 +211,7 @@
       D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.035)'; ctx.fill();
       const GX = aa => gx + clamp(aa / aMax, 0, 1) * gw;
       const GY = kk => gy + gh - clamp(kk / kMax, 0, 1) * gh;
-      D.text(ctx, 'K_I = σ√(πa)', gx + 4, gy - 8, { size: 10.5, color: '#61719a' });
+      D.text(ctx, 'K_I = σ√(πa)', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
       // K(a) 곡선
       ctx.save(); ctx.strokeStyle = C.K; ctx.lineWidth = 2; ctx.beginPath();
       for (let i = 0; i <= 80; i++) { const aa = aMax * i / 80, X = GX(aa), Y = GY(KofA(p.sig, aa)); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }
@@ -220,25 +220,25 @@
       D.line(ctx, gx, GY(p.KIC), gx + gw, GY(p.KIC), { color: C.KIC, width: 2, hot: hl === 'KIC' });
       D.text(ctx, 'K_IC', gx + gw - 2, GY(p.KIC) - 6, { size: 10, color: hl === 'KIC' ? '#fff' : C.KIC, align: 'right', bold: hl === 'KIC' });
       // 파괴 영역 음영
-      ctx.save(); ctx.fillStyle = 'rgba(251,113,133,.10)'; ctx.fillRect(gx, gy, gw, GY(p.KIC) - gy); ctx.restore();
-      D.text(ctx, '파괴', gx + 6, gy + 14, { size: 9.5, color: 'rgba(251,113,133,.85)' });
+      ctx.save(); ctx.fillStyle = 'rgba(216,148,158,.10)'; ctx.fillRect(gx, gy, gw, GY(p.KIC) - gy); ctx.restore();
+      D.text(ctx, '파괴', gx + 6, gy + 14, { size: 9.5, color: 'rgba(216,148,158,.85)' });
       // a_c 수직선 · 현재 점
       if (ac < aMax) D.line(ctx, GX(ac), gy, GX(ac), gy + gh, { color: C.ac, dash: [3, 4], hot: hl === 'ac' });
-      D.dot(ctx, GX(st.a), GY(K), 4.5, crit ? '#fb7185' : C.K, true);
+      D.dot(ctx, GX(st.a), GY(K), 4.5, crit ? '#c4705f' : C.K, true);
       D.text(ctx, 'K = ' + fmt(K, 1), GX(st.a) + 6, GY(K) - 8,
         { size: 10.5, color: hl === 'K' ? '#fff' : C.K, bold: true });
-      D.text(ctx, '균열 길이 a →', gx + gw, gy + gh + 14, { size: 9.5, color: '#61719a', align: 'right' });
+      D.text(ctx, '균열 길이 a →', gx + gw, gy + gh + 14, { size: 9.5, color: '#6a6e78', align: 'right' });
 
       // 안전율 게이지
       const sr = K > .01 ? p.KIC / K : 9;
       const sgy = gy + gh + 42;
       D.text(ctx, '안전율 K_IC / K_I = ' + (sr > 8 ? '∞' : fmt(sr, 2)), gx, sgy,
-        { size: 11.5, color: sr >= 1.5 ? '#34d399' : (sr >= 1 ? '#fbbf24' : '#fb7185'), bold: true });
+        { size: 11.5, color: sr >= 1.5 ? '#7fb894' : (sr >= 1 ? '#ffb020' : '#c4705f'), bold: true });
       D.roundRect(ctx, gx, sgy + 10, gw, 8, 4); ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fill();
-      ctx.fillStyle = sr >= 1.5 ? '#34d399' : (sr >= 1 ? '#fbbf24' : '#fb7185');
+      ctx.fillStyle = sr >= 1.5 ? '#7fb894' : (sr >= 1 ? '#ffb020' : '#c4705f');
       ctx.fillRect(gx, sgy + 10, gw * clamp(sr / 3, 0, 1), 8);
       D.line(ctx, gx + gw / 3, sgy + 6, gx + gw / 3, sgy + 22, { color: '#fff', width: 1.5 });
-      D.text(ctx, '1 (파괴)', gx + gw / 3, sgy + 34, { size: 9, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '1 (파괴)', gx + gw / 3, sgy + 34, { size: 9, color: '#9a9da6', align: 'center' });
     }
   });
 })();

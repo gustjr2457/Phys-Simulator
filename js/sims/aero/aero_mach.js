@@ -6,8 +6,8 @@
    마하수가 올라간다. 초음속기 설계의 출발점. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { V: '#fb7185', alt: '#5eead4', Tdel: '#fbbf24',
-              a: '#60a5fa', M: '#a78bfa', T0: '#fb923c' };
+  const C = { V: '#c4705f', alt: '#68b8b0', Tdel: '#ffb020',
+              a: '#6f9fc4', M: '#a98cc4', T0: '#d1824a' };
   const GAMMA = 1.4;
 
   // 국제표준대기
@@ -18,11 +18,11 @@
   const stagT = p => tempOf(p) * (1 + (GAMMA - 1) / 2 * machOf(p) * machOf(p));
   const pgFactor = p => { const M = machOf(p); return M < .95 ? 1 / Math.sqrt(1 - M * M) : Infinity; };
 
-  const REG = [[0, .3, '저속 비압축성', '#34d399', '공기를 비압축성으로 봐도 된다 — 베르누이 식이 그대로 통한다'],
-               [.3, .8, '아음속 (압축성)', '#60a5fa', '밀도 변화가 무시 못 할 정도 — 여객기 순항 영역'],
-               [.8, 1.2, '천음속', '#fbbf24', '날개 윗면 일부가 먼저 초음속이 된다 — 항력이 급증하는 가장 까다로운 구간'],
-               [1.2, 5, '초음속', '#fb7185', '기수에서 충격파가 선다 — 뾰족한 코, 얇은 날개가 필요'],
-               [5, 99, '극초음속', '#f472b6', '공기가 해리·이온화된다 — 열이 가장 큰 문제']];
+  const REG = [[0, .3, '저속 비압축성', '#7fb894', '공기를 비압축성으로 봐도 된다 — 베르누이 식이 그대로 통한다'],
+               [.3, .8, '아음속 (압축성)', '#6f9fc4', '밀도 변화가 무시 못 할 정도 — 여객기 순항 영역'],
+               [.8, 1.2, '천음속', '#ffb020', '날개 윗면 일부가 먼저 초음속이 된다 — 항력이 급증하는 가장 까다로운 구간'],
+               [1.2, 5, '초음속', '#c4705f', '기수에서 충격파가 선다 — 뾰족한 코, 얇은 날개가 필요'],
+               [5, 99, '극초음속', '#c08098', '공기가 해리·이온화된다 — 열이 가장 큰 문제']];
   const regOf = M => REG.find(r => M >= r[0] && M < r[1]) || REG[REG.length - 1];
 
   PS.register({
@@ -85,12 +85,12 @@
         { label: '그 영역의 특징', value: r[4], wide: true, color: r[3] },
         { label: '마하콘 반각', value: M > 1 ? coneDeg(p) : 0, unit: '°', dec: 1, color: C.M },
         { label: '정체점 온도 T₀', value: stagT(p) - 273.15, unit: '°C', color: C.T0, dec: 0 },
-        { label: '기수 가열', wide: true, color: stagT(p) > 500 ? '#fb7185' : (stagT(p) > 400 ? '#fbbf24' : '#34d399'),
+        { label: '기수 가열', wide: true, color: stagT(p) > 500 ? '#c4705f' : (stagT(p) > 400 ? '#ffb020' : '#7fb894'),
           value: stagT(p) > 1200 ? '알루미늄은 녹는다 — 티타늄·니켈합금이 필요' :
                  (stagT(p) > 500 ? '알루미늄 한계 근처 — 콩코드가 이 영역' :
                   (stagT(p) > 350 ? '주의할 수준의 가열' : '열은 문제가 되지 않는다')) },
-        { label: '압축성 보정 (1/√(1−M²))', value: isFinite(pg) ? pg : Infinity, dec: 3, color: '#fbbf24' },
-        { label: '해수면이었다면 마하수', value: p.V / (20.0468 * Math.sqrt(288.15 + p.Tdel)), dec: 3, color: '#93a2c4' }
+        { label: '압축성 보정 (1/√(1−M²))', value: isFinite(pg) ? pg : Infinity, dec: 3, color: '#ffb020' },
+        { label: '해수면이었다면 마하수', value: p.V / (20.0468 * Math.sqrt(288.15 + p.Tdel)), dec: 3, color: '#9a9da6' }
       ];
     },
 
@@ -147,7 +147,7 @@
         const emitX = px - p.V * age * (pw / 2200) * 2.2;
         const rr = a * age * (pw / 2200) * 2.2;
         if (rr < 2) continue;
-        ctx.strokeStyle = 'rgba(200,211,239,' + clamp(.35 - age * .22, 0, .35) + ')';
+        ctx.strokeStyle = 'rgba(207,214,232,' + clamp(.35 - age * .22, 0, .35) + ')';
         ctx.lineWidth = 1.3;
         ctx.beginPath(); ctx.arc(emitX, cy, rr, 0, 7); ctx.stroke();
       }
@@ -156,7 +156,7 @@
       if (M > 1) {
         const mu = Math.asin(1 / M);
         ctx.save();
-        ctx.strokeStyle = hl === 'M' ? 'rgba(251,113,133,1)' : 'rgba(251,113,133,.7)';
+        ctx.strokeStyle = hl === 'M' ? 'rgba(216,148,158,1)' : 'rgba(216,148,158,.7)';
         ctx.lineWidth = 2.6;
         [-1, 1].forEach(s => {
           ctx.beginPath(); ctx.moveTo(px, cy);
@@ -174,10 +174,10 @@
       ctx.translate(px, cy);
       const nose = M > 1 ? 30 : 20;
       D.poly(ctx, [[nose, 0], [-26, -5], [-30, 0], [-26, 5]],
-        { fill: 'rgba(200,211,239,.45)', stroke: '#c8d3ef', width: 1.6 });
+        { fill: 'rgba(207,214,232,.45)', stroke: '#c8cad2', width: 1.6 });
       const sw = M > 1.2 ? 16 : 26;
-      D.poly(ctx, [[-4, 0], [-20, -sw], [-26, -sw], [-10, 0]], { fill: 'rgba(200,211,239,.35)', stroke: '#c8d3ef', width: 1.2 });
-      D.poly(ctx, [[-4, 0], [-20, sw], [-26, sw], [-10, 0]], { fill: 'rgba(200,211,239,.35)', stroke: '#c8d3ef', width: 1.2 });
+      D.poly(ctx, [[-4, 0], [-20, -sw], [-26, -sw], [-10, 0]], { fill: 'rgba(207,214,232,.35)', stroke: '#c8cad2', width: 1.2 });
+      D.poly(ctx, [[-4, 0], [-20, sw], [-26, sw], [-10, 0]], { fill: 'rgba(207,214,232,.35)', stroke: '#c8cad2', width: 1.2 });
       ctx.restore();
       // 기수 가열
       const T0C = stagT(p) - 273.15;
@@ -186,7 +186,7 @@
         ctx.save();
         const g = ctx.createRadialGradient(px + nose, cy, 0, px + nose, cy, 16 + hot * 22);
         g.addColorStop(0, 'rgba(255,' + Math.round(220 - 170 * hot) + ',120,' + (.4 + .5 * hot) + ')');
-        g.addColorStop(1, 'rgba(251,113,133,0)');
+        g.addColorStop(1, 'rgba(216,148,158,0)');
         ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px + nose, cy, 16 + hot * 22, 0, 7); ctx.fill();
         ctx.restore();
         D.tag(ctx, 'T₀ = ' + fmt(T0C, 0) + ' °C', px + nose + 36, cy - 26, C.T0, hl === 'T0');
@@ -199,7 +199,7 @@
 
       /* ── 고도-온도-음속 그림 ── */
       const ax = 56, ay = h * .50, aw = 150, ah = Math.min(h * .36, 170);
-      D.text(ctx, '표준대기', ax, ay - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '표준대기', ax, ay - 10, { size: 10.5, color: '#6a6e78' });
       D.roundRect(ctx, ax, ay, aw, ah, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
       const AY = hh => ay + ah - hh / 20 * ah;
       // 기온 곡선
@@ -210,20 +210,20 @@
         hh === 0 ? ctx.moveTo(X, AY(hh)) : ctx.lineTo(X, AY(hh));
       }
       ctx.stroke(); ctx.restore();
-      D.line(ctx, ax, AY(11), ax + aw, AY(11), { color: 'rgba(147,162,196,.3)', dash: [3, 4] });
-      D.text(ctx, '대류권계면 11 km', ax + 4, AY(11) - 5, { size: 8.5, color: '#93a2c4' });
+      D.line(ctx, ax, AY(11), ax + aw, AY(11), { color: 'rgba(167,170,176,.3)', dash: [3, 4] });
+      D.text(ctx, '대류권계면 11 km', ax + 4, AY(11) - 5, { size: 8.5, color: '#9a9da6' });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.dot(ctx, ax + (T - 200) / 110 * aw, AY(p.alt), 5, '#fff', true); ctx.restore();
-      D.text(ctx, '0 km', ax - 4, AY(0) + 4, { size: 8.5, color: '#4b5a80', align: 'right' });
-      D.text(ctx, '20 km', ax - 4, AY(20) + 4, { size: 8.5, color: '#4b5a80', align: 'right' });
-      D.text(ctx, '기온 →', ax + aw, ay + ah + 14, { size: 8.5, color: '#4b5a80', align: 'right' });
+      D.text(ctx, '0 km', ax - 4, AY(0) + 4, { size: 8.5, color: '#4a4d55', align: 'right' });
+      D.text(ctx, '20 km', ax - 4, AY(20) + 4, { size: 8.5, color: '#4a4d55', align: 'right' });
+      D.text(ctx, '기온 →', ax + aw, ay + ah + 14, { size: 8.5, color: '#4a4d55', align: 'right' });
       D.text(ctx, fmt(T - 273.15, 1) + ' °C  →  a = ' + fmt(a, 1) + ' m/s',
         ax, ay + ah + 32, { size: 11, color: hl === 'a' ? '#fff' : C.a, bold: true });
 
       /* ── 마하 영역 띠 ── */
       const mx = ax + aw + 50, my = ay + 10, mw = Math.min(w - mx - 44, 330);
       if (mw > 180) {
-        D.text(ctx, '비행 영역', mx, my - 12, { size: 10.5, color: '#61719a' });
+        D.text(ctx, '비행 영역', mx, my - 12, { size: 10.5, color: '#6a6e78' });
         const MLO = 0, MHI = 8;
         const MX = m => mx + mw * clamp((m - MLO) / (MHI - MLO), 0, 1);
         REG.forEach((rr, i) => {
@@ -233,17 +233,17 @@
           ctx.fillStyle = rr[3]; ctx.globalAlpha = rr === r ? .55 : .2;
           ctx.fillRect(A, my, Math.max(2, B - A), 20); ctx.restore();
           if (B - A > 28) D.text(ctx, rr[2].split(' ')[0], (A + B) / 2, my + (i % 2 ? 34 : -4),
-            { size: 8.5, color: rr === r ? rr[3] : '#4b5a80', align: 'center', bold: rr === r });
+            { size: 8.5, color: rr === r ? rr[3] : '#4a4d55', align: 'center', bold: rr === r });
         });
         D.line(ctx, MX(1), my - 6, MX(1), my + 26, { color: '#fff', width: 2 });
-        D.text(ctx, 'M = 1', MX(1), my + 48, { size: 9.5, color: '#e8eefc', align: 'center' });
+        D.text(ctx, 'M = 1', MX(1), my + 48, { size: 9.5, color: '#e6e7ea', align: 'center' });
         ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 12;
         D.dot(ctx, MX(M), my + 10, 6, '#fff', true); ctx.restore();
-        [0, 2, 4, 6, 8].forEach(m => D.text(ctx, m + '', MX(m), my + 62, { size: 8.5, color: '#4b5a80', align: 'center' }));
+        [0, 2, 4, 6, 8].forEach(m => D.text(ctx, m + '', MX(m), my + 62, { size: 8.5, color: '#4a4d55', align: 'center' }));
         // 정체점 온도 곡선
         const ty = my + 86, th = Math.min(h - ty - 30, 70);
         if (th > 36) {
-          D.text(ctx, '정체점 온도 — 마하수의 제곱으로 오른다', mx, ty - 8, { size: 10, color: '#61719a' });
+          D.text(ctx, '정체점 온도 — 마하수의 제곱으로 오른다', mx, ty - 8, { size: 10, color: '#6a6e78' });
           ctx.save(); ctx.strokeStyle = C.T0; ctx.lineWidth = 2; ctx.beginPath();
           for (let m = 0; m <= MHI; m += .1) {
             const t0 = T * (1 + .2 * m * m) - 273.15;
@@ -253,8 +253,8 @@
           ctx.stroke(); ctx.restore();
           [[660, '알루미늄 녹음'], [1668, '티타늄 녹음']].forEach(([tt, lab]) => {
             const Y = ty + th - clamp(tt / 3000, 0, 1) * th;
-            D.line(ctx, mx, Y, mx + mw, Y, { color: 'rgba(251,113,133,.35)', dash: [3, 3] });
-            D.text(ctx, lab, mx + 4, Y - 4, { size: 8.5, color: 'rgba(251,113,133,.8)' });
+            D.line(ctx, mx, Y, mx + mw, Y, { color: 'rgba(216,148,158,.35)', dash: [3, 3] });
+            D.text(ctx, lab, mx + 4, Y - 4, { size: 8.5, color: 'rgba(216,148,158,.8)' });
           });
           D.dot(ctx, MX(M), ty + th - clamp(T0C / 3000, 0, 1) * th, 4.5, C.T0, true);
         }

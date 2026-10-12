@@ -1,7 +1,7 @@
 /* 파동의 표현 — v = fλ */
 (function () {
   const D = PS.D, fmt = PS.fmt;
-  const C = { A: '#fbbf24', f: '#f472b6', lam: '#5eead4', v: '#60a5fa', T: '#f472b6', y: '#fb7185' };
+  const C = { A: '#ffb020', f: '#c08098', lam: '#68b8b0', v: '#6f9fc4', T: '#c08098', y: '#c4705f' };
   const XM = 12, MARK = 2.0;
 
   const y = (x, t, p) => p.A * Math.sin(2 * Math.PI * (x / p.lam - p.f * t));
@@ -29,8 +29,8 @@
         where: '빨간 입자가 <b>한 번 왕복하는 데 걸리는 시간</b>입니다. 아래 y–t 그래프에서 같은 모양이 반복되는 간격입니다.' },
       yv: { symbol: 'y', label: '변위', unit: 'm', color: C.y,
         where: '중심선에서 <b>매질 입자까지의 높이</b>입니다. 파동이 지나가도 입자는 위아래로만 움직일 뿐 앞으로 이동하지 않습니다.' },
-      x: { symbol: 'x', label: '위치', unit: 'm', color: '#94a3b8', where: '파동이 진행하는 방향의 좌표입니다.' },
-      t: { symbol: 't', label: '시간', unit: 's', color: '#94a3b8', where: '경과 시간입니다.' }
+      x: { symbol: 'x', label: '위치', unit: 'm', color: '#8b8f99', where: '파동이 진행하는 방향의 좌표입니다.' },
+      t: { symbol: 't', label: '시간', unit: 's', color: '#8b8f99', where: '경과 시간입니다.' }
     },
     formulas: [
       { name: '파동의 속력', tpl: '{v} = {f} · {lam} = {lam} ⁄ {T}' },
@@ -79,10 +79,10 @@
       const mid = V.Y(0);
 
       // 중심선 & 눈금
-      D.line(ctx, V.X(0), mid, V.X(XM), mid, { color: 'rgba(147,162,196,.25)', dash: [6, 6] });
+      D.line(ctx, V.X(0), mid, V.X(XM), mid, { color: 'rgba(167,170,176,.25)', dash: [6, 6] });
       for (let m = 0; m <= XM; m += 2) {
-        D.line(ctx, V.X(m), mid - 4, V.X(m), mid + 4, { color: 'rgba(147,162,196,.35)' });
-        D.text(ctx, m + ' m', V.X(m), mid + 18, { size: 9.5, color: '#4a5878', align: 'center' });
+        D.line(ctx, V.X(m), mid - 4, V.X(m), mid + 4, { color: 'rgba(167,170,176,.35)' });
+        D.text(ctx, m + ' m', V.X(m), mid + 18, { size: 9.5, color: '#4a4d55', align: 'center' });
       }
 
       // 파형
@@ -92,13 +92,13 @@
         const px = V.X(x), py = V.Y(y(x, t, p));
         x === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
       }
-      ctx.strokeStyle = 'rgba(94,234,212,.45)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.strokeStyle = 'rgba(122,206,193,.45)'; ctx.lineWidth = 2; ctx.stroke();
       ctx.restore();
 
       // 매질 입자
       for (let x = 0; x <= XM + .01; x += .3) {
         const py = V.Y(y(x, t, p));
-        D.dot(ctx, V.X(x), py, 3.2, 'rgba(147,162,196,.75)');
+        D.dot(ctx, V.X(x), py, 3.2, 'rgba(167,170,176,.75)');
       }
 
       // 표시 입자 (제자리 진동)
@@ -143,7 +143,7 @@
 
       // 주기 안내
       D.text(ctx, 'T = 1/f = ' + fmt(1 / p.f, 2) + ' s  동안 파동은 λ = ' + fmt(p.lam, 1) + ' m 만큼 나아갑니다',
-        14, 20, { size: 11.5, color: hl === 'T' || hl === 'v' ? '#fff' : '#61719a', bold: hl === 'T' });
+        14, 20, { size: 11.5, color: hl === 'T' || hl === 'v' ? '#fff' : '#6a6e78', bold: hl === 'T' });
     }
   });
 })();

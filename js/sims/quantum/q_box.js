@@ -1,7 +1,7 @@
 /* [양자역학] 상자 속 전자 — 에너지가 띄엄띄엄한 이유 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { L: '#5eead4', n: '#fbbf24', off: '#fb7185', E: '#a78bfa', lam: '#60a5fa', p: '#f472b6' };
+  const C = { L: '#68b8b0', n: '#ffb020', off: '#c4705f', E: '#a98cc4', lam: '#6f9fc4', p: '#c08098' };
   const H = 6.62607015e-34, ME = 9.1093837e-31, QE = 1.602176634e-19;
 
   // L[nm], n → 에너지(eV)
@@ -57,7 +57,7 @@
         { label: '바닥 에너지 E₁', value: En(1, p.L), unit: 'eV', dec: 3 },
         { label: '바로 아래 준위와의 차', value: p.n > 1 ? En(p.n, p.L) - En(p.n - 1, p.L) : 0, unit: 'eV', dec: 3 },
         { label: '마디(진폭 0인 점) 개수', value: ok ? p.n - 1 : '—', unit: ok ? '개' : '', dec: 0 },
-        { label: '상태 판정', wide: true, color: ok ? '#34d399' : '#fb7185',
+        { label: '상태 판정', wide: true, color: ok ? '#7fb894' : '#c4705f',
           value: ok ? '✔ 허용된 상태 — 양쪽 벽에서 파동이 0입니다'
             : '✘ 허용되지 않음 — 오른쪽 벽에서 파동이 0이 아닙니다' }
       ];
@@ -108,20 +108,20 @@
       const amp = Math.min(h * .22, 110);
 
       ctx.save();
-      ctx.fillStyle = 'rgba(94,234,212,.08)';
+      ctx.fillStyle = 'rgba(122,206,193,.08)';
       ctx.fillRect(x0, cy - amp - 26, x1 - x0, (amp + 26) * 2);
       ctx.restore();
       [x0, x1].forEach(xw => {
         ctx.save();
-        ctx.strokeStyle = hl === 'L' ? '#a7f3e5' : C.L;
+        ctx.strokeStyle = hl === 'L' ? '#9ad4cc' : C.L;
         ctx.lineWidth = hl === 'L' ? 5 : 3.5;
         if (hl === 'L') { ctx.shadowColor = C.L; ctx.shadowBlur = 14; }
         ctx.beginPath(); ctx.moveTo(xw, cy - amp - 30); ctx.lineTo(xw, cy + amp + 30); ctx.stroke();
         ctx.restore();
       });
-      D.line(ctx, x0, cy, x1, cy, { color: 'rgba(147,162,196,.3)', dash: [5, 5] });
+      D.line(ctx, x0, cy, x1, cy, { color: 'rgba(167,170,176,.3)', dash: [5, 5] });
       D.dim(ctx, x0, cy + amp + 46, x1, cy + amp + 46, 'L = ' + fmt(p.L, 2) + ' nm', C.L, hl === 'L');
-      D.text(ctx, '벽 (전자가 나갈 수 없음)', x0, cy - amp - 40, { size: 10, color: '#4a5878' });
+      D.text(ctx, '벽 (전자가 나갈 수 없음)', x0, cy - amp - 40, { size: 10, color: '#4a4d55' });
 
       /* ── |ψ|² 확률 분포 ── */
       const k = nEff * Math.PI / (x1 - x0);
@@ -134,9 +134,9 @@
         ctx.lineTo(x, base - s * s * amp * .58);
       }
       ctx.lineTo(x1, base); ctx.closePath();
-      ctx.fillStyle = 'rgba(167,139,250,.22)'; ctx.fill();
+      ctx.fillStyle = 'rgba(181,167,222,.22)'; ctx.fill();
       ctx.restore();
-      D.text(ctx, '|ψ|² — 전자를 발견할 확률', x0 + 6, base - 6, { size: 10, color: 'rgba(167,139,250,.9)' });
+      D.text(ctx, '|ψ|² — 전자를 발견할 확률', x0 + 6, base - 6, { size: 10, color: 'rgba(181,167,222,.9)' });
 
       /* ── 정상파 ψ ── */
       const osc = Math.cos(st.ph);
@@ -154,16 +154,16 @@
       // 마디
       if (ok) for (let i = 1; i < p.n; i++) {
         const xm = x0 + (x1 - x0) * i / p.n;
-        D.dot(ctx, xm, cy, 4, '#93a2c4', hl === 'n');
-        D.text(ctx, '마디', xm, cy + 18, { size: 9, color: '#61719a', align: 'center' });
+        D.dot(ctx, xm, cy, 4, '#9a9da6', hl === 'n');
+        D.text(ctx, '마디', xm, cy + 18, { size: 9, color: '#6a6e78', align: 'center' });
       }
 
       // 반파장 개수
       const halfW = (x1 - x0) / nEff;
       for (let i = 0; i < Math.floor(nEff); i++) {
         const a = x0 + halfW * i, b = a + halfW;
-        D.line(ctx, a, cy - amp - 12, b, cy - amp - 12, { color: hl === 'n' ? C.n : 'rgba(251,191,36,.45)', width: hl === 'n' ? 2 : 1.2 });
-        D.line(ctx, a, cy - amp - 16, a, cy - amp - 8, { color: 'rgba(251,191,36,.5)' });
+        D.line(ctx, a, cy - amp - 12, b, cy - amp - 12, { color: hl === 'n' ? C.n : 'rgba(227,180,60,.45)', width: hl === 'n' ? 2 : 1.2 });
+        D.line(ctx, a, cy - amp - 16, a, cy - amp - 8, { color: 'rgba(227,180,60,.5)' });
       }
       D.text(ctx, '반파장 ' + (ok ? p.n : fmt(nEff, 1)) + '개가 딱 들어간다',
         (x0 + x1) / 2, cy - amp - 22, { size: 10.5, color: hl === 'n' ? '#fff' : C.n, align: 'center', bold: hl === 'n' });
@@ -181,19 +181,19 @@
       const top = 44, botY = h - 62;
       const Emax = En(6, p.L);
       const EY = e => botY - (e / Emax) * (botY - top);
-      D.text(ctx, '에너지 준위', lx, top - 18, { size: 11, color: hl === 'E' ? '#fff' : '#93a2c4', bold: hl === 'E' });
+      D.text(ctx, '에너지 준위', lx, top - 18, { size: 11, color: hl === 'E' ? '#fff' : '#9a9da6', bold: hl === 'E' });
       for (let i = 1; i <= 6; i++) {
         const e = En(i, p.L), y = EY(e), cur = i === p.n;
         D.line(ctx, lx, y, lx + lw, y, {
-          color: cur ? C.E : 'rgba(167,139,250,.35)', width: cur ? 3 : 1.4, hot: cur && hl === 'E'
+          color: cur ? C.E : 'rgba(181,167,222,.35)', width: cur ? 3 : 1.4, hot: cur && hl === 'E'
         });
-        D.text(ctx, 'n=' + i, lx - 6, y + 4, { size: 9.5, color: cur ? C.n : '#4a5878', align: 'right', bold: cur });
+        D.text(ctx, 'n=' + i, lx - 6, y + 4, { size: 9.5, color: cur ? C.n : '#4a4d55', align: 'right', bold: cur });
         if (cur || i === 1 || i === 6)
-          D.text(ctx, fmt(e, 2) + ' eV', lx + lw + 5, y + 4, { size: 9.5, color: cur ? C.E : '#4a5878' });
+          D.text(ctx, fmt(e, 2) + ' eV', lx + lw + 5, y + 4, { size: 9.5, color: cur ? C.E : '#4a4d55' });
       }
       D.dot(ctx, lx + lw / 2, EY(En(p.n, p.L)), 5, '#fff', true);
-      D.text(ctx, '위로 갈수록 간격이', lx, botY + 24, { size: 9.5, color: '#4a5878' });
-      D.text(ctx, '벌어집니다 (E ∝ n²)', lx, botY + 37, { size: 9.5, color: '#4a5878' });
+      D.text(ctx, '위로 갈수록 간격이', lx, botY + 24, { size: 9.5, color: '#4a4d55' });
+      D.text(ctx, '벌어집니다 (E ∝ n²)', lx, botY + 37, { size: 9.5, color: '#4a4d55' });
     }
   });
 })();

@@ -1,7 +1,7 @@
 /* [양자역학] 전자의 에너지 준위와 스펙트럼 — 네온사인의 색 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { Z: '#5eead4', ni: '#fbbf24', nf: '#60a5fa', E: '#a78bfa', lam: '#f472b6', f: '#34d399' };
+  const C = { Z: '#68b8b0', ni: '#ffb020', nf: '#6f9fc4', E: '#a98cc4', lam: '#c08098', f: '#7fb894' };
   const RY = 13.605693;                       // 리드베리 에너지 (eV)
   const HC = 1239.841984;                     // h·c (eV·nm)
   const ATOM = ['수소 H', '헬륨 이온 He⁺', '리튬 이온 Li²⁺'];
@@ -91,7 +91,7 @@
         { label: '진동수 f', value: dE / 4.135667e-15 / 1e12, unit: 'THz', color: C.f, dec: 0 },
         { label: '계열', value: SERIES[nf] || (nf + '번 준위로'), wide: true },
         {
-          label: '눈에 보이는가', wide: true, color: visible ? '#34d399' : '#fb7185',
+          label: '눈에 보이는가', wide: true, color: visible ? '#7fb894' : '#c4705f',
           value: visible ? '✔ 가시광선 — 색으로 보입니다 (' + fmt(L, 0) + ' nm)'
             : (L < 380 ? '✘ 자외선 — 눈에 보이지 않습니다' : '✘ 적외선 — 눈에 보이지 않습니다')
         }
@@ -137,7 +137,7 @@
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
       const Z = Math.round(p.Z), ni = Math.round(p.ni), nf = nfOf(p);
-      const dE = dEOf(p), L = lamOf(p), col = rgb(L) || '#6b7896';
+      const dE = dEOf(p), L = lamOf(p), col = rgb(L) || '#7a7e87';
       const visible = !!rgb(L);
 
       /* ── 왼쪽: 에너지 사다리 ── */
@@ -145,20 +145,20 @@
       const top = 46, botY = h - 118;            // 아래 스펙트럼 띠와 겹치지 않게
       const Emin = En(1, Z);
       const EY = e => botY - (e - Emin) / (0 - Emin) * (botY - top);
-      D.text(ctx, '에너지 준위 (eV)', lx, top - 20, { size: 11, color: hl === 'E' ? '#fff' : '#93a2c4', bold: hl === 'E' });
-      D.line(ctx, lx - 6, EY(0), lx + lw + 10, EY(0), { color: 'rgba(147,162,196,.45)', dash: [4, 4] });
-      D.text(ctx, '0 — 자유 전자', lx + lw + 14, EY(0) + 4, { size: 9.5, color: '#61719a' });
+      D.text(ctx, '에너지 준위 (eV)', lx, top - 20, { size: 11, color: hl === 'E' ? '#fff' : '#9a9da6', bold: hl === 'E' });
+      D.line(ctx, lx - 6, EY(0), lx + lw + 10, EY(0), { color: 'rgba(167,170,176,.45)', dash: [4, 4] });
+      D.text(ctx, '0 — 자유 전자', lx + lw + 14, EY(0) + 4, { size: 9.5, color: '#6a6e78' });
       for (let n = 1; n <= 7; n++) {
         const e = En(n, Z), y = EY(e);
         const isI = n === ni, isF = n === nf;
         D.line(ctx, lx, y, lx + lw, y, {
-          color: isI ? C.ni : (isF ? C.nf : 'rgba(167,139,250,.4)'),
+          color: isI ? C.ni : (isF ? C.nf : 'rgba(181,167,222,.4)'),
           width: isI || isF ? 3 : 1.4, hot: (isI && hl === 'ni') || (isF && hl === 'nf')
         });
         // 위쪽 준위들은 촘촘해서 겹치므로 라벨을 솎아 낸다
         if (n <= 4 || isI || isF) {
-          D.text(ctx, 'n=' + n, lx - 6, y + 4, { size: 9.5, color: isI ? C.ni : (isF ? C.nf : '#4a5878'), align: 'right', bold: isI || isF });
-          D.text(ctx, fmt(e, 1), lx + lw + 6, y + 4, { size: 9, color: '#4a5878' });
+          D.text(ctx, 'n=' + n, lx - 6, y + 4, { size: 9.5, color: isI ? C.ni : (isF ? C.nf : '#4a4d55'), align: 'right', bold: isI || isF });
+          D.text(ctx, fmt(e, 1), lx + lw + 6, y + 4, { size: 9, color: '#4a4d55' });
         }
       }
       // 전이 화살표
@@ -171,8 +171,8 @@
 
       /* ── 가운데: 원 둘레의 정상파 ── */
       const ox = w * .50, oy = h * .40, orad = clamp(Math.min(w * .11, h * .20), 40, 92);
-      D.dot(ctx, ox, oy, 7, '#fb7185', hl === 'Z');
-      D.text(ctx, '핵 +' + Z, ox, oy + 22, { size: 10, color: '#fb7185', align: 'center', bold: hl === 'Z' });
+      D.dot(ctx, ox, oy, 7, '#c4705f', hl === 'Z');
+      D.text(ctx, '핵 +' + Z, ox, oy + 22, { size: 10, color: '#c4705f', align: 'center', bold: hl === 'Z' });
       ctx.save();
       ctx.strokeStyle = C.nf; ctx.lineWidth = hl === 'lamb' || hl === 'r' ? 2.6 : 1.9;
       if (hl === 'lamb' || hl === 'r') { ctx.shadowColor = C.nf; ctx.shadowBlur = 12; }
@@ -184,7 +184,7 @@
       }
       ctx.closePath(); ctx.stroke(); ctx.restore();
       D.text(ctx, '전자의 정상파 — 둘레에 ' + ni + '개', ox, oy - orad - 24, { size: 10.5, color: C.nf, align: 'center' });
-      D.text(ctx, '2πr = ' + ni + 'λ', ox, oy - orad - 10, { size: 10, color: '#61719a', align: 'center' });
+      D.text(ctx, '2πr = ' + ni + 'λ', ox, oy - orad - 10, { size: 10, color: '#6a6e78', align: 'center' });
 
       /* ── 날아가는 광자 ── */
       const age = st.t - st.fly;
@@ -215,13 +215,13 @@
         ctx.fillRect(sx + i, sy, 1.5, sh);
       }
       ctx.restore();
-      ctx.save(); ctx.strokeStyle = 'rgba(147,162,196,.4)'; ctx.lineWidth = 1;
+      ctx.save(); ctx.strokeStyle = 'rgba(167,170,176,.4)'; ctx.lineWidth = 1;
       ctx.strokeRect(sx, sy, sw, sh); ctx.restore();
       [400, 500, 600, 700].forEach(nm => {
         const x = sx + (nm - 380) / 370 * sw;
-        D.text(ctx, nm + '', x, sy + sh + 13, { size: 9, color: '#4a5878', align: 'center' });
+        D.text(ctx, nm + '', x, sy + sh + 13, { size: 9, color: '#4a4d55', align: 'center' });
       });
-      D.text(ctx, '가시광선 스펙트럼 (nm)', sx, sy - 8, { size: 10.5, color: '#93a2c4' });
+      D.text(ctx, '가시광선 스펙트럼 (nm)', sx, sy - 8, { size: 10.5, color: '#9a9da6' });
 
       // 지금까지 만든 선들
       st.lines.forEach(ln => {
@@ -239,12 +239,12 @@
       } else {
         const left = L < 380;
         D.tag(ctx, (left ? '◀ 자외선 ' : '적외선 ▶ ') + fmt(L, 0) + ' nm — 눈에 안 보임',
-          left ? sx + 90 : sx + sw - 90, sy - 20, '#93a2c4', true);
+          left ? sx + 90 : sx + sw - 90, sy - 20, '#9a9da6', true);
       }
 
       D.text(ctx, SERIES[nf] || '', w - 24, 30, { size: 12, color: col, align: 'right', bold: true });
       if (Math.round(p.nf) !== nf)
-        D.tag(ctx, '도착 준위는 출발 준위보다 낮아야 합니다 → n_f = ' + nf + '로 맞춤', w / 2, 24, '#fbbf24', true);
+        D.tag(ctx, '도착 준위는 출발 준위보다 낮아야 합니다 → n_f = ' + nf + '로 맞춤', w / 2, 24, '#ffb020', true);
     }
   });
 })();

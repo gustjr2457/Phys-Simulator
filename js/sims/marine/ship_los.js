@@ -6,8 +6,8 @@
    우현으로 변침한다. 이 둘이 자율운항 시스템의 뼈대다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { look: '#5eead4', V: '#fb7185', tV: '#fbbf24', tC: '#a78bfa',
-              Rs: '#f472b6', e: '#60a5fa', cpa: '#fb923c' };
+  const C = { look: '#68b8b0', V: '#c4705f', tV: '#ffb020', tC: '#a98cc4',
+              Rs: '#c08098', e: '#6f9fc4', cpa: '#d1824a' };
   const KN = .5144;
   const WP = [[0, 0], [1600, 300], [3200, -200], [4800, 400]];   // 항로 경유점 [m]
 
@@ -122,22 +122,22 @@
       const pi = pathInfo(st), c = cpaOf(st, p);
       const dnow = Math.hypot(st.tx - st.x, st.ty - st.y);
       return [
-        { label: '현재 구간', value: (pi.i + 1) + ' / ' + (WP.length - 1), color: '#93a2c4' },
+        { label: '현재 구간', value: (pi.i + 1) + ' / ' + (WP.length - 1), color: '#9a9da6' },
         { label: '횡방향 오차 e', value: pi.e, unit: 'm', color: C.e, dec: 1 },
-        { label: '항로 침로 α_p', value: pi.ap * 180 / Math.PI, unit: '°', dec: 1, color: '#93a2c4' },
+        { label: '항로 침로 α_p', value: pi.ap * 180 / Math.PI, unit: '°', dec: 1, color: '#9a9da6' },
         { label: '목표 침로 χ_d', value: (pi.ap + Math.atan2(-pi.e, p.look)) * 180 / Math.PI - st.off, unit: '°', dec: 1, color: C.look },
         { label: '현재 침로 ψ', value: st.psi * 180 / Math.PI, unit: '°', dec: 1, color: C.V },
-        { label: '타선과의 현재 거리', value: dnow, unit: 'm', dec: 0, color: '#93a2c4' },
+        { label: '타선과의 현재 거리', value: dnow, unit: 'm', dec: 0, color: '#9a9da6' },
         { label: '최근접 거리 CPA', value: c.d, unit: 'm', color: C.cpa, dec: 0 },
         { label: '최근접까지 시간 TCPA', value: c.t > 0 ? c.t / 60 : 0, unit: '분', dec: 1, color: C.cpa },
         { label: '실제 최근접 거리 (지금까지)', value: st.minD < 1e8 ? st.minD : 0, unit: 'm', dec: 0,
-          color: st.minD < p.Rs ? '#fb7185' : '#34d399' },
-        { label: '회피 기동', wide: true, color: st.avoid ? '#fb7185' : '#34d399',
+          color: st.minD < p.Rs ? '#c4705f' : '#7fb894' },
+        { label: '회피 기동', wide: true, color: st.avoid ? '#c4705f' : '#7fb894',
           value: st.avoid ? '작동 중 — 우현 ' + fmt(st.off, 0) + '° 변침 (COLREG)' : '불필요 — 항로 유지' },
-        { label: '추종 품질', wide: true, color: Math.abs(pi.e) < 60 ? '#34d399' : (Math.abs(pi.e) < 200 ? '#fbbf24' : '#fb7185'),
+        { label: '추종 품질', wide: true, color: Math.abs(pi.e) < 60 ? '#7fb894' : (Math.abs(pi.e) < 200 ? '#ffb020' : '#c4705f'),
           value: Math.abs(pi.e) < 60 ? '항로에 잘 붙어 있다' :
                  (Math.abs(pi.e) < 200 ? '약간 벗어남' : '크게 벗어남 — 전방주시거리를 줄여 보세요') },
-        { label: '안전 판정', wide: true, color: st.minD >= p.Rs ? '#34d399' : '#fb7185',
+        { label: '안전 판정', wide: true, color: st.minD >= p.Rs ? '#7fb894' : '#c4705f',
           value: st.minD >= p.Rs ? '✔ 안전 반경을 지켰다' : '✘ 안전 반경 침범 — 더 일찍 회피했어야 한다' }
       ];
     },
@@ -192,18 +192,18 @@
 
       /* ── 항로 ── */
       ctx.save();
-      ctx.strokeStyle = 'rgba(94,234,212,.45)'; ctx.lineWidth = 2; ctx.setLineDash([7, 6]);
+      ctx.strokeStyle = 'rgba(122,206,193,.45)'; ctx.lineWidth = 2; ctx.setLineDash([7, 6]);
       ctx.beginPath();
       WP.forEach((q, i) => i ? ctx.lineTo(X(q[0]), Y(q[1])) : ctx.moveTo(X(q[0]), Y(q[1])));
       ctx.stroke(); ctx.restore();
       WP.forEach((q, i) => {
-        D.dot(ctx, X(q[0]), Y(q[1]), 4, i === pi.i + 1 ? '#5eead4' : 'rgba(94,234,212,.5)', i === pi.i + 1);
-        D.text(ctx, 'WP' + i, X(q[0]), Y(q[1]) - 10, { size: 9, color: '#5eead4', align: 'center' });
+        D.dot(ctx, X(q[0]), Y(q[1]), 4, i === pi.i + 1 ? '#68b8b0' : 'rgba(122,206,193,.5)', i === pi.i + 1);
+        D.text(ctx, 'WP' + i, X(q[0]), Y(q[1]) - 10, { size: 9, color: '#68b8b0', align: 'center' });
       });
 
       /* ── 지나온 길 ── */
       if (st.trail.length > 1) {
-        ctx.save(); ctx.strokeStyle = 'rgba(251,113,133,.55)'; ctx.lineWidth = 2;
+        ctx.save(); ctx.strokeStyle = 'rgba(216,148,158,.55)'; ctx.lineWidth = 2;
         ctx.beginPath();
         st.trail.forEach((q, i) => i ? ctx.lineTo(X(q[0]), Y(q[1])) : ctx.moveTo(X(q[0]), Y(q[1])));
         ctx.stroke(); ctx.restore();
@@ -227,14 +227,14 @@
 
       /* ── 안전 반경 ── */
       ctx.save();
-      ctx.strokeStyle = st.avoid ? 'rgba(244,114,182,.8)' : 'rgba(244,114,182,.3)';
+      ctx.strokeStyle = st.avoid ? 'rgba(214,144,181,.8)' : 'rgba(214,144,181,.3)';
       ctx.lineWidth = st.avoid ? 2.2 : 1.4; ctx.setLineDash([4, 5]);
       if (hl === 'Rs') { ctx.shadowColor = C.Rs; ctx.shadowBlur = 12; }
       ctx.beginPath(); ctx.arc(X(st.tx), Y(st.ty), p.Rs * SC, 0, 7); ctx.stroke(); ctx.restore();
 
       /* ── 타선 + 예측 경로 ── */
       const tc = p.tC * Math.PI / 180;
-      ctx.save(); ctx.strokeStyle = 'rgba(251,191,36,.35)'; ctx.lineWidth = 1.4; ctx.setLineDash([5, 5]);
+      ctx.save(); ctx.strokeStyle = 'rgba(227,180,60,.35)'; ctx.lineWidth = 1.4; ctx.setLineDash([5, 5]);
       ctx.beginPath(); ctx.moveTo(X(st.tx), Y(st.ty));
       ctx.lineTo(X(st.tx + Math.cos(tc) * p.tV * KN * 900), Y(st.ty + Math.sin(tc) * p.tV * KN * 900));
       ctx.stroke(); ctx.restore();
@@ -246,37 +246,37 @@
           { fill: col, stroke: col, width: 1.6 });
         ctx.restore();
       };
-      ctx.save(); ctx.globalAlpha = .55; drawShip(st.tx, st.ty, tc, '#fbbf24', hl === 'tV' || hl === 'tC', 12); ctx.restore();
+      ctx.save(); ctx.globalAlpha = .55; drawShip(st.tx, st.ty, tc, '#ffb020', hl === 'tV' || hl === 'tC', 12); ctx.restore();
       D.text(ctx, '타선 ' + fmt(p.tV, 1) + ' kn', X(st.tx), Y(st.ty) + 24,
-        { size: 10, color: '#fbbf24', align: 'center' });
+        { size: 10, color: '#ffb020', align: 'center' });
 
       /* ── 자선 ── */
-      ctx.save(); ctx.globalAlpha = .75; drawShip(st.x, st.y, st.psi, '#fb7185', hl === 'V', 13); ctx.restore();
+      ctx.save(); ctx.globalAlpha = .75; drawShip(st.x, st.y, st.psi, '#c4705f', hl === 'V', 13); ctx.restore();
       D.text(ctx, '자선 ' + fmt(p.V, 1) + ' kn', X(st.x), Y(st.y) + 26,
-        { size: 10, color: '#fb7185', align: 'center' });
+        { size: 10, color: '#c4705f', align: 'center' });
 
       /* ── CPA 표시 ── */
       if (c.t > 0 && c.t < 1800) {
         const vx = p.V * KN * Math.cos(st.psi), vy = p.V * KN * Math.sin(st.psi);
         const ax = st.x + vx * c.t, ay = st.y + vy * c.t;
         const bx = st.tx + p.tV * KN * Math.cos(tc) * c.t, by = st.ty + p.tV * KN * Math.sin(tc) * c.t;
-        ctx.save(); ctx.strokeStyle = c.d < p.Rs ? 'rgba(251,113,133,.85)' : 'rgba(251,146,60,.6)';
+        ctx.save(); ctx.strokeStyle = c.d < p.Rs ? 'rgba(216,148,158,.85)' : 'rgba(230,148,81,.6)';
         ctx.lineWidth = 2; ctx.setLineDash([3, 3]);
         ctx.beginPath(); ctx.moveTo(X(ax), Y(ay)); ctx.lineTo(X(bx), Y(by)); ctx.stroke(); ctx.restore();
-        D.dot(ctx, X(ax), Y(ay), 3, '#fb923c', false);
-        D.dot(ctx, X(bx), Y(by), 3, '#fb923c', false);
+        D.dot(ctx, X(ax), Y(ay), 3, '#d1824a', false);
+        D.dot(ctx, X(bx), Y(by), 3, '#d1824a', false);
         D.tag(ctx, 'CPA ' + fmt(c.d, 0) + ' m / ' + fmt(c.t / 60, 1) + '분',
           (X(ax) + X(bx)) / 2, (Y(ay) + Y(by)) / 2 - 18,
-          c.d < p.Rs ? '#fb7185' : C.cpa, hl === 'cpa');
+          c.d < p.Rs ? '#c4705f' : C.cpa, hl === 'cpa');
       }
 
       /* ── 상태 ── */
       D.tag(ctx, st.avoid ? '충돌 회피 작동 — 우현 ' + fmt(st.off, 0) + '° 변침' : 'LOS 항로 추종 중',
-        w * .5, 30, st.avoid ? '#fb7185' : '#34d399', true);
+        w * .5, 30, st.avoid ? '#c4705f' : '#7fb894', true);
       D.text(ctx, '최근접 기록 ' + fmt(st.minD < 1e8 ? st.minD : 0, 0) + ' m  /  안전 반경 ' + fmt(p.Rs, 0) + ' m',
-        24, h - 30, { size: 11, color: st.minD >= p.Rs ? '#34d399' : '#fb7185' });
+        24, h - 30, { size: 11, color: st.minD >= p.Rs ? '#7fb894' : '#c4705f' });
       D.text(ctx, '화면 1초 = 실제 14초   ·   항로는 4개 경유점으로 이뤄진 지그재그',
-        24, h - 12, { size: 9.5, color: '#4b5a80' });
+        24, h - 12, { size: 9.5, color: '#4a4d55' });
     }
   });
 })();

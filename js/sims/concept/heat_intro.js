@@ -5,7 +5,7 @@
    뒤에 나오는 '엔트로피란 무엇인가?'로 바로 이어진다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { T1: '#fb7185', T2: '#60a5fa', k: '#fbbf24' };
+  const C = { T1: '#c4705f', T2: '#6f9fc4', k: '#ffb020' };
 
   function colorOfT(t) {
     const f = clamp((t - 0) / 100, 0, 1);
@@ -99,8 +99,8 @@
         D.roundRect(ctx, x, cy - bh / 2, bw, bh, 10);
         ctx.fillStyle = col; ctx.fill();
         ctx.restore();
-        D.text(ctx, '블록 ' + label, x + bw / 2, cy - bh / 2 - 14, { size: 13, color: '#e8eefc', align: 'center', bold: true });
-        D.text(ctx, fmt(t, 1) + '°', x + bw / 2, cy + 8, { size: 26, color: '#08101f', align: 'center', bold: true });
+        D.text(ctx, '블록 ' + label, x + bw / 2, cy - bh / 2 - 14, { size: 13, color: '#e6e7ea', align: 'center', bold: true });
+        D.text(ctx, fmt(t, 1) + '°', x + bw / 2, cy + 8, { size: 26, color: '#08090a', align: 'center', bold: true });
       });
 
       // 접촉면 + 흐름 화살표
@@ -111,7 +111,7 @@
         const dir = diff > 0 ? 1 : -1;
         D.arrow(ctx, midx - dir * 46, cy - bh / 2 - 34, dir * 70, 0, { color: C.k, width: 4, hot: hl === 'k', label: '열 흐름' });
       } else {
-        D.tag(ctx, '열평형 — 더 이상 흐르지 않음', midx, cy - bh / 2 - 34, '#34d399', true);
+        D.tag(ctx, '열평형 — 더 이상 흐르지 않음', midx, cy - bh / 2 - 34, '#7fb894', true);
       }
     }
   });

@@ -2,7 +2,7 @@
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const G = 9.8;
-  const C = { F: '#34d399', m: '#f472b6', mu: '#fb7185', a: '#fbbf24', v: '#60a5fa', N: '#60a5fa', f: '#fb7185', W: '#a78bfa' };
+  const C = { F: '#7fb894', m: '#c08098', mu: '#c4705f', a: '#ffb020', v: '#6f9fc4', N: '#6f9fc4', f: '#c4705f', W: '#a98cc4' };
 
   function friction(p) { return p.mu * p.m * G; }
   function accel(st, p) {
@@ -30,7 +30,7 @@
     vars: {
       a: { symbol: 'a', label: '가속도', unit: 'm/s²', color: C.a,
         where: '상자 위쪽 <b>노란 화살표</b>입니다. 알짜힘을 질량으로 나눈 값이며, 속도(파란 화살표)를 매초 이만큼 바꿉니다.' },
-      Fnet: { symbol: 'F', label: '알짜힘', unit: 'N', color: '#e8eefc',
+      Fnet: { symbol: 'F', label: '알짜힘', unit: 'N', color: '#e6e7ea',
         where: '화면 위쪽 <b>알짜힘 막대</b>입니다. 미는 힘에서 마찰력을 뺀 나머지로, 이것이 0이면 속도는 변하지 않습니다.' },
       f: { symbol: 'f', label: '마찰력', unit: 'N', color: C.f,
         where: '운동을 방해하는 <b>빨간 화살표</b>. 항상 운동 방향의 반대쪽을 향합니다.' },
@@ -71,7 +71,7 @@
         { label: '마찰력 f = μmg', value: f, unit: 'N', color: C.f },
         { label: '알짜힘 F − f', value: moving ? p.F - f : 0, unit: 'N' },
         { label: '이동 거리', value: st.x, unit: 'm' },
-        { label: '상태', value: moving ? '가속 중' : '정지 (힘 부족)', color: moving ? '#34d399' : '#fb7185' }
+        { label: '상태', value: moving ? '가속 중' : '정지 (힘 부족)', color: moving ? '#7fb894' : '#c4705f' }
       ];
     },
 
@@ -110,7 +110,7 @@
       D.text(ctx, 'μ = ' + fmt(p.mu, 2), 14, gy + 26, { size: 11, color: C.mu, bold: hl === 'mu' });
 
       // 거리 표시 (지나간 거리)
-      D.text(ctx, '이동 거리 ' + fmt(st.x, 1) + ' m', w - 14, gy + 26, { size: 11, color: '#61719a', align: 'right' });
+      D.text(ctx, '이동 거리 ' + fmt(st.x, 1) + ' m', w - 14, gy + 26, { size: 11, color: '#6a6e78', align: 'right' });
 
       // 상자
       const by = gy - side;
@@ -118,11 +118,11 @@
       if (hl === 'm') { ctx.shadowColor = C.m; ctx.shadowBlur = 22; }
       D.roundRect(ctx, cx - side / 2, by, side, side, 6);
       const grd = ctx.createLinearGradient(0, by, 0, by + side);
-      grd.addColorStop(0, hl === 'm' ? '#f9a8d4' : '#8ba4d8');
-      grd.addColorStop(1, hl === 'm' ? '#be5a92' : '#4a6ba8');
+      grd.addColorStop(0, hl === 'm' ? '#cfa2b2' : '#8a95a8');
+      grd.addColorStop(1, hl === 'm' ? '#a06a86' : '#5a7a96');
       ctx.fillStyle = grd; ctx.fill();
       ctx.restore();
-      D.text(ctx, fmt(p.m, 1) + ' kg', cx, by + side / 2 + 4, { size: 12, color: '#0a1120', align: 'center', bold: true });
+      D.text(ctx, fmt(p.m, 1) + ' kg', cx, by + side / 2 + 4, { size: 12, color: '#0a0b0c', align: 'center', bold: true });
 
       const f = friction(p);
       const moving = Math.abs(st.v) > 1e-6 || p.F > f;
@@ -149,14 +149,14 @@
       // 알짜힘 막대
       const bx = 22, bw = Math.min(240, w * .3), byy = 22;
       const maxF = 60;
-      D.text(ctx, '알짜힘 = 미는 힘 − 마찰력', bx, byy - 8, { size: 11, color: hl === 'Fnet' ? '#fff' : '#61719a', bold: hl === 'Fnet' });
+      D.text(ctx, '알짜힘 = 미는 힘 − 마찰력', bx, byy - 8, { size: 11, color: hl === 'Fnet' ? '#fff' : '#6a6e78', bold: hl === 'Fnet' });
       const fShown = moving ? f : Math.min(f, p.F);
       D.bar(ctx, bx, byy, bw, 10, p.F, maxF, C.F, null, hl === 'F');
       D.text(ctx, '미는 힘 ' + fmt(p.F, 0) + ' N', bx + bw + 8, byy + 9, { size: 11, color: C.F, bold: hl === 'F' });
       D.bar(ctx, bx, byy + 16, bw, 10, fShown, maxF, C.f, null, hl === 'f' || hl === 'mu');
       D.text(ctx, '마찰력 ' + fmt(fShown, 1) + ' N', bx + bw + 8, byy + 25, { size: 11, color: C.f, bold: hl === 'f' || hl === 'mu' });
-      D.bar(ctx, bx, byy + 32, bw, 12, moving ? p.F - f : 0, maxF, '#e8eefc', null, hl === 'Fnet');
-      D.text(ctx, '알짜힘 ' + fmt(moving ? p.F - f : 0, 1) + ' N', bx + bw + 8, byy + 42, { size: 12, color: '#e8eefc', bold: true });
+      D.bar(ctx, bx, byy + 32, bw, 12, moving ? p.F - f : 0, maxF, '#e6e7ea', null, hl === 'Fnet');
+      D.text(ctx, '알짜힘 ' + fmt(moving ? p.F - f : 0, 1) + ' N', bx + bw + 8, byy + 42, { size: 12, color: '#e6e7ea', bold: true });
 
       if (!moving) D.tag(ctx, '미는 힘 ≤ 최대 정지 마찰력 → 정지', w / 2, h - 18, C.f, hl === 'mu' || hl === 'f');
     }

@@ -6,8 +6,8 @@
    항로가 보정을 필요로 한다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { om: '#fbbf24', v0: '#fb7185', R: '#5eead4', lat: '#60a5fa',
-              acc: '#a78bfa', dev: '#f472b6' };
+  const C = { om: '#ffb020', v0: '#c4705f', R: '#68b8b0', lat: '#6f9fc4',
+              acc: '#a98cc4', dev: '#c08098' };
   const OMEGA_E = 7.292115e-5;        // 지구 자전 각속도 [rad/s]
 
   const tFlight = p => p.R / p.v0;                       // 가장자리까지 걸리는 시간
@@ -74,14 +74,14 @@
         { label: '원판이 돈 바퀴 수', value: td / 360, unit: '바퀴', dec: 2, color: C.om },
         { label: '코리올리 가속도 2ωv', value: corAcc(p), unit: 'm/s²', color: C.acc, dec: 2 },
         { label: '중력가속도 대비', value: corAcc(p) / 9.81 * 100, unit: '%', dec: 1, color: C.acc },
-        { label: '관성계에서의 궤적', value: '완벽한 직선 (아무 힘도 안 걸린다)', wide: true, color: '#34d399' },
+        { label: '관성계에서의 궤적', value: '완벽한 직선 (아무 힘도 안 걸린다)', wide: true, color: '#7fb894' },
         { label: '회전계에서의 궤적', wide: true, color: C.dev,
           value: p.om === 0 ? '직선 (회전이 없으니 같다)' : '오른쪽으로 휜다 — 가짜 힘이 있는 것처럼 보인다' },
-        { label: '── 지구에서라면 (위도 ' + fmt(p.lat, 0) + '°) ──', value: '', wide: true, color: '#4b5a80' },
+        { label: '── 지구에서라면 (위도 ' + fmt(p.lat, 0) + '°) ──', value: '', wide: true, color: '#4a4d55' },
         { label: '코리올리 매개변수 f', value: f * 1e5, unit: '×10⁻⁵ /s', color: C.lat, dec: 3 },
         { label: '관성원 반지름 (v/f)', value: isFinite(ir) ? ir / 1000 : Infinity, unit: 'km', dec: 1, color: C.lat },
         { label: '1시간 날아간 포탄의 편향', value: .5 * f * p.v0 * 3600 * 3600 / 1000, unit: 'km', dec: 1, color: C.dev },
-        { label: '이 위도에서 태풍이', wide: true, color: p.lat < 5 ? '#fb7185' : '#34d399',
+        { label: '이 위도에서 태풍이', wide: true, color: p.lat < 5 ? '#c4705f' : '#7fb894',
           value: p.lat < 5 ? '생기지 않는다 — 코리올리 힘이 거의 0이라 회전이 시작되지 않는다' :
                  '북반구라면 반시계 방향으로 돈다' }
       ];
@@ -138,25 +138,25 @@
         // 원판
         ctx.save();
         ctx.beginPath(); ctx.arc(cx, cy, rad, 0, 7);
-        ctx.fillStyle = 'rgba(94,234,212,.05)'; ctx.fill();
-        ctx.strokeStyle = 'rgba(94,234,212,.4)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = 'rgba(122,206,193,.05)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(122,206,193,.4)'; ctx.lineWidth = 2; ctx.stroke();
         ctx.restore();
         // 원판 위의 무늬(돌고 있다는 표시)
         ctx.save();
         ctx.translate(cx, cy); ctx.rotate(rot);
-        ctx.strokeStyle = 'rgba(147,162,196,.28)'; ctx.lineWidth = 1.2;
+        ctx.strokeStyle = 'rgba(167,170,176,.28)'; ctx.lineWidth = 1.2;
         for (let k = 0; k < 8; k++) {
           const a = k * Math.PI / 4;
           ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad); ctx.stroke();
         }
         [.35, .7].forEach(f2 => { ctx.beginPath(); ctx.arc(0, 0, rad * f2, 0, 7); ctx.stroke(); });
         // 기준 표시 (빨간 쐐기)
-        ctx.fillStyle = 'rgba(251,191,36,.55)';
+        ctx.fillStyle = 'rgba(227,180,60,.55)';
         ctx.beginPath(); ctx.moveTo(rad - 14, -7); ctx.lineTo(rad, 0); ctx.lineTo(rad - 14, 7); ctx.closePath(); ctx.fill();
         ctx.restore();
-        D.text(ctx, label, cx, cy - rad - 26, { size: 12, color: '#e8eefc', align: 'center', bold: true });
-        D.text(ctx, sub, cx, cy - rad - 10, { size: 10, color: '#61719a', align: 'center' });
-        D.dot(ctx, cx, cy, 3.5, '#93a2c4', false);
+        D.text(ctx, label, cx, cy - rad - 26, { size: 12, color: '#e6e7ea', align: 'center', bold: true });
+        D.text(ctx, sub, cx, cy - rad - 10, { size: 10, color: '#6a6e78', align: 'center' });
+        D.dot(ctx, cx, cy, 3.5, '#9a9da6', false);
       };
 
       const lx = w * .27, rx = w * .72;
@@ -164,7 +164,7 @@
       drawDisk(lx, theta, '관성계 (하늘에서 본 모습)', '공은 완벽한 직선 — 원판이 돈다');
       // 직선 궤적
       ctx.save();
-      ctx.strokeStyle = 'rgba(251,113,133,.75)'; ctx.lineWidth = 2.4; ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(216,148,158,.75)'; ctx.lineWidth = 2.4; ctx.setLineDash([]);
       ctx.beginPath(); ctx.moveTo(lx, cy); ctx.lineTo(lx + r * PX, cy); ctx.stroke(); ctx.restore();
       ctx.save(); ctx.shadowColor = C.v0; ctx.shadowBlur = 14;
       D.dot(ctx, lx + r * PX, cy, 5.5, C.v0, true); ctx.restore();
@@ -183,7 +183,7 @@
       drawDisk(rx, 0, '회전계 (원판 위에서 본 모습)', '공이 휜다 — 코리올리 힘이 있는 것처럼');
       // 휜 궤적: 관성계의 직선을 −θ만큼 되돌린다
       ctx.save();
-      ctx.strokeStyle = hl === 'dev' ? '#f472b6' : 'rgba(244,114,182,.75)'; ctx.lineWidth = 2.4;
+      ctx.strokeStyle = hl === 'dev' ? '#c08098' : 'rgba(214,144,181,.75)'; ctx.lineWidth = 2.4;
       if (hl === 'dev') { ctx.shadowColor = C.dev; ctx.shadowBlur = 12; }
       ctx.beginPath();
       const N = 80;
@@ -197,8 +197,8 @@
       ctx.save(); ctx.shadowColor = C.v0; ctx.shadowBlur = 14;
       D.dot(ctx, bx, by, 5.5, C.v0, true); ctx.restore();
       // 참고: 던진 방향 직선
-      D.line(ctx, rx, cy, rx + rad, cy, { color: 'rgba(147,162,196,.3)', dash: [4, 5] });
-      D.text(ctx, '던진 방향', rx + rad * .55, cy - 8, { size: 9, color: '#61719a' });
+      D.line(ctx, rx, cy, rx + rad, cy, { color: 'rgba(167,170,176,.3)', dash: [4, 5] });
+      D.text(ctx, '던진 방향', rx + rad * .55, cy - 8, { size: 9, color: '#6a6e78' });
       // 코리올리 가속도 화살표
       if (p.om > 0 && r > .3) {
         const vdir = -theta, nx = Math.sin(vdir), ny = -Math.cos(vdir);
@@ -215,20 +215,20 @@
 
       /* ── 지구 비유 ── */
       const ex = 48, ey = h - 72;
-      D.text(ctx, '지구에서라면 — 코리올리 매개변수 f = 2Ω sin φ', ex, ey - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '지구에서라면 — 코리올리 매개변수 f = 2Ω sin φ', ex, ey - 10, { size: 10.5, color: '#6a6e78' });
       const ew = Math.min(w - 300, 300);
       D.roundRect(ctx, ex, ey, ew, 12, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       ctx.save();
       for (let i = 0; i < ew; i += 3) {
         const la = i / ew * 90;
-        ctx.fillStyle = 'rgba(96,165,250,' + (.12 + .55 * Math.sin(la * Math.PI / 180)) + ')';
+        ctx.fillStyle = 'rgba(135,169,211,' + (.12 + .55 * Math.sin(la * Math.PI / 180)) + ')';
         ctx.fillRect(ex + i, ey, 3.5, 12);
       }
       ctx.restore();
       ctx.save(); ctx.shadowColor = C.lat; ctx.shadowBlur = 10;
       D.line(ctx, ex + ew * p.lat / 90, ey - 5, ex + ew * p.lat / 90, ey + 17, { color: '#fff', width: 2.2 }); ctx.restore();
-      D.text(ctx, '적도 0°', ex, ey + 28, { size: 9, color: '#4b5a80' });
-      D.text(ctx, '극 90°', ex + ew, ey + 28, { size: 9, color: '#4b5a80', align: 'right' });
+      D.text(ctx, '적도 0°', ex, ey + 28, { size: 9, color: '#4a4d55' });
+      D.text(ctx, '극 90°', ex + ew, ey + 28, { size: 9, color: '#4a4d55', align: 'right' });
       D.text(ctx, '위도 ' + fmt(p.lat, 0) + '°  ·  f = ' + fmt(fEarth(p) * 1e5, 2) + '×10⁻⁵ /s  ·  관성원 ' +
         (isFinite(inertialR(p)) ? fmt(inertialR(p) / 1000, 1) + ' km' : '무한대'),
         ex + ew + 20, ey + 10, { size: 11, color: hl === 'lat' ? '#fff' : C.lat });

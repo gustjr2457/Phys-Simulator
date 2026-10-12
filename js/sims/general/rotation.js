@@ -1,7 +1,7 @@
 /* [일반물리] 회전운동과 각운동량 — L = Iω (각운동량 보존) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { L: '#fbbf24', r: '#a78bfa', I: '#5eead4', w: '#60a5fa', K: '#f472b6' };
+  const C = { L: '#ffb020', r: '#a98cc4', I: '#68b8b0', w: '#6f9fc4', K: '#c08098' };
   const M = 1; // 점질량 모형: 팔 끝에 달린 질량(단순화를 위해 1로 고정)
 
   PS.register({
@@ -73,7 +73,7 @@
 
       // 회전판(바닥)
       ctx.save();
-      ctx.strokeStyle = 'rgba(147,162,196,.25)'; ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(167,170,176,.25)'; ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(cx, cy, PPM * 1.85, 0, 7); ctx.stroke();
       ctx.restore();
 
@@ -84,14 +84,14 @@
       // 팔(막대)
       const hotR = hl === 'r' || hl === 'I';
       D.line(ctx, x1, y1, x2, y2, { color: hotR ? '#fff' : C.r, width: hotR ? 5 : 3.5, hot: hotR });
-      D.dot(ctx, cx, cy, 5, '#93a2c4', false);
+      D.dot(ctx, cx, cy, 5, '#9a9da6', false);
 
       // 양 끝 질량
       [[x1, y1], [x2, y2]].forEach(([x, y]) => {
         ctx.save();
         if (hl === 'w' || hl === 'L') { ctx.shadowColor = C.w; ctx.shadowBlur = 18; }
         const g = ctx.createRadialGradient(x - 5, y - 5, 1, x, y, 16);
-        g.addColorStop(0, '#fde7f3'); g.addColorStop(1, '#f472b6');
+        g.addColorStop(0, '#e4dade'); g.addColorStop(1, '#c08098');
         ctx.fillStyle = g;
         ctx.beginPath(); ctx.arc(x, y, 16, 0, 7); ctx.fill();
         ctx.restore();

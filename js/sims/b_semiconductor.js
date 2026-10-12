@@ -7,22 +7,22 @@
    (물리학Ⅰ '전기력과 물질의 성질' 단원) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { Eg: '#fbbf24', T: '#fb7185', dope: '#5eead4', n: '#60a5fa', sig: '#a78bfa' };
+  const C = { Eg: '#ffb020', T: '#c4705f', dope: '#68b8b0', n: '#6f9fc4', sig: '#a98cc4' };
   const KB_EV = 8.617333e-5;            // 볼츠만 상수 [eV/K]
 
   // 열로 전도띠에 올라간 전자의 상대적 비율
   const nOf = p => Math.exp(-p.Eg / (2 * KB_EV * p.T));
   const DOPE = [
-    { n: '순수 (진성)', c: '#93a2c4', d: '열로 넘어간 전자만큼만 전류가 흐른다' },
-    { n: 'n형 도핑 (인 첨가)', c: '#60a5fa', d: '전자를 하나 더 가진 원자를 섞어 — 전자가 운반자' },
-    { n: 'p형 도핑 (붕소 첨가)', c: '#fb7185', d: '전자가 하나 모자란 원자를 섞어 — 양공이 운반자' }
+    { n: '순수 (진성)', c: '#9a9da6', d: '열로 넘어간 전자만큼만 전류가 흐른다' },
+    { n: 'n형 도핑 (인 첨가)', c: '#6f9fc4', d: '전자를 하나 더 가진 원자를 섞어 — 전자가 운반자' },
+    { n: 'p형 도핑 (붕소 첨가)', c: '#c4705f', d: '전자가 하나 모자란 원자를 섞어 — 양공이 운반자' }
   ];
   const dopeOf = p => DOPE[clamp(Math.round(p.dope), 0, 2)];
   // 도핑하면 운반자가 수십만 배 늘어난다
   const carriers = p => nOf(p) * (Math.round(p.dope) === 0 ? 1 : 1e6 * p.nd);
   const KIND = p => p.Eg < .1 ? 0 : (p.Eg < 3.2 ? 1 : 2);
   const KNAME = ['도체 — 띠가 겹쳐 있어 항상 전류가 흐른다', '반도체 — 조건에 따라 흐르기도, 안 흐르기도', '부도체 — 열로는 넘을 수 없다'];
-  const KCOL = ['#fbbf24', '#5eead4', '#fb7185'];
+  const KCOL = ['#ffb020', '#68b8b0', '#c4705f'];
   const MAT = [[0, '구리 (도체)'], [.67, '저마늄 0.67'], [1.12, '실리콘 1.12'], [1.42, '갈륨비소 1.42'],
                [2.26, '인화갈륨 2.26 (녹색 LED)'], [3.4, '질화갈륨 3.4 (청색 LED)'], [5.5, '다이아몬드 5.5'], [8, '석영 ~9']];
 
@@ -87,9 +87,9 @@
         { label: '도핑 효과', value: d.d, wide: true, color: d.c },
         { label: '전도도 (상대값)', value: cr < 1e-4 ? cr.toExponential(2) : fmt(cr, 4), wide: true, color: C.sig },
         { label: '분류', value: KNAME[k], wide: true, color: KCOL[k] },
-        { label: '가장 비슷한 물질', value: near[1], wide: true, color: '#fbbf24' },
+        { label: '가장 비슷한 물질', value: near[1], wide: true, color: '#ffb020' },
         { label: '온도를 100 K 올리면 n은', value: Math.exp(-p.Eg / (2 * KB_EV * (p.T + 100))) / Math.max(n, 1e-300), unit: '배', dec: 2, color: C.T },
-        { label: '이 띠간격에서 나오는 빛', wide: true, color: '#a78bfa',
+        { label: '이 띠간격에서 나오는 빛', wide: true, color: '#a98cc4',
           value: p.Eg > .3 ? fmt(1239.8 / p.Eg, 0) + ' nm ' +
                  (1239.8 / p.Eg < 400 ? '(자외선)' : (1239.8 / p.Eg < 500 ? '(파랑 — 청색 LED)' :
                  (1239.8 / p.Eg < 580 ? '(초록)' : (1239.8 / p.Eg < 700 ? '(빨강)' : '(적외선)')))) : '— (띠간격이 너무 작다)' }
@@ -146,17 +146,17 @@
       const gap = clamp(p.Eg, 0, EMAX - 2);
 
       // 가전자띠 (가득 찬)
-      ctx.save(); ctx.fillStyle = 'rgba(96,165,250,.35)';
+      ctx.save(); ctx.fillStyle = 'rgba(135,169,211,.35)';
       ctx.fillRect(bx, SY(0), bw, SY(-2) - SY(0)); ctx.restore();
-      D.text(ctx, '가전자띠 (가득 참)', bx + bw / 2, SY(-1) + 4, { size: 10.5, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '가전자띠 (가득 참)', bx + bw / 2, SY(-1) + 4, { size: 10.5, color: '#9a9da6', align: 'center' });
       // 전도띠 (비어 있는)
-      ctx.save(); ctx.fillStyle = 'rgba(94,234,212,.22)';
+      ctx.save(); ctx.fillStyle = 'rgba(122,206,193,.22)';
       ctx.fillRect(bx, SY(gap + 2.6), bw, SY(gap) - SY(gap + 2.6)); ctx.restore();
-      D.text(ctx, '전도띠 (비어 있음)', bx + bw / 2, SY(gap + 1.3) + 4, { size: 10.5, color: '#5eead4', align: 'center' });
+      D.text(ctx, '전도띠 (비어 있음)', bx + bw / 2, SY(gap + 1.3) + 4, { size: 10.5, color: '#68b8b0', align: 'center' });
       // 띠간격
       ctx.save();
       if (hl === 'Eg') { ctx.shadowColor = C.Eg; ctx.shadowBlur = 16; }
-      ctx.fillStyle = 'rgba(251,191,36,.10)'; ctx.fillRect(bx, SY(gap), bw, SY(0) - SY(gap));
+      ctx.fillStyle = 'rgba(227,180,60,.10)'; ctx.fillRect(bx, SY(gap), bw, SY(0) - SY(gap));
       ctx.strokeStyle = C.Eg; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(bx, SY(0)); ctx.lineTo(bx + bw, SY(0));
       ctx.moveTo(bx, SY(gap)); ctx.lineTo(bx + bw, SY(gap)); ctx.stroke(); ctx.restore();
@@ -164,7 +164,7 @@
         D.dim(ctx, bx + bw + 22, SY(0), bx + bw + 22, SY(gap),
           'E_g = ' + fmt(p.Eg, 2) + ' eV', C.Eg, hl === 'Eg');
       } else {
-        D.text(ctx, '띠가 겹쳐 있다 (도체)', bx + bw + 14, SY(0), { size: 10.5, color: '#fbbf24' });
+        D.text(ctx, '띠가 겹쳐 있다 (도체)', bx + bw + 14, SY(0), { size: 10.5, color: '#ffb020' });
       }
       // 열에너지 kT 눈금
       const kT = KB_EV * p.T;
@@ -178,28 +178,28 @@
         const ex = bx + 12 + ((q.x + i * .021) % 1) * (bw - 24);
         if (up) {
           const ey = SY(gap + .5 + (q.y * 1.8));
-          D.dot(ctx, ex, ey + Math.sin(st.t * 3 + q.ph) * 3, 3.2, '#5eead4', true);
+          D.dot(ctx, ex, ey + Math.sin(st.t * 3 + q.ph) * 3, 3.2, '#68b8b0', true);
           // 뒤에 남은 양공
-          D.dot(ctx, ex, SY(-.4 - q.y * 1.1), 3, 'rgba(251,113,133,.8)', false);
+          D.dot(ctx, ex, SY(-.4 - q.y * 1.1), 3, 'rgba(216,148,158,.8)', false);
         } else {
-          D.dot(ctx, ex, SY(-.3 - q.y * 1.4), 2.8, 'rgba(96,165,250,.75)', false);
+          D.dot(ctx, ex, SY(-.3 - q.y * 1.4), 2.8, 'rgba(135,169,211,.75)', false);
         }
       });
       // 도핑으로 생긴 여분 준위
       if (Math.round(p.dope) === 1) {
-        D.line(ctx, bx + 8, SY(gap - .25), bx + bw - 8, SY(gap - .25), { color: '#60a5fa', dash: [5, 4], width: 2, hot: hl === 'dope' });
-        D.text(ctx, 'n형 — 전도띠 바로 아래 여분 전자', bx + 10, SY(gap - .25) - 6, { size: 9.5, color: '#60a5fa' });
+        D.line(ctx, bx + 8, SY(gap - .25), bx + bw - 8, SY(gap - .25), { color: '#6f9fc4', dash: [5, 4], width: 2, hot: hl === 'dope' });
+        D.text(ctx, 'n형 — 전도띠 바로 아래 여분 전자', bx + 10, SY(gap - .25) - 6, { size: 9.5, color: '#6f9fc4' });
       } else if (Math.round(p.dope) === 2) {
-        D.line(ctx, bx + 8, SY(.25), bx + bw - 8, SY(.25), { color: '#fb7185', dash: [5, 4], width: 2, hot: hl === 'dope' });
-        D.text(ctx, 'p형 — 가전자띠 바로 위 빈자리(양공)', bx + 10, SY(.25) + 14, { size: 9.5, color: '#fb7185' });
+        D.line(ctx, bx + 8, SY(.25), bx + bw - 8, SY(.25), { color: '#c4705f', dash: [5, 4], width: 2, hot: hl === 'dope' });
+        D.text(ctx, 'p형 — 가전자띠 바로 위 빈자리(양공)', bx + 10, SY(.25) + 14, { size: 9.5, color: '#c4705f' });
       }
-      D.text(ctx, '에너지 ↑', bx - 30, SY(gap + 2.6) - 6, { size: 9.5, color: '#61719a', align: 'right' });
+      D.text(ctx, '에너지 ↑', bx - 30, SY(gap + 2.6) - 6, { size: 9.5, color: '#6a6e78', align: 'right' });
       D.tag(ctx, KNAME[k].split(' —')[0], bx + bw / 2, SY(gap + 3.4), KCOL[k], true);
 
       /* ── 전도도 막대 (로그) ── */
       const sx = Math.min(w - 120, bx + bw + 110), sTop = cy - 110, sH = 220, sW = 32;
       if (sx + sW + 60 < w + 60) {
-        D.text(ctx, '전도도 (로그)', sx + sW / 2, sTop - 24, { size: 10.5, color: '#61719a', align: 'center' });
+        D.text(ctx, '전도도 (로그)', sx + sW / 2, sTop - 24, { size: 10.5, color: '#6a6e78', align: 'center' });
         D.roundRect(ctx, sx, sTop, sW, sH, 6); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
         const cr = carriers(p);
         const LO = -40, HI = 0;
@@ -209,8 +209,8 @@
         ctx.fillStyle = C.sig; ctx.globalAlpha = .8; ctx.fill(); ctx.restore();
         [[0, '도체'], [-10, '반도체'], [-30, '부도체']].forEach(([lv, lab]) => {
           const yy = sTop + sH * (1 - (lv - LO) / (HI - LO));
-          D.line(ctx, sx - 5, yy, sx + sW + 5, yy, { color: 'rgba(147,162,196,.35)', dash: [3, 3] });
-          D.text(ctx, lab, sx + sW + 9, yy + 4, { size: 9.5, color: '#93a2c4' });
+          D.line(ctx, sx - 5, yy, sx + sW + 5, yy, { color: 'rgba(167,170,176,.35)', dash: [3, 3] });
+          D.text(ctx, lab, sx + sW + 9, yy + 4, { size: 9.5, color: '#9a9da6' });
         });
         D.text(ctx, cr < 1e-4 ? cr.toExponential(1) : fmt(cr, 3), sx + sW / 2, sTop - 8,
           { size: 11, color: C.sig, align: 'center', bold: true });
@@ -218,20 +218,20 @@
 
       /* ── 물질 눈금 ── */
       const mx = 48, my = h - 58, mw = Math.min(w - 96, 500);
-      D.text(ctx, '물질별 띠간격 (eV)', mx, my - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '물질별 띠간격 (eV)', mx, my - 10, { size: 10.5, color: '#6a6e78' });
       D.roundRect(ctx, mx, my, mw, 11, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       const MX = e => mx + mw * clamp(e / 9, 0, 1);
-      ctx.fillStyle = 'rgba(251,191,36,.22)'; ctx.fillRect(mx, my, MX(.1) - mx, 11);
-      ctx.fillStyle = 'rgba(94,234,212,.22)'; ctx.fillRect(MX(.1), my, MX(3.2) - MX(.1), 11);
-      ctx.fillStyle = 'rgba(251,113,133,.18)'; ctx.fillRect(MX(3.2), my, mx + mw - MX(3.2), 11);
+      ctx.fillStyle = 'rgba(227,180,60,.22)'; ctx.fillRect(mx, my, MX(.1) - mx, 11);
+      ctx.fillStyle = 'rgba(122,206,193,.22)'; ctx.fillRect(MX(.1), my, MX(3.2) - MX(.1), 11);
+      ctx.fillStyle = 'rgba(216,148,158,.18)'; ctx.fillRect(MX(3.2), my, mx + mw - MX(3.2), 11);
       MAT.forEach(([e, nm], i) => {
-        D.line(ctx, MX(e), my - 4, MX(e), my + 15, { color: 'rgba(147,162,196,.45)', width: 1.2 });
-        D.text(ctx, nm.split(' ')[0], MX(e), my + (i % 2 ? 38 : 27), { size: 8.5, color: '#93a2c4', align: 'center' });
+        D.line(ctx, MX(e), my - 4, MX(e), my + 15, { color: 'rgba(167,170,176,.45)', width: 1.2 });
+        D.text(ctx, nm.split(' ')[0], MX(e), my + (i % 2 ? 38 : 27), { size: 8.5, color: '#9a9da6', align: 'center' });
       });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.line(ctx, MX(p.Eg), my - 7, MX(p.Eg), my + 18, { color: '#fff', width: 2.4 }); ctx.restore();
-      D.text(ctx, '도체', mx + 4, my + 9, { size: 8.5, color: '#fbbf24' });
-      D.text(ctx, '부도체', mx + mw - 4, my + 9, { size: 8.5, color: '#fb7185', align: 'right' });
+      D.text(ctx, '도체', mx + 4, my + 9, { size: 8.5, color: '#ffb020' });
+      D.text(ctx, '부도체', mx + mw - 4, my + 9, { size: 8.5, color: '#c4705f', align: 'right' });
     }
   });
 })();

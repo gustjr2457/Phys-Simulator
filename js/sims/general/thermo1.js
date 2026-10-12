@@ -5,7 +5,7 @@
    항상 ΔU : W = 3 : 2 로 고정된다는 것을 정확한 해석해로 보여준다(수치오차 없음). */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { P: '#fbbf24', q: '#fb7185', Q: '#fb7185', W: '#60a5fa', U: '#a78bfa' };
+  const C = { P: '#ffb020', q: '#c4705f', Q: '#c4705f', W: '#6f9fc4', U: '#a98cc4' };
   const V0 = 10, VMAX = 26;
 
   function rate(p) { return (2 / 5) * (p.q / p.P); } // dV/dt (등압 과정, 단원자 이상기체)
@@ -53,7 +53,7 @@
 
     readouts(st, p) {
       return [
-        { label: '기체 부피 V', value: st.V, dec: 2, color: '#93a2c4' },
+        { label: '기체 부피 V', value: st.V, dec: 2, color: '#9a9da6' },
         { label: '들어간 열 Q', value: st.Q, dec: 2, color: C.Q },
         { label: '기체가 한 일 W', value: st.W, dec: 2, color: C.W },
         { label: '내부에너지 변화 ΔU', value: st.dU, dec: 2, color: C.U, wide: true },
@@ -83,16 +83,16 @@
       const pistonY = baseY - st.V * pxPerV;
 
       // 실린더 벽(양옆 + 바닥) — 위는 열려 있음
-      D.line(ctx, cx - cw / 2, topY, cx - cw / 2, baseY, { color: 'rgba(147,162,196,.55)', width: 3 });
-      D.line(ctx, cx + cw / 2, topY, cx + cw / 2, baseY, { color: 'rgba(147,162,196,.55)', width: 3 });
-      D.line(ctx, cx - cw / 2 - 6, baseY, cx + cw / 2 + 6, baseY, { color: 'rgba(147,162,196,.7)', width: 4 });
+      D.line(ctx, cx - cw / 2, topY, cx - cw / 2, baseY, { color: 'rgba(167,170,176,.55)', width: 3 });
+      D.line(ctx, cx + cw / 2, topY, cx + cw / 2, baseY, { color: 'rgba(167,170,176,.55)', width: 3 });
+      D.line(ctx, cx - cw / 2 - 6, baseY, cx + cw / 2 + 6, baseY, { color: 'rgba(167,170,176,.7)', width: 4 });
 
       // 기체(피스톤 아래 영역) — 뜨거울수록(ΔU 클수록) 붉게
       const heat = clamp(st.dU / Math.max(1, p.q * tCap(p) * 0.6), 0, 1);
       ctx.save();
       ctx.beginPath(); ctx.rect(cx - cw / 2 + 2, pistonY, cw - 4, baseY - pistonY);
       const grad = ctx.createLinearGradient(0, pistonY, 0, baseY);
-      grad.addColorStop(0, 'rgba(168,139,250,.18)');
+      grad.addColorStop(0, 'rgba(181,167,222,.18)');
       grad.addColorStop(1, `rgba(${Math.round(96 + 155 * heat)},${Math.round(120 - 40 * heat)},${Math.round(220 - 140 * heat)},.30)`);
       ctx.fillStyle = grad; ctx.fill();
       ctx.restore();
@@ -100,9 +100,9 @@
       // 피스톤
       const pistonH = 16;
       ctx.save();
-      if (hl === 'V') { ctx.shadowColor = '#e8eefc'; ctx.shadowBlur = 14; }
+      if (hl === 'V') { ctx.shadowColor = '#e6e7ea'; ctx.shadowBlur = 14; }
       D.roundRect(ctx, cx - cw / 2 - 6, pistonY - pistonH, cw + 12, pistonH, 4);
-      ctx.fillStyle = '#c8d3ef'; ctx.fill();
+      ctx.fillStyle = '#c8cad2'; ctx.fill();
       ctx.restore();
       // 추(무게 = P) — 피스톤 위에 얹혀 함께 올라간다
       const wSize = 20 + p.P * 7;
@@ -112,12 +112,12 @@
       D.roundRect(ctx, cx - wSize / 2, wTop, wSize, wSize, 6);
       ctx.fillStyle = C.P; ctx.fill();
       ctx.restore();
-      D.text(ctx, 'P', cx, wTop + wSize / 2 + 4, { size: 12, color: '#08101f', align: 'center', bold: true });
+      D.text(ctx, 'P', cx, wTop + wSize / 2 + 4, { size: 12, color: '#08090a', align: 'center', bold: true });
       D.text(ctx, '추의 무게 = 압력', cx + wSize / 2 + 10, wTop + wSize / 2 + 4,
         { size: 10, color: hl === 'P' ? '#fff' : C.P, bold: hl === 'P' });
 
       // 부피 치수선
-      D.dim(ctx, cx + cw / 2 + 24, baseY, cx + cw / 2 + 24, pistonY, 'V=' + fmt(st.V, 1), '#93a2c4', hl === 'V');
+      D.dim(ctx, cx + cw / 2 + 24, baseY, cx + cw / 2 + 24, pistonY, 'V=' + fmt(st.V, 1), '#9a9da6', hl === 'V');
 
       // W 화살표(피스톤이 밀려 올라간 만큼)
       if (st.V > V0 + .2) {
@@ -149,9 +149,9 @@
       ctx.fillStyle = C.U; ctx.fillRect(barX, barTop, barW, uH); ctx.restore();
       ctx.save(); if (hl === 'W') { ctx.shadowColor = C.W; ctx.shadowBlur = 14; }
       ctx.fillStyle = C.W; ctx.fillRect(barX, barTop + uH, barW, wH); ctx.restore();
-      D.text(ctx, 'Q 배분', barX + barW / 2, barTop - 12, { size: 10.5, color: '#61719a', align: 'center' });
-      D.text(ctx, 'ΔU 3', barX + barW / 2, barTop + uH / 2 + 4, { size: 10, color: '#08101f', align: 'center', bold: true });
-      D.text(ctx, 'W 2', barX + barW / 2, barTop + uH + wH / 2 + 4, { size: 10, color: '#08101f', align: 'center', bold: true });
+      D.text(ctx, 'Q 배분', barX + barW / 2, barTop - 12, { size: 10.5, color: '#6a6e78', align: 'center' });
+      D.text(ctx, 'ΔU 3', barX + barW / 2, barTop + uH / 2 + 4, { size: 10, color: '#08090a', align: 'center', bold: true });
+      D.text(ctx, 'W 2', barX + barW / 2, barTop + uH + wH / 2 + 4, { size: 10, color: '#08090a', align: 'center', bold: true });
     }
   });
 })();

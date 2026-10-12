@@ -4,7 +4,7 @@
    고등물리 트랙의 '역학적 에너지 보존'(에너지 종류별 정밀 계산)보다 앞서 보는 개념 시뮬. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { h0: '#a78bfa', bounce: '#fb7185', v: '#60a5fa', K: '#60a5fa', U: '#a78bfa', lost: '#61719a' };
+  const C = { h0: '#a98cc4', bounce: '#c4705f', v: '#6f9fc4', K: '#6f9fc4', U: '#a98cc4', lost: '#6a6e78' };
   const GY0 = 0.35; // 바닥 높이(개념용 여유 공간)
   const G = 9.0;    // 중력가속도(단순화) — U와 K를 같은 "에너지 단위"로 맞추는 데 사용
 
@@ -88,7 +88,7 @@
       return [
         { label: '현재 높이', value: h, dec: 2, color: C.U },
         { label: '빠르기(속력)', value: Math.abs(st.v), dec: 2, color: C.K },
-        { label: '튄 횟수', value: st.bounces, dec: 0, color: '#e8eefc' },
+        { label: '튄 횟수', value: st.bounces, dec: 0, color: '#e6e7ea' },
         { label: '소리·열로 사라진 양', value: st.lost, dec: 2, color: C.lost, wide: true }
       ];
     },
@@ -122,7 +122,7 @@
       const V = PS.view(w - BW, h, { x0: -2, x1: 2, y0: 0, y1: 5.6, pad: 24 });
       const ground = V.Y(GY0 - 0.02);
 
-      D.line(ctx, V.X(-2), ground, V.X(2), ground, { color: 'rgba(147,162,196,.4)', width: 2 });
+      D.line(ctx, V.X(-2), ground, V.X(2), ground, { color: 'rgba(167,170,176,.4)', width: 2 });
       D.ground(ctx, V.X(-2), V.X(2), ground, 0);
 
       // 출발 높이 안내선
@@ -144,14 +144,14 @@
       ctx.save();
       if (hl === 'U' || hl === 'h0') { ctx.shadowColor = C.h0; ctx.shadowBlur = 20; }
       const bg = ctx.createRadialGradient(bx - r * .3, by - r * .3, 1, bx, by, r);
-      bg.addColorStop(0, '#fde7f3'); bg.addColorStop(1, '#f472b6');
+      bg.addColorStop(0, '#e4dade'); bg.addColorStop(1, '#c08098');
       ctx.fillStyle = bg;
       ctx.beginPath(); ctx.arc(bx, by, r, 0, 7); ctx.fill();
       ctx.restore();
 
       if (st.settled) {
         D.text(ctx, '가만히 멈췄어요 — 에너지가 모두 소리·열로 흩어졌습니다', bx, by - r - 16,
-          { size: 11.5, color: '#e8eefc', align: 'center' });
+          { size: 11.5, color: '#e6e7ea', align: 'center' });
       }
 
       // 에너지 막대 (오른쪽)
@@ -163,7 +163,7 @@
       const kh = bh * clamp(K / maxE, 0, 1 - U / maxE);
       const lh = bh * clamp(lost / maxE, 0, 1);
 
-      D.text(ctx, '에너지', bxx + bwid / 2, top - 20, { size: 11, color: '#61719a', align: 'center' });
+      D.text(ctx, '에너지', bxx + bwid / 2, top - 20, { size: 11, color: '#6a6e78', align: 'center' });
       D.roundRect(ctx, bxx, top, bwid, bh, 6); ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.fill();
 
       ctx.save(); if (hl === 'lost') { ctx.shadowColor = C.lost; ctx.shadowBlur = 14; }
@@ -176,7 +176,7 @@
       ctx.fillStyle = C.K; ctx.fillRect(bxx, bot - lh - uh - kh, bwid, kh); ctx.restore();
 
       D.text(ctx, '항상 이 높이', bxx + bwid + 10, top + bh * (1 - clamp(st.E0 / maxE, 0, 1)) + 4,
-        { size: 9.5, color: '#61719a' });
+        { size: 9.5, color: '#6a6e78' });
     }
   });
 })();

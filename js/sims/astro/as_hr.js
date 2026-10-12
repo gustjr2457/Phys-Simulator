@@ -6,7 +6,7 @@
    헤르츠스프룽과 러셀이 1910년대에 그린 이 그림 한 장이 항성진화론의 출발점이다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { M: '#fbbf24', L: '#a78bfa', T: '#fb7185', R: '#5eead4', age: '#93a2c4' };
+  const C = { M: '#ffb020', L: '#a98cc4', T: '#c4705f', R: '#68b8b0', age: '#9a9da6' };
   const TSUN = 5772, LIFE = 22;        // 화면에서 별의 일생 전체에 쓰는 시간(초)
 
   const msL = M => Math.pow(M, 3.5);                       // 주계열 광도 [L☉]
@@ -107,19 +107,19 @@
       const s = stateOf(p.M, st.f), R = radOf(s);
       const tot = totLife(p.M) * 10, age = st.f * tot;        // 억 년
       return [
-        { label: '현재 단계', value: PHASE[s.ph], wide: true, color: ['#93a2c4', '#34d399', '#fb7185', '#a78bfa'][s.ph] },
+        { label: '현재 단계', value: PHASE[s.ph], wide: true, color: ['#9a9da6', '#7fb894', '#c4705f', '#a98cc4'][s.ph] },
         { label: '광도 L', value: s.L, unit: 'L☉', color: C.L, dec: s.L > 100 ? 0 : (s.L > 1 ? 2 : 5) },
         { label: '표면 온도 T', value: s.T, unit: 'K', color: C.T, dec: 0 },
         { label: '반지름 R', value: R, unit: 'R☉', color: C.R, dec: R > 10 ? 0 : 3 },
-        { label: '주계열 수명', value: msLife(p.M) * 10, unit: '억 년', color: '#fbbf24', dec: msLife(p.M) * 10 > 100 ? 0 : 2 },
-        { label: '태양 수명의 몇 배', wide: true, color: '#fbbf24',
+        { label: '주계열 수명', value: msLife(p.M) * 10, unit: '억 년', color: '#ffb020', dec: msLife(p.M) * 10 > 100 ? 0 : 2 },
+        { label: '태양 수명의 몇 배', wide: true, color: '#ffb020',
           value: msLife(p.M) >= 10 ? fmt(msLife(p.M) / 10, 1) + ' 배 김' : '1/' + fmt(10 / msLife(p.M), 0) + ' 배 (훨씬 짧음)' },
         { label: '현재 나이', value: age, unit: '억 년', color: C.age, dec: age > 100 ? 0 : 2 },
         { label: '남은 시간', value: Math.max(0, tot - age), unit: '억 년', dec: tot - age > 100 ? 0 : 2, color: C.age },
         { label: '이 별의 최후', value: FATE_NAME[FATE(p.M)], wide: true,
-          color: ['#93a2c4', '#e8eefc', '#60a5fa', '#a78bfa'][FATE(p.M)] },
+          color: ['#9a9da6', '#e6e7ea', '#6f9fc4', '#a98cc4'][FATE(p.M)] },
         { label: '우주 나이(138억 년) 안에 죽는가', wide: true,
-          color: totLife(p.M) * 10 <= 138 ? '#fb7185' : '#34d399',
+          color: totLife(p.M) * 10 <= 138 ? '#c4705f' : '#7fb894',
           value: totLife(p.M) * 10 <= 138 ? '죽는다 — 이미 죽은 같은 별이 우주에 많다' : '아직 아니다 — 1세대 별도 아직 주계열에 있다' }
       ];
     },
@@ -185,7 +185,7 @@
         D.text(ctx, '초신성!', sx, sy - rad - 30, { size: 13, color: '#fff', align: 'center', bold: true });
       }
       D.text(ctx, PHASE[s.ph], sx, sy + rad + 22,
-        { size: 12, color: ['#93a2c4', '#34d399', '#fb7185', '#a78bfa'][s.ph], align: 'center', bold: true });
+        { size: 12, color: ['#9a9da6', '#7fb894', '#c4705f', '#a98cc4'][s.ph], align: 'center', bold: true });
       D.text(ctx, 'R = ' + (R > 10 ? fmt(R, 0) : R.toExponential(1)) + ' R☉', sx, sy + rad + 38,
         { size: 10, color: hl === 'R' ? '#fff' : C.R, align: 'center' });
 
@@ -211,16 +211,16 @@
       for (let i = 0; i < 40; i++) {
         const j = (Math.sin(i * 33.77) * 43758.5453 % 1 + 1) % 1;
         D.dot(ctx, GX(3400 + j * 1600), GY(Math.pow(10, 1.6 + j * 1.9)), 1.5, bbRGB(3400 + j * 1600), false);
-        D.dot(ctx, GX(9000 + j * 20000), GY(Math.pow(10, -3.2 + j * 1.1)), 1.3, '#cfe0ff', false);
+        D.dot(ctx, GX(9000 + j * 20000), GY(Math.pow(10, -3.2 + j * 1.1)), 1.3, '#dce4f2', false);
       }
       ctx.restore();
-      D.text(ctx, '주계열', GX(9000), GY(msL(2.2)) - 8, { size: 9.5, color: 'rgba(52,211,153,.8)', align: 'center' });
-      D.text(ctx, '거성 가지', GX(4000), GY(300), { size: 9.5, color: 'rgba(251,113,133,.8)', align: 'center' });
-      D.text(ctx, '백색왜성', GX(16000), GY(3e-3), { size: 9.5, color: 'rgba(207,224,255,.75)', align: 'center' });
+      D.text(ctx, '주계열', GX(9000), GY(msL(2.2)) - 8, { size: 9.5, color: 'rgba(82,181,145,.8)', align: 'center' });
+      D.text(ctx, '거성 가지', GX(4000), GY(300), { size: 9.5, color: 'rgba(216,148,158,.8)', align: 'center' });
+      D.text(ctx, '백색왜성', GX(16000), GY(3e-3), { size: 9.5, color: 'rgba(220,228,242,.75)', align: 'center' });
 
       // 지나온 경로
       if (st.track.length > 1) {
-        ctx.save(); ctx.strokeStyle = 'rgba(232,238,252,.55)'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+        ctx.save(); ctx.strokeStyle = 'rgba(236,240,248,.55)'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
         ctx.beginPath();
         st.track.forEach((q, i) => { const X = GX(Math.pow(10, q[0])), Y = GY(Math.pow(10, q[1])); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
         ctx.stroke(); ctx.restore();
@@ -230,31 +230,31 @@
       D.dot(ctx, GX(s.T), GY(s.L), 6, col, true); ctx.restore();
 
       // 축
-      D.text(ctx, '← 뜨겁다', gx + 6, gy + gh + 16, { size: 9.5, color: '#61719a' });
-      D.text(ctx, '차갑다 →', gx + gw - 4, gy + gh + 16, { size: 9.5, color: '#61719a', align: 'right' });
-      D.text(ctx, '표면 온도 (로그)', gx + gw / 2, gy + gh + 16, { size: 9.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '← 뜨겁다', gx + 6, gy + gh + 16, { size: 9.5, color: '#6a6e78' });
+      D.text(ctx, '차갑다 →', gx + gw - 4, gy + gh + 16, { size: 9.5, color: '#6a6e78', align: 'right' });
+      D.text(ctx, '표면 온도 (로그)', gx + gw / 2, gy + gh + 16, { size: 9.5, color: '#6a6e78', align: 'center' });
       [[1e6, '10⁶'], [1e3, '10³'], [1, '1'], [1e-3, '10⁻³']].forEach(([v, lab]) => {
-        D.text(ctx, lab, gx - 5, GY(v) + 3.5, { size: 9, color: '#4b5a80', align: 'right' });
+        D.text(ctx, lab, gx - 5, GY(v) + 3.5, { size: 9, color: '#4a4d55', align: 'right' });
         D.line(ctx, gx, GY(v), gx + gw, GY(v), { color: 'rgba(255,255,255,.045)' });
       });
-      D.text(ctx, '광도 (L☉)', gx - 5, gy - 8, { size: 9.5, color: '#61719a', align: 'right' });
-      D.text(ctx, 'H-R 도', gx + 6, gy - 8, { size: 11, color: '#61719a' });
+      D.text(ctx, '광도 (L☉)', gx - 5, gy - 8, { size: 9.5, color: '#6a6e78', align: 'right' });
+      D.text(ctx, 'H-R 도', gx + 6, gy - 8, { size: 11, color: '#6a6e78' });
 
       /* ── 일생 막대 ── */
       const bx = 44, by = h - 62, bw = Math.min(w - 88, 540);
       const tot = totLife(p.M) * 10;
-      D.text(ctx, '일생 — 전체 ' + (tot > 100 ? fmt(tot, 0) : fmt(tot, 2)) + ' 억 년', bx, by - 26, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '일생 — 전체 ' + (tot > 100 ? fmt(tot, 0) : fmt(tot, 2)) + ' 억 년', bx, by - 26, { size: 10.5, color: '#6a6e78' });
       D.roundRect(ctx, bx, by, bw, 16, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
-      [[0, .02, '#93a2c4'], [.02, .80, '#34d399'], [.80, .94, '#fb7185'], [.94, 1, '#a78bfa']].forEach(([a, b, cc]) => {
+      [[0, .02, '#9a9da6'], [.02, .80, '#7fb894'], [.80, .94, '#c4705f'], [.94, 1, '#a98cc4']].forEach(([a, b, cc]) => {
         ctx.fillStyle = cc; ctx.globalAlpha = .45;
         ctx.fillRect(bx + bw * a, by, bw * (b - a), 16); ctx.globalAlpha = 1;
       });
-      D.text(ctx, '주계열 (일생의 80%)', bx + bw * .41, by + 29, { size: 9.5, color: '#34d399', align: 'center' });
-      D.text(ctx, '적색거성', bx + bw * .87, by + 29, { size: 9.5, color: '#fb7185', align: 'center' });
+      D.text(ctx, '주계열 (일생의 80%)', bx + bw * .41, by + 29, { size: 9.5, color: '#7fb894', align: 'center' });
+      D.text(ctx, '적색거성', bx + bw * .87, by + 29, { size: 9.5, color: '#c4705f', align: 'center' });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.line(ctx, bx + bw * st.f, by - 5, bx + bw * st.f, by + 21, { color: '#fff', width: 2.4 }); ctx.restore();
       D.text(ctx, fmt(st.f * tot, tot > 100 ? 0 : 2) + ' 억 년',
-        clamp(bx + bw * st.f, bx + 30, bx + bw - 30), by - 9, { size: 10, color: '#e8eefc', align: 'center' });
+        clamp(bx + bw * st.f, bx + 30, bx + bw - 30), by - 9, { size: 10, color: '#e6e7ea', align: 'center' });
       D.text(ctx, 'M = ' + fmt(p.M, 1) + ' M☉', Math.min(w - 44, bx + bw + 20), by + 12,
         { size: 12.5, color: hl === 'M' ? '#fff' : C.M, align: 'right', bold: true });
     }

@@ -6,8 +6,8 @@
    전파도 빛도 X선도 전부 같은 파동이고, 진동수만 다르다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { lgf: '#fbbf24', E0: '#fb7185', E: '#fb7185', B: '#5eead4',
-              lam: '#a78bfa', ph: '#60a5fa', S: '#fb923c' };
+  const C = { lgf: '#ffb020', E0: '#c4705f', E: '#c4705f', B: '#68b8b0',
+              lam: '#a98cc4', ph: '#6f9fc4', S: '#d1824a' };
   const Cc = 2.99792458e8, EPS0 = 8.8541878e-12, HEV = 4.135667696e-15;
 
   const fOf = p => Math.pow(10, p.lgf);
@@ -17,13 +17,13 @@
   const intensity = p => .5 * EPS0 * Cc * p.E0 * p.E0;             // W/m²
 
   const BANDS = [
-    [0, 3e9, '전파', '#60a5fa', '방송·통신·전파망원경 — 대기를 그대로 통과'],
-    [3e9, 3e11, '마이크로파', '#5eead4', '레이더·전자레인지·위성통신 — 물 분자를 흔든다'],
-    [3e11, 4.3e14, '적외선', '#fb7185', '열복사 — 모든 따뜻한 물체가 낸다'],
-    [4.3e14, 7.5e14, '가시광선', '#fbbf24', '눈이 보는 아주 좁은 창 — 대기가 열려 있는 구간'],
-    [7.5e14, 3e16, '자외선', '#a78bfa', '피부를 태운다 — 오존층이 대부분 막아 준다'],
-    [3e16, 3e19, 'X선', '#c084fc', '몸을 통과한다 — 대기가 막아 우주에서만 관측'],
-    [3e19, 1e25, '감마선', '#f472b6', '원자핵에서 나온다 — 가장 높은 에너지']
+    [0, 3e9, '전파', '#6f9fc4', '방송·통신·전파망원경 — 대기를 그대로 통과'],
+    [3e9, 3e11, '마이크로파', '#68b8b0', '레이더·전자레인지·위성통신 — 물 분자를 흔든다'],
+    [3e11, 4.3e14, '적외선', '#c4705f', '열복사 — 모든 따뜻한 물체가 낸다'],
+    [4.3e14, 7.5e14, '가시광선', '#ffb020', '눈이 보는 아주 좁은 창 — 대기가 열려 있는 구간'],
+    [7.5e14, 3e16, '자외선', '#a98cc4', '피부를 태운다 — 오존층이 대부분 막아 준다'],
+    [3e16, 3e19, 'X선', '#b088d0', '몸을 통과한다 — 대기가 막아 우주에서만 관측'],
+    [3e19, 1e25, '감마선', '#c08098', '원자핵에서 나온다 — 가장 높은 에너지']
   ];
   const bandOf = f => BANDS.find(b => f >= b[0] && f < b[1]) || BANDS[BANDS.length - 1];
 
@@ -87,11 +87,11 @@
         { label: '자기장 진폭 B₀ = E₀/c', value: b0Of(p) * 1e9, unit: 'nT', color: C.B, dec: 3 },
         { label: '세기 S', value: intensity(p), unit: 'W/m²', color: C.S, dec: 2 },
         { label: '햇빛(1361 W/m²) 대비', value: intensity(p) / 1361 * 100, unit: '%', dec: 1, color: C.S },
-        { label: '1초에 지나가는 파동 수', value: f, unit: '개', dec: 0, color: '#93a2c4' },
+        { label: '1초에 지나가는 파동 수', value: f, unit: '개', dec: 0, color: '#9a9da6' },
         { label: '파장을 사람 크기와 비교하면', wide: true, color: C.lam,
           value: lam > 100 ? '건물보다 길다' : (lam > .5 ? '사람 키 정도' : (lam > 1e-3 ? '머리카락~손톱 정도' :
                  (lam > 1e-7 ? '세균~분자 크기' : '원자보다 작다'))) },
-        { label: '매질이 필요한가', value: '필요 없다 — 진공에서도 전파된다 (소리와 결정적으로 다른 점)', wide: true, color: '#34d399' }
+        { label: '매질이 필요한가', value: '필요 없다 — 진공에서도 전파된다 (소리와 결정적으로 다른 점)', wide: true, color: '#7fb894' }
       ];
     },
 
@@ -146,15 +146,15 @@
       const PH = u => (u * cycles * 2 * Math.PI) - st.ph;
 
       // 진행 축
-      D.line(ctx, x0 - 20, cy, x0 + pw + 26, cy, { color: 'rgba(147,162,196,.35)', width: 1.4 });
-      D.arrow(ctx, x0 + pw + 4, cy, 26, 0, { color: '#93a2c4', width: 2, head: 7 });
-      D.text(ctx, '진행 방향 (속력 c)', x0 + pw + 34, cy + 4, { size: 10, color: '#93a2c4' });
+      D.line(ctx, x0 - 20, cy, x0 + pw + 26, cy, { color: 'rgba(167,170,176,.35)', width: 1.4 });
+      D.arrow(ctx, x0 + pw + 4, cy, 26, 0, { color: '#9a9da6', width: 2, head: 7 });
+      D.text(ctx, '진행 방향 (속력 c)', x0 + pw + 34, cy + 4, { size: 10, color: '#9a9da6' });
       // z축 안내
-      D.line(ctx, x0, cy, x0 + 44 * dxz, cy + 44 * dyz, { color: 'rgba(147,162,196,.25)', dash: [3, 3] });
+      D.line(ctx, x0, cy, x0 + 44 * dxz, cy + 44 * dyz, { color: 'rgba(167,170,176,.25)', dash: [3, 3] });
 
       // B (뒤쪽에 먼저)
       ctx.save();
-      ctx.strokeStyle = hl === 'B' ? 'rgba(94,234,212,.95)' : 'rgba(94,234,212,.55)';
+      ctx.strokeStyle = hl === 'B' ? 'rgba(122,206,193,.95)' : 'rgba(122,206,193,.55)';
       ctx.lineWidth = 2.2;
       ctx.beginPath();
       for (let i = 0; i <= 180; i++) {
@@ -167,14 +167,14 @@
         const u = i / 14, s = Math.sin(PH(u));
         if (Math.abs(s) < .12) continue;
         D.line(ctx, x0 + pw * u, cy, x0 + pw * u + s * bamp * dxz, cy + s * bamp * dyz,
-          { color: hl === 'B' ? 'rgba(94,234,212,.9)' : 'rgba(94,234,212,.4)', width: 1.4 });
+          { color: hl === 'B' ? 'rgba(122,206,193,.9)' : 'rgba(122,206,193,.4)', width: 1.4 });
       }
       D.text(ctx, 'B (자기장)', x0 + 60 * dxz - 10, cy + 60 * dyz - 6,
         { size: 11, color: hl === 'B' ? '#fff' : C.B, bold: hl === 'B' });
 
       // E (앞쪽)
       ctx.save();
-      ctx.strokeStyle = hl === 'E' || hl === 'E0' ? '#fb7185' : 'rgba(251,113,133,.8)';
+      ctx.strokeStyle = hl === 'E' || hl === 'E0' ? '#c4705f' : 'rgba(216,148,158,.8)';
       ctx.lineWidth = 2.6;
       if (hl === 'E' || hl === 'E0') { ctx.shadowColor = C.E; ctx.shadowBlur = 12; }
       ctx.beginPath();
@@ -200,11 +200,11 @@
              (lam > 1e-9 ? fmt(lam * 1e9, 2) + ' nm' : lam.toExponential(2) + ' m')),
         x0 + 10 + lamPx / 2, cy + amp + 46, { size: 10.5, color: hl === 'lam' ? '#fff' : C.lam, align: 'center' });
       D.text(ctx, 'E ⊥ B ⊥ 진행 방향   ·   위상이 같다   ·   E/B = c',
-        x0, cy - amp - 32, { size: 10.5, color: '#61719a' });
+        x0, cy - amp - 32, { size: 10.5, color: '#6a6e78' });
 
       /* ── 스펙트럼 띠 ── */
       const sx = 48, sy = h - 112, sw = Math.min(w - 96, 520);
-      D.text(ctx, '전자기 스펙트럼 — 전부 같은 파동, 진동수만 다르다', sx, sy - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '전자기 스펙트럼 — 전부 같은 파동, 진동수만 다르다', sx, sy - 10, { size: 10.5, color: '#6a6e78' });
       const LO = 4, HI = 23;
       const SX = ff => sx + sw * clamp((Math.log10(ff) - LO) / (HI - LO), 0, 1);
       BANDS.forEach((bd, i) => {
@@ -214,16 +214,16 @@
         ctx.fillStyle = bd[3]; ctx.globalAlpha = bd === band ? .62 : .26;
         ctx.fillRect(a, sy, Math.max(2, b2 - a), 20); ctx.restore();
         if (b2 - a > 30) D.text(ctx, bd[2], (a + b2) / 2, sy + 34,
-          { size: 9, color: bd === band ? bd[3] : '#4b5a80', align: 'center', bold: bd === band });
+          { size: 9, color: bd === band ? bd[3] : '#4a4d55', align: 'center', bold: bd === band });
       });
       // 가시광선 강조
       ctx.save(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.4;
       ctx.strokeRect(SX(4.3e14), sy - 2, SX(7.5e14) - SX(4.3e14), 24); ctx.restore();
       [1e6, 1e9, 1e12, 1e15, 1e18, 1e21].forEach(ff => {
         D.text(ctx, '10' + ('' + Math.round(Math.log10(ff))).replace(/\d/g, d => '⁰¹²³⁴⁵⁶⁷⁸⁹'[d]),
-          SX(ff), sy + 48, { size: 8.5, color: '#4b5a80', align: 'center' });
+          SX(ff), sy + 48, { size: 8.5, color: '#4a4d55', align: 'center' });
       });
-      D.text(ctx, 'Hz', sx + sw, sy + 48, { size: 8.5, color: '#4b5a80', align: 'right' });
+      D.text(ctx, 'Hz', sx + sw, sy + 48, { size: 8.5, color: '#4a4d55', align: 'right' });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.line(ctx, SX(f), sy - 7, SX(f), sy + 27, { color: '#fff', width: 2.4 }); ctx.restore();
 
@@ -233,7 +233,7 @@
         sx, h - 36, { size: 12, color: band[3], bold: true });
       D.text(ctx, 'B₀ = ' + fmt(b0Of(p) * 1e9, 3) + ' nT   ·   세기 ' + fmt(intensity(p), 2) + ' W/m²  (햇빛의 ' +
         fmt(intensity(p) / 1361 * 100, 1) + '%)', sx, h - 16,
-        { size: 11, color: hl === 'S' ? '#fff' : '#93a2c4' });
+        { size: 11, color: hl === 'S' ? '#fff' : '#9a9da6' });
     }
   });
 })();

@@ -6,13 +6,13 @@
    질량분석기, 토카막 핵융합로가 모두 이 한 식 위에 서 있다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { v: '#fb7185', B: '#5eead4', ang: '#a78bfa', pt: '#fbbf24',
-              r: '#60a5fa', T: '#f472b6', F: '#fb923c' };
+  const C = { v: '#c4705f', B: '#68b8b0', ang: '#a98cc4', pt: '#ffb020',
+              r: '#6f9fc4', T: '#c08098', F: '#d1824a' };
   const E = 1.602176634e-19;
   const PARTS = [
-    { n: '전자', q: -E, m: 9.1093837e-31, c: '#60a5fa' },
-    { n: '양성자', q: E, m: 1.67262192e-27, c: '#fb7185' },
-    { n: '알파 입자', q: 2 * E, m: 6.6446573e-27, c: '#fbbf24' }
+    { n: '전자', q: -E, m: 9.1093837e-31, c: '#6f9fc4' },
+    { n: '양성자', q: E, m: 1.67262192e-27, c: '#c4705f' },
+    { n: '알파 입자', q: 2 * E, m: 6.6446573e-27, c: '#ffb020' }
   ];
   const partOf = p => PARTS[clamp(Math.round(p.pt), 0, 2)];
   const vOf = p => p.v * 1e6;                                  // m/s
@@ -72,7 +72,7 @@
       title: '수직면 위치 — 원운동 (y, z 성분)', xmin: 4, window: 7,
       series: [
         { key: 'py', label: 'y (mm)', color: C.r },
-        { key: 'pz', label: 'z (mm)', color: '#a78bfa' }
+        { key: 'pz', label: 'z (mm)', color: '#a98cc4' }
       ]
     }],
     sample(st, p) {
@@ -92,8 +92,8 @@
         { label: '평행 속도 v∥', value: vpar(p) / 1e6, unit: '×10⁶ m/s', dec: 2, color: C.ang },
         { label: '나선의 피치', value: pitchOf(p) * 1000, unit: 'mm', dec: 3, color: C.ang },
         { label: '자기력 F', value: forceOf(p), unit: 'N', color: C.F, dec: 20 },
-        { label: '운동에너지', value: keOf(p), unit: 'eV', dec: 0, color: '#fb923c' },
-        { label: '속력이 변하는가', wide: true, color: '#34d399',
+        { label: '운동에너지', value: keOf(p), unit: 'eV', dec: 0, color: '#d1824a' },
+        { label: '속력이 변하는가', wide: true, color: '#7fb894',
           value: '변하지 않는다 — 힘이 속도에 수직이라 일을 하지 않는다' },
         { label: '궤적의 모양', wide: true, color: C.ang,
           value: p.ang >= 89 ? '완전한 원 (v가 B에 수직)' : (p.ang <= 1 ? '직진 (자기력이 0)' : '나선 — 돌면서 B 방향으로 전진') }
@@ -145,7 +145,7 @@
 
       /* ── 자기장 ── */
       ctx.save();
-      ctx.strokeStyle = hl === 'B' ? 'rgba(94,234,212,.75)' : 'rgba(94,234,212,.3)';
+      ctx.strokeStyle = hl === 'B' ? 'rgba(122,206,193,.75)' : 'rgba(122,206,193,.3)';
       ctx.lineWidth = hl === 'B' ? 1.8 : 1.2;
       for (let k = -2; k <= 2; k++) {
         const yy = cy + k * R * .55;
@@ -169,7 +169,7 @@
         if (z < z0) { prev = null; return; }
         const pt = proj(z - z0, ph);
         if (prev) {
-          ctx.strokeStyle = 'rgba(' + (q.c === '#60a5fa' ? '96,165,250' : q.c === '#fb7185' ? '251,113,133' : '251,191,36') +
+          ctx.strokeStyle = 'rgba(' + (q.c === '#6f9fc4' ? '96,165,250' : q.c === '#c4705f' ? '251,113,133' : '251,191,36') +
             ',' + (.2 + .55 * depth(ph)) + ')';
           ctx.beginPath(); ctx.moveTo(prev[0], prev[1]); ctx.lineTo(pt[0], pt[1]); ctx.stroke();
         }
@@ -196,16 +196,16 @@
       const cr = clamp(Math.min(w * .14, h * .17), 28, 66);
       if (ox + cr + 20 < w) {
         ctx.save();
-        ctx.strokeStyle = 'rgba(147,162,196,.35)'; ctx.lineWidth = 1.4;
+        ctx.strokeStyle = 'rgba(167,170,176,.35)'; ctx.lineWidth = 1.4;
         ctx.beginPath(); ctx.arc(ox, oy, cr + 16, 0, 7); ctx.stroke(); ctx.restore();
-        D.text(ctx, 'B 방향에서 본 모습', ox, oy - cr - 28, { size: 10.5, color: '#61719a', align: 'center' });
+        D.text(ctx, 'B 방향에서 본 모습', ox, oy - cr - 28, { size: 10.5, color: '#6a6e78', align: 'center' });
         // B는 화면 밖으로 나오는 방향 (⊙)
         for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) {
           const bx = ox + i * (cr + 2), by = oy + j * (cr + 2);
           if (Math.hypot(i, j) < .5) continue;
-          ctx.save(); ctx.strokeStyle = 'rgba(94,234,212,.4)'; ctx.lineWidth = 1.2;
+          ctx.save(); ctx.strokeStyle = 'rgba(122,206,193,.4)'; ctx.lineWidth = 1.2;
           ctx.beginPath(); ctx.arc(bx, by, 4, 0, 7); ctx.stroke(); ctx.restore();
-          D.dot(ctx, bx, by, 1.4, 'rgba(94,234,212,.6)', false);
+          D.dot(ctx, bx, by, 1.4, 'rgba(122,206,193,.6)', false);
         }
         ctx.save();
         ctx.strokeStyle = q.c; ctx.lineWidth = 2; ctx.globalAlpha = .55;
@@ -222,9 +222,9 @@
       D.text(ctx, 'T = ' + (T * 1e9 < 1000 ? fmt(T * 1e9, 2) + ' ns' : fmt(T * 1e6, 2) + ' µs') +
         '   (속도와 무관!)', 36, h - 40, { size: 12.5, color: hl === 'T' ? '#fff' : C.T, bold: true });
       D.text(ctx, '사이클로트론 진동수 ' + fmt(fcOf(p) / 1e6, 1) + ' MHz   ·   피치 ' + fmt(pitch * 1000, 3) + ' mm',
-        36, h - 20, { size: 11, color: '#93a2c4' });
+        36, h - 20, { size: 11, color: '#9a9da6' });
       D.text(ctx, '※ 화면 회전 속도는 보기 좋게 느리게 했습니다 (실제 주기는 위 값)',
-        36, h - 4, { size: 9, color: '#4b5a80' });
+        36, h - 4, { size: 9, color: '#4a4d55' });
     }
   });
 })();

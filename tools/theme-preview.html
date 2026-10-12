@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PhysLab — 디자인 방향 비교</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#1a1a1c;color:#e8e8ea;font-family:"IBM Plex Sans","Pretendard","Malgun Gothic",sans-serif;padding:26px 22px 60px}
+.pg-head{max-width:1180px;margin:0 auto 30px}
+.pg-head h1{font-size:19px;font-weight:600;margin:0 0 7px;letter-spacing:-.2px}
+.pg-head p{margin:0;font-size:13px;color:#8e9099;line-height:1.75}
+.block{max-width:1180px;margin:0 auto 46px}
+.blk-head{display:flex;align-items:baseline;gap:11px;margin-bottom:4px}
+.blk-head h2{font-size:16px;font-weight:600;margin:0}
+.blk-n{font-family:"IBM Plex Mono",monospace;font-size:12px;color:#6a6c74}
+.blk-note{font-size:12.5px;color:#8e9099;margin:0 0 13px;line-height:1.7}
+.blk-note b{color:#c8cad2;font-weight:500}
+.cost{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:2px 7px;margin-left:4px}
+
+/* ─── 공통 셸 골격 ─── */
+.shell{display:grid;grid-template-columns:186px minmax(0,1fr) 248px;height:398px;overflow:hidden;font-size:13px}
+.sh-nav{display:flex;flex-direction:column;overflow:hidden}
+.sh-brand{display:flex;gap:9px;align-items:center;padding:14px 13px 11px}
+.sh-logo{width:30px;height:30px;flex:none;display:grid;place-items:center;font-size:15px;font-weight:600}
+.sh-brand h3{margin:0;font-size:14px;font-weight:600;letter-spacing:.2px}
+.sh-brand small{display:block;font-size:9.5px;margin-top:2px}
+.sh-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 10px 9px}
+.sh-mode{font-size:9.5px;padding:5px 2px;text-align:center;white-space:nowrap;overflow:hidden;cursor:default}
+.sh-list{flex:1;overflow:hidden;padding:3px 9px}
+.sh-cat{font-size:9px;letter-spacing:1.1px;padding:11px 6px 5px;font-weight:600}
+.sh-item{padding:7px 9px;margin-bottom:2px;font-size:12px;line-height:1.3;cursor:default}
+.sh-item small{display:block;font-size:9.5px;margin-top:2px}
+.sh-main{display:flex;flex-direction:column;min-width:0;overflow:hidden;padding:13px 15px}
+.sh-chip{display:inline-block;font-size:9.5px;letter-spacing:.4px;padding:2px 8px;margin-bottom:6px}
+.sh-main h4{margin:0;font-size:17px;font-weight:600;letter-spacing:-.2px}
+.sh-main .tag{margin:4px 0 0;font-size:11.5px}
+.sh-stage{position:relative;flex:1;min-height:0;margin-top:10px;overflow:hidden;display:flex;flex-direction:column}
+.sh-stage canvas{flex:1;min-height:0;width:100%;display:block}
+.sh-bar{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:11.5px}
+.sh-btn{padding:5px 11px;font-size:11.5px;cursor:default}
+.sh-clock{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:11.5px}
+.sh-panel{overflow:hidden;padding:13px 12px;display:flex;flex-direction:column;gap:10px}
+.sh-card{padding:11px 12px}
+.sh-card h5{margin:0 0 9px;font-size:9.5px;letter-spacing:1.1px;font-weight:600}
+.sh-fx{padding:9px 10px;margin-bottom:7px}
+.sh-fname{font-size:9.5px;margin-bottom:4px}
+.sh-fbody{font-size:16px;line-height:1.7}
+.sh-fbody i{font-style:italic}
+.sh-term{font-weight:600;font-style:normal;padding:0 2px;border-bottom:2px solid currentColor}
+.sh-ctrl{margin-bottom:11px}
+.sh-ctop{display:flex;align-items:baseline;gap:5px;margin-bottom:5px;font-size:11px}
+.sh-csym{font-style:italic;font-weight:600;font-size:12.5px;min-width:15px}
+.sh-clab{flex:1}
+.sh-cval{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500}
+.sh-track{height:3px;position:relative}
+.sh-thumb{position:absolute;top:-5px;width:13px;height:13px}
+.sh-ro{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.sh-rb{padding:7px 9px}
+.sh-rl{font-size:9.5px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-rv{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:500;letter-spacing:-.3px}
+
+/* ─── 0. 현재 (대조군) ─── */
+.t0{background:#070b16;color:#e8eefc;border:1px solid #22304f;border-radius:14px;
+  background-image:radial-gradient(900px 520px at 15% -10%,rgba(30,60,120,.10),transparent),radial-gradient(700px 440px at 110% 0%,rgba(40,120,140,.08),transparent)}
+.t0 .sh-nav{background:#0a1120;border-right:1px solid #22304f}
+.t0 .sh-logo{border-radius:9px;background:linear-gradient(135deg,#5eead4,#60a5fa);color:#07121a;box-shadow:0 6px 18px rgba(94,234,212,.25)}
+.t0 .sh-brand small{color:#61719a}
+.t0 .sh-mode{background:#101a30;border:1px solid #22304f;color:#61719a;border-radius:9px}
+.t0 .sh-mode.on{background:linear-gradient(135deg,#1a3a54,#17304d);color:#5eead4;border-color:#2f5f74;font-weight:700}
+.t0 .sh-cat{color:#61719a;text-transform:uppercase}
+.t0 .sh-item{color:#93a2c4;border-radius:10px;border:1px solid transparent}
+.t0 .sh-item small{color:#61719a}
+.t0 .sh-item.on{background:linear-gradient(90deg,#16294a,#131d36);border-color:#2c4675;color:#fff;box-shadow:inset 2px 0 0 #5eead4}
+.t0 .sh-chip{color:#5eead4;background:rgba(94,234,212,.1);border:1px solid rgba(94,234,212,.28);border-radius:99px}
+.t0 .tag{color:#93a2c4}
+.t0 .sh-stage{background:#0a1120;border:1px solid #22304f;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.t0 .sh-bar{background:#0c1426;border-top:1px solid #22304f}
+.t0 .sh-btn{background:linear-gradient(135deg,#5eead4,#3ec9c0);color:#062018;border-radius:9px;font-weight:700}
+.t0 .sh-btn.sec{background:#16213c;border:1px solid #2a3960;color:#e8eefc;font-weight:400}
+.t0 .sh-clock{color:#93a2c4}
+.t0 .sh-clock b{color:#5eead4}
+.t0 .sh-panel{background:#0a1120;border-left:1px solid #22304f}
+.t0 .sh-card{background:#121b31;border:1px solid #22304f;border-radius:14px}
+.t0 .sh-card h5{color:#61719a;text-transform:uppercase}
+.t0 .sh-fx{background:#0a132a;border:1px solid #1d2a4a;border-radius:10px}
+.t0 .sh-fname{color:#61719a}
+.t0 .sh-track{background:#22304f;border-radius:99px}
+.t0 .sh-thumb{border-radius:50%;border:2px solid #0a1120}
+.t0 .sh-rb{background:#0a132a;border:1px solid #1d2a4a;border-radius:10px}
+.t0 .sh-rl{color:#61719a}
+.t0 .sh-clab{color:#93a2c4}
+
+/* ─── 1. 계측기 ─── */
+.t1{background:#0e0f11;color:#e6e7ea;border:1px solid #2a2c31}
+.t1 .sh-nav{background:#141518;border-right:1px solid #2a2c31}
+.t1 .sh-logo{background:#1e2024;border:1px solid #3a3d44;color:#ffb020;border-radius:2px;font-family:"IBM Plex Mono",monospace}
+.t1 .sh-brand small{color:#6a6e78;font-family:"IBM Plex Mono",monospace;letter-spacing:.4px}
+.t1 .sh-mode{background:#1a1c20;border:1px solid #32353c;border-top-color:#41444c;color:#8b8f99;border-radius:2px}
+.t1 .sh-mode.on{background:#26282e;color:#ffb020;border-color:#4a4d56;border-top-color:#5c6069;font-weight:600}
+.t1 .sh-cat{color:#6a6e78;font-family:"IBM Plex Mono",monospace;letter-spacing:.8px}
+.t1 .sh-item{color:#9a9da6;border-left:2px solid transparent}
+.t1 .sh-item small{color:#6a6e78}
+.t1 .sh-item.on{background:#1c1e22;border-left-color:#ffb020;color:#f0f1f3}
+.t1 .sh-chip{color:#c8a05a;border:1px solid #4a4030;background:#1c1a16;border-radius:2px;font-family:"IBM Plex Mono",monospace}
+.t1 .tag{color:#9a9da6}
+.t1 .sh-stage{background:#0a0b0c;border:1px solid #2a2c31}
+.t1 .sh-bar{background:#17181c;border-top:1px solid #2a2c31}
+.t1 .sh-btn{background:#26282e;border:1px solid #42454d;border-top-color:#565a63;color:#e6e7ea;border-radius:2px;font-weight:500}
+.t1 .sh-btn.pri{background:#ffb020;border-color:#c98a10;color:#1a1204;font-weight:600}
+.t1 .sh-clock{color:#9a9da6}
+.t1 .sh-clock b{color:#ffb020;font-weight:500}
+.t1 .sh-panel{background:#101114;border-left:1px solid #2a2c31}
+.t1 .sh-card{background:#17181c;border:1px solid #2a2c31}
+.t1 .sh-card h5{color:#6a6e78;font-family:"IBM Plex Mono",monospace;letter-spacing:.9px}
+.t1 .sh-fx{background:#0d0e10;border:1px solid #272a2f}
+.t1 .sh-fname{color:#6a6e78;font-family:"IBM Plex Mono",monospace}
+.t1 .sh-fbody{font-family:"IBM Plex Serif",serif}
+.t1 .sh-track{background:#2a2c31}
+.t1 .sh-thumb{border-radius:1px;border:1px solid #0a0b0c;width:9px;height:15px;top:-6px}
+.t1 .sh-rb{background:#0d0e10;border:1px solid #272a2f}
+.t1 .sh-rl{color:#6a6e78}
+.t1 .sh-clab{color:#9a9da6}
+.t1 .sh-csym{font-family:"IBM Plex Serif",serif}
+
+/* ─── 2. 블루프린트 ─── */
+.t2{background:#eceae3;color:#1c2127;border:1px solid #c0bcae;font-family:"IBM Plex Sans",sans-serif}
+.t2 .sh-nav{background:#e2dfd6;border-right:1px solid #c0bcae}
+.t2 .sh-logo{background:#1c2127;color:#eceae3;border-radius:0;font-family:"IBM Plex Serif",serif}
+.t2 .sh-brand small{color:#6f7680;font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.5px}
+.t2 .sh-brand h3{color:#1c2127}
+.t2 .sh-mode{background:#d8d4c8;border:1px solid #bdb8a8;color:#5a6066;border-radius:0}
+.t2 .sh-mode.on{background:#1c2127;color:#eceae3;border-color:#1c2127;font-weight:600}
+.t2 .sh-cat{color:#8a8578;font-family:"IBM Plex Mono",monospace;letter-spacing:.8px;border-bottom:1px solid #cdc9bc;margin:0 2px}
+.t2 .sh-item{color:#434a52;border-left:2px solid transparent}
+.t2 .sh-item small{color:#8a8578}
+.t2 .sh-item.on{background:#d6d2c5;border-left-color:#b23a2e;color:#1c2127;font-weight:500}
+.t2 .sh-chip{color:#8c2f24;border:1px solid #c49a92;background:#f0e4e1;border-radius:0;font-family:"IBM Plex Mono",monospace}
+.t2 .tag{color:#5a6066}
+.t2 .sh-stage{background:#f6f4ee;border:1px solid #b8b3a4}
+.t2 .sh-bar{background:#e6e3da;border-top:1px solid #c7c2b4}
+.t2 .sh-btn{background:#f0eee7;border:1px solid #a9a497;color:#1c2127;border-radius:0}
+.t2 .sh-btn.pri{background:#1c2127;color:#f6f4ee;border-color:#1c2127;font-weight:500}
+.t2 .sh-clock{color:#5a6066}
+.t2 .sh-clock b{color:#b23a2e;font-weight:600}
+.t2 .sh-panel{background:#e8e5dc;border-left:1px solid #c0bcae}
+.t2 .sh-card{background:#f3f1ea;border:1px solid #c7c2b4}
+.t2 .sh-card h5{color:#8a8578;font-family:"IBM Plex Mono",monospace;letter-spacing:.9px}
+.t2 .sh-fx{background:#fbfaf6;border:1px solid #cdc9bc}
+.t2 .sh-fname{color:#8a8578;font-family:"IBM Plex Mono",monospace}
+.t2 .sh-fbody{font-family:"IBM Plex Serif",serif}
+.t2 .sh-track{background:#c7c2b4}
+.t2 .sh-thumb{border-radius:0;border:1px solid #f3f1ea;width:9px;height:15px;top:-6px}
+.t2 .sh-rb{background:#fbfaf6;border:1px solid #cdc9bc}
+.t2 .sh-rl{color:#8a8578}
+.t2 .sh-clab{color:#434a52}
+.t2 .sh-csym{font-family:"IBM Plex Serif",serif}
+
+/* ─── 3. 심우주 ─── */
+.t3{background:#050506;color:#ecebe6;border:1px solid #232329}
+.t3 .sh-nav{background:#0b0b0d;border-right:1px solid #232329}
+.t3 .sh-logo{background:transparent;border:1px solid #4a4a52;color:#ecebe6;border-radius:50%;font-family:"IBM Plex Serif",serif}
+.t3 .sh-brand h3{font-family:"IBM Plex Serif",serif;font-weight:400;letter-spacing:.6px}
+.t3 .sh-brand small{color:#696972;letter-spacing:1.2px;font-size:9px}
+.t3 .sh-mode{background:transparent;border:1px solid #2a2a31;color:#8a8a93;border-radius:2px}
+.t3 .sh-mode.on{background:#1b1b20;color:#ecebe6;border-color:#55555e;font-weight:500}
+.t3 .sh-cat{color:#696972;letter-spacing:1.4px}
+.t3 .sh-item{color:#9b9ba3;border-left:1px solid transparent}
+.t3 .sh-item small{color:#696972}
+.t3 .sh-item.on{background:#131317;border-left-color:#ecebe6;color:#fff}
+.t3 .sh-chip{color:#c9c3b2;border:1px solid #3a3a42;background:transparent;border-radius:2px;letter-spacing:1px}
+.t3 .tag{color:#9b9ba3}
+.t3 .sh-main h4{font-family:"IBM Plex Serif",serif;font-weight:400;font-size:19px}
+.t3 .sh-stage{background:#030304;border:1px solid #232329}
+.t3 .sh-bar{background:#0b0b0d;border-top:1px solid #232329}
+.t3 .sh-btn{background:#17171b;border:1px solid #35353d;color:#ecebe6;border-radius:2px}
+.t3 .sh-btn.pri{background:#ecebe6;border-color:#ecebe6;color:#0b0b0d;font-weight:500}
+.t3 .sh-clock{color:#9b9ba3}
+.t3 .sh-clock b{color:#ecebe6;font-weight:500}
+.t3 .sh-panel{background:#08080a;border-left:1px solid #232329}
+.t3 .sh-card{background:#0e0e11;border:1px solid #232329}
+.t3 .sh-card h5{color:#696972;letter-spacing:1.3px}
+.t3 .sh-fx{background:#060607;border:1px solid #1e1e24}
+.t3 .sh-fname{color:#696972}
+.t3 .sh-fbody{font-family:"IBM Plex Serif",serif}
+.t3 .sh-track{background:#26262c}
+.t3 .sh-thumb{border-radius:50%;border:1px solid #050506}
+.t3 .sh-rb{background:#060607;border:1px solid #1e1e24}
+.t3 .sh-rl{color:#696972}
+.t3 .sh-clab{color:#9b9ba3}
+.t3 .sh-csym{font-family:"IBM Plex Serif",serif}
+</style>
+</head>
+<body>
+
+<div class="pg-head">
+  <h1>PhysLab — 디자인 방향 비교</h1>
+  <p>같은 화면(항공기 항력과 양항비)을 네 가지 언어로 그렸습니다. 맨 위가 이전 디자인, 두 번째가 채택해 적용한 방향입니다.<br>
+     캔버스 안의 그림까지 각 방향의 팔레트로 다시 칠해 두었으니, 시뮬레이션 자체가 어떻게 보일지도 함께 보시면 됩니다.</p>
+</div>
+
+<div id="out"></div>
+
+<script>
+/* ── 각 방향의 캔버스 팔레트 ─────────────────────────────
+   stage: 무대 배경 / grid: 눈금 / ink,ink2,ink3: 글자 3단계
+   sym:   기호별 색 (V, AR, CD0, CL, CD, LD 순서로 쓰인다)        */
+const THEMES = [
+  { cls:'t0', n:'이전', name:'Tailwind 기본 팔레트 + 네온 (교체됨)',
+    note:'배경 <b>#070b16</b>(slate-950) · 강조 <b>#5eead4</b>(teal-300) · 코너 glow 2개 · 모든 버튼에 <b>135deg</b> 그라디언트. 캔버스 색 1,405개 중 882개가 Tailwind 400단계 기본값입니다.',
+    pal:{ stage:'#0a1120', grid:'rgba(255,255,255,.035)', ink:'#e8eefc', ink2:'#93a2c4', ink3:'#61719a',
+          sym:['#60a5fa','#a78bfa','#fb923c','#5eead4','#fb7185','#fbbf24'], glow:true, serif:false } },
+
+  { cls:'t1', n:'채택', name:'계측기 — 흑연 + 호박색 단일 강조',
+    note:'네이비를 <b>중성 흑연</b>으로 바꾸고 강조색을 <b>호박색 하나</b>로 줄입니다. 그라디언트·글로우 대신 위쪽 1px 하이라이트로 만든 <b>물리적인 베젤</b>. 슬라이더 손잡이는 디텐트 노브, 숫자는 전부 등폭 고정폭입니다.',
+    cost:'이식 비용 낮음 — 다크 유지',
+    pal:{ stage:'#0a0b0c', grid:'rgba(255,255,255,.04)', ink:'#e6e7ea', ink2:'#9a9da6', ink3:'#6a6e78',
+          sym:['#6f9fc4','#b58fc4','#c98a4e','#7fb894','#c4705f','#ffb020'], glow:false, serif:true } },
+
+  { cls:'t2', n:'방향 2', name:'블루프린트 — 제도지 + 잉크',
+    note:'무대를 <b>제도 용지</b>로 바꿉니다. 따뜻한 종이 바탕, 머리카락 굵기 선, 모서리 둥글림 0, 강조는 <b>적색 연필 한 자루</b>. 기호 색은 프러시안블루·산화철·올리브 같은 <b>잉크 색</b>에서 가져옵니다.',
+    cost:'이식 비용 높음 — 캔버스 전면 재도색',
+    pal:{ stage:'#f6f4ee', grid:'rgba(28,33,39,.07)', ink:'#1c2127', ink2:'#5a6066', ink3:'#8a8578',
+          sym:['#1d4e7a','#5f4a86','#a8562e','#3f6b52','#b23a2e','#7a6420'], glow:false, serif:true } },
+
+  { cls:'t3', n:'방향 3', name:'심우주 — 순수 검정 + 분광색',
+    note:'네이비가 아닌 <b>진짜 검정</b>. 강조는 아이보리 한 가지, 기호 색은 실제 <b>스펙트럼선</b>에서 가져옵니다 — Hα 적색, Hβ 청색, O III 녹색, 나트륨 D선 황색. 제목은 고대비 세리프로 학술지 느낌을 냅니다.',
+    cost:'이식 비용 낮음 — 다크 유지',
+    pal:{ stage:'#030304', grid:'rgba(255,255,255,.045)', ink:'#ecebe6', ink2:'#9b9ba3', ink3:'#696972',
+          sym:['#4a7fd4','#9a7bc8','#e8b64c','#3fb98a','#e23b3b','#d8d2c0'], glow:false, serif:true } }
+];
+
+const SHELL = `
+<div class="sh-nav">
+  <div class="sh-brand"><div class="sh-logo">&Phi;</div>
+    <div><h3>PhysLab</h3><small>물리 이론의 시각화</small></div></div>
+  <div class="sh-modes">
+    <div class="sh-mode">비행역학</div><div class="sh-mode on">항공우주</div><div class="sh-mode">선박</div>
+  </div>
+  <div class="sh-list">
+    <div class="sh-cat">비행역학</div>
+    <div class="sh-item on">항력과 양항비<small>왜 가장 느린 속도가 아닐까</small></div>
+    <div class="sh-item">양력의 발생<small>받음각과 실속</small></div>
+    <div class="sh-item">마하수와 충격파<small>압축성이 시작되는 곳</small></div>
+    <div class="sh-cat">궤도역학</div>
+    <div class="sh-item">원궤도와 탈출속도<small>붙잡히느냐 벗어나느냐</small></div>
+  </div>
+</div>
+<div class="sh-main">
+  <div><span class="sh-chip">항공우주공학 · 비행역학</span>
+    <h4>항력과 양항비</h4>
+    <p class="tag">유해항력은 속도와 함께 커지고 유도항력은 작아진다 — 두 곡선이 만나는 곳이 최대 양항비다.</p></div>
+  <div class="sh-stage">
+    <canvas></canvas>
+    <div class="sh-bar">
+      <span class="sh-btn pri">&#9654; 재생</span><span class="sh-btn sec">&#8634; 처음으로</span>
+      <span class="sh-clock">t = <b>12.40</b> s</span>
+    </div>
+  </div>
+</div>
+<div class="sh-panel">
+  <div class="sh-card"><h5>공식</h5>
+    <div class="sh-fx"><div class="sh-fname">항력 계수</div>
+      <div class="sh-fbody"><i>C</i><sub>D</sub> = <span class="sh-term" style="color:SYM2">C<sub>D0</sub></span>
+        + <span class="sh-term" style="color:SYM3">C<sub>L</sub></span><sup>2</sup> / <i>&pi;</i>
+        <span class="sh-term" style="color:SYM1">AR</span> <i>e</i></div></div>
+    <div class="sh-fx"><div class="sh-fname">양항비</div>
+      <div class="sh-fbody"><span class="sh-term" style="color:SYM5">L/D</span> =
+        <span class="sh-term" style="color:SYM3">C<sub>L</sub></span> /
+        <span class="sh-term" style="color:SYM4">C<sub>D</sub></span></div></div>
+  </div>
+  <div class="sh-card"><h5>변수 조절</h5>
+    <div class="sh-ctrl"><div class="sh-ctop"><span class="sh-csym" style="color:SYM0">V</span>
+      <span class="sh-clab">비행 속도</span><span class="sh-cval" style="color:SYM0">60</span></div>
+      <div class="sh-track"><div class="sh-thumb" style="background:SYM0;left:16%"></div></div></div>
+    <div class="sh-ctrl"><div class="sh-ctop"><span class="sh-csym" style="color:SYM1">AR</span>
+      <span class="sh-clab">날개 가로세로비</span><span class="sh-cval" style="color:SYM1">10.0</span></div>
+      <div class="sh-track"><div class="sh-thumb" style="background:SYM1;left:46%"></div></div></div>
+  </div>
+  <div class="sh-card"><h5>측정값</h5>
+    <div class="sh-ro">
+      <div class="sh-rb"><div class="sh-rl">양력계수</div><div class="sh-rv" style="color:SYM3">0.389</div></div>
+      <div class="sh-rb"><div class="sh-rl">양항비</div><div class="sh-rv" style="color:SYM5">14.2</div></div>
+    </div>
+  </div>
+</div>`;
+
+const out = document.getElementById('out');
+const stages = [];
+THEMES.forEach((t, i) => {
+  const b = document.createElement('div');
+  b.className = 'block';
+  const costTag = t.cost
+    ? `<span class="cost" style="color:${t.pal.sym[5]};border:1px solid ${t.pal.sym[5]}55">${t.cost}</span>` : '';
+  let html = SHELL;
+  t.pal.sym.forEach((c, k) => { html = html.split('SYM' + k).join(c); });
+  b.innerHTML = `<div class="blk-head"><span class="blk-n">${t.n}</span><h2>${t.name}</h2>${costTag}</div>
+    <p class="blk-note">${t.note}</p><div class="shell ${t.cls}">${html}</div>`;
+  out.appendChild(b);
+  stages.push([b.querySelector('canvas'), t.pal]);
+});
+
+/* 레이아웃·웹폰트가 자리를 잡은 뒤에 그려야 캔버스 비트맵이 늘어나지 않는다 */
+const redraw = () => stages.forEach(([cv, pal]) => drawStage(cv, pal));
+requestAnimationFrame(() => requestAnimationFrame(redraw));
+addEventListener('resize', redraw);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+
+/* 항력 곡선 — 각 방향의 팔레트로 같은 그림을 그린다 */
+function drawStage(cv, P) {
+  const dpr = devicePixelRatio || 1;
+  const r = cv.getBoundingClientRect();
+  const w = Math.round(r.width), h = Math.round(r.height);
+  if (w < 40 || h < 40) return;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const c = cv.getContext('2d');
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const SF = P.serif ? '"IBM Plex Serif",serif' : '"IBM Plex Sans",sans-serif';
+  const MF = '"IBM Plex Mono",monospace';
+
+  c.fillStyle = P.stage; c.fillRect(0, 0, w, h);
+  c.strokeStyle = P.grid; c.lineWidth = 1;
+  for (let x = 0; x < w; x += 26) { c.beginPath(); c.moveTo(x + .5, 0); c.lineTo(x + .5, h); c.stroke(); }
+  for (let y = 0; y < h; y += 26) { c.beginPath(); c.moveTo(0, y + .5); c.lineTo(w, y + .5); c.stroke(); }
+
+  const L = 52, R = w - 22, T = 26, B = h - 34, pw = R - L, ph = B - T;
+  c.strokeStyle = P.ink3; c.globalAlpha = .55; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(L, T); c.lineTo(L, B); c.lineTo(R, B); c.stroke(); c.globalAlpha = 1;
+
+  /* W/S=700 N/m², S=16 m², AR=10, e=0.8, C_D0=0.025 → (L/D)max는 38 m/s 부근 */
+  const VLO = 18, VHI = 115, DMAX = 2400, W = 700 * 16;
+  const X = v => L + (v - VLO) / (VHI - VLO) * pw, Y = d => B - d / DMAX * ph;
+  const para = v => 0.5 * 1.225 * v * v * 0.025 * 16;
+  const indu = v => 2 * W * W / (1.225 * v * v * 16 * Math.PI * 10 * 0.8);
+
+  const curve = (f, col, lw) => {
+    c.strokeStyle = col; c.lineWidth = lw;
+    if (P.glow) { c.shadowColor = col; c.shadowBlur = 10; }
+    c.beginPath();
+    let open = false;
+    for (let v = VLO + 1; v <= VHI; v += 1) {
+      const y = Y(f(v));
+      if (y < T || y > B) { if (open) { c.stroke(); c.beginPath(); open = false; } continue; }
+      if (open) c.lineTo(X(v), y); else { c.moveTo(X(v), y); open = true; }
+    }
+    if (open) c.stroke();
+    c.shadowBlur = 0;
+  };
+  curve(para, P.sym[2], 1.6);
+  curve(indu, P.sym[3], 1.6);
+  curve(v => para(v) + indu(v), P.sym[4], 2.4);
+
+  const best = Math.pow(4 * W * W / (1.225 * 1.225 * .025 * 16 * 16 * Math.PI * 10 * .8), .25);
+  const bx = X(best), by = Y(para(best) + indu(best));
+  c.setLineDash([3, 4]); c.strokeStyle = P.sym[5]; c.globalAlpha = .7; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(bx, by); c.lineTo(bx, B); c.stroke();
+  c.setLineDash([]); c.globalAlpha = 1;
+  c.beginPath(); c.arc(bx, by, 4, 0, 7); c.fillStyle = P.sym[5];
+  if (P.glow) { c.shadowColor = P.sym[5]; c.shadowBlur = 12; }
+  c.fill(); c.shadowBlur = 0;
+
+  const txt = (s, x, y, col, size, f, al) => {
+    c.fillStyle = col; c.font = (size || 10) + 'px ' + (f || SF);
+    c.textAlign = al || 'left'; c.textBaseline = 'alphabetic'; c.fillText(s, x, y);
+  };
+  txt('항공기 항력 — 속도에 따른 두 성분의 합', L, T - 10, P.ink3, 10);
+  txt('유해항력 ½ρV²C_D0 S', X(74) + 6, Y(para(74)) + 4, P.sym[2], 9.5);
+  txt('유도항력', X(26) + 6, Y(indu(26)) - 7, P.sym[3], 9.5);
+  txt('합 = 필요 추력', X(56) + 5, Y(para(56) + indu(56)) - 9, P.sym[4], 10);
+  txt('(L/D)max', bx + 8, by + 4, P.sym[5], 10);
+  txt('V (m/s)', R, h - 10, P.ink3, 9.5, MF, 'right');
+  txt(DMAX, L - 6, T + 4, P.ink3, 9.5, MF, 'right');
+  txt('0', L - 6, B + 3, P.ink3, 9.5, MF, 'right');
+  txt('항력 N', L - 6, T - 10, P.ink3, 9.5, MF, 'right');
+  txt(Math.round(best) + ' m/s', bx, B + 14, P.sym[5], 9.5, MF, 'center');
+
+  /* 기체 실루엣 — 기호 색이 화면 위 어디에 작용하는지 */
+  const ax = X(86), ay = T + 34;
+  c.save(); c.translate(ax, ay);
+  c.strokeStyle = P.ink2; c.lineWidth = 1.4; c.globalAlpha = .85;
+  c.beginPath(); c.moveTo(-16, 0); c.lineTo(14, 0); c.stroke();
+  c.beginPath(); c.moveTo(-2, 0); c.lineTo(-9, -9); c.moveTo(-2, 0); c.lineTo(-9, 9); c.stroke();
+  c.globalAlpha = 1;
+  const arr = (dx, dy, col, lab) => {
+    c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 1.8;
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(dx, dy); c.stroke();
+    const a = Math.atan2(dy, dx);
+    c.beginPath(); c.moveTo(dx, dy);
+    c.lineTo(dx - 6 * Math.cos(a - .4), dy - 6 * Math.sin(a - .4));
+    c.lineTo(dx - 6 * Math.cos(a + .4), dy - 6 * Math.sin(a + .4));
+    c.closePath(); c.fill();
+    txt(lab, dx + (dx > 0 ? 5 : -5), dy + (dy < 0 ? -3 : 11), col, 10, SF, dx > 0 ? 'left' : 'right');
+  };
+  arr(0, -22, P.sym[3], 'L');
+  arr(-24, 0, P.sym[4], 'D');
+  arr(26, 0, P.sym[0], 'V');
+  c.restore();
+}
+</script>
+</body>
+</html>

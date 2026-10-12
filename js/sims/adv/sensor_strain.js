@@ -1,7 +1,7 @@
 /* [공학응용·센서와 계측] 스트레인 게이지 & 휘트스톤 브리지 — Vo = Vs·GF·ε/4 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { F: '#34d399', GF: '#fbbf24', Vs: '#f472b6', A: '#a78bfa', eps: '#5eead4', Vo: '#60a5fa', Vout: '#60a5fa' };
+  const C = { F: '#7fb894', GF: '#ffb020', Vs: '#c08098', A: '#a98cc4', eps: '#68b8b0', Vo: '#6f9fc4', Vout: '#6f9fc4' };
 
   // 외팔보 제원 (스테인리스)
   const L = 0.15, bw = 0.02, hh = 0.003, E = 200e9;
@@ -92,8 +92,8 @@
       const tip = clamp(defl(st.F) * 22000, 0, 90);      // 처짐 과장 표시
 
       // 벽(고정단)
-      ctx.fillStyle = '#1b2540'; ctx.fillRect(bx - 26, by - 60, 26, 120);
-      for (let i = 0; i < 7; i++) D.line(ctx, bx - 26, by - 56 + i * 18, bx - 40, by - 46 + i * 18, { color: 'rgba(147,162,196,.3)' });
+      ctx.fillStyle = '#2b2d30'; ctx.fillRect(bx - 26, by - 60, 26, 120);
+      for (let i = 0; i < 7; i++) D.line(ctx, bx - 26, by - 56 + i * 18, bx - 40, by - 46 + i * 18, { color: 'rgba(167,170,176,.3)' });
 
       // 휜 보 (2차 곡선 근사)
       const yAt = s => by + tip * (s * s * (3 - s)) / 2;   // s: 0~1
@@ -103,7 +103,7 @@
       for (let i = 40; i >= 0; i--) { const s = i / 40; const x = bx + s * blen; ctx.lineTo(x, yAt(s) + bthk); }
       ctx.closePath();
       const gr = ctx.createLinearGradient(0, by, 0, by + bthk);
-      gr.addColorStop(0, '#93a2c4'); gr.addColorStop(1, '#55628a');
+      gr.addColorStop(0, '#9a9da6'); gr.addColorStop(1, '#5a5e68');
       ctx.fillStyle = gr; ctx.fill();
       ctx.restore();
 
@@ -111,7 +111,7 @@
       const gx0 = bx + blen * .08, gw = 54 * (1 + e * 300), gy = by - 3;
       ctx.save();
       if (hl === 'eps' || hl === 'GF') { ctx.shadowColor = C.eps; ctx.shadowBlur = 14; }
-      ctx.strokeStyle = hl === 'eps' || hl === 'GF' ? '#a7f3e5' : C.eps;
+      ctx.strokeStyle = hl === 'eps' || hl === 'GF' ? '#9ad4cc' : C.eps;
       ctx.lineWidth = 2; ctx.beginPath();
       const zig = 5;
       for (let i = 0; i <= zig * 2; i++) {
@@ -127,14 +127,14 @@
       const tipY = yAt(1);
       D.arrow(ctx, bx + blen, tipY - 78, 0, 66,
         { color: C.F, width: 4, hot: hl === 'F', label: 'F = ' + fmt(st.F, 1) + ' N', ly: -14 });
-      D.line(ctx, bx, by + 70, bx + blen, by + 70, { color: 'rgba(147,162,196,.25)', dash: [4, 4] });
-      D.text(ctx, 'L = 150 mm · 폭 20 mm · 두께 3 mm · 스테인리스', bx, by + 88, { size: 10, color: '#4a5878' });
+      D.line(ctx, bx, by + 70, bx + blen, by + 70, { color: 'rgba(167,170,176,.25)', dash: [4, 4] });
+      D.text(ctx, 'L = 150 mm · 폭 20 mm · 두께 3 mm · 스테인리스', bx, by + 88, { size: 10, color: '#4a4d55' });
 
       /* ── 휘트스톤 브리지 ────────────────────── */
       const cx = w * .62, cy = h * .62, R = 84;
       const N = [cx, cy - R], S = [cx, cy + R], Wp = [cx - R, cy], Ep = [cx + R, cy];
       ctx.save();
-      ctx.strokeStyle = '#4b5b7d'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#4a4d55'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
       ctx.beginPath();
       ctx.moveTo(N[0], N[1]); ctx.lineTo(Ep[0], Ep[1]); ctx.lineTo(S[0], S[1]); ctx.lineTo(Wp[0], Wp[1]); ctx.closePath();
       ctx.stroke(); ctx.restore();
@@ -150,20 +150,20 @@
         D.text(ctx, label, mx + (a[0] < cx && b[0] < cx ? -30 : 30), my + 4,
           { size: 10.5, color: col, align: a[0] < cx && b[0] < cx ? 'right' : 'left', bold: hot });
       };
-      res(N, Wp, 'R₁ (게이지)', hl === 'GF' || hl === 'eps' ? '#a7f3e5' : C.eps, hl === 'GF' || hl === 'eps');
-      res(N, Ep, 'R₂', '#55628a', false);
-      res(Wp, S, 'R₃', '#55628a', false);
-      res(Ep, S, 'R₄', '#55628a', false);
+      res(N, Wp, 'R₁ (게이지)', hl === 'GF' || hl === 'eps' ? '#9ad4cc' : C.eps, hl === 'GF' || hl === 'eps');
+      res(N, Ep, 'R₂', '#5a5e68', false);
+      res(Wp, S, 'R₃', '#5a5e68', false);
+      res(Ep, S, 'R₄', '#5a5e68', false);
 
       // 여기 전압
       D.text(ctx, '+Vs', N[0], N[1] - 14, { size: 11.5, color: C.Vs, align: 'center', bold: hl === 'Vs' });
-      D.text(ctx, 'GND', S[0], S[1] + 20, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, 'GND', S[0], S[1] + 20, { size: 10.5, color: '#6a6e78', align: 'center' });
       D.line(ctx, N[0], N[1] - 10, N[0], N[1] - 4, { color: C.Vs, width: 2, hot: hl === 'Vs' });
       D.text(ctx, fmt(p.Vs, 1) + ' V', N[0] + 26, N[1] - 12, { size: 10.5, color: C.Vs, bold: hl === 'Vs' });
 
       // 출력단
-      D.line(ctx, Wp[0], Wp[1], Wp[0] - 46, Wp[1], { color: '#4b5b7d', width: 2 });
-      D.line(ctx, Ep[0], Ep[1], Ep[0] + 30, Ep[1], { color: '#4b5b7d', width: 2 });
+      D.line(ctx, Wp[0], Wp[1], Wp[0] - 46, Wp[1], { color: '#4a4d55', width: 2 });
+      D.line(ctx, Ep[0], Ep[1], Ep[0] + 30, Ep[1], { color: '#4a4d55', width: 2 });
       D.tag(ctx, 'Vo = ' + fmt(Vo * 1000, 3) + ' mV', Wp[0] - 92, Wp[1], C.Vo, hl === 'Vo');
 
       // 증폭기(삼각형)
@@ -171,18 +171,18 @@
       ctx.save();
       if (hl === 'A') { ctx.shadowColor = C.A; ctx.shadowBlur = 16; }
       ctx.beginPath(); ctx.moveTo(ax, ay - 26); ctx.lineTo(ax + 46, ay); ctx.lineTo(ax, ay + 26); ctx.closePath();
-      ctx.fillStyle = hl === 'A' ? '#c4b5fd' : '#5b4d8a'; ctx.fill();
+      ctx.fillStyle = hl === 'A' ? '#bdb0d4' : '#666971'; ctx.fill();
       ctx.restore();
-      D.text(ctx, '×' + p.A, ax + 12, ay + 4, { size: 11, color: '#0d0820', bold: true });
+      D.text(ctx, '×' + p.A, ax + 12, ay + 4, { size: 11, color: '#131415', bold: true });
       D.text(ctx, '증폭기', ax + 22, ay - 34, { size: 10, color: C.A, align: 'center', bold: hl === 'A' });
 
       // 최종 출력 막대 + 수치
       const obx = ax + 60, oby = ay - 60, obw = Math.min(150, w - obx - 24);
-      D.text(ctx, '최종 출력', obx, oby - 6, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '최종 출력', obx, oby - 6, { size: 10.5, color: '#6a6e78' });
       D.bar(ctx, obx, oby, obw, 14, Math.abs(Vout), 5, C.Vout, null, hl === 'Vout' || hl === 'A');
       D.text(ctx, fmt(Vout, 3) + ' V', obx, oby + 44, { size: 20, color: C.Vout, bold: true });
-      D.text(ctx, '(ADC 입력 범위 0~5 V 기준)', obx, oby + 60, { size: 9.5, color: '#4a5878' });
-      if (Math.abs(Vout) > 5) D.tag(ctx, '⚠ 포화 — 이득을 낮추세요', obx + obw / 2, oby + 78, '#fb7185', true);
+      D.text(ctx, '(ADC 입력 범위 0~5 V 기준)', obx, oby + 60, { size: 9.5, color: '#4a4d55' });
+      if (Math.abs(Vout) > 5) D.tag(ctx, '⚠ 포화 — 이득을 낮추세요', obx + obw / 2, oby + 78, '#c4705f', true);
     }
   });
 })();

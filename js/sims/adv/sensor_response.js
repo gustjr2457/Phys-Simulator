@@ -1,7 +1,7 @@
 /* [공학응용·센서와 계측] 1차 지연계의 응답 — τ·ẏ + y = u,  샘플링과 노이즈 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { tau: '#fbbf24', u: '#fb7185', y: '#5eead4', ns: '#a78bfa', Ts: '#60a5fa', fc: '#fbbf24' };
+  const C = { tau: '#ffb020', u: '#c4705f', y: '#68b8b0', ns: '#a98cc4', Ts: '#6f9fc4', fc: '#ffb020' };
   const Y0 = 20;   // 초기 온도(상온)
 
   PS.register({
@@ -64,7 +64,7 @@
       return [
         { label: '센서 출력 y', value: st.y, unit: '℃', color: C.y },
         { label: '샘플링 값 (노이즈 포함)', value: st.meas, unit: '℃', color: C.Ts },
-        { label: '실제 값과의 오차', value: st.y - p.u, unit: '℃', color: '#fb7185' },
+        { label: '실제 값과의 오차', value: st.y - p.u, unit: '℃', color: '#c4705f' },
         { label: '최종값 도달률', value: frac * 100, unit: '%', dec: 1 },
         { label: '상승 시간 2.2τ', value: 2.2 * p.tau, unit: 's', color: C.tau },
         { label: '정착 시간 4τ (98%)', value: 4 * p.tau, unit: 's', color: C.tau },
@@ -104,10 +104,10 @@
       ctx.restore();
       // 비커 외곽
       ctx.save();
-      ctx.strokeStyle = 'rgba(147,162,196,.55)'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+      ctx.strokeStyle = 'rgba(167,170,176,.55)'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
       ctx.beginPath(); ctx.moveTo(bx, bTop); ctx.lineTo(bx, bTop + bH); ctx.lineTo(bx + bw, bTop + bH); ctx.lineTo(bx + bw, bTop);
       ctx.stroke(); ctx.restore();
-      D.line(ctx, bx, bTop + 18, bx + bw, bTop + 18, { color: 'rgba(147,162,196,.4)' });
+      D.line(ctx, bx, bTop + 18, bx + bw, bTop + 18, { color: 'rgba(167,170,176,.4)' });
       // 기포 (뜨거울수록 많이)
       const nb = Math.round(hot * 9);
       for (let i = 0; i < nb; i++) {
@@ -118,17 +118,17 @@
 
       // 프로브
       const px = bx + bw / 2;
-      D.line(ctx, px, bTop - 70, px, bTop + bH - 30, { color: '#93a2c4', width: 5 });
-      ctx.fillStyle = hl === 'y' ? '#a7f3e5' : C.y;
+      D.line(ctx, px, bTop - 70, px, bTop + bH - 30, { color: '#9a9da6', width: 5 });
+      ctx.fillStyle = hl === 'y' ? '#9ad4cc' : C.y;
       ctx.beginPath(); ctx.arc(px, bTop + bH - 28, 8, 0, 7); ctx.fill();
-      D.text(ctx, '온도 센서', px, bTop - 78, { size: 10.5, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '온도 센서', px, bTop - 78, { size: 10.5, color: '#9a9da6', align: 'center' });
 
       // 디지털 표시기
       const dx = bx + bw + 46, dy = bTop - 4;
       D.roundRect(ctx, dx, dy, 168, 78, 10);
-      ctx.fillStyle = '#08101f'; ctx.fill();
-      ctx.strokeStyle = '#22304f'; ctx.lineWidth = 1; ctx.stroke();
-      D.text(ctx, '센서 출력 (샘플링)', dx + 12, dy + 18, { size: 10, color: '#61719a' });
+      ctx.fillStyle = '#08090a'; ctx.fill();
+      ctx.strokeStyle = '#2a2c31'; ctx.lineWidth = 1; ctx.stroke();
+      D.text(ctx, '센서 출력 (샘플링)', dx + 12, dy + 18, { size: 10, color: '#6a6e78' });
       D.text(ctx, fmt(st.meas, 1) + ' ℃', dx + 12, dy + 52, { size: 28, color: C.Ts, bold: true, glow: hl === 'Ts' });
       D.text(ctx, '연속 출력 ' + fmt(st.y, 1) + ' ℃', dx + 12, dy + 70, { size: 10, color: C.y });
 
@@ -150,7 +150,7 @@
       /* ── 샘플링 계단 그림 ──────────────────── */
       const gx = w * .1, gy = h * .84, gw = w * .8, gh = 54;
       D.text(ctx, '샘플링: ' + fmt(p.Ts, 2) + ' s 마다 한 번씩만 읽습니다 (' + fmt(1 / p.Ts, 1) + ' Hz)',
-        gx, gy - gh - 10, { size: 11, color: hl === 'Ts' ? '#fff' : '#61719a', bold: hl === 'Ts' });
+        gx, gy - gh - 10, { size: 11, color: hl === 'Ts' ? '#fff' : '#6a6e78', bold: hl === 'Ts' });
       const WIN = 10;
       const t0 = Math.max(0, st.t - WIN);
       const SX = t => gx + ((t - t0) / WIN) * gw;

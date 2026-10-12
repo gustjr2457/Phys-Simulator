@@ -6,7 +6,7 @@
    전부 이 칸 위에서 눈금을 얻는다. 1838년 베셀이 백조자리 61에서 처음 성공했다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { lgd: '#5eead4', lgs: '#fb7185', p: '#fbbf24', d: '#a78bfa', sn: '#34d399' };
+  const C = { lgd: '#68b8b0', lgs: '#c4705f', p: '#ffb020', d: '#a98cc4', sn: '#7fb894' };
   const YEAR = 6;                       // 1년을 화면 6초로
   const PC_LY = 3.2616;
 
@@ -21,10 +21,10 @@
   const gauss = i => (rnd(i) + rnd(i + 97) + rnd(i + 211) - 1.5) * 1.15;
 
   const LADDER = [
-    [1, 2e4, '연주시차', '#5eead4', '삼각측량 — 가정이 필요 없는 유일한 방법'],
-    [1e3, 3e7, '세페이드 변광성', '#fbbf24', '맥동 주기가 광도를 알려 준다 (주기-광도 관계)'],
-    [3e6, 3e9, 'Ia형 초신성', '#fb7185', '폭발 밝기가 항상 같다 — 표준 촛불'],
-    [1e8, 4e9, '허블 법칙', '#a78bfa', '적색편이로 거리를 잰다']
+    [1, 2e4, '연주시차', '#68b8b0', '삼각측량 — 가정이 필요 없는 유일한 방법'],
+    [1e3, 3e7, '세페이드 변광성', '#ffb020', '맥동 주기가 광도를 알려 준다 (주기-광도 관계)'],
+    [3e6, 3e9, 'Ia형 초신성', '#c4705f', '폭발 밝기가 항상 같다 — 표준 촛불'],
+    [1e8, 4e9, '허블 법칙', '#a98cc4', '적색편이로 거리를 잰다']
   ];
 
   PS.register({
@@ -69,7 +69,7 @@
     graphs: [{
       title: '하늘에서의 위치 (적경 방향) – 시간 — 1년 주기로 흔들린다', xmin: 12, window: 14,
       series: [
-        { key: 'obs', label: '관측값 (오차 포함)', color: '#e8eefc' },
+        { key: 'obs', label: '관측값 (오차 포함)', color: '#e6e7ea' },
         { key: 'tru', label: '참값', color: C.p }
       ]
     }],
@@ -89,11 +89,11 @@
         { label: '측정 정밀도 σ', value: sg, unit: 'µas', color: C.lgs, dec: sg > 100 ? 0 : 2 },
         { label: '신호 대 잡음비 S/N', value: sn, unit: '', color: C.sn, dec: 2 },
         { label: '거리 오차', value: sn > .2 ? 100 / sn : Infinity, unit: '%', dec: 1,
-          color: sn >= 10 ? '#34d399' : (sn >= 5 ? '#fbbf24' : '#fb7185') },
-        { label: '이 정밀도로 잴 수 있는 최대 거리', value: dMax(p), unit: 'pc', dec: 0, color: '#93a2c4' },
-        { label: '판정', wide: true, color: sn >= 10 ? '#34d399' : (sn >= 5 ? '#fbbf24' : '#fb7185'),
+          color: sn >= 10 ? '#7fb894' : (sn >= 5 ? '#ffb020' : '#c4705f') },
+        { label: '이 정밀도로 잴 수 있는 최대 거리', value: dMax(p), unit: 'pc', dec: 0, color: '#9a9da6' },
+        { label: '판정', wide: true, color: sn >= 10 ? '#7fb894' : (sn >= 5 ? '#ffb020' : '#c4705f'),
           value: sn >= 10 ? '✔ 정밀하게 측정됨' : (sn >= 5 ? '△ 겨우 측정됨 (오차가 크다)' : '✘ 잡음에 묻혔다 — 거리를 알 수 없다') },
-        { label: '어느 사다리 칸인가', wide: true, color: '#fbbf24',
+        { label: '어느 사다리 칸인가', wide: true, color: '#ffb020',
           value: d < 2e4 ? '연주시차로 직접 측정 가능한 범위' : '시차로는 불가능 — 세페이드 이상의 방법이 필요' }
       ];
     },
@@ -141,26 +141,26 @@
 
       /* ── 위에서 본 삼각측량 ── */
       const ox = 92, oy = h * .27, au = 34;
-      D.text(ctx, '위에서 본 지구 궤도', ox, oy - au - 34, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '위에서 본 지구 궤도', ox, oy - au - 34, { size: 10.5, color: '#6a6e78', align: 'center' });
       // 태양 · 궤도
-      ctx.save(); ctx.strokeStyle = 'rgba(147,162,196,.3)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+      ctx.save(); ctx.strokeStyle = 'rgba(167,170,176,.3)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.ellipse(ox, oy, au, au * .42, 0, 0, 7); ctx.stroke(); ctx.restore();
-      D.dot(ctx, ox, oy, 7, '#fbbf24', true);
-      D.text(ctx, '태양', ox, oy + 20, { size: 9, color: '#fbbf24', align: 'center' });
+      D.dot(ctx, ox, oy, 7, '#ffb020', true);
+      D.text(ctx, '태양', ox, oy + 20, { size: 9, color: '#ffb020', align: 'center' });
       // 지구 (현재 위치 + 6개월 뒤)
       const ex = ox + Math.cos(ph) * au, ey = oy + Math.sin(ph) * au * .42;
       const ex2 = ox - Math.cos(ph) * au, ey2 = oy - Math.sin(ph) * au * .42;
-      D.dot(ctx, ex, ey, 5, '#60a5fa', true);
-      D.dot(ctx, ex2, ey2, 4, 'rgba(96,165,250,.35)', false);
+      D.dot(ctx, ex, ey, 5, '#6f9fc4', true);
+      D.dot(ctx, ex2, ey2, 4, 'rgba(135,169,211,.35)', false);
       // 라벨을 궤도 바깥쪽으로 — 태양 라벨과 겹치지 않게
       D.text(ctx, '지구', ex + (Math.cos(ph) >= 0 ? 9 : -9), ey + (Math.sin(ph) > .3 ? 14 : (Math.sin(ph) < -.3 ? -6 : 4)),
-        { size: 9, color: '#60a5fa', align: Math.cos(ph) >= 0 ? 'left' : 'right' });
-      D.dim(ctx, ox, oy + au * .42 + 18, ox + au, oy + au * .42 + 18, '1 AU', '#93a2c4', false);
+        { size: 9, color: '#6f9fc4', align: Math.cos(ph) >= 0 ? 'left' : 'right' });
+      D.dim(ctx, ox, oy + au * .42 + 18, ox + au, oy + au * .42 + 18, '1 AU', '#9a9da6', false);
 
       // 별 (오른쪽) + 두 시선 — 거리가 멀수록 두 시선이 평행해진다
       const starX = ox + 196, starY = oy - 6;
       const spread = clamp(Math.log10(2e4 / d) / Math.log10(2e4) , .02, 1);
-      ctx.save(); ctx.strokeStyle = 'rgba(94,234,212,.5)'; ctx.lineWidth = 1.4;
+      ctx.save(); ctx.strokeStyle = 'rgba(122,206,193,.5)'; ctx.lineWidth = 1.4;
       [[ex, ey], [ex2, ey2]].forEach(([qx, qy]) => {
         ctx.beginPath(); ctx.moveTo(qx, qy);
         ctx.lineTo(starX, starY); ctx.stroke();
@@ -176,10 +176,10 @@
       D.dot(ctx, starX, starY, 5, '#fff', true); ctx.restore();
       D.text(ctx, 'd = ' + (d > 100 ? fmt(d, 0) : fmt(d, 2)) + ' pc', starX + 12, starY + 4,
         { size: 11, color: hl === 'd' ? '#fff' : C.d, bold: hl === 'd' });
-      D.text(ctx, '(' + fmt(d * PC_LY, d > 100 ? 0 : 1) + ' 광년)', starX + 12, starY + 19, { size: 9.5, color: '#61719a' });
+      D.text(ctx, '(' + fmt(d * PC_LY, d > 100 ? 0 : 1) + ' 광년)', starX + 12, starY + 19, { size: 9.5, color: '#6a6e78' });
       // 거리 압축 표시
-      D.text(ctx, '≈≋≈', (ox + starX) / 2 + 36, starY - 14, { size: 11, color: 'rgba(147,162,196,.5)', align: 'center' });
-      D.text(ctx, '(그림은 거리를 크게 줄였습니다)', ox, oy + au * .42 + 42, { size: 9, color: '#4b5a80' });
+      D.text(ctx, '≈≋≈', (ox + starX) / 2 + 36, starY - 14, { size: 11, color: 'rgba(167,170,176,.5)', align: 'center' });
+      D.text(ctx, '(그림은 거리를 크게 줄였습니다)', ox, oy + au * .42 + 42, { size: 9, color: '#4a4d55' });
 
       /* ── 하늘에서 본 모습 ── */
       const vx = Math.min(w - 150, starX + 140), vy = oy, vr = Math.min(76, (w - vx - 44));
@@ -188,23 +188,23 @@
         const S = m => m / span * vr;
         ctx.save();
         ctx.beginPath(); ctx.arc(vx, vy, vr, 0, 7);
-        ctx.fillStyle = 'rgba(8,14,28,.75)'; ctx.fill();
-        ctx.strokeStyle = 'rgba(147,162,196,.35)'; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.fillStyle = 'rgba(17,18,19,.75)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(167,170,176,.35)'; ctx.lineWidth = 1.4; ctx.stroke();
         ctx.clip();
         // 배경별 (아주 멀어서 안 움직인다)
         for (let i = 0; i < 30; i++) {
           const ang = rnd(i) * 6.283, rr = Math.sqrt(rnd(i + 50)) * vr;
-          D.dot(ctx, vx + Math.cos(ang) * rr, vy + Math.sin(ang) * rr, .9 + rnd(i + 90) * 1.3, 'rgba(200,211,239,.55)', false);
+          D.dot(ctx, vx + Math.cos(ang) * rr, vy + Math.sin(ang) * rr, .9 + rnd(i + 90) * 1.3, 'rgba(207,214,232,.55)', false);
         }
         // 시차 타원 (참 궤적)
-        ctx.strokeStyle = 'rgba(251,191,36,.45)'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = 'rgba(227,180,60,.45)'; ctx.lineWidth = 1.2; ctx.setLineDash([3, 3]);
         ctx.beginPath(); ctx.ellipse(vx, vy, S(pm), S(pm) * .45, 0, 0, 7); ctx.stroke(); ctx.setLineDash([]);
         // 관측점
         st.meas.forEach((m, i) => {
           const X = vx + S(pm * Math.cos(m.ph) + m.ex * sg);
           const Y = vy + S((pm * Math.sin(m.ph)) * .45 + m.ey * sg);
           ctx.globalAlpha = .35 + .65 * (i / Math.max(1, st.meas.length - 1));
-          D.dot(ctx, X, Y, 2.4, '#e8eefc', false);
+          D.dot(ctx, X, Y, 2.4, '#e6e7ea', false);
         });
         ctx.globalAlpha = 1;
         // 현재 위치
@@ -212,16 +212,16 @@
         ctx.shadowColor = '#fff'; ctx.shadowBlur = 12;
         D.dot(ctx, cxx, cyy, 4, '#fff', true);
         ctx.restore();
-        D.text(ctx, '하늘에서 본 모습', vx, vy - vr - 10, { size: 10.5, color: '#61719a', align: 'center' });
+        D.text(ctx, '하늘에서 본 모습', vx, vy - vr - 10, { size: 10.5, color: '#6a6e78', align: 'center' });
         D.text(ctx, '시야 ' + (span * 2 > 1000 ? fmt(span * 2 / 1000, 2) + '″' : fmt(span * 2, 1) + ' mas'),
-          vx, vy + vr + 15, { size: 9, color: '#4b5a80', align: 'center' });
+          vx, vy + vr + 15, { size: 9, color: '#4a4d55', align: 'center' });
         D.text(ctx, sn >= 5 ? '타원이 보인다' : '잡음에 묻혔다',
-          vx, vy + vr + 30, { size: 10, color: sn >= 5 ? '#34d399' : '#fb7185', align: 'center', bold: true });
+          vx, vy + vr + 30, { size: 10, color: sn >= 5 ? '#7fb894' : '#c4705f', align: 'center', bold: true });
       }
 
       /* ── 거리 사다리 ── */
       const lx = 44, ly = h - 118, lw = Math.min(w - 88, 540);
-      D.text(ctx, '우주 거리 사다리 — 각 방법이 닿는 범위', lx, ly - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '우주 거리 사다리 — 각 방법이 닿는 범위', lx, ly - 10, { size: 10.5, color: '#6a6e78' });
       const LO = 0, HI = Math.log10(4e9);
       const LX = pc => lx + lw * clamp((Math.log10(Math.max(pc, 1)) - LO) / (HI - LO), 0, 1);
       LADDER.forEach((rung, i) => {
@@ -234,17 +234,17 @@
       });
       [[1, '1 pc'], [1e3, '1 kpc'], [1e6, '1 Mpc'], [1e9, '1 Gpc']].forEach(([v, lab]) => {
         D.line(ctx, LX(v), ly - 4, LX(v), ly + 70, { color: 'rgba(255,255,255,.05)' });
-        D.text(ctx, lab, LX(v), ly + 82, { size: 9, color: '#4b5a80', align: 'center' });
+        D.text(ctx, lab, LX(v), ly + 82, { size: 9, color: '#4a4d55', align: 'center' });
       });
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.line(ctx, LX(d), ly - 6, LX(d), ly + 72, { color: '#fff', width: 2 }); ctx.restore();
 
       /* ── S/N 게이지 ── */
       D.text(ctx, 'S/N = p / σ = ' + fmt(sn, 2), lx, h - 14,
-        { size: 12, color: sn >= 5 ? '#34d399' : '#fb7185', bold: true });
+        { size: 12, color: sn >= 5 ? '#7fb894' : '#c4705f', bold: true });
       D.text(ctx, 'p = ' + (pm < 1 ? fmt(pm * 1000, 1) + ' µas' : fmt(pm, 2) + ' mas') +
         '   ·   σ = ' + (sg < 1 ? fmt(sg * 1000, 0) + ' µas' : fmt(sg, 1) + ' mas'),
-        lx + 150, h - 14, { size: 11, color: '#93a2c4' });
+        lx + 150, h - 14, { size: 11, color: '#9a9da6' });
     }
   });
 })();

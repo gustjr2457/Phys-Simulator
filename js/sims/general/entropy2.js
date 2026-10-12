@@ -6,7 +6,7 @@
    오버플로를 피하려고 ln(N!) 자체가 아니라 ln(i)들의 합으로 계산한다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { N: '#60a5fa', rate: '#fbbf24', left: '#34d399', right: '#93a2c4', Omega: '#a78bfa', S: '#f472b6' };
+  const C = { N: '#6f9fc4', rate: '#ffb020', left: '#7fb894', right: '#9a9da6', Omega: '#a98cc4', S: '#c08098' };
 
   // ln(N!) 을 직접 큰 수로 만들지 않고 ln(i)의 합으로 구해 오버플로를 피한다.
   function lnFact(n) { let s = 0; for (let i = 2; i <= n; i++) s += Math.log(i); return s; }
@@ -99,9 +99,9 @@
       [['왼쪽', ax, st.nLeft, C.left], ['오른쪽', bx, p.N - st.nLeft, C.right]].forEach(([label, x, count]) => {
         D.roundRect(ctx, x, cy - boxH / 2, boxW, boxH, 10);
         ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.fill();
-        ctx.save(); ctx.strokeStyle = 'rgba(147,162,196,.4)'; ctx.lineWidth = 1.5;
+        ctx.save(); ctx.strokeStyle = 'rgba(167,170,176,.4)'; ctx.lineWidth = 1.5;
         D.roundRect(ctx, x, cy - boxH / 2, boxW, boxH, 10); ctx.stroke(); ctx.restore();
-        D.text(ctx, label + ' 칸 (' + count + '개)', x + boxW / 2, cy - boxH / 2 - 12, { size: 12.5, color: '#e8eefc', align: 'center', bold: true });
+        D.text(ctx, label + ' 칸 (' + count + '개)', x + boxW / 2, cy - boxH / 2 - 12, { size: 12.5, color: '#e6e7ea', align: 'center', bold: true });
         dotsGrid(x + 12, cy - boxH / 2 + 12, boxW - 24, boxH - 24, count, label === '왼쪽' ? C.left : C.right, false);
       });
 

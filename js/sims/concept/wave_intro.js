@@ -5,7 +5,7 @@
    고등물리 트랙의 '파동의 표현'(v=fλ 정량 계산)보다 앞서 보는 개념 시뮬. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { speed: '#60a5fa', amp: '#f472b6', dot: '#fbbf24', pulse: '#5eead4', medium: '#93a2c4' };
+  const C = { speed: '#6f9fc4', amp: '#c08098', dot: '#ffb020', pulse: '#68b8b0', medium: '#9a9da6' };
   const N = 46; // 매질 입자 개수
 
   function shape(x, t, speed, amp) {
@@ -81,7 +81,7 @@
       const isLong = p.kind >= .5;
 
       D.text(ctx, isLong ? '종파 (소리·용수철처럼 앞뒤로 흔들림)' : '횡파 (밧줄·물결처럼 위아래로 흔들림)',
-        w / 2, 22, { size: 12.5, color: '#e8eefc', align: 'center', bold: true });
+        w / 2, 22, { size: 12.5, color: '#e6e7ea', align: 'center', bold: true });
 
       // 기준선
       D.line(ctx, V.X(-0.3), cy, V.X(6.6), cy, { color: 'rgba(255,255,255,.12)', width: 1 });
@@ -103,7 +103,7 @@
         for (let i = 0; i < N; i++) {
           const x = -0.3 + (6.6 - -0.3) * i / (N - 1);
           const y = shape(x, st.t, p.speed, p.amp);
-          D.dot(ctx, V.X(x), V.Y(y), 4, 'rgba(147,162,196,.55)', false);
+          D.dot(ctx, V.X(x), V.Y(y), 4, 'rgba(167,170,176,.55)', false);
         }
         // 강조 입자(노란 점)
         const hx = 3.1;
@@ -120,11 +120,11 @@
           const x = x0 + disp;
           const isHi = i === Math.round(N * 0.55);
           const px = V.X(x);
-          D.dot(ctx, px, baseY, isHi ? 8 : 5, isHi ? C.dot : 'rgba(147,162,196,.6)', isHi);
+          D.dot(ctx, px, baseY, isHi ? 8 : 5, isHi ? C.dot : 'rgba(167,170,176,.6)', isHi);
           if (isHi) D.tag(ctx, '이 점은 앞뒤로만 움직임', px, baseY - 26, C.dot, true);
         }
         // 압축/이완 구간 음영 힌트
-        D.text(ctx, '점들이 촘촘한 곳 = 압축, 성긴 곳 = 이완', w / 2, h - 46, { size: 10.5, color: '#61719a', align: 'center' });
+        D.text(ctx, '점들이 촘촘한 곳 = 압축, 성긴 곳 = 이완', w / 2, h - 46, { size: 10.5, color: '#6a6e78', align: 'center' });
       }
 
       // 진행 방향 화살표

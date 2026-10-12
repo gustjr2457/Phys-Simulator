@@ -5,7 +5,7 @@
    고등물리 트랙의 'F = ma'(마찰·수직항력 중심의 1차원 힘 분석)보다 앞서 보는 개념 시뮬. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { F1: '#60a5fa', a1: '#60a5fa', F2: '#f472b6', a2: '#f472b6', net: '#fbbf24' };
+  const C = { F1: '#6f9fc4', a1: '#6f9fc4', F2: '#c08098', a2: '#c08098', net: '#ffb020' };
   const D2R = Math.PI / 180;
 
   PS.register({
@@ -61,7 +61,7 @@
       return [
         { label: '알짜힘 크기', value: mag, dec: 2, color: C.net },
         { label: '알짜힘 방향', value: mag > .05 ? fmt(ang, 0) + '°' : '(없음)', color: C.net, wide: true },
-        { label: '상자의 속력', value: Math.hypot(st.vx, st.vy), dec: 2, color: '#e8eefc' }
+        { label: '상자의 속력', value: Math.hypot(st.vx, st.vy), dec: 2, color: '#e6e7ea' }
       ];
     },
 
@@ -106,7 +106,7 @@
       // 지나온 자취
       if (st.trail.length > 1) {
         ctx.save();
-        ctx.strokeStyle = 'rgba(94,234,212,.5)'; ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(122,206,193,.5)'; ctx.lineWidth = 2;
         ctx.beginPath();
         st.trail.forEach((q, i) => { const px = V.X(q.x), py = V.Y(q.y); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
         ctx.stroke();
@@ -123,7 +123,7 @@
       ctx.save();
       D.roundRect(ctx, bx - 22, by - 22, 44, 44, 8);
       const g = ctx.createLinearGradient(0, by - 22, 0, by + 22);
-      g.addColorStop(0, '#8ba4d8'); g.addColorStop(1, '#4a6ba8');
+      g.addColorStop(0, '#8a95a8'); g.addColorStop(1, '#5a7a96');
       ctx.fillStyle = g; ctx.fill();
       ctx.restore();
 
@@ -140,7 +140,7 @@
         D.tag(ctx, '알짜힘 = 0 (평형)', bx, by - 46, C.net, hl === 'net');
       }
 
-      D.text(ctx, '노란 화살표 = 실제로 상자를 움직이는 방향', w / 2, h - 16, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '노란 화살표 = 실제로 상자를 움직이는 방향', w / 2, h - 16, { size: 10.5, color: '#6a6e78', align: 'center' });
     }
   });
 })();

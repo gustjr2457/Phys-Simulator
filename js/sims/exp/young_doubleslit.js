@@ -7,7 +7,7 @@
    초급 '빛이란 무엇인가?'(파동성/입자성)에서 바로 이어지는 실험. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { lambda: '#fbbf24', d: '#60a5fa', rate: '#a78bfa', dy: '#34d399', slits: '#f472b6' };
+  const C = { lambda: '#ffb020', d: '#6f9fc4', rate: '#a98cc4', dy: '#7fb894', slits: '#c08098' };
   const L_M = 1.5;      // 슬릿~스크린 거리(실제 값, m) — 교실 실험에서 흔한 값
   const FRINGES_SHOWN = 9; // 화면에 항상 보여줄 무늬 개수(파장·슬릿 간격이 바뀌어도 이 개수만큼 보이도록 시야를 자동으로 맞춘다)
   const BINS = 90;
@@ -138,19 +138,19 @@
       ctx.save(); ctx.shadowColor = col; ctx.shadowBlur = 14;
       D.dot(ctx, srcX, cy, 9, col, false);
       ctx.restore();
-      D.text(ctx, '광원', srcX, cy + 26, { size: 10.5, color: '#61719a', align: 'center' });
+      D.text(ctx, '광원', srcX, cy + 26, { size: 10.5, color: '#6a6e78', align: 'center' });
 
       // 슬릿 판(장벽)
       const slitYs = p.slits >= 2 ? [cy - gap, cy + gap] : [cy];
       ctx.save();
-      ctx.strokeStyle = 'rgba(147,162,196,.7)'; ctx.lineWidth = 5; ctx.lineCap = 'butt';
+      ctx.strokeStyle = 'rgba(167,170,176,.7)'; ctx.lineWidth = 5; ctx.lineCap = 'butt';
       ctx.beginPath();
       let prevY = topY;
       slitYs.forEach(sy => { ctx.moveTo(barrierX, prevY); ctx.lineTo(barrierX, sy - 4); prevY = sy + 4; });
       ctx.moveTo(barrierX, prevY); ctx.lineTo(barrierX, botY);
       ctx.stroke();
       ctx.restore();
-      D.text(ctx, p.slits >= 2 ? '슬릿 2개' : '슬릿 1개', barrierX, topY - 14, { size: 11, color: '#93a2c4', align: 'center' });
+      D.text(ctx, p.slits >= 2 ? '슬릿 2개' : '슬릿 1개', barrierX, topY - 14, { size: 11, color: '#9a9da6', align: 'center' });
 
       // 하위헌스 원리 느낌의 퍼지는 파면(부채꼴 호)
       const nArcs = 4;
@@ -168,7 +168,7 @@
 
       // 스크린 세로선
       D.line(ctx, screenX, topY, screenX, botY, { color: 'rgba(255,255,255,.35)', width: 2 });
-      D.text(ctx, '스크린(관측 화면)', screenX, topY - 14, { size: 11, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '스크린(관측 화면)', screenX, topY - 14, { size: 11, color: '#9a9da6', align: 'center' });
 
       // 누적 히스토그램(왼쪽으로 뻗는 막대) + 이론 곡선(오른쪽 얇은 선)
       const win = windowMM(p);
@@ -193,11 +193,11 @@
           const yMidPrev = topY + (i - .5) * binH;
           const yMMprev = -win / 2 + (i - .5) * (win / BINS);
           const theoPrev = intensityAt(yMMprev, p);
-          D.line(ctx, screenX + 6 + theoPrev * 26, yMidPrev, screenX + 6 + theo * 26, yMid, { color: 'rgba(232,238,252,.55)', width: 1.3 });
+          D.line(ctx, screenX + 6 + theoPrev * 26, yMidPrev, screenX + 6 + theo * 26, yMid, { color: 'rgba(236,240,248,.55)', width: 1.3 });
         }
       }
       D.text(ctx, '실제로 쌓인 무늬', screenX - barMax * .5, botY + 20, { size: 10, color: col, align: 'center' });
-      D.text(ctx, '이론 곡선', screenX + 34, botY + 20, { size: 9.5, color: '#93a2c4', align: 'center' });
+      D.text(ctx, '이론 곡선', screenX + 34, botY + 20, { size: 9.5, color: '#9a9da6', align: 'center' });
 
       // 방금 도착한 광자 표시
       if (st.lastY !== null && st.t - st.lastT < .25) {
@@ -216,7 +216,7 @@
         D.dim(ctx, screenX + 70, py1, screenX + 70, py2, 'Δy=' + fmt(dyMM, 2) + 'mm', C.dy, hl === 'dy');
       }
 
-      D.text(ctx, '누적 광자 수: ' + st.total, 16, h - 14, { size: 11, color: '#93a2c4' });
+      D.text(ctx, '누적 광자 수: ' + st.total, 16, h - 14, { size: 11, color: '#9a9da6' });
     }
   });
 })();

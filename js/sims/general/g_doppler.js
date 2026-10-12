@@ -6,8 +6,8 @@
    모두 이 식 하나로 설명된다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { fs: '#fbbf24', vs: '#fb7185', vo: '#60a5fa', v: '#5eead4',
-              fa: '#fb7185', fr: '#60a5fa', M: '#a78bfa' };
+  const C = { fs: '#ffb020', vs: '#c4705f', vo: '#6f9fc4', v: '#68b8b0',
+              fa: '#c4705f', fr: '#6f9fc4', M: '#a98cc4' };
 
   const machOf = p => p.vs / p.v;
   const fApp = p => p.vs >= p.v ? Infinity : p.fs * (p.v + p.vo) / (p.v - p.vs);
@@ -62,7 +62,7 @@
     graphs: [{
       title: '관찰자가 듣는 진동수 — 음원이 지나가는 순간', xmin: 8, window: 10, y0: 0,
       series: [
-        { key: 'heard', label: '들리는 f′ (Hz)', color: '#e8eefc' },
+        { key: 'heard', label: '들리는 f′ (Hz)', color: '#e6e7ea' },
         { key: 'src', label: '실제 f (Hz)', color: C.fs }
       ]
     }],
@@ -79,18 +79,18 @@
       return [
         { label: '다가올 때 f′', value: isFinite(fa) ? fa : Infinity, unit: 'Hz', color: C.fa, dec: 1 },
         { label: '멀어질 때 f′', value: fr, unit: 'Hz', color: C.fr, dec: 1 },
-        { label: '지나가는 순간의 낙차', value: isFinite(fa) ? fa - fr : Infinity, unit: 'Hz', dec: 1, color: '#fbbf24' },
+        { label: '지나가는 순간의 낙차', value: isFinite(fa) ? fa - fr : Infinity, unit: 'Hz', dec: 1, color: '#ffb020' },
         { label: '음정 변화 (다가올 때)', value: isFinite(fa) ? semitone(fa / p.fs) : Infinity, unit: '반음', dec: 2, color: C.fa },
         { label: '앞쪽 파장', value: isFinite(fa) ? p.v / fa : 0, unit: 'm', dec: 3, color: C.fa },
         { label: '뒤쪽 파장', value: p.v / fr, unit: 'm', dec: 3, color: C.fr },
         { label: '마하수 M', value: M, unit: '', color: C.M, dec: 3 },
         { label: '마하콘 반각', value: M > 1 ? coneDeg(p) : 0, unit: '°', dec: 1, color: C.M },
-        { label: '충격파', wide: true, color: M >= 1 ? '#fb7185' : '#34d399',
+        { label: '충격파', wide: true, color: M >= 1 ? '#c4705f' : '#7fb894',
           value: M > 1 ? '발생 — 원뿔이 지나갈 때 소닉붐으로 들린다' :
                  (M > .99 ? '음속 돌파 직전 — 파면이 앞에 쌓인다' : '없음 (아음속)') },
         { label: '이 매질은', wide: true, color: C.v,
           value: p.v < 400 ? '공기 (343 m/s 근처)' : (p.v < 1200 ? '헬륨 (1007 m/s 근처)' : '물 (1480 m/s 근처)') },
-        { label: '빛이었다면 (적색편이 z)', value: p.vs / 299792458 * 1e6, unit: '×10⁻⁶', dec: 4, wide: true, color: '#a78bfa' }
+        { label: '빛이었다면 (적색편이 z)', value: p.vs / 299792458 * 1e6, unit: '×10⁻⁶', dec: 4, wide: true, color: '#a98cc4' }
       ];
     },
 
@@ -148,7 +148,7 @@
         if (r < 1) return;
         const fade = clamp(1 - age / 2.6, 0, 1);
         // 음원 진행 방향(오른쪽)이 앞쪽 — 붉게, 뒤쪽은 푸르게
-        ctx.strokeStyle = 'rgba(200,211,239,' + (fade * .45) + ')';
+        ctx.strokeStyle = 'rgba(207,214,232,' + (fade * .45) + ')';
         ctx.lineWidth = 1.4;
         ctx.beginPath(); ctx.arc(X(q.x), cy, r, 0, 7); ctx.stroke();
       });
@@ -158,7 +158,7 @@
       if (M > 1) {
         const mu = Math.asin(1 / M);
         ctx.save();
-        ctx.strokeStyle = hl === 'M' ? 'rgba(251,113,133,.95)' : 'rgba(251,113,133,.6)';
+        ctx.strokeStyle = hl === 'M' ? 'rgba(216,148,158,.95)' : 'rgba(216,148,158,.6)';
         ctx.lineWidth = 2.4;
         [-1, 1].forEach(s => {
           ctx.beginPath(); ctx.moveTo(X(st.sx), cy);
@@ -190,12 +190,12 @@
       const heard = p.vs >= p.v && dx > 0 ? NaN
         : p.fs * (p.v + (dx > 0 ? p.vo : -p.vo)) / (p.v - (dx > 0 ? p.vs : -p.vs));
       D.tag(ctx, isFinite(heard) ? '듣는 중: ' + fmt(heard, 0) + ' Hz' : '충격파 도달 전',
-        X(st.ox), cy + 78, isFinite(heard) ? (heard > p.fs ? C.fa : C.fr) : '#fb7185', true);
+        X(st.ox), cy + 78, isFinite(heard) ? (heard > p.fs ? C.fa : C.fr) : '#c4705f', true);
 
       /* ── 앞/뒤 파장 비교 ── */
       const la = isFinite(fApp(p)) ? p.v / fApp(p) : 0, lr = p.v / fRec(p);
       const by = h - 76;
-      D.text(ctx, '파장 비교 (음원 기준)', x0, by - 10, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '파장 비교 (음원 기준)', x0, by - 10, { size: 10.5, color: '#6a6e78' });
       [[la, C.fa, '앞쪽 (다가옴)', 0], [lr, C.fr, '뒤쪽 (멀어짐)', 1]].forEach(([lam, cc, lab, row]) => {
         const yy = by + row * 24;
         const n = 9, step = clamp(lam * PX * 2.2, 3, 46);
@@ -216,10 +216,10 @@
       const mx = x0, my = h - 18, mw = Math.min(pw, 420);
       D.roundRect(ctx, mx, my - 7, mw, 9, 4); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       const MX = m => mx + clamp(m / 2.2, 0, 1) * mw;
-      ctx.fillStyle = 'rgba(52,211,153,.25)'; ctx.fillRect(mx, my - 7, MX(1) - mx, 9);
-      ctx.fillStyle = 'rgba(251,113,133,.25)'; ctx.fillRect(MX(1), my - 7, mx + mw - MX(1), 9);
+      ctx.fillStyle = 'rgba(82,181,145,.25)'; ctx.fillRect(mx, my - 7, MX(1) - mx, 9);
+      ctx.fillStyle = 'rgba(216,148,158,.25)'; ctx.fillRect(MX(1), my - 7, mx + mw - MX(1), 9);
       D.line(ctx, MX(1), my - 12, MX(1), my + 7, { color: '#fff', width: 2 });
-      D.text(ctx, 'M = 1 (음속)', MX(1), my - 16, { size: 9, color: '#e8eefc', align: 'center' });
+      D.text(ctx, 'M = 1 (음속)', MX(1), my - 16, { size: 9, color: '#e6e7ea', align: 'center' });
       ctx.save(); ctx.shadowColor = C.M; ctx.shadowBlur = 10;
       D.dot(ctx, MX(M), my - 2.5, 6, C.M, true); ctx.restore();
       D.text(ctx, 'M = ' + fmt(M, 2), mx + mw + 10, my + 2,

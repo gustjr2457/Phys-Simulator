@@ -5,7 +5,7 @@
    실제 분자간 힘을 정밀히 계산하지는 않는 단순화된 개념 모델이다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { T: '#fb7185', vavg: '#34d399', box: '#93a2c4' };
+  const C = { T: '#c4705f', vavg: '#7fb894', box: '#9a9da6' };
   const X0 = 0, X1 = 8, Y0 = 0, Y1 = 6;
   const R = 0.16;          // 입자 반지름(m)
   const AG = 3.0;          // 중력 가속도(단순화)
@@ -99,9 +99,9 @@
       st.parts.forEach(q => { s += Math.hypot(q.vx, q.vy); });
       const ph = phaseOf(p.T);
       return [
-        { label: '상태', value: phaseLabel(ph), color: '#e8eefc' },
+        { label: '상태', value: phaseLabel(ph), color: '#e6e7ea' },
         { label: '평균 속력', value: s / st.parts.length, dec: 2, color: C.vavg },
-        { label: '입자 수', value: st.parts.length, dec: 0, color: '#93a2c4' }
+        { label: '입자 수', value: st.parts.length, dec: 0, color: '#9a9da6' }
       ];
     },
 
@@ -139,18 +139,18 @@
       // 용기
       ctx.save();
       D.roundRect(ctx, V.X(X0), V.Y(Y1), V.X(X1) - V.X(X0), V.Y(Y0) - V.Y(Y1), 8);
-      ctx.strokeStyle = 'rgba(147,162,196,.5)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.strokeStyle = 'rgba(167,170,176,.5)'; ctx.lineWidth = 2; ctx.stroke();
       ctx.restore();
 
-      D.text(ctx, phaseLabel(ph), V.X((X0 + X1) / 2), V.Y(Y1) - 14, { size: 13, color: '#e8eefc', align: 'center', bold: true });
+      D.text(ctx, phaseLabel(ph), V.X((X0 + X1) / 2), V.Y(Y1) - 14, { size: 13, color: '#e6e7ea', align: 'center', bold: true });
 
       st.parts.forEach(q => {
         const speed = Math.hypot(q.vx, q.vy);
-        const col = hl === 'T' || hl === 'vavg' ? '#fbbf24' : speedColor(speed);
+        const col = hl === 'T' || hl === 'vavg' ? '#ffb020' : speedColor(speed);
         D.dot(ctx, V.X(q.x), V.Y(q.y), V.S(R) , col, hl === 'T' || hl === 'vavg');
       });
 
-      D.text(ctx, '파랑 = 느린 입자, 빨강 = 빠른 입자', V.X(X0), V.Y(Y0) + 26, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '파랑 = 느린 입자, 빨강 = 빠른 입자', V.X(X0), V.Y(Y0) + 26, { size: 10.5, color: '#6a6e78' });
     }
   });
 })();

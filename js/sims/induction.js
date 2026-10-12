@@ -1,7 +1,7 @@
 /* 전자기 유도 — 패러데이 법칙 V = −N ΔΦ/Δt */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { N: '#fbbf24', B: '#fb7185', v: '#60a5fa', R: '#c084fc', emf: '#34d399', phi: '#f472b6', I: '#5eead4' };
+  const C = { N: '#ffb020', B: '#c4705f', v: '#6f9fc4', R: '#b088d0', emf: '#7fb894', phi: '#c08098', I: '#68b8b0' };
   const r = 0.04, A = Math.PI * r * r, LIM = 0.26;
 
   const flux = (x, B) => B * A * Math.pow(r, 3) / Math.pow(x * x + r * r, 1.5);
@@ -31,7 +31,7 @@
         where: '<b>검류계 바늘</b>이 가리키는 값입니다. 자석이 코일 한가운데를 지날 때가 아니라, 선속이 <b>가장 빠르게 변하는 순간</b>에 최대가 됩니다.' },
       phi: { symbol: 'Φ', label: '자기 선속', unit: 'Wb', color: C.phi,
         where: '코일을 <b>통과하는 분홍색 화살표의 수</b>입니다. 자석이 가까울수록 촘촘해집니다. 중요한 것은 Φ 자체가 아니라 Φ의 <b>변화</b>입니다.' },
-      t: { symbol: 't', label: '시간', unit: 's', color: '#94a3b8',
+      t: { symbol: 't', label: '시간', unit: 's', color: '#8b8f99',
         where: '자석이 지나가는 데 걸리는 시간. 같은 변화라도 빨리 지나가면(Δt 작음) 기전력이 커집니다.' },
       I: { symbol: 'I', label: '유도 전류', unit: 'A', color: C.I,
         where: '회로 위를 흐르는 <b>움직이는 점들</b>입니다. 자석이 다가올 때와 멀어질 때 <b>방향이 반대</b>가 됩니다.' },
@@ -68,7 +68,7 @@
         { label: '유도 기전력 V', value: st.emf, unit: 'V', color: C.emf },
         { label: '유도 전류 I = V/R', value: st.emf / p.R, unit: 'A', color: C.I },
         { label: '자석–코일 거리', value: Math.abs(st.x) * 100, unit: 'cm' },
-        { label: '지금 상태', wide: true, color: approaching ? '#fb7185' : '#60a5fa',
+        { label: '지금 상태', wide: true, color: approaching ? '#c4705f' : '#6f9fc4',
           value: approaching ? '자석이 다가옴 → 코일이 밀어냄 (같은 극)' : '자석이 멀어짐 → 코일이 붙잡음 (다른 극)' }
       ];
     },
@@ -117,7 +117,7 @@
         const x = cx + t * spread * 2;
         ctx.beginPath();
         ctx.ellipse(x, cy, R * .32, R, 0, 0, 7);
-        ctx.strokeStyle = hl === 'N' ? '#fde68a' : '#d9a441';
+        ctx.strokeStyle = hl === 'N' ? '#f0de97' : '#cea14c';
         ctx.lineWidth = 3; ctx.stroke();
       }
       ctx.restore();
@@ -127,9 +127,9 @@
       const mx = V.X(st.x), ml = V.S(0.045), mh = RM;
       ctx.save();
       if (hl === 'B') { ctx.shadowColor = C.B; ctx.shadowBlur = 22; }
-      ctx.fillStyle = '#fb7185';
+      ctx.fillStyle = '#c4705f';
       D.roundRect(ctx, mx - ml, cy - mh, ml, mh * 2, 4); ctx.fill();
-      ctx.fillStyle = '#60a5fa';
+      ctx.fillStyle = '#6f9fc4';
       D.roundRect(ctx, mx, cy - mh, ml, mh * 2, 4); ctx.fill();
       ctx.restore();
       D.text(ctx, 'N', mx - ml / 2, cy + 5, { size: 13, color: '#fff', align: 'center', bold: true });
@@ -143,7 +143,7 @@
       const I = st.emf / p.R, Imax = Math.max(peak(p) / p.R, 1e-9);
       const path = [[cx - spread - R * .32, cy], [xL, cy], [xL, y2], [xR, y2], [xR, cy], [cx + spread + R * .32, cy]];
       ctx.save();
-      ctx.strokeStyle = '#4b5b7d'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+      ctx.strokeStyle = '#4a4d55'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
       ctx.beginPath(); path.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke();
       ctx.restore();
 
@@ -173,30 +173,30 @@
       // 저항
       const rx = (xL + xR) / 2 - 26;
       ctx.save();
-      ctx.fillStyle = hl === 'R' ? '#d8b4fe' : '#7c5aa8';
+      ctx.fillStyle = hl === 'R' ? '#d9c8ea' : '#7e6999';
       D.roundRect(ctx, rx, y2 - 9, 52, 18, 4); ctx.fill();
       ctx.restore();
-      D.text(ctx, p.R + 'Ω', rx + 26, y2 + 5, { size: 11, color: '#160b26', align: 'center', bold: true });
+      D.text(ctx, p.R + 'Ω', rx + 26, y2 + 5, { size: 11, color: '#17181a', align: 'center', bold: true });
 
       // 검류계
       const gx = xR, gy = (cy + y2) / 2, gr = 30;
       ctx.save();
       ctx.beginPath(); ctx.arc(gx, gy, gr, 0, 7);
-      ctx.fillStyle = '#0f1830'; ctx.fill();
-      ctx.strokeStyle = hl === 'emf' ? C.emf : '#33456d'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#1e1f21'; ctx.fill();
+      ctx.strokeStyle = hl === 'emf' ? C.emf : '#4c4e54'; ctx.lineWidth = 2; ctx.stroke();
       ctx.restore();
       const ang = -Math.PI / 2 + clamp(st.emf / Math.max(peak(p), 1e-9), -1, 1) * 1.05;
       D.line(ctx, gx, gy + 6, gx + Math.cos(ang) * gr * .8, gy + 6 + Math.sin(ang) * gr * .8,
         { color: C.emf, width: 2.5, hot: hl === 'emf' });
       D.dot(ctx, gx, gy + 6, 3, C.emf);
       D.text(ctx, fmt(st.emf, 2) + ' V', gx, gy + gr + 15, { size: 11, color: C.emf, align: 'center', bold: hl === 'emf' });
-      D.text(ctx, '검류계', gx, gy - gr - 8, { size: 10, color: '#61719a', align: 'center' });
+      D.text(ctx, '검류계', gx, gy - gr - 8, { size: 10, color: '#6a6e78', align: 'center' });
 
       // 렌츠 법칙 안내
       const approaching = (st.d > 0 && st.x < 0) || (st.d < 0 && st.x > 0);
       D.tag(ctx, approaching ? '자석이 다가온다 → 코일도 같은 극을 만들어 밀어낸다'
         : '자석이 멀어진다 → 코일이 반대 극을 만들어 붙잡는다',
-        w / 2, h - 16, approaching ? '#fb7185' : '#60a5fa', hl === 'I' || hl === 'emf');
+        w / 2, h - 16, approaching ? '#c4705f' : '#6f9fc4', hl === 'I' || hl === 'emf');
     }
   });
 })();

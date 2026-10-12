@@ -1,7 +1,7 @@
 /* 역학적 에너지 보존 — E = ½mv² + mgh (롤러코스터) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { h0: '#a78bfa', m: '#f472b6', g: '#c084fc', mu: '#fb7185', v: '#60a5fa', K: '#60a5fa', U: '#a78bfa', E: '#34d399', h: '#fbbf24' };
+  const C = { h0: '#a98cc4', m: '#c08098', g: '#b088d0', mu: '#c4705f', v: '#6f9fc4', K: '#6f9fc4', U: '#a98cc4', E: '#7fb894', h: '#ffb020' };
   const X1 = 20;
 
   // 트랙 높이와 기울기
@@ -139,16 +139,16 @@
       ctx.lineTo(V.X(X1), ground);
       ctx.closePath();
       const g1 = ctx.createLinearGradient(0, V.Y(6.5), 0, ground);
-      g1.addColorStop(0, 'rgba(94,234,212,.10)');
-      g1.addColorStop(1, 'rgba(94,234,212,.02)');
+      g1.addColorStop(0, 'rgba(122,206,193,.10)');
+      g1.addColorStop(1, 'rgba(122,206,193,.02)');
       ctx.fillStyle = g1; ctx.fill();
-      ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 2.5; ctx.globalAlpha = .8;
+      ctx.strokeStyle = '#68b8b0'; ctx.lineWidth = 2.5; ctx.globalAlpha = .8;
       ctx.beginPath();
       for (let x = 0; x <= X1; x += .1) { const px = V.X(x), py = V.Y(H(x)); x === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py); }
       ctx.stroke();
       ctx.restore();
-      D.line(ctx, V.X(0), ground, V.X(X1), ground, { color: 'rgba(147,162,196,.35)', width: 1.5, dash: [6, 5] });
-      D.text(ctx, '기준면 (h = 0)', V.X(0) + 4, ground + 14, { size: 10, color: '#4a5878' });
+      D.line(ctx, V.X(0), ground, V.X(X1), ground, { color: 'rgba(167,170,176,.35)', width: 1.5, dash: [6, 5] });
+      D.text(ctx, '기준면 (h = 0)', V.X(0) + 4, ground + 14, { size: 10, color: '#4a4d55' });
 
       // 출발 높이 보조선
       const hotH0 = hl === 'h0' || hl === 'E';
@@ -179,7 +179,7 @@
       ctx.save();
       if (hl === 'm') { ctx.shadowColor = C.m; ctx.shadowBlur = 24; }
       const bg = ctx.createRadialGradient(ballX - r * .3, ballY - r * .3, 1, ballX, ballY, r);
-      bg.addColorStop(0, '#fde7f3'); bg.addColorStop(1, C.m);
+      bg.addColorStop(0, '#e4dade'); bg.addColorStop(1, C.m);
       ctx.fillStyle = bg;
       ctx.beginPath(); ctx.arc(ballX, ballY, r, 0, 7); ctx.fill();
       ctx.restore();
@@ -191,7 +191,7 @@
       const bxx = w - BW + 26, bwid = 46;
       const maxE = Math.max(st.E0, 1);
       const kh = bh * (K / maxE), uh = bh * (U / maxE);
-      D.text(ctx, '에너지', bxx + bwid / 2, top - 22, { size: 11, color: '#61719a', align: 'center' });
+      D.text(ctx, '에너지', bxx + bwid / 2, top - 22, { size: 11, color: '#6a6e78', align: 'center' });
       D.roundRect(ctx, bxx, top, bwid, bh, 6); ctx.fillStyle = 'rgba(255,255,255,.04)'; ctx.fill();
       ctx.save();
       if (hl === 'U') { ctx.shadowColor = C.U; ctx.shadowBlur = 16; }
@@ -205,8 +205,8 @@
       const ey = bot - bh * (st.E / maxE);
       D.line(ctx, bxx - 10, ey, bxx + bwid + 10, ey, { color: C.E, width: hl === 'E' ? 3 : 2, hot: hl === 'E' });
       D.text(ctx, 'E ' + fmt(st.E, 0) + 'J', bxx + bwid + 12, ey + 4, { size: 10.5, color: C.E, bold: hl === 'E' });
-      D.text(ctx, 'K ' + fmt(K, 0), bxx + bwid / 2, bot - uh - kh / 2 + 4, { size: 10, color: '#04121f', align: 'center', bold: true });
-      D.text(ctx, 'U ' + fmt(U, 0), bxx + bwid / 2, bot - uh / 2 + 4, { size: 10, color: '#14061f', align: 'center', bold: true });
+      D.text(ctx, 'K ' + fmt(K, 0), bxx + bwid / 2, bot - uh - kh / 2 + 4, { size: 10, color: '#111112', align: 'center', bold: true });
+      D.text(ctx, 'U ' + fmt(U, 0), bxx + bwid / 2, bot - uh / 2 + 4, { size: 10, color: '#130b1a', align: 'center', bold: true });
       if (p.mu > 0) {
         const ly = bot - bh * (st.E0 / maxE);
         D.line(ctx, bxx - 10, ly, bxx + bwid + 10, ly, { color: C.mu, dash: [4, 4], hot: hl === 'mu' });

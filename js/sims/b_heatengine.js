@@ -6,8 +6,8 @@
    (물리학Ⅰ '열역학 법칙' 단원) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { Th: '#fb7185', Tc: '#60a5fa', Qh: '#fbbf24', qual: '#5eead4',
-              eta: '#34d399', W: '#a78bfa', Qc: '#60a5fa' };
+  const C = { Th: '#c4705f', Tc: '#6f9fc4', Qh: '#ffb020', qual: '#68b8b0',
+              eta: '#7fb894', W: '#a98cc4', Qc: '#6f9fc4' };
 
   const carnot = p => 1 - p.Tc / p.Th;
   const etaOf = p => carnot(p) * p.qual;
@@ -64,20 +64,20 @@
     readouts(st, p) {
       const cr = carnot(p), e = etaOf(p), W = Wof(p), Qc = QcOf(p);
       return [
-        { label: '카르노 한계 효율', value: cr * 100, unit: '%', color: '#34d399', dec: 1 },
+        { label: '카르노 한계 효율', value: cr * 100, unit: '%', color: '#7fb894', dec: 1 },
         { label: '실제 효율 η', value: e * 100, unit: '%', color: C.eta, dec: 1 },
         { label: '한 일 W', value: W, unit: 'kJ', color: C.W, dec: 1 },
         { label: '버리는 열 Q_c', value: Qc, unit: 'kJ', color: C.Qc, dec: 1 },
         { label: '버려지는 비율', value: Qc / p.Qh * 100, unit: '%', dec: 1, color: C.Qc },
         { label: '온도비 T_c/T_h', value: p.Tc / p.Th, unit: '', dec: 3, color: C.Th },
         { label: '전체 엔트로피 변화', value: dSof(p), unit: 'kJ/K', dec: 4,
-          color: dSof(p) >= -1e-9 ? '#34d399' : '#fb7185' },
-        { label: '제2법칙 점검', wide: true, color: dSof(p) >= -1e-9 ? '#34d399' : '#fb7185',
+          color: dSof(p) >= -1e-9 ? '#7fb894' : '#c4705f' },
+        { label: '제2법칙 점검', wide: true, color: dSof(p) >= -1e-9 ? '#7fb894' : '#c4705f',
           value: dSof(p) >= -1e-9 ? '✔ 엔트로피가 줄지 않는다 — 가능한 기관' : '✘ 불가능 (카르노 한계를 넘었다)' },
-        { label: '실제 기관과 비교', wide: true, color: '#fbbf24',
+        { label: '실제 기관과 비교', wide: true, color: '#ffb020',
           value: e >= .55 ? '최신 복합화력발전(60%)급' : (e >= .38 ? '화력발전소(40%)급' :
                  (e >= .25 ? '자동차 가솔린 엔진(30%)급' : '증기기관차(8%)급')) },
-        { label: '효율 100%가 되려면', wide: true, color: '#93a2c4',
+        { label: '효율 100%가 되려면', wide: true, color: '#9a9da6',
           value: '저온부가 절대영도(0 K)여야 한다 — 도달 불가능' }
       ];
     },
@@ -129,7 +129,7 @@
       /* ── 고온 저장고 ── */
       ctx.save(); if (hl === 'Th') { ctx.shadowColor = C.Th; ctx.shadowBlur = 18; }
       D.roundRect(ctx, cx - rw / 2, cy - 140, rw, rh, 6);
-      ctx.fillStyle = 'rgba(251,113,133,.25)'; ctx.fill();
+      ctx.fillStyle = 'rgba(216,148,158,.25)'; ctx.fill();
       ctx.strokeStyle = C.Th; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
       D.text(ctx, '고온부  T_h = ' + fmt(p.Th, 0) + ' K', cx, cy - 140 + rh / 2 + 5,
         { size: 12, color: hl === 'Th' ? '#fff' : C.Th, align: 'center', bold: true });
@@ -137,21 +137,21 @@
       /* ── 기관 ── */
       const er = 44;
       ctx.save();
-      ctx.strokeStyle = 'rgba(200,211,239,.7)'; ctx.lineWidth = 2.4;
+      ctx.strokeStyle = 'rgba(207,214,232,.7)'; ctx.lineWidth = 2.4;
       ctx.beginPath(); ctx.arc(cx, cy, er, 0, 7); ctx.stroke();
       ctx.translate(cx, cy); ctx.rotate(st.ph);
-      ctx.strokeStyle = 'rgba(200,211,239,.5)'; ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(207,214,232,.5)'; ctx.lineWidth = 3;
       for (let k = 0; k < 4; k++) {
         const a = k * Math.PI / 2;
         ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(a) * er * .8, Math.sin(a) * er * .8); ctx.stroke();
       }
       ctx.restore();
-      D.text(ctx, '기관', cx, cy + 5, { size: 12, color: '#e8eefc', align: 'center', bold: true });
+      D.text(ctx, '기관', cx, cy + 5, { size: 12, color: '#e6e7ea', align: 'center', bold: true });
 
       /* ── 저온 저장고 ── */
       ctx.save(); if (hl === 'Tc') { ctx.shadowColor = C.Tc; ctx.shadowBlur = 18; }
       D.roundRect(ctx, cx - rw / 2, cy + 104, rw, rh, 6);
-      ctx.fillStyle = 'rgba(96,165,250,.22)'; ctx.fill();
+      ctx.fillStyle = 'rgba(135,169,211,.22)'; ctx.fill();
       ctx.strokeStyle = C.Tc; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
       D.text(ctx, '저온부  T_c = ' + fmt(p.Tc, 0) + ' K', cx, cy + 104 + rh / 2 + 5,
         { size: 12, color: hl === 'Tc' ? '#fff' : C.Tc, align: 'center', bold: true });
@@ -161,20 +161,20 @@
       const wQh = clamp(p.Qh * scale, 6, 70), wW = clamp(W * scale, 2, 70), wQc = clamp(Qc * scale, 2, 70);
       // Q_h (위 → 기관)
       ctx.save(); if (hl === 'Qh') { ctx.shadowColor = C.Qh; ctx.shadowBlur = 14; }
-      ctx.fillStyle = 'rgba(251,191,36,.45)';
+      ctx.fillStyle = 'rgba(227,180,60,.45)';
       ctx.fillRect(cx - wQh / 2, cy - 104, wQh, 60 - er + 44); ctx.restore();
       D.arrow(ctx, cx, cy - 100, 0, 46, { color: C.Qh, width: 3, head: 10, hot: hl === 'Qh' });
       D.tag(ctx, 'Q_h = ' + fmt(p.Qh, 0) + ' kJ', cx - wQh / 2 - 56, cy - 76, C.Qh, hl === 'Qh');
       // W (기관 → 오른쪽)
       ctx.save(); if (hl === 'W') { ctx.shadowColor = C.W; ctx.shadowBlur = 14; }
-      ctx.fillStyle = 'rgba(167,139,250,.45)';
+      ctx.fillStyle = 'rgba(181,167,222,.45)';
       ctx.fillRect(cx + er, cy - wW / 2, 80, wW); ctx.restore();
       D.arrow(ctx, cx + er + 4, cy, 86, 0, { color: C.W, width: 3, head: 10, hot: hl === 'W' });
       D.tag(ctx, 'W = ' + fmt(W, 1) + ' kJ', cx + er + 60, cy - 30, C.W, hl === 'W');
       D.text(ctx, '쓸모 있는 일', cx + er + 60, cy + 32, { size: 10, color: C.W, align: 'center' });
       // Q_c (기관 → 아래)
       ctx.save(); if (hl === 'Qc') { ctx.shadowColor = C.Qc; ctx.shadowBlur = 14; }
-      ctx.fillStyle = 'rgba(96,165,250,.40)';
+      ctx.fillStyle = 'rgba(135,169,211,.40)';
       ctx.fillRect(cx - wQc / 2, cy + er, wQc, 104 - er); ctx.restore();
       D.arrow(ctx, cx, cy + er + 4, 0, 92, { color: C.Qc, width: 3, head: 10, hot: hl === 'Qc' });
       D.tag(ctx, 'Q_c = ' + fmt(Qc, 1) + ' kJ', cx - wQc / 2 - 58, cy + 78, C.Qc, hl === 'Qc');
@@ -185,29 +185,29 @@
       if (gx + gW + 50 < w + 50) {
         D.roundRect(ctx, gx, gTop, gW, gH, 6); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
         // 불가능 영역 (카르노 위)
-        ctx.save(); ctx.fillStyle = 'rgba(251,113,133,.14)';
+        ctx.save(); ctx.fillStyle = 'rgba(216,148,158,.14)';
         ctx.fillRect(gx, gTop, gW, gH * (1 - cr)); ctx.restore();
-        D.text(ctx, '불가능', gx + gW / 2, gTop + 14, { size: 9, color: 'rgba(251,113,133,.9)', align: 'center' });
+        D.text(ctx, '불가능', gx + gW / 2, gTop + 14, { size: 9, color: 'rgba(216,148,158,.9)', align: 'center' });
         // 실제 효율
         ctx.save(); if (hl === 'eta') { ctx.shadowColor = C.eta; ctx.shadowBlur = 16; }
         D.roundRect(ctx, gx, gTop + gH * (1 - e), gW, gH * e, 6);
         ctx.fillStyle = C.eta; ctx.globalAlpha = .8; ctx.fill(); ctx.restore();
         // 카르노 한계선
         D.line(ctx, gx - 8, gTop + gH * (1 - cr), gx + gW + 8, gTop + gH * (1 - cr),
-          { color: '#34d399', width: 2.2 });
+          { color: '#7fb894', width: 2.2 });
         D.text(ctx, '카르노 ' + fmt(cr * 100, 1) + '%', gx + gW + 12, gTop + gH * (1 - cr) + 4,
-          { size: 10, color: '#34d399' });
+          { size: 10, color: '#7fb894' });
         D.text(ctx, 'η = ' + fmt(e * 100, 1) + '%', gx + gW / 2, gTop - 10,
           { size: 13, color: hl === 'eta' ? '#fff' : C.eta, align: 'center', bold: true });
-        D.text(ctx, '0%', gx + gW / 2, gTop + gH + 15, { size: 9, color: '#4b5a80', align: 'center' });
-        D.text(ctx, '100%', gx + gW / 2, gTop - 24, { size: 9, color: '#4b5a80', align: 'center' });
+        D.text(ctx, '0%', gx + gW / 2, gTop + gH + 15, { size: 9, color: '#4a4d55', align: 'center' });
+        D.text(ctx, '100%', gx + gW / 2, gTop - 24, { size: 9, color: '#4a4d55', align: 'center' });
       }
 
       /* ── 요약 ── */
       D.text(ctx, 'η ≤ 1 − T_c/T_h = ' + fmt(cr * 100, 1) + '%   (재료·설계와 무관한 벽)',
-        36, h - 32, { size: 12, color: '#34d399', bold: true });
+        36, h - 32, { size: 12, color: '#7fb894', bold: true });
       D.text(ctx, 'Q_h = W + Q_c  →  ' + fmt(p.Qh, 0) + ' = ' + fmt(W, 1) + ' + ' + fmt(Qc, 1) + ' kJ',
-        36, h - 12, { size: 11, color: '#93a2c4' });
+        36, h - 12, { size: 11, color: '#9a9da6' });
     }
   });
 })();

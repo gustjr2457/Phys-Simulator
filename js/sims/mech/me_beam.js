@@ -5,8 +5,8 @@
    이 식 하나로 설계된다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { P: '#f472b6', L: '#93a2c4', b: '#60a5fa', h: '#5eead4', E: '#a78bfa',
-              I: '#fbbf24', d: '#fb7185', sig: '#fb923c' };
+  const C = { P: '#c08098', L: '#9a9da6', b: '#6f9fc4', h: '#68b8b0', E: '#a98cc4',
+              I: '#ffb020', d: '#c4705f', sig: '#d1824a' };
   const SY = 250;                   // 가정한 항복강도(연강) MPa
 
   const Imm = p => p.b * p.h * p.h * p.h / 12;                       // mm⁴
@@ -59,7 +59,7 @@
       title: '굽힘응력 – 하중', xKey: 'Pn', xUnit: 'N', xMin: 0, y0: 0,
       series: [
         { key: 'sg', label: 'σ (MPa)', color: C.sig },
-        { key: 'syl', label: '항복강도 250', color: '#fb7185' }
+        { key: 'syl', label: '항복강도 250', color: '#c4705f' }
       ]
     }],
     sample(st, p) {
@@ -72,16 +72,16 @@
       return [
         { label: '단면 2차 모멘트 I', value: Imm(p), unit: 'mm⁴', color: C.I, dec: 0 },
         { label: '최대 처짐 δ', value: dl, unit: 'mm', color: C.d, dec: 2 },
-        { label: '처짐 한계 L/300', value: lim, unit: 'mm', dec: 2, color: '#93a2c4' },
+        { label: '처짐 한계 L/300', value: lim, unit: 'mm', dec: 2, color: '#9a9da6' },
         { label: '처짐 판정', wide: true, value: dl <= lim ? '✔ 한계 안 (δ ≤ L/300)' : '✘ 너무 처진다 (δ > L/300)',
-          color: dl <= lim ? '#34d399' : '#fb7185' },
+          color: dl <= lim ? '#7fb894' : '#c4705f' },
         { label: '최대 굽힘응력 σ', value: sg, unit: 'MPa', color: C.sig, dec: 0 },
         { label: '안전율 (250 MPa 기준)', value: sg > .5 ? SY / sg : Infinity, dec: 2,
-          color: sg < SY ? '#34d399' : '#fb7185' },
+          color: sg < SY ? '#7fb894' : '#c4705f' },
         { label: '현재 하중', value: p.P * st.r, unit: 'N', color: C.P, dec: 0 },
         { label: '높이를 2배로 하면', value: fmt(dl / 8, 2) + ' mm (1/8)', wide: true, color: C.h },
         { label: '강도 판정', wide: true, value: sg < SY ? '탄성 — 하중을 풀면 완전히 복원' : '항복 — 영구 변형 발생(공식 적용 범위 밖)',
-          color: sg < SY ? '#34d399' : '#fb7185' }
+          color: sg < SY ? '#7fb894' : '#c4705f' }
       ];
     },
 
@@ -138,11 +138,11 @@
       };
 
       // 벽(고정단)
-      ctx.fillStyle = 'rgba(147,162,196,.18)';
+      ctx.fillStyle = 'rgba(167,170,176,.18)';
       ctx.fillRect(x0 - 34, y0 - 72, 34, 150);
-      D.line(ctx, x0, y0 - 72, x0, y0 + 78, { color: 'rgba(147,162,196,.7)', width: 3 });
-      for (let i = 0; i < 9; i++) D.line(ctx, x0 - 34, y0 - 66 + i * 17, x0 - 22, y0 - 76 + i * 17, { color: 'rgba(147,162,196,.3)' });
-      D.text(ctx, '고정단', x0 - 36, y0 + 94, { size: 10, color: '#61719a', align: 'center' });
+      D.line(ctx, x0, y0 - 72, x0, y0 + 78, { color: 'rgba(167,170,176,.7)', width: 3 });
+      for (let i = 0; i < 9; i++) D.line(ctx, x0 - 34, y0 - 66 + i * 17, x0 - 22, y0 - 76 + i * 17, { color: 'rgba(167,170,176,.3)' });
+      D.text(ctx, '고정단', x0 - 36, y0 + 94, { size: 10, color: '#6a6e78', align: 'center' });
 
       // 보 — 위·아래 표면을 굽힘응력 비율로 색칠(위 인장 / 아래 압축)
       const seg = 60;
@@ -157,13 +157,13 @@
       ctx.save();
       if (hl === 'h' || hl === 'b' || hl === 'I') { ctx.shadowColor = hl === 'h' ? C.h : (hl === 'b' ? C.b : C.I); ctx.shadowBlur = 16; }
       D.poly(ctx, top.concat(bot.slice().reverse()),
-        { fill: 'rgba(147,162,196,.16)', stroke: sg > SY ? '#fb7185' : '#c8d3ef', width: 2 });
+        { fill: 'rgba(167,170,176,.16)', stroke: sg > SY ? '#c4705f' : '#c8cad2', width: 2 });
       ctx.restore();
       // 응력 색띠: 고정단에서 진하고 자유단에서 0
       const sFrac = clamp(sg / SY, 0, 1.3);
       ctx.save();
       ctx.lineWidth = 3.4; ctx.lineCap = 'round';
-      [[top, '#fb7185', '인장'], [bot, '#60a5fa', '압축']].forEach(([pts, cc]) => {
+      [[top, '#c4705f', '인장'], [bot, '#6f9fc4', '압축']].forEach(([pts, cc]) => {
         for (let i = 0; i < seg; i++) {
           const a = 1 - i / seg;                       // 굽힘모멘트는 고정단에서 최대
           ctx.strokeStyle = cc; ctx.globalAlpha = .18 + .72 * a * Math.min(1, sFrac);
@@ -171,17 +171,17 @@
         }
       });
       ctx.restore();
-      D.text(ctx, '인장 (늘어남)', x0 + 8, top[2][1] - 8, { size: 9.5, color: '#fb7185' });
-      D.text(ctx, '압축 (눌림)', x0 + 8, bot[2][1] + 16, { size: 9.5, color: '#60a5fa' });
+      D.text(ctx, '인장 (늘어남)', x0 + 8, top[2][1] - 8, { size: 9.5, color: '#c4705f' });
+      D.text(ctx, '압축 (눌림)', x0 + 8, bot[2][1] + 16, { size: 9.5, color: '#6f9fc4' });
       // 중립축
-      ctx.save(); ctx.strokeStyle = 'rgba(232,238,252,.35)'; ctx.setLineDash([4, 5]); ctx.lineWidth = 1;
+      ctx.save(); ctx.strokeStyle = 'rgba(236,240,248,.35)'; ctx.setLineDash([4, 5]); ctx.lineWidth = 1;
       ctx.beginPath();
       for (let i = 0; i <= seg; i++) { const x = Lpx * i / seg; i ? ctx.lineTo(x0 + x, y0 + yOf(x)) : ctx.moveTo(x0 + x, y0 + yOf(x)); }
       ctx.stroke(); ctx.restore();
-      D.text(ctx, '중립축 (σ = 0)', x0 + Lpx * .5, y0 + yOf(Lpx * .5) - 3, { size: 9, color: 'rgba(232,238,252,.5)', align: 'center' });
+      D.text(ctx, '중립축 (σ = 0)', x0 + Lpx * .5, y0 + yOf(Lpx * .5) - 3, { size: 9, color: 'rgba(236,240,248,.5)', align: 'center' });
 
       // 처짐 전 기준선
-      D.line(ctx, x0, y0, x0 + Lpx + 26, y0, { color: 'rgba(147,162,196,.3)', dash: [5, 6] });
+      D.line(ctx, x0, y0, x0 + Lpx + 26, y0, { color: 'rgba(167,170,176,.3)', dash: [5, 6] });
 
       // 하중 화살표
       const tipX = x0 + Lpx, tipY = y0 + dpx;
@@ -197,7 +197,7 @@
       [[.5, 8, '높이 ½ → 8배'], [2, 1 / 8, '높이 2배 → ⅛']].forEach(([, k, lab], idx) => {
         const gd = clamp(dlmm * k * 1.7, 0, h * .34);
         ctx.save();
-        ctx.strokeStyle = idx ? 'rgba(94,234,212,.5)' : 'rgba(251,113,133,.4)';
+        ctx.strokeStyle = idx ? 'rgba(122,206,193,.5)' : 'rgba(216,148,158,.4)';
         ctx.setLineDash([3, 4]); ctx.lineWidth = 1.4;
         ctx.beginPath();
         for (let i = 0; i <= seg; i++) {
@@ -206,17 +206,17 @@
         }
         ctx.stroke(); ctx.restore();
         D.text(ctx, lab, tipX + 4, y0 + gd + (idx ? -4 : 12),
-          { size: 9, color: idx ? 'rgba(94,234,212,.8)' : 'rgba(251,113,133,.75)' });
+          { size: 9, color: idx ? 'rgba(122,206,193,.8)' : 'rgba(216,148,158,.75)' });
       });
 
       /* ── 단면도 ── */
       const sx = w - 118, sy = h - 168;
-      D.text(ctx, '단면 (b × h)', sx, sy - 12, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '단면 (b × h)', sx, sy - 12, { size: 10.5, color: '#6a6e78' });
       const dw = clamp(p.b * .62, 8, 76), dh = clamp(p.h * .62, 8, 76);
       ctx.save();
       if (hl === 'I') { ctx.shadowColor = C.I; ctx.shadowBlur = 16; }
       D.roundRect(ctx, sx + 38 - dw / 2, sy + 42 - dh / 2, dw, dh, 2);
-      ctx.fillStyle = 'rgba(147,162,196,.22)'; ctx.fill();
+      ctx.fillStyle = 'rgba(167,170,176,.22)'; ctx.fill();
       ctx.strokeStyle = C.I; ctx.lineWidth = 1.8; ctx.stroke();
       ctx.restore();
       D.dim(ctx, sx + 38 - dw / 2, sy + 42 + dh / 2 + 13, sx + 38 + dw / 2, sy + 42 + dh / 2 + 13,
@@ -229,7 +229,7 @@
       /* ── 상태 배너 ── */
       const over = sg > SY;
       D.tag(ctx, over ? '항복! σ = ' + fmt(sg, 0) + ' MPa > 250' : 'σ = ' + fmt(sg, 0) + ' MPa  ·  δ = ' + fmt(dlmm, 2) + ' mm',
-        w * .45, 26, over ? '#fb7185' : '#34d399', true);
+        w * .45, 26, over ? '#c4705f' : '#7fb894', true);
     }
   });
 })();

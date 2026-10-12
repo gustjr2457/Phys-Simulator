@@ -6,8 +6,8 @@
    악기의 음높이, 구조물의 고유진동수, 전자레인지의 핫스팟이 모두 여기서 나온다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { L: '#5eead4', T: '#fbbf24', mu: '#a78bfa', f: '#fb7185',
-              v: '#60a5fa', f1: '#34d399', A: '#f472b6' };
+  const C = { L: '#68b8b0', T: '#ffb020', mu: '#a98cc4', f: '#c4705f',
+              v: '#6f9fc4', f1: '#7fb894', A: '#c08098' };
   const NMODE = 9, GAMMA = .06;        // 표시할 배진동 수 / 감쇠비
 
   const vOf = p => Math.sqrt(p.T / (p.mu / 1000));         // m/s
@@ -91,10 +91,10 @@
         { label: '구동 진동수 f', value: p.f, unit: 'Hz', color: C.f, dec: 0 },
         { label: '가장 세게 반응하는 모드', value: n + ' 배 진동 (' + fmt(fnOf(p, n), 1) + ' Hz)', wide: true, color: C.A },
         { label: '파장 λ = 2L/n', value: 2 * p.L / n, unit: 'm', dec: 3, color: C.L },
-        { label: '마디(움직이지 않는 점) 수', value: n + 1, unit: '개', dec: 0, color: '#93a2c4' },
+        { label: '마디(움직이지 않는 점) 수', value: n + 1, unit: '개', dec: 0, color: '#9a9da6' },
         { label: '배(가장 크게 흔들리는 점) 수', value: n, unit: '개', dec: 0, color: C.A },
         { label: '공명 상태', wide: true,
-          color: res < .01 ? '#34d399' : (res < .05 ? '#fbbf24' : '#fb7185'),
+          color: res < .01 ? '#7fb894' : (res < .05 ? '#ffb020' : '#c4705f'),
           value: res < .01 ? '✔ 정확히 공명 — 진폭 최대' :
                  (res < .05 ? '△ 공명 근처 (' + fmt(res * 100, 1) + '% 벗어남)' : '✘ 공명이 아니다 — 거의 흔들리지 않는다') },
         { label: '장력을 4배로 하면 f₁', value: f1 * 2, unit: 'Hz', dec: 1, color: C.T },
@@ -154,7 +154,7 @@
       };
       // 잔상(포락선)
       ctx.save();
-      ctx.strokeStyle = 'rgba(244,114,182,.18)'; ctx.lineWidth = 1.4;
+      ctx.strokeStyle = 'rgba(214,144,181,.18)'; ctx.lineWidth = 1.4;
       [1, -1].forEach(s => {
         ctx.beginPath();
         for (let i = 0; i <= 160; i++) { const u = i / 160; const yy = cy + s * shape(u) * amp; i ? ctx.lineTo(x0 + sw * u, yy) : ctx.moveTo(x0 + sw * u, yy); }
@@ -163,7 +163,7 @@
       ctx.restore();
       // 줄
       ctx.save();
-      ctx.strokeStyle = res < .02 ? '#f472b6' : '#c8d3ef';
+      ctx.strokeStyle = res < .02 ? '#c08098' : '#c8cad2';
       ctx.lineWidth = 2.6 + clamp(p.mu * .12, 0, 2.4);
       if (hl === 'A' || res < .02) { ctx.shadowColor = C.A; ctx.shadowBlur = 14; }
       ctx.beginPath();
@@ -172,18 +172,18 @@
       // 고정단
       [0, 1].forEach(s => {
         const xx = x0 + sw * s;
-        ctx.fillStyle = 'rgba(147,162,196,.5)'; ctx.fillRect(xx - 4 + s * -2, cy - 26, 6, 52);
+        ctx.fillStyle = 'rgba(167,170,176,.5)'; ctx.fillRect(xx - 4 + s * -2, cy - 26, 6, 52);
       });
       // 마디 · 배
       if (res < .25) {
         for (let k = 0; k <= n; k++) {
           const xx = x0 + sw * k / n;
-          D.dot(ctx, xx, cy, 3.5, '#60a5fa', false);
-          if (k === 0) D.text(ctx, '마디', xx, cy + 34, { size: 9, color: '#60a5fa', align: 'center' });
+          D.dot(ctx, xx, cy, 3.5, '#6f9fc4', false);
+          if (k === 0) D.text(ctx, '마디', xx, cy + 34, { size: 9, color: '#6f9fc4', align: 'center' });
         }
         for (let k = 0; k < n; k++) {
           const xx = x0 + sw * (k + .5) / n;
-          D.line(ctx, xx, cy - amp - 6, xx, cy + amp + 6, { color: 'rgba(244,114,182,.3)', dash: [2, 3] });
+          D.line(ctx, xx, cy - amp - 6, xx, cy + amp + 6, { color: 'rgba(214,144,181,.3)', dash: [2, 3] });
           if (k === 0) D.text(ctx, '배', xx, cy - amp - 12, { size: 9, color: C.A, align: 'center' });
         }
         D.dim(ctx, x0, cy + 48, x0 + sw / n, cy + 48, 'λ/2 = ' + fmt(p.L / n, 3) + ' m', C.L, hl === 'L');
@@ -196,23 +196,23 @@
       D.text(ctx, fmt(p.f, 0) + ' Hz', x0 - 20, cy - 22, { size: 10, color: hl === 'f' ? '#fff' : C.f, align: 'center', bold: true });
       D.dim(ctx, x0, cy - 48, x0 + sw, cy - 48, 'L = ' + fmt(p.L, 2) + ' m', C.L, hl === 'L');
       D.tag(ctx, res < .02 ? '공명! ' + n + '배 진동' : (res < .08 ? '공명 근처' : '공명 아님 — 거의 안 흔들린다'),
-        x0 + sw / 2, cy + 74, res < .02 ? '#34d399' : (res < .08 ? '#fbbf24' : '#fb7185'), true);
+        x0 + sw / 2, cy + 74, res < .02 ? '#7fb894' : (res < .08 ? '#ffb020' : '#c4705f'), true);
 
       /* ── 고유진동수 사다리 ── */
       const lx = 52, ly = h - 96, lw = Math.min(w - 104, 500);
       const fmax = Math.max(p.f * 1.25, fnOf(p, NMODE) * 1.05);
       const LX = f => lx + clamp(f / fmax, 0, 1) * lw;
-      D.text(ctx, '고유진동수 사다리 — 이 눈금 위에서만 크게 흔들린다', lx, ly - 26, { size: 10.5, color: '#61719a' });
-      D.line(ctx, lx, ly + 16, lx + lw, ly + 16, { color: 'rgba(147,162,196,.25)', width: 2 });
+      D.text(ctx, '고유진동수 사다리 — 이 눈금 위에서만 크게 흔들린다', lx, ly - 26, { size: 10.5, color: '#6a6e78' });
+      D.line(ctx, lx, ly + 16, lx + lw, ly + 16, { color: 'rgba(167,170,176,.25)', width: 2 });
       for (let k = 1; k <= NMODE; k++) {
         const fn = fnOf(p, k);
         if (fn > fmax) break;
         const hit = Math.abs(p.f - fn) / fn < .02;
         ctx.save(); if (hit) { ctx.shadowColor = C.f1; ctx.shadowBlur = 12; }
         D.line(ctx, LX(fn), ly + 16 - (hit ? 20 : 12), LX(fn), ly + 16,
-          { color: hit ? '#34d399' : 'rgba(52,211,153,.5)', width: hit ? 3 : 1.8 });
+          { color: hit ? '#7fb894' : 'rgba(82,181,145,.5)', width: hit ? 3 : 1.8 });
         ctx.restore();
-        D.text(ctx, k + '', LX(fn), ly + 29, { size: 9, color: hit ? '#34d399' : '#4b5a80', align: 'center' });
+        D.text(ctx, k + '', LX(fn), ly + 29, { size: 9, color: hit ? '#7fb894' : '#4a4d55', align: 'center' });
       }
       D.text(ctx, 'f₁ = ' + fmt(fnOf(p, 1), 1) + ' Hz', lx, ly + 48,
         { size: 11.5, color: hl === 'f1' ? '#fff' : C.f1, bold: true });
@@ -221,7 +221,7 @@
       D.text(ctx, '구동 f', LX(p.f), ly - 6, { size: 9, color: C.f, align: 'center' });
       D.text(ctx, 'v = √(T/μ) = ' + fmt(v, 1) + ' m/s', lx + 150, ly + 48,
         { size: 11.5, color: hl === 'v' ? '#fff' : C.v, bold: hl === 'v' });
-      D.text(ctx, '진동수 (Hz) →', lx + lw, ly + 48, { size: 9.5, color: '#61719a', align: 'right' });
+      D.text(ctx, '진동수 (Hz) →', lx + lw, ly + 48, { size: 9.5, color: '#6a6e78', align: 'right' });
     }
   });
 })();

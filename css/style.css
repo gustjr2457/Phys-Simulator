@@ -1,14 +1,31 @@
+/* =========================================================
+   PhysLab — 계측기 테마 (흑연 + 호박색 단일 강조)
+   규칙 셋:
+     1. 장식용 그라디언트·글로우를 쓰지 않는다. 빛남은 "지금 강조된 것"
+        이라는 뜻으로만 쓰고, 그 외의 입체감은 위쪽 1px 하이라이트로 만든다.
+     2. 강조색은 호박색 하나뿐이다. 다른 색은 기호 색이며 의미를 갖는다.
+     3. 모서리는 거의 깎지 않는다(3px). 알약 모양은 쓰지 않는다.
+   ========================================================= */
 :root{
-  --bg:#070b16;
-  --panel:#121b31;
-  --line:#22304f;
-  --tx:#e8eefc;
-  --tx2:#93a2c4;
-  --tx3:#61719a;
-  --acc:#5eead4;
-  --acc2:#60a5fa;
-  --radius:14px;
-  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --bg:#0e0f11;        /* 페이지 */
+  --nav:#141518;       /* 좌측 콘솔 */
+  --panel:#17181c;     /* 카드 */
+  --inset:#0d0e10;     /* 카드 안쪽에 파인 칸 */
+  --stage:#0a0b0c;     /* 무대 */
+  --line:#2a2c31;      /* 기본 실선 */
+  --line2:#3a3d44;     /* 강한 실선 */
+  --edge:#4a4d56;      /* 베젤 위쪽 하이라이트 */
+  --tx:#e6e7ea;
+  --tx2:#9a9da6;
+  --tx3:#6a6e78;
+  --acc:#ffb020;       /* 호박색 — 유일한 강조색 */
+  --acc-dim:#c8a05a;
+  --acc-bg:#1c1a16;
+  --acc-line:#4a4030;
+  --ok:#7fb894;
+  --radius:3px;
+  --mono:"IBM Plex Mono","Consolas","D2Coding",ui-monospace,monospace;
+  --serif:"IBM Plex Serif","Cambria Math","Times New Roman",serif;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -16,236 +33,243 @@ body{
   margin:0;
   display:grid;
   grid-template-columns:250px minmax(0,1fr) 340px;
-  background:
-    radial-gradient(1200px 700px at 15% -10%, rgba(30,60,120,.10), transparent),
-    radial-gradient(900px 600px at 110% 0%, rgba(40,120,140,.08), transparent),
-    var(--bg);
+  background:var(--bg);
   color:var(--tx);
   font-family:"Pretendard","Noto Sans KR","Malgun Gothic",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:14px;
   overflow:hidden;
 }
-h1,h2,h3{margin:0;font-weight:700}
+h1,h2,h3{margin:0;font-weight:600}
 p{margin:0}
 button{font-family:inherit}
+/* 숫자는 전부 등폭 — 값이 바뀌어도 자리가 흔들리지 않는다 */
+.ctrl-val,.ro .rv,.clock,.fx-fbody sub,.quest-sub{font-variant-numeric:tabular-nums}
 
-/* ── 좌측 네비 ───────────────────────────── */
+/* ── 좌측 콘솔 ───────────────────────────── */
 #nav{
-  background-color:#0a1120;
+  background-color:var(--nav);
   border-right:1px solid var(--line);
   display:flex;flex-direction:column;
   overflow:hidden;
 }
-.brand{display:flex;gap:11px;align-items:center;padding:20px 18px 16px}
-.brand h1{font-size:18px;letter-spacing:.3px}
-.brand p{font-size:11px;color:var(--tx3);margin-top:3px}
+.brand{display:flex;gap:11px;align-items:center;padding:18px 16px 14px}
+.brand h1{font-size:17px;letter-spacing:.2px}
+.brand p{font-size:10px;color:var(--tx3);margin-top:4px;letter-spacing:.2px}
 .logo{
-  width:38px;height:38px;border-radius:11px;flex:none;
-  display:grid;place-items:center;font-size:20px;font-weight:700;color:#07121a;
-  background:linear-gradient(135deg,var(--acc),var(--acc2));
-  box-shadow:0 6px 18px rgba(94,234,212,.25);
+  width:34px;height:34px;border-radius:2px;flex:none;
+  display:grid;place-items:center;font-size:17px;font-weight:500;
+  font-family:var(--serif);color:var(--acc);
+  background:#1e2024;border:1px solid var(--line2);border-top-color:var(--edge);
 }
 /* 대분류 — 햄버거 메뉴로 선택 */
 .group-menu-btn{
   display:flex;align-items:center;gap:8px;width:calc(100% - 24px);margin:0 12px 9px;
-  padding:9px 11px;border-radius:10px;border:1px solid #2c4675;
-  background:linear-gradient(135deg,#16294a,#131d36);color:var(--tx);
-  font-size:12.5px;font-weight:700;cursor:pointer;transition:.14s;text-align:left;
+  padding:8px 10px;border-radius:var(--radius);
+  border:1px solid var(--line2);border-top-color:var(--edge);
+  background:#1a1c20;color:var(--tx);
+  font-size:12.5px;font-weight:500;cursor:pointer;transition:.12s;text-align:left;
 }
-.group-menu-btn:hover{border-color:var(--acc);background:#1a3148}
-.gm-ico{font-size:13px;color:var(--acc);flex:none}
+.group-menu-btn:hover{border-color:var(--acc-line);background:#212328;color:var(--acc)}
+.gm-ico{font-size:12px;color:var(--acc);flex:none}
 #groupLabel{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gm-caret{color:var(--tx3);font-size:10px;flex:none}
 
 .modal-sm{width:min(440px,100%)}
 .group-card{
-  display:block;width:100%;text-align:left;cursor:pointer;margin-bottom:9px;
-  background:#0a132a;border:1px solid #1d2a4a;border-radius:11px;padding:12px 14px;
-  color:var(--tx2);transition:.14s;font-family:inherit;
+  display:block;width:100%;text-align:left;cursor:pointer;margin-bottom:8px;
+  background:var(--inset);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 14px;color:var(--tx2);transition:.12s;font-family:inherit;
 }
-.group-card:hover{border-color:var(--acc2);background:#0e1a38}
-.group-card.on{border-color:var(--acc);background:rgba(94,234,212,.08)}
+.group-card:hover{border-color:var(--line2);background:#141518}
+.group-card.on{border-color:var(--acc);background:var(--acc-bg)}
 .gc-top{display:flex;align-items:baseline;gap:9px;margin-bottom:4px}
-.gc-top b{font-size:14px;color:var(--tx)}
+.gc-top b{font-size:14px;color:var(--tx);font-weight:600}
 .group-card.on .gc-top b{color:var(--acc)}
-.gc-n{margin-left:auto;font-size:11px;color:var(--tx3)}
+.gc-n{margin-left:auto;font-size:11px;color:var(--tx3);font-family:var(--mono)}
 .gc-sub{font-size:11.5px;color:var(--tx3);line-height:1.5}
 
-/* 중분류 */
-.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 12px 10px}
+/* 중분류 — 패널 키 */
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:0 12px 10px}
 .mode.off{display:none}
 .mode{
-  cursor:pointer;background:#101a30;border:1px solid #22304f;color:var(--tx3);
-  font-size:10.5px;padding:7px 3px;border-radius:9px;transition:.14s;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;background:#1a1c20;color:var(--tx3);
+  border:1px solid #32353c;border-top-color:#41444c;
+  font-size:10.5px;padding:7px 3px;border-radius:var(--radius);transition:.12s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.mode:hover{color:var(--tx2);background:#16223d}
-.mode.on{background:linear-gradient(135deg,#1a3a54,#17304d);color:var(--acc);border-color:#2f5f74;font-weight:700}
-.mode.empty{opacity:.55}
+.mode:hover{color:var(--tx2);background:#212328}
+.mode.on{background:#26282e;color:var(--acc);border-color:#4a4d56;border-top-color:#5c6069;font-weight:600}
+.mode.empty{opacity:.5}
 .simlist-empty{padding:18px 10px;color:var(--tx3);font-size:12px;line-height:1.7}
 
 /* 전체 공식 모음 버튼 + 모달 */
 .formula-index-btn{
-  display:block;width:calc(100% - 24px);margin:0 12px 10px;padding:8px 10px;
-  border-radius:9px;border:1px solid #22304f;background:#101a30;color:var(--tx2);
-  font-size:11.5px;font-weight:600;letter-spacing:.3px;cursor:pointer;text-align:center;transition:.14s;
+  display:block;width:calc(100% - 24px);margin:0 12px 10px;padding:7px 10px;
+  border-radius:var(--radius);border:1px solid var(--line);background:#1a1c20;
+  color:var(--tx2);
+  font-size:11px;letter-spacing:.4px;cursor:pointer;text-align:center;transition:.12s;
 }
-.formula-index-btn:hover{background:#16223d;color:var(--acc);border-color:#2f5f74}
+.formula-index-btn:hover{background:#212328;color:var(--acc);border-color:var(--acc-line)}
 .modal-overlay{
-  position:fixed;inset:0;background:rgba(4,7,15,.72);
+  position:fixed;inset:0;background:rgba(6,7,8,.78);
   display:flex;align-items:center;justify-content:center;z-index:50;padding:30px;
 }
 .modal-overlay.hidden{display:none}
 .modal{
-  background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+  background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);
   width:min(880px,100%);max-height:min(84vh,900px);display:flex;flex-direction:column;overflow:hidden;
 }
 .modal-head{
-  display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line);flex:none;
+  display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line);flex:none;
 }
 .modal-head h2{font-size:15px;flex:none;white-space:nowrap}
 #formulaSearch{
-  flex:1;background:#0a1120;border:1px solid var(--line);border-radius:9px;color:var(--tx);
-  padding:8px 12px;font-size:13px;min-width:0;
+  flex:1;background:var(--inset);border:1px solid var(--line);border-radius:var(--radius);
+  color:var(--tx);padding:8px 11px;font-size:13px;min-width:0;font-family:inherit;
 }
-#formulaSearch:focus{outline:none;border-color:var(--acc2)}
+#formulaSearch:focus{outline:none;border-color:var(--acc)}
 .modal-close{
-  background:transparent;border:none;color:var(--tx3);font-size:16px;cursor:pointer;padding:4px 9px;border-radius:8px;flex:none;
+  background:transparent;border:1px solid transparent;color:var(--tx3);
+  font-size:15px;cursor:pointer;padding:4px 9px;border-radius:var(--radius);flex:none;
 }
-.modal-close:hover{color:var(--tx);background:#16223d}
+.modal-close:hover{color:var(--tx);background:#212328;border-color:var(--line)}
 .modal-body{overflow-y:auto;padding:6px 18px 20px}
 .fx-group-title{
-  font-size:13px;font-weight:800;color:var(--tx);letter-spacing:.5px;
-  margin:26px 0 2px;padding:7px 11px;border-radius:9px;
-  background:linear-gradient(90deg,rgba(94,234,212,.14),transparent);
-  border-left:3px solid var(--acc);
+  font-size:12.5px;font-weight:600;color:var(--tx);letter-spacing:.4px;
+  margin:24px 0 2px;padding:7px 11px;border-radius:0;
+  background:#1c1e22;border-left:2px solid var(--acc);
 }
 .fx-group-title:first-child{margin-top:10px}
 .fx-track-title{
-  font-size:11.5px;letter-spacing:1.4px;color:var(--acc);text-transform:uppercase;
+  font-size:11.5px;letter-spacing:.4px;color:var(--acc);font-weight:600;
   margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line);
 }
 .fx-track:first-child .fx-track-title{margin-top:8px}
-.fx-cat{font-size:10.5px;letter-spacing:1px;color:var(--tx3);margin:12px 0 6px 2px}
+.fx-cat{font-size:10px;letter-spacing:.2px;color:var(--tx3);margin:12px 0 6px 2px}
 .fx-sim{
-  background:#0a132a;border:1px solid #1d2a4a;border-radius:10px;padding:10px 12px;margin-bottom:8px;
-  cursor:pointer;transition:.14s;
+  background:var(--inset);border:1px solid var(--line);border-radius:var(--radius);
+  padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:.12s;
 }
-.fx-sim:hover{border-color:var(--acc2);background:#0e1a38}
+.fx-sim:hover{border-color:var(--acc-line);background:#141518}
 .fx-sim-head{display:flex;align-items:baseline;gap:9px;margin-bottom:6px;flex-wrap:wrap}
-.fx-sim-head b{font-size:13px;color:var(--tx)}
+.fx-sim-head b{font-size:13px;color:var(--tx);font-weight:600}
 .fx-sub{font-size:11px;color:var(--tx3)}
-.fx-jump{margin-left:auto;color:var(--acc2);font-size:11px;opacity:.65;transition:.14s;white-space:nowrap}
+.fx-jump{margin-left:auto;color:var(--acc-dim);font-size:11px;opacity:.6;transition:.12s;white-space:nowrap}
 .fx-sim:hover .fx-jump{opacity:1}
 .fx-formula{margin-top:5px}
 .fx-fname{font-size:10px;color:var(--tx3);margin-bottom:2px}
-.fx-fbody{font-size:15px;font-family:"Cambria Math","Times New Roman",serif;font-style:italic;line-height:1.6}
+.fx-fbody{font-size:15px;font-family:var(--serif);font-style:italic;line-height:1.6}
 .fx-empty{color:var(--tx3);font-size:12.5px;padding:24px 4px;text-align:center}
-.term-inline{font-weight:700;font-style:normal}
+.term-inline{font-weight:600;font-style:normal}
 #simlist{flex:1;overflow-y:auto;padding:4px 10px 10px}
-.nav-group{font-size:10.5px;letter-spacing:1.4px;color:var(--tx3);
-  text-transform:uppercase;padding:16px 8px 7px;font-weight:700}
+.nav-group{
+  font-size:10px;letter-spacing:.3px;color:var(--tx3);font-weight:600;
+  padding:16px 8px 6px;
+}
 .nav-item{
   display:block;width:100%;text-align:left;cursor:pointer;
-  background:transparent;border:1px solid transparent;color:var(--tx2);
-  padding:9px 11px;border-radius:10px;margin-bottom:2px;
-  font-size:13px;line-height:1.35;transition:.14s;
+  background:transparent;border:none;border-left:2px solid transparent;color:var(--tx2);
+  padding:8px 10px;border-radius:0;margin-bottom:1px;
+  font-size:13px;line-height:1.35;transition:.12s;
 }
 .nav-item small{display:block;color:var(--tx3);font-size:10.5px;margin-top:2px}
-.nav-item:hover{background:#131d36;color:var(--tx)}
-.nav-item.on{
-  background:linear-gradient(90deg,#16294a,#131d36);
-  border-color:#2c4675;color:#fff;
-  box-shadow:inset 2px 0 0 var(--acc);
+.nav-item:hover{background:#1a1c20;color:var(--tx)}
+.nav-item.on{background:#1c1e22;border-left-color:var(--acc);color:#f0f1f3}
+.nav-foot{
+  padding:11px 16px 14px;border-top:1px solid var(--line);
+  color:var(--tx3);font-size:10.5px;line-height:1.8;
 }
-.nav-foot{padding:12px 18px 16px;border-top:1px solid var(--line);color:var(--tx3);font-size:10.5px;line-height:1.8}
-.nav-foot b{color:var(--tx2);background:#16203a;padding:1px 5px;border-radius:4px;font-weight:600}
-.mini-term{color:var(--acc);border-bottom:1px dashed var(--acc)}
+.nav-foot b{color:var(--tx2);background:#212328;padding:1px 5px;border-radius:2px;font-weight:500;font-family:var(--mono)}
+.mini-term{color:var(--acc);border-bottom:1px dashed var(--acc-line)}
 
 /* ── 메인 ────────────────────────────────── */
-#main{display:flex;flex-direction:column;min-width:0;overflow:hidden;padding:18px 20px}
-#head{margin-bottom:12px}
+#main{display:flex;flex-direction:column;min-width:0;overflow:hidden;padding:16px 20px}
+#head{margin-bottom:11px}
 .chip{
-  display:inline-block;font-size:10.5px;letter-spacing:.5px;color:var(--acc);
-  background:rgba(94,234,212,.1);border:1px solid rgba(94,234,212,.28);
-  padding:2px 9px;border-radius:99px;margin-bottom:7px;
+  display:inline-block;font-size:10.5px;letter-spacing:.2px;
+  color:var(--acc-dim);background:var(--acc-bg);border:1px solid var(--acc-line);
+  padding:2px 8px;border-radius:2px;margin-bottom:7px;
 }
-.chip.adv{color:#fbbf24;background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3)}
-#simTitle{font-size:22px;letter-spacing:-.2px}
+.chip.adv{color:#9fb0c4;background:#161a1e;border-color:#2e3942}
+#simTitle{font-size:21px;letter-spacing:-.2px;font-weight:600}
 #simTag{color:var(--tx2);font-size:12.5px;margin-top:5px}
 
 .stage{
   position:relative;flex:1;min-height:0;
-  background-color:#0a1120;
+  background-color:var(--stage);
   border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:var(--shadow);overflow:hidden;
-  display:flex;flex-direction:column;
+  overflow:hidden;display:flex;flex-direction:column;
 }
 #cv{flex:1;min-height:0;width:100%;display:block}
 .stage-bar{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 12px;border-top:1px solid var(--line);
-  background-color:#0c1426;
+  display:flex;align-items:center;gap:9px;
+  padding:8px 11px;border-top:1px solid var(--line);
+  background-color:#17181c;
 }
 .btn{
   display:inline-flex;align-items:center;gap:7px;cursor:pointer;
-  background:#16213c;border:1px solid #2a3960;color:var(--tx);
-  padding:7px 13px;border-radius:9px;font-size:12.5px;transition:.14s;
+  background:#26282e;border:1px solid #42454d;border-top-color:#565a63;
+  color:var(--tx);padding:6px 12px;border-radius:var(--radius);
+  font-size:12.5px;font-weight:500;transition:.12s;
 }
-.btn:hover{background:#1d2b4c;border-color:#3a4d7d}
-.btn.primary{background:linear-gradient(135deg,var(--acc),#3ec9c0);color:#062018;border-color:transparent;font-weight:700}
-.btn.primary:hover{filter:brightness(1.08)}
+.btn:hover{background:#2e3038;border-color:#52555e}
+.btn:active{background:#1e2024;border-top-color:#42454d}
+.btn.primary{
+  background:var(--acc);color:#1a1204;
+  border-color:#c98a10;border-top-color:#ffc96b;font-weight:600;
+}
+.btn.primary:hover{background:#ffbe42}
 .ico{font-size:11px}
 .speed{display:flex;align-items:center;gap:8px;color:var(--tx2);font-size:12px;margin-left:6px;white-space:nowrap}
-.speed b{color:var(--tx);width:34px}
+.speed b{color:var(--tx);width:34px;font-family:var(--mono)}
 .speed input{width:96px}
-.clock{margin-left:auto;color:var(--tx2);font-size:12px;font-variant-numeric:tabular-nums}
-.clock b{color:var(--acc);font-size:14px}
+.clock{margin-left:auto;color:var(--tx2);font-size:12px;font-family:var(--mono)}
+.clock b{color:var(--acc);font-size:13.5px;font-weight:500}
 
-#graphs{display:flex;gap:12px;margin-top:12px;height:152px}
+#graphs{display:flex;gap:10px;margin-top:10px;height:152px}
 #graphs:empty{display:none;margin:0;height:0}
 .graph{
-  flex:1;min-width:0;background:#0a1120;border:1px solid var(--line);
-  border-radius:12px;padding:8px 10px 4px;display:flex;flex-direction:column;
+  flex:1;min-width:0;background:var(--stage);border:1px solid var(--line);
+  border-radius:var(--radius);padding:8px 10px 4px;display:flex;flex-direction:column;
 }
-.graph h4{margin:0 0 2px;font-size:11px;color:var(--tx2);font-weight:600;display:flex;gap:9px;align-items:center}
-.graph h4 i{font-style:normal;font-size:10px;color:var(--tx3)}
+.graph h4{margin:0 0 2px;font-size:10.5px;color:var(--tx2);font-weight:500;display:flex;gap:9px;align-items:center}
+.graph h4 i{font-style:normal;font-size:10px;color:var(--tx3);font-family:var(--mono)}
 .graph canvas{flex:1;min-height:0;width:100%}
 
-/* ── 우측 패널 ───────────────────────────── */
+/* ── 우측 계측 패널 ──────────────────────── */
 #panel{
-  background:#0a1120;border-left:1px solid var(--line);
-  overflow-y:auto;padding:16px 14px 40px;display:flex;flex-direction:column;gap:12px;
+  background:#101114;border-left:1px solid var(--line);
+  overflow-y:auto;padding:15px 13px 40px;display:flex;flex-direction:column;gap:10px;
 }
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px}
-.card h3{font-size:11px;letter-spacing:1.2px;color:var(--tx3);text-transform:uppercase;margin-bottom:11px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 13px}
+.card h3{font-size:10px;letter-spacing:.3px;color:var(--tx3);font-weight:600;margin-bottom:10px}
 
 /* 공식 */
 .formula{
-  background-color:#0a132a;border:1px solid #1d2a4a;
-  border-radius:10px;padding:11px 12px;margin-bottom:8px;
+  background-color:var(--inset);border:1px solid #272a2f;
+  border-radius:var(--radius);padding:10px 12px;margin-bottom:7px;
 }
-.formula .fname{font-size:10.5px;color:var(--tx3);margin-bottom:6px}
-.formula .fbody{font-size:18px;line-height:1.8;font-family:"Cambria Math","Times New Roman",serif;font-style:italic}
+.formula .fname{font-size:10px;color:var(--tx3);margin-bottom:6px}
+.formula .fbody{font-size:18px;line-height:1.8;font-family:var(--serif);font-style:italic}
 .term{
   display:inline-block;
-  cursor:pointer;border-radius:5px;padding:1px 3px;margin:0 1px;
-  border-bottom:2px solid currentColor;transition:.12s;font-weight:700;
+  cursor:pointer;border-radius:2px;padding:1px 3px;margin:0 1px;
+  border-bottom:2px solid currentColor;transition:.1s;font-weight:600;
 }
-/* 강조는 캔버스의 화살표처럼 "빛나는" 방식 — 글자 색은 그대로 유지한다 */
+/* 강조는 캔버스의 화살표와 같은 방식 — 글자 색은 그대로 두고 빛만 올린다.
+   이 빛남은 장식이 아니라 "지금 이 기호가 화면 어디에 작용하는지" 라는 신호다. */
 .term:hover,.term.on{
-  background:rgba(255,255,255,.10);
-  text-shadow:0 0 14px currentColor,0 0 5px currentColor;
+  background:rgba(255,255,255,.07);
+  text-shadow:0 0 12px currentColor,0 0 4px currentColor;
   border-bottom-width:3px;
-  transform:translateY(-1px);
 }
 .term.on{
-  background:rgba(255,255,255,.16);
-  box-shadow:0 0 0 2px rgba(255,255,255,.12),0 0 14px -2px currentColor;
+  background:rgba(255,255,255,.12);
+  box-shadow:0 0 0 1px rgba(255,255,255,.14);
 }
 .term-info{
   font-size:12px;line-height:1.65;color:var(--tx2);
-  border-left:3px solid var(--line);padding:2px 0 2px 10px;
+  border-left:2px solid var(--line2);padding:2px 0 2px 10px;
   margin-top:14px;padding-top:2px;
   /* 높이를 미리 확보해 두어야 마우스오버 때 위쪽 요소가 밀리지 않는다 */
   min-height:92px;
@@ -253,85 +277,85 @@ button{font-family:inherit}
 .term-info b{color:var(--tx)}
 .ti-hint{color:var(--tx3);font-size:11.5px}
 .ti-title{display:flex;align-items:baseline;gap:6px;margin-bottom:3px}
-.ti-sym{font-family:"Cambria Math",serif;font-style:italic;font-weight:700;font-size:15px}
+.ti-sym{font-family:var(--serif);font-style:italic;font-weight:600;font-size:15px}
 
-/* 컨트롤 */
-.ctrl{margin-bottom:14px}
+/* 컨트롤 — 디텐트 노브 */
+.ctrl{margin-bottom:13px}
 .ctrl-top{display:flex;align-items:baseline;gap:6px;margin-bottom:6px}
-.ctrl-sym{font-family:"Cambria Math",serif;font-style:italic;font-weight:700;font-size:14px;min-width:20px}
+.ctrl-sym{font-family:var(--serif);font-style:italic;font-weight:600;font-size:14px;min-width:20px}
 .ctrl-label{font-size:12px;color:var(--tx2);flex:1}
-.ctrl-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.ctrl-val{font-size:13px;font-weight:500;font-family:var(--mono)}
 .ctrl-unit{font-size:10.5px;color:var(--tx3)}
 .ctrl.hot .ctrl-label{color:var(--tx)}
 input[type=range]{
-  -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;
-  background:#22304f;outline:none;cursor:pointer;
+  -webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:0;
+  background:#2a2c31;outline:none;cursor:pointer;
 }
 input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:15px;height:15px;border-radius:50%;
-  background:var(--c,#5eead4);border:2px solid #0a1120;
-  box-shadow:0 0 0 1px var(--c,#5eead4);cursor:pointer;transition:.12s;
+  -webkit-appearance:none;width:9px;height:16px;border-radius:1px;
+  background:var(--c,#ffb020);border:1px solid #0a0b0c;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);cursor:pointer;transition:.1s;
 }
-input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.15)}
+input[type=range]:hover::-webkit-slider-thumb{height:18px}
 input[type=range]::-moz-range-thumb{
-  width:13px;height:13px;border-radius:50%;background:var(--c,#5eead4);
-  border:2px solid #0a1120;box-shadow:0 0 0 1px var(--c,#5eead4);cursor:pointer;
+  width:8px;height:15px;border-radius:1px;background:var(--c,#ffb020);
+  border:1px solid #0a0b0c;cursor:pointer;
 }
-.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.presets{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
 .preset{
-  cursor:pointer;background:#16213c;border:1px solid #2a3960;color:var(--tx2);
-  font-size:11.5px;padding:5px 10px;border-radius:99px;transition:.14s;
+  cursor:pointer;background:#1e2024;border:1px solid var(--line2);color:var(--tx2);
+  font-size:11.5px;padding:4px 9px;border-radius:var(--radius);transition:.12s;
 }
-.preset:hover{background:#20305a;color:#fff;border-color:#3d558d}
+.preset:hover{background:#272a30;color:var(--tx);border-color:var(--acc-line)}
 
-/* 측정값 */
-.readouts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ro{background:#0a132a;border:1px solid #1d2a4a;border-radius:10px;padding:8px 10px}
-.ro .rl{font-size:10.5px;color:var(--tx3);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ro .rv{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
-.ro .ru{font-size:10px;color:var(--tx3);margin-left:2px;font-weight:400}
+/* 측정값 — 계측기 표시창 */
+.readouts{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ro{background:var(--inset);border:1px solid #272a2f;border-radius:var(--radius);padding:8px 10px}
+.ro .rl{font-size:10px;color:var(--tx3);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ro .rv{font-size:16px;font-weight:500;font-family:var(--mono);letter-spacing:-.4px}
+.ro .ru{font-size:10px;color:var(--tx3);margin-left:2px;font-weight:400;font-family:var(--mono)}
 .ro.wide{grid-column:span 2}
 
 #notes{margin:0;padding-left:16px;color:var(--tx2);font-size:12px;line-height:1.75}
 #notes li{margin-bottom:6px}
 #notes b{color:var(--acc)}
 
-/* 문제방(도전 과제) — 공식·슬라이더·측정값과 섞이지 않도록 무대 아래에 따로 분리된 영역 */
+/* 문제방(도전 과제) — 공식·슬라이더·측정값과 섞이지 않도록 무대 아래에 따로 둔다 */
 .quest-room{
-  margin-top:12px;flex:none;
-  background:linear-gradient(135deg,rgba(251,191,36,.09),rgba(251,191,36,.02));
-  border:1px solid rgba(251,191,36,.38);border-radius:var(--radius);
-  padding:12px 14px 13px;max-height:190px;overflow-y:auto;
+  margin-top:10px;flex:none;
+  background:var(--acc-bg);
+  border:1px solid var(--acc-line);border-radius:var(--radius);
+  padding:11px 13px 12px;max-height:190px;overflow-y:auto;
 }
 .quest-room.hidden{display:none}
-.quest-head{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
-.quest-icon{font-size:14px;filter:drop-shadow(0 0 6px rgba(251,191,36,.6))}
-.quest-head h3{font-size:12.5px;letter-spacing:.6px;color:#fbbf24}
-.quest-sub{font-size:10.5px;color:var(--tx3);margin-left:auto;white-space:nowrap}
+.quest-head{display:flex;align-items:baseline;gap:8px;margin-bottom:9px}
+.quest-icon{font-size:13px;color:var(--acc)}
+.quest-head h3{font-size:12px;letter-spacing:.5px;color:var(--acc);font-weight:600}
+.quest-sub{font-size:10.5px;color:var(--tx3);margin-left:auto;white-space:nowrap;font-family:var(--mono)}
 .quest-list .challenge:last-child{margin-bottom:0}
 .challenge{
-  background-color:#0a132a;border:1px solid #1d2a4a;border-radius:10px;
-  padding:10px 12px;margin-bottom:8px;transition:.15s;
+  background-color:var(--inset);border:1px solid #272a2f;border-radius:var(--radius);
+  padding:9px 11px;margin-bottom:7px;transition:.12s;
 }
 .challenge:last-child{margin-bottom:0}
 .ch-head{display:flex;align-items:baseline;gap:8px}
-.ch-head b{font-size:12.5px;color:var(--tx)}
+.ch-head b{font-size:12.5px;color:var(--tx);font-weight:600}
 .ch-badge{font-size:12px;width:16px;flex:none;color:var(--tx3);text-align:center}
 .ch-desc{font-size:11.5px;color:var(--tx2);line-height:1.6;margin:5px 0 0}
 .ch-hint-btn{
-  margin-top:7px;cursor:pointer;background:transparent;border:1px solid #26365c;color:var(--tx3);
-  font-size:10.5px;padding:3px 9px;border-radius:99px;transition:.14s;
+  margin-top:7px;cursor:pointer;background:transparent;border:1px solid var(--line2);
+  color:var(--tx3);font-size:10.5px;padding:3px 8px;border-radius:var(--radius);transition:.12s;
 }
-.ch-hint-btn:hover{color:var(--tx2);border-color:#3a4d7d}
-.ch-hint{margin-top:6px;font-size:11px;color:var(--tx2);line-height:1.6;border-left:2px solid var(--line);padding-left:8px}
-.challenge.ch-ok{border-color:rgba(52,211,153,.55);background:rgba(52,211,153,.07)}
-.challenge.ch-ok .ch-badge{color:#34d399}
-.challenge.ch-done-ever .ch-badge{color:var(--acc2)}
+.ch-hint-btn:hover{color:var(--tx2);border-color:var(--acc-line)}
+.ch-hint{margin-top:6px;font-size:11px;color:var(--tx2);line-height:1.6;border-left:2px solid var(--line2);padding-left:8px}
+.challenge.ch-ok{border-color:var(--ok);background:#101613}
+.challenge.ch-ok .ch-badge{color:var(--ok)}
+.challenge.ch-done-ever .ch-badge{color:var(--acc-dim)}
 
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:#1d2a4a;border-radius:9px;border:2px solid #0a1120}
-::-webkit-scrollbar-thumb:hover{background:#2c3f69}
+::-webkit-scrollbar-thumb{background:#2a2c31;border-radius:0;border:2px solid #101114}
+::-webkit-scrollbar-thumb:hover{background:#3a3d44}
 
 @media (max-width:1280px){
   body{grid-template-columns:210px minmax(0,1fr) 310px}
@@ -351,7 +375,8 @@ input[type=range]::-moz-range-thumb{
   .mode{padding:6px 8px}
   #simlist{display:flex;gap:6px;flex:1;padding:8px;overflow-x:auto}
   .nav-group{display:none}
-  .nav-item{width:auto;white-space:nowrap;margin:0}
+  .nav-item{width:auto;white-space:nowrap;margin:0;border-left:none;border-bottom:2px solid transparent}
+  .nav-item.on{border-left:none;border-bottom-color:var(--acc)}
   .nav-item small{display:none}
   .nav-foot{display:none}
   .formula-index-btn{display:none}

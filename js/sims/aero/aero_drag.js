@@ -6,8 +6,8 @@
    글라이더가 가늘고 긴 날개를 갖는 이유가 이 식 하나에 들어 있다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { V: '#fb7185', AR: '#5eead4', CD0: '#fbbf24', WS: '#a78bfa',
-              CL: '#60a5fa', CD: '#fb923c', LD: '#34d399' };
+  const C = { V: '#c4705f', AR: '#68b8b0', CD0: '#ffb020', WS: '#a98cc4',
+              CL: '#6f9fc4', CD: '#d1824a', LD: '#7fb894' };
   const RHO = 1.225, OSW = .82;
 
   const clOf = p => (p.WS) / (.5 * RHO * p.V * p.V);
@@ -80,19 +80,19 @@
         { label: '유도항력계수', value: cdi, unit: '', color: C.CL, dec: 4 },
         { label: '전체 항력계수 C_D', value: cd, unit: '', color: C.CD, dec: 4 },
         { label: '양항비 L/D', value: ld, unit: '', color: C.LD, dec: 2 },
-        { label: '이 날개의 최대 L/D', value: lm, unit: '', color: '#34d399', dec: 2 },
+        { label: '이 날개의 최대 L/D', value: lm, unit: '', color: '#7fb894', dec: 2 },
         { label: '최적 활공 속도', value: best, unit: 'm/s', dec: 1, color: C.V },
         { label: '실속 속도 (C_L = 1.5)', value: stall, unit: 'm/s', dec: 1,
-          color: p.V < stall ? '#fb7185' : '#93a2c4' },
+          color: p.V < stall ? '#c4705f' : '#9a9da6' },
         { label: '활공각', value: glideDeg(p), unit: '°', dec: 2, color: C.LD },
         { label: '고도 1 km에서 활공 거리', value: ld, unit: 'km', dec: 2, color: C.LD },
-        { label: '유도/유해 항력 비', value: cdi / p.CD0, unit: '', dec: 2, color: '#fbbf24' },
+        { label: '유도/유해 항력 비', value: cdi / p.CD0, unit: '', dec: 2, color: '#ffb020' },
         { label: '지금 어떤 상태인가', wide: true,
-          color: p.V < stall ? '#fb7185' : (Math.abs(p.V - best) / best < .06 ? '#34d399' : '#fbbf24'),
+          color: p.V < stall ? '#c4705f' : (Math.abs(p.V - best) / best < .06 ? '#7fb894' : '#ffb020'),
           value: p.V < stall ? '실속! 이 속도로는 뜰 수 없다' :
                  (Math.abs(p.V - best) / best < .06 ? '최적 활공 속도 — L/D 최대' :
                   (p.V < best ? '너무 느리다 — 유도항력이 지배' : '너무 빠르다 — 유해항력이 지배')) },
-        { label: '최대 L/D일 때는', value: '유도항력 = 유해항력 (정확히 반반)', wide: true, color: '#34d399' }
+        { label: '최대 L/D일 때는', value: '유도항력 = 유해항력 (정확히 반반)', wide: true, color: '#7fb894' }
       ];
     },
 
@@ -145,20 +145,20 @@
       ctx.save();
       ctx.translate(px, py); ctx.rotate(rad);
       // 동체
-      D.poly(ctx, [[-30, 0], [14, -4], [26, 0], [14, 4]], { fill: 'rgba(200,211,239,.4)', stroke: '#c8d3ef', width: 1.6 });
+      D.poly(ctx, [[-30, 0], [14, -4], [26, 0], [14, 4]], { fill: 'rgba(207,214,232,.4)', stroke: '#c8cad2', width: 1.6 });
       // 날개 (가로세로비를 길이로 표현)
       const span = clamp(10 + p.AR * 2.4, 20, 110);
       ctx.save();
       if (hl === 'AR') { ctx.shadowColor = C.AR; ctx.shadowBlur = 16; }
       D.roundRect(ctx, -6, -span / 2, 11, span, 2);
-      ctx.fillStyle = 'rgba(94,234,212,.4)'; ctx.fill();
+      ctx.fillStyle = 'rgba(122,206,193,.4)'; ctx.fill();
       ctx.strokeStyle = C.AR; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
-      D.poly(ctx, [[-30, 0], [-24, -13], [-20, 0]], { fill: 'rgba(200,211,239,.4)', stroke: '#c8d3ef', width: 1.2 });
+      D.poly(ctx, [[-30, 0], [-24, -13], [-20, 0]], { fill: 'rgba(207,214,232,.4)', stroke: '#c8cad2', width: 1.2 });
       ctx.restore();
       // 날개 끝 소용돌이 (유도항력)
       const vg = clamp(cdiOf(p) / Math.max(cd, 1e-6), 0, 1);
       if (vg > .05) {
-        ctx.save(); ctx.strokeStyle = 'rgba(96,165,250,' + (.2 + .55 * vg) + ')'; ctx.lineWidth = 1.5;
+        ctx.save(); ctx.strokeStyle = 'rgba(135,169,211,' + (.2 + .55 * vg) + ')'; ctx.lineWidth = 1.5;
         [-1, 1].forEach(s => {
           for (let k = 0; k < 4; k++) {
             const bx = px - 34 - k * 20, by = py + s * span * .5 * Math.cos(rad);
@@ -169,31 +169,31 @@
         });
         ctx.restore();
         D.text(ctx, '날개 끝 소용돌이 = 유도항력', px - 46, py + span * .5 + 32,
-          { size: 9.5, color: 'rgba(96,165,250,.85)', align: 'center' });
+          { size: 9.5, color: 'rgba(135,169,211,.85)', align: 'center' });
       }
       // 양력·항력·무게
       D.arrow(ctx, px, py, Math.sin(rad) * 60, -Math.cos(rad) * 60,
         { color: C.CL, width: 3, head: 8, hot: hl === 'CL', label: 'L', ly: -8 });
       D.arrow(ctx, px, py, -Math.cos(rad) * clamp(60 / Math.max(ld, 1) * 4, 10, 60), -Math.sin(rad) * clamp(60 / Math.max(ld, 1) * 4, 10, 60),
         { color: C.CD, width: 3, head: 8, hot: hl === 'CD', label: 'D', ly: 14 });
-      D.arrow(ctx, px, py, 0, 56, { color: '#93a2c4', width: 2.4, head: 7, label: 'W', lx: 12 });
+      D.arrow(ctx, px, py, 0, 56, { color: '#9a9da6', width: 2.4, head: 7, label: 'W', lx: 12 });
       // 활공 경로
       const gx2 = px + 140;
       D.line(ctx, px, py, gx2, py + (gx2 - px) * Math.tan(ga * Math.PI / 180),
-        { color: 'rgba(52,211,153,.5)', dash: [5, 5], width: 1.8 });
-      D.line(ctx, px, py, gx2, py, { color: 'rgba(147,162,196,.25)', dash: [3, 4] });
+        { color: 'rgba(82,181,145,.5)', dash: [5, 5], width: 1.8 });
+      D.line(ctx, px, py, gx2, py, { color: 'rgba(167,170,176,.25)', dash: [3, 4] });
       ctx.save(); ctx.strokeStyle = C.LD; ctx.lineWidth = 1.8;
       ctx.beginPath(); ctx.arc(px, py, 62, 0, ga * Math.PI / 180); ctx.stroke(); ctx.restore();
       D.text(ctx, 'γ = ' + fmt(ga, 2) + '°', px + 70, py + 20,
         { size: 11, color: hl === 'LD' ? '#fff' : C.LD, bold: true });
       D.tag(ctx, 'L/D = ' + fmt(ld, 2) + '  →  1 km 고도에서 ' + fmt(ld, 1) + ' km 활공',
         px + 16, py - 72, C.LD, hl === 'LD');
-      if (p.V < stall) D.tag(ctx, '실속! 속도가 너무 낮다', px, py + 92, '#fb7185', true);
+      if (p.V < stall) D.tag(ctx, '실속! 속도가 너무 낮다', px, py + 92, '#c4705f', true);
 
       /* ── 항력 곡선 ── */
       const gx = 48, gy = h - 178, gw = Math.min(w - 96, 480), gh = 124;
       D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-      D.text(ctx, '항력 – 속도  (두 곡선이 만나는 곳이 최적)', gx + 4, gy - 8, { size: 10.5, color: '#61719a' });
+      D.text(ctx, '항력 – 속도  (두 곡선이 만나는 곳이 최적)', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
       const VLO = Math.max(15, best * .45), VHI = Math.min(300, Math.max(best * 2.8, p.V * 1.15));
       const GX = v => gx + gw * clamp((v - VLO) / (VHI - VLO), 0, 1);
       const dmax = (p.WS / Math.max(lm, 1)) * 3.4;          // 최소 항력의 3.4배까지만 보여 준다
@@ -218,23 +218,23 @@
           { size: 9, color: cc, align: i === 0 ? 'right' : 'left' });
       });
       // 최적 속도 · 실속 속도 · 현재
-      D.line(ctx, GX(best), gy, GX(best), gy + gh, { color: '#34d399', dash: [4, 4], width: 1.8 });
-      D.text(ctx, '최적 ' + fmt(best, 0), GX(best) + 4, gy + 14, { size: 9.5, color: '#34d399' });
+      D.line(ctx, GX(best), gy, GX(best), gy + gh, { color: '#7fb894', dash: [4, 4], width: 1.8 });
+      D.text(ctx, '최적 ' + fmt(best, 0), GX(best) + 4, gy + 14, { size: 9.5, color: '#7fb894' });
       if (stall > VLO && stall < VHI) {
-        ctx.save(); ctx.fillStyle = 'rgba(251,113,133,.10)'; ctx.fillRect(gx, gy, GX(stall) - gx, gh); ctx.restore();
-        D.text(ctx, '실속', gx + 4, gy + gh - 6, { size: 9, color: 'rgba(251,113,133,.85)' });
+        ctx.save(); ctx.fillStyle = 'rgba(216,148,158,.10)'; ctx.fillRect(gx, gy, GX(stall) - gx, gh); ctx.restore();
+        D.text(ctx, '실속', gx + 4, gy + gh - 6, { size: 9, color: 'rgba(216,148,158,.85)' });
       }
       ctx.save(); ctx.shadowColor = '#fff'; ctx.shadowBlur = 10;
       D.line(ctx, GX(p.V), gy, GX(p.V), gy + gh, { color: '#fff', width: 2 }); ctx.restore();
       D.dot(ctx, GX(p.V), GY(cd * .5 * RHO * p.V * p.V), 4.5, C.CD, true);
-      D.text(ctx, '속도 (m/s) →', gx + gw, gy + gh + 15, { size: 9, color: '#61719a', align: 'right' });
+      D.text(ctx, '속도 (m/s) →', gx + gw, gy + gh + 15, { size: 9, color: '#6a6e78', align: 'right' });
 
       /* ── 요약 ── */
       D.text(ctx, 'L/D = ' + fmt(ld, 2) + '  /  최대 ' + fmt(lm, 2) + '   ·   최적 속도 ' + fmt(best, 0) + ' m/s',
         gx, h - 32, { size: 12, color: hl === 'LD' ? '#fff' : C.LD, bold: true });
       D.text(ctx, 'AR = ' + fmt(p.AR, 1) + '   ·   C_D0 = ' + fmt(p.CD0, 3) +
         '   ·   유도/유해 = ' + fmt(cdiOf(p) / p.CD0, 2),
-        gx, h - 12, { size: 11, color: '#93a2c4' });
+        gx, h - 12, { size: 11, color: '#9a9da6' });
     }
   });
 })();

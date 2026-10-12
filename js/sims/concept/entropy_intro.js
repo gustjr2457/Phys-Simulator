@@ -6,7 +6,7 @@
    느끼게 한다. 계산(ln Ω)은 '일반물리·열역학'의 통계적 엔트로피에서 다룬다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { N: '#60a5fa', v0: '#fbbf24', left: '#34d399' };
+  const C = { N: '#6f9fc4', v0: '#ffb020', left: '#7fb894' };
   const BOX = { x0: -30, x1: 30, y0: -16, y1: 16 };
   const R = 0.55;
 
@@ -118,18 +118,18 @@
       const V = PS.view(w, h, Object.assign({ pad: 24 }, BOX));
 
       // 상자
-      D.line(ctx, V.X(BOX.x0), V.Y(BOX.y0), V.X(BOX.x1), V.Y(BOX.y0), { color: 'rgba(147,162,196,.55)', width: 2 });
-      D.line(ctx, V.X(BOX.x0), V.Y(BOX.y1), V.X(BOX.x1), V.Y(BOX.y1), { color: 'rgba(147,162,196,.55)', width: 2 });
-      D.line(ctx, V.X(BOX.x0), V.Y(BOX.y0), V.X(BOX.x0), V.Y(BOX.y1), { color: 'rgba(147,162,196,.55)', width: 2 });
-      D.line(ctx, V.X(BOX.x1), V.Y(BOX.y0), V.X(BOX.x1), V.Y(BOX.y1), { color: 'rgba(147,162,196,.55)', width: 2 });
+      D.line(ctx, V.X(BOX.x0), V.Y(BOX.y0), V.X(BOX.x1), V.Y(BOX.y0), { color: 'rgba(167,170,176,.55)', width: 2 });
+      D.line(ctx, V.X(BOX.x0), V.Y(BOX.y1), V.X(BOX.x1), V.Y(BOX.y1), { color: 'rgba(167,170,176,.55)', width: 2 });
+      D.line(ctx, V.X(BOX.x0), V.Y(BOX.y0), V.X(BOX.x0), V.Y(BOX.y1), { color: 'rgba(167,170,176,.55)', width: 2 });
+      D.line(ctx, V.X(BOX.x1), V.Y(BOX.y0), V.X(BOX.x1), V.Y(BOX.y1), { color: 'rgba(167,170,176,.55)', width: 2 });
 
       // 원래 칸막이가 있던 자리(점선 — 지금은 실제 벽이 아님)
-      D.line(ctx, V.X(0), V.Y(BOX.y0), V.X(0), V.Y(BOX.y1), { color: hl === 'left' ? C.left : 'rgba(147,162,196,.35)', width: hl === 'left' ? 2.4 : 1.4, dash: [6, 6] });
-      D.text(ctx, '원래 칸막이가 있던 자리', V.X(0), V.Y(BOX.y1) - 12, { size: 10.5, color: '#61719a', align: 'center' });
+      D.line(ctx, V.X(0), V.Y(BOX.y0), V.X(0), V.Y(BOX.y1), { color: hl === 'left' ? C.left : 'rgba(167,170,176,.35)', width: hl === 'left' ? 2.4 : 1.4, dash: [6, 6] });
+      D.text(ctx, '원래 칸막이가 있던 자리', V.X(0), V.Y(BOX.y1) - 12, { size: 10.5, color: '#6a6e78', align: 'center' });
 
       // 입자
       st.particles.forEach(pt => {
-        D.dot(ctx, V.X(pt.x), V.Y(pt.y), Math.max(2.6, V.S(R) * .55), pt.x < 0 ? C.left : '#93a2c4', false);
+        D.dot(ctx, V.X(pt.x), V.Y(pt.y), Math.max(2.6, V.S(R) * .55), pt.x < 0 ? C.left : '#9a9da6', false);
       });
 
       // 왼쪽 비율 가로 막대(아래쪽)

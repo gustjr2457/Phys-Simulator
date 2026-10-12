@@ -8,7 +8,7 @@
    측정 가능한 현상으로 확인되는 지점. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { phi: '#fbbf24', lambda: '#60a5fa', I: '#a78bfa', KEmax: '#34d399' };
+  const C = { phi: '#ffb020', lambda: '#6f9fc4', I: '#a98cc4', KEmax: '#7fb894' };
   const M_E = 9.109e-31, ECH = 1.602e-19; // 전자 질량(kg), 기본전하(C)
 
   function wavelengthToRGB(nm) {
@@ -106,9 +106,9 @@
       // 금속판
       ctx.save();
       if (hl === 'phi') { ctx.shadowColor = C.phi; ctx.shadowBlur = 16; }
-      D.line(ctx, plateX, cy - plateH / 2, plateX, cy + plateH / 2, { color: '#c8d3ef', width: 10 });
+      D.line(ctx, plateX, cy - plateH / 2, plateX, cy + plateH / 2, { color: '#c8cad2', width: 10 });
       ctx.restore();
-      D.text(ctx, '금속판 (φ=' + fmt(p.phi, 1) + ' eV)', plateX, cy - plateH / 2 - 14, { size: 11.5, color: '#e8eefc', align: 'center' });
+      D.text(ctx, '금속판 (φ=' + fmt(p.phi, 1) + ' eV)', plateX, cy - plateH / 2 - 14, { size: 11.5, color: '#e6e7ea', align: 'center' });
 
       // 들어오는 빛(광자) 화살표 몇 개
       for (let i = -2; i <= 2; i++) {
@@ -133,18 +133,18 @@
         const age = st.t - f.born;
         const alpha = clamp(1 - age / .35, 0, 1);
         ctx.save(); ctx.globalAlpha = alpha * .8;
-        D.dot(ctx, plateX + 6, cy + f.y * plateH / 2, 5, '#61719a', false);
+        D.dot(ctx, plateX + 6, cy + f.y * plateH / 2, 5, '#6a6e78', false);
         ctx.restore();
       });
 
       if (!emit) {
-        D.tag(ctx, '광자 에너지가 부족 — 전자가 전혀 안 나옴', plateX + 130, cy - plateH / 2 - 10, '#61719a', true);
+        D.tag(ctx, '광자 에너지가 부족 — 전자가 전혀 안 나옴', plateX + 130, cy - plateH / 2 - 10, '#6a6e78', true);
       } else {
         D.text(ctx, '전자 최대 속력 ≈ ' + fmt(vMax_kms(p), 0) + ' km/s', plateX + 130, cy + plateH / 2 + 26, { size: 11, color: C.KEmax, align: 'center' });
       }
 
       D.text(ctx, 'hf = ' + fmt(photonE_eV(p), 2) + ' eV   φ = ' + fmt(p.phi, 2) + ' eV   KE_max = ' + fmt(KEmax_eV(p), 2) + ' eV',
-        16, h - 14, { size: 10.5, color: '#93a2c4' });
+        16, h - 14, { size: 10.5, color: '#9a9da6' });
     }
   });
 })();

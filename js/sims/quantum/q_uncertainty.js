@@ -1,7 +1,7 @@
 /* [양자역학] 불확정성 원리 — 좁게 만들수록 파장이 번진다 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { sk: '#fbbf24', k0: '#60a5fa', N: '#5eead4', dx: '#34d399', dp: '#f472b6', psi: '#60a5fa' };
+  const C = { sk: '#ffb020', k0: '#6f9fc4', N: '#68b8b0', dx: '#7fb894', dp: '#c08098', psi: '#6f9fc4' };
   const HBAR = 1.054571817e-34;
   const XW = 10;                       // 위치 창: ±10 nm
   const NX = 300;
@@ -95,7 +95,7 @@
         { label: '더하는 파동 수', value: N, unit: '개', color: C.N, dec: 0 },
         {
           label: 'Δx · Δp (ħ/2 를 1로 본 값)', wide: true,
-          color: pure ? '#fb7185' : (rt < 1.25 ? '#34d399' : '#fbbf24'),
+          color: pure ? '#c4705f' : (rt < 1.25 ? '#7fb894' : '#ffb020'),
           value: pure ? '파장이 하나뿐 → 운동량은 완벽히 알지만 위치는 전혀 모름'
             : fmt(rt, 2) + ' × (ħ/2)' + (rt < 1.25 ? '  —  최소 불확정성에 가까움' : '')
         }
@@ -147,11 +147,11 @@
       const amp = Math.min(h * .17, 86);
       const X = xn => px0 + (xn + XW) / (2 * XW) * (px1 - px0);
 
-      D.text(ctx, '위치 공간 — 전자는 어디에 있나', px0, 26, { size: 11.5, color: '#93a2c4' });
-      D.line(ctx, px0, cy, px1, cy, { color: 'rgba(147,162,196,.25)', dash: [5, 5] });
+      D.text(ctx, '위치 공간 — 전자는 어디에 있나', px0, 26, { size: 11.5, color: '#9a9da6' });
+      D.line(ctx, px0, cy, px1, cy, { color: 'rgba(167,170,176,.25)', dash: [5, 5] });
       for (let xn = -10; xn <= 10; xn += 5) {
-        D.line(ctx, X(xn), cy - 4, X(xn), cy + 4, { color: 'rgba(147,162,196,.35)' });
-        D.text(ctx, xn + ' nm', X(xn), cy + 18, { size: 9, color: '#4a5878', align: 'center' });
+        D.line(ctx, X(xn), cy - 4, X(xn), cy + 4, { color: 'rgba(167,170,176,.35)' });
+        D.text(ctx, xn + ' nm', X(xn), cy + 18, { size: 9, color: '#4a4d55', align: 'center' });
       }
 
       // 더해지는 개별 파동 (앞의 몇 개만 희미하게)
@@ -160,7 +160,7 @@
       ctx.globalAlpha = .30; ctx.lineWidth = 1;
       for (let j = 0; j < show; j++) {
         const c = r.cs[Math.floor(j * r.cs.length / show)];
-        ctx.strokeStyle = hl === 'N' ? C.N : 'rgba(94,234,212,.7)';
+        ctx.strokeStyle = hl === 'N' ? C.N : 'rgba(122,206,193,.7)';
         ctx.beginPath();
         for (let i = 0; i <= NX; i += 2) {
           const xn = -XW + 2 * XW * i / NX;
@@ -182,9 +182,9 @@
         ctx.lineTo(X(xn), cy + amp - (r.prob[i] / Math.max(r.kmax, 1e-9)) * amp * .9);
       }
       ctx.lineTo(px1, cy + amp); ctx.closePath();
-      ctx.fillStyle = 'rgba(52,211,153,.20)'; ctx.fill();
+      ctx.fillStyle = 'rgba(82,181,145,.20)'; ctx.fill();
       ctx.restore();
-      D.text(ctx, '|ψ|² — 발견할 확률', px0 + 4, cy + amp - 6, { size: 10, color: 'rgba(52,211,153,.9)' });
+      D.text(ctx, '|ψ|² — 발견할 확률', px0 + 4, cy + amp - 6, { size: 10, color: 'rgba(82,181,145,.9)' });
 
       // 파속 ψ
       ctx.save();
@@ -203,20 +203,20 @@
         const yD = cy + amp + 34;
         D.dim(ctx, X(-r.sx), yD, X(r.sx), yD, 'Δx = ' + fmt(r.sx, 2) + ' nm', C.dx, hl === 'dx');
       } else {
-        D.tag(ctx, 'Δx = ∞ — 창 밖까지 끝없이 이어집니다', (px0 + px1) / 2, cy + amp + 34, '#fb7185', true);
+        D.tag(ctx, 'Δx = ∞ — 창 밖까지 끝없이 이어집니다', (px0 + px1) / 2, cy + amp + 34, '#c4705f', true);
       }
 
       /* ── 오른쪽: 운동량 공간 ── */
       const qx0 = w * .68, qx1 = w - 36, qyB = h * .68, qyT = h * .18;
-      D.text(ctx, '운동량 공간 — 어떤 파장을 썼나', qx0, 26, { size: 11.5, color: '#93a2c4' });
-      D.line(ctx, qx0, qyB, qx1, qyB, { color: 'rgba(147,162,196,.4)', width: 1.5 });
+      D.text(ctx, '운동량 공간 — 어떤 파장을 썼나', qx0, 26, { size: 11.5, color: '#9a9da6' });
+      D.line(ctx, qx0, qyB, qx1, qyB, { color: 'rgba(167,170,176,.4)', width: 1.5 });
       const kLo = Math.max(0, p.k0 - 7), kHi = p.k0 + 7;
       const K = kk => qx0 + (kk - kLo) / (kHi - kLo) * (qx1 - qx0);
       for (let kk = Math.ceil(kLo / 4) * 4; kk <= kHi; kk += 4) {
-        D.line(ctx, K(kk), qyB, K(kk), qyB + 5, { color: 'rgba(147,162,196,.35)' });
-        D.text(ctx, kk + '', K(kk), qyB + 18, { size: 9, color: '#4a5878', align: 'center' });
+        D.line(ctx, K(kk), qyB, K(kk), qyB + 5, { color: 'rgba(167,170,176,.35)' });
+        D.text(ctx, kk + '', K(kk), qyB + 18, { size: 9, color: '#4a4d55', align: 'center' });
       }
-      D.text(ctx, 'k (1/nm)', qx1, qyB + 32, { size: 9.5, color: '#4a5878', align: 'right' });
+      D.text(ctx, 'k (1/nm)', qx1, qyB + 32, { size: 9.5, color: '#4a4d55', align: 'right' });
 
       // 성분 막대
       const bw = Math.max(2, (qx1 - qx0) / 40);
@@ -242,17 +242,17 @@
       /* ── 아래: Δx·Δp 저울 ── */
       const rt = ratio(r);
       const sx0 = w * .08, sw = w * .5, sy = h - 44;
-      D.text(ctx, 'Δx · Δp', sx0, sy - 10, { size: 11, color: '#93a2c4' });
+      D.text(ctx, 'Δx · Δp', sx0, sy - 10, { size: 11, color: '#9a9da6' });
       D.roundRect(ctx, sx0, sy, sw, 13, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       const lim = sx0 + sw * (1 / 3);                      // ħ/2 지점을 1/3 위치에
       ctx.save();
-      ctx.fillStyle = pure ? '#fb7185' : (rt < 1.25 ? '#34d399' : '#fbbf24');
+      ctx.fillStyle = pure ? '#c4705f' : (rt < 1.25 ? '#7fb894' : '#ffb020');
       D.roundRect(ctx, sx0, sy, clamp(sw * (rt / 3), 3, sw), 13, 5); ctx.fill();
       ctx.restore();
       D.line(ctx, lim, sy - 6, lim, sy + 19, { color: '#fff', width: 2 });
       D.text(ctx, 'ħ/2 — 이보다 작아질 수 없음', lim + 6, sy - 10, { size: 10, color: '#fff' });
       D.text(ctx, pure ? '측정 불가' : fmt(rt, 2) + ' × ħ/2', sx0 + sw + 10, sy + 12,
-        { size: 12, color: pure ? '#fb7185' : '#e8eefc', bold: true });
+        { size: 12, color: pure ? '#c4705f' : '#e6e7ea', bold: true });
     }
   });
 })();

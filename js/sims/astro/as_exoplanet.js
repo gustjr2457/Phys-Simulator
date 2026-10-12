@@ -6,8 +6,8 @@
    6,000개를 넘었는데, 그 대부분이 이 두 방법으로 찾은 것이다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { lgM: '#f472b6', lga: '#5eead4', Ms: '#fbbf24', inc: '#a78bfa',
-              P: '#93a2c4', K: '#fb7185', dep: '#60a5fa' };
+  const C = { lgM: '#c08098', lga: '#68b8b0', Ms: '#ffb020', inc: '#a98cc4',
+              P: '#9a9da6', K: '#c4705f', dep: '#6f9fc4' };
   const RE_RS = 6371 / 696000;          // 지구 반지름 / 태양 반지름
   const RS_AU = 696000 / 1.496e8;       // 태양 반지름 / 1 AU
   const SHOW = 10;                      // 공전 한 바퀴를 화면 10초로
@@ -93,19 +93,19 @@
         { label: '행성 질량', value: mpOf(p), unit: 'M⊕', color: C.lgM, dec: mpOf(p) > 10 ? 0 : 2 },
         { label: '시선속도 반진폭 K', value: K, unit: 'm/s', color: C.K, dec: K < 1 ? 3 : 2 },
         { label: '트랜싯 깊이 δ', value: dep, unit: 'ppm', color: C.dep, dec: dep > 100 ? 0 : 1 },
-        { label: '트랜싯 확률', value: prob * 100, unit: '%', dec: 2, color: '#93a2c4' },
+        { label: '트랜싯 확률', value: prob * 100, unit: '%', dec: 2, color: '#9a9da6' },
         { label: '충돌 매개변수 b', value: bOf(p), unit: '', dec: 2, color: C.inc },
         { label: '트랜싯 지속 시간', value: durOf(p), unit: '시간', dec: 2, color: C.dep },
         { label: '시선속도법으로 찾을 수 있나', wide: true,
-          color: K >= 1 ? '#34d399' : (K >= .25 ? '#fbbf24' : '#fb7185'),
+          color: K >= 1 ? '#7fb894' : (K >= .25 ? '#ffb020' : '#c4705f'),
           value: K >= 1 ? '✔ HARPS급(1 m/s)으로 가능' :
                  (K >= .25 ? '△ ESPRESSO급(0.25 m/s)이 필요' : '✘ 현재 기술로는 어렵다') },
         { label: '트랜싯법으로 찾을 수 있나', wide: true,
-          color: !tr ? '#fb7185' : (dep >= 100 ? '#34d399' : (dep >= 20 ? '#fbbf24' : '#fb7185')),
+          color: !tr ? '#c4705f' : (dep >= 100 ? '#7fb894' : (dep >= 20 ? '#ffb020' : '#c4705f')),
           value: !tr ? '✘ 궤도가 기울어 별 앞을 지나지 않는다' :
                  (dep >= 100 ? '✔ TESS급(100 ppm)으로 가능' :
                   (dep >= 20 ? '△ 케플러급(20 ppm)이 필요' : '✘ 너무 얕다')) },
-        { label: '표면 온도 (대략, 알베도 0.3)', dec: 0, unit: 'K', color: '#fb923c',
+        { label: '표면 온도 (대략, 알베도 0.3)', dec: 0, unit: 'K', color: '#d1824a',
           value: 278 * Math.pow(p.Ms, 1.75) / Math.sqrt(aOf(p)) }
       ];
     },
@@ -162,48 +162,48 @@
       const front = Math.cos(ph) < 0;                            // 우리 쪽(앞)인가
 
       // 궤도
-      ctx.save(); ctx.strokeStyle = 'rgba(94,234,212,.3)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1.2;
+      ctx.save(); ctx.strokeStyle = 'rgba(122,206,193,.3)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.ellipse(cx, (cy + py) / 2, orb, Math.max(3, b * srad * .5 + 5), 0, 0, 7); ctx.stroke(); ctx.restore();
 
       // 별 (무게중심 둘레로 흔들린다 — 과장)
       const wob = clamp(K * .5, 0, 12);
       const sx2 = cx - Math.sin(ph) * wob;
-      if (!front) { D.dot(ctx, px, py, Math.max(2.5, srad * Rp * RE_RS / rstar(p) * 1.6), '#8aa0c8', false); }
+      if (!front) { D.dot(ctx, px, py, Math.max(2.5, srad * Rp * RE_RS / rstar(p) * 1.6), '#96a3bc', false); }
       ctx.save();
       const g = ctx.createRadialGradient(sx2, cy, 0, sx2, cy, srad * 2.2);
-      g.addColorStop(0, 'rgba(255,236,180,.9)'); g.addColorStop(.4, 'rgba(255,210,120,.4)'); g.addColorStop(1, 'rgba(255,200,100,0)');
+      g.addColorStop(0, 'rgba(246,231,189,.9)'); g.addColorStop(.4, 'rgba(238,204,137,.4)'); g.addColorStop(1, 'rgba(236,194,119,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx2, cy, srad * 2.2, 0, 7); ctx.fill();
-      if (hl === 'Ms' || hl === 'K') { ctx.shadowColor = '#fbbf24'; ctx.shadowBlur = 22; }
-      ctx.fillStyle = '#ffd98a'; ctx.beginPath(); ctx.arc(sx2, cy, srad, 0, 7); ctx.fill();
+      if (hl === 'Ms' || hl === 'K') { ctx.shadowColor = '#ffb020'; ctx.shadowBlur = 22; }
+      ctx.fillStyle = '#f0d499'; ctx.beginPath(); ctx.arc(sx2, cy, srad, 0, 7); ctx.fill();
       ctx.restore();
       if (front) {
         const prad = Math.max(2.5, srad * Rp * RE_RS / rstar(p) * 1.6);
         ctx.save(); if (hl === 'lgM' || hl === 'dep') { ctx.shadowColor = C.dep; ctx.shadowBlur = 14; }
-        D.dot(ctx, px, py, prad, '#1b2742', false);
-        ctx.strokeStyle = 'rgba(96,165,250,.7)'; ctx.lineWidth = 1.2;
+        D.dot(ctx, px, py, prad, '#2c2e31', false);
+        ctx.strokeStyle = 'rgba(135,169,211,.7)'; ctx.lineWidth = 1.2;
         ctx.beginPath(); ctx.arc(px, py, prad, 0, 7); ctx.stroke(); ctx.restore();
       }
       // 별의 흔들림 화살표
       D.arrow(ctx, cx, cy - srad - 16, -Math.sin(ph) * clamp(K * 1.2, 4, 40), 0,
         { color: C.K, width: 2.6, head: 7, hot: hl === 'K' });
       D.tag(ctx, 'K = ' + (K < 1 ? fmt(K, 3) : fmt(K, 1)) + ' m/s', cx, cy - srad - 36, C.K, hl === 'K');
-      D.line(ctx, cx - orb - 20, cy + srad + 26, cx + orb + 20, cy + srad + 26, { color: 'rgba(147,162,196,.2)', dash: [4, 5] });
+      D.line(ctx, cx - orb - 20, cy + srad + 26, cx + orb + 20, cy + srad + 26, { color: 'rgba(167,170,176,.2)', dash: [4, 5] });
       D.text(ctx, tr ? '우리 시선 — 행성이 별 앞을 지난다' : '우리 시선 — 행성이 별을 비껴간다',
-        cx, cy + srad + 42, { size: 10, color: tr ? '#34d399' : '#fb7185', align: 'center' });
+        cx, cy + srad + 42, { size: 10, color: tr ? '#7fb894' : '#c4705f', align: 'center' });
 
       /* ── 검출 가능성 패널 ── */
       const bx = Math.min(w - 196, cx + orb + 54), by = 56;
       if (bx > cx + orb + 20) {
-        D.text(ctx, '검출 가능성', bx, by - 10, { size: 10.5, color: '#61719a' });
+        D.text(ctx, '검출 가능성', bx, by - 10, { size: 10.5, color: '#6a6e78' });
         // 시선속도
         const kLO = Math.log10(.01), kHI = Math.log10(300);
         const KX = v => bx + clamp((Math.log10(clamp(v, .01, 300)) - kLO) / (kHI - kLO), 0, 1) * 170;
         D.text(ctx, '시선속도 K', bx, by + 10, { size: 10, color: C.K });
         D.roundRect(ctx, bx, by + 16, 170, 9, 4); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
-        ctx.fillStyle = 'rgba(52,211,153,.3)'; ctx.fillRect(KX(1), by + 16, bx + 170 - KX(1), 9);
+        ctx.fillStyle = 'rgba(82,181,145,.3)'; ctx.fillRect(KX(1), by + 16, bx + 170 - KX(1), 9);
         [[1, 'HARPS', 0], [.25, 'ESPRESSO', 1]].forEach(([v, lab, row]) => {
-          D.line(ctx, KX(v), by + 12, KX(v), by + 29 + row * 9, { color: '#93a2c4', width: 1.2 });
-          D.text(ctx, lab, KX(v), by + 40 + row * 10, { size: 8, color: '#93a2c4', align: 'center' });
+          D.line(ctx, KX(v), by + 12, KX(v), by + 29 + row * 9, { color: '#9a9da6', width: 1.2 });
+          D.text(ctx, lab, KX(v), by + 40 + row * 10, { size: 8, color: '#9a9da6', align: 'center' });
         });
         ctx.save(); ctx.shadowColor = C.K; ctx.shadowBlur = 10;
         D.dot(ctx, KX(K), by + 20.5, 5, C.K, true); ctx.restore();
@@ -212,28 +212,28 @@
         const DX = v => bx + clamp((Math.log10(clamp(v, 1, 3e4)) - dLO) / (dHI - dLO), 0, 1) * 170;
         D.text(ctx, '트랜싯 깊이 δ', bx, by + 66, { size: 10, color: C.dep });
         D.roundRect(ctx, bx, by + 72, 170, 9, 4); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
-        ctx.fillStyle = 'rgba(52,211,153,.3)'; ctx.fillRect(DX(100), by + 72, bx + 170 - DX(100), 9);
+        ctx.fillStyle = 'rgba(82,181,145,.3)'; ctx.fillRect(DX(100), by + 72, bx + 170 - DX(100), 9);
         [[20, '케플러'], [100, 'TESS']].forEach(([v, lab]) => {
-          D.line(ctx, DX(v), by + 68, DX(v), by + 85, { color: '#93a2c4', width: 1.2 });
-          D.text(ctx, lab, DX(v), by + 96, { size: 8, color: '#93a2c4', align: 'center' });
+          D.line(ctx, DX(v), by + 68, DX(v), by + 85, { color: '#9a9da6', width: 1.2 });
+          D.text(ctx, lab, DX(v), by + 96, { size: 8, color: '#9a9da6', align: 'center' });
         });
         if (tr) { ctx.save(); ctx.shadowColor = C.dep; ctx.shadowBlur = 10; D.dot(ctx, DX(dep * 1e6), by + 76.5, 5, C.dep, true); ctx.restore(); }
-        else D.text(ctx, '트랜싯 없음', bx + 85, by + 80, { size: 10, color: '#fb7185', align: 'center', bold: true });
+        else D.text(ctx, '트랜싯 없음', bx + 85, by + 80, { size: 10, color: '#c4705f', align: 'center', bold: true });
         // 요약
         D.text(ctx, 'P = ' + fmt(perOf(p) * 365.25, perOf(p) * 365.25 > 100 ? 0 : 2) + ' 일',
           bx, by + 122, { size: 11, color: hl === 'P' ? '#fff' : C.P });
         D.text(ctx, 'R_p = ' + fmt(Rp, 2) + ' R⊕   ·   트랜싯 확률 ' + fmt(prob * 100, 2) + '%',
-          bx, by + 140, { size: 10, color: '#93a2c4' });
+          bx, by + 140, { size: 10, color: '#9a9da6' });
       }
 
       /* ── 질량-반지름 분포 (행성의 종류) ── */
       const qx = 48, qy = h - 118, qw = Math.min(w - 96, 420), qh = 92;
       if (qy > cy + 60) {
         D.roundRect(ctx, qx, qy, qw, qh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-        D.text(ctx, '질량 – 반지름 (행성의 종류)', qx + 4, qy - 8, { size: 10.5, color: '#61719a' });
+        D.text(ctx, '질량 – 반지름 (행성의 종류)', qx + 4, qy - 8, { size: 10.5, color: '#6a6e78' });
         const QX = M => qx + clamp((Math.log10(clamp(M, .5, 1000)) - Math.log10(.5)) / (Math.log10(1000) - Math.log10(.5)), 0, 1) * qw;
         const QY = R => qy + qh - clamp(R / 13, 0, 1) * qh;
-        ctx.save(); ctx.strokeStyle = 'rgba(244,114,182,.6)'; ctx.lineWidth = 1.8; ctx.beginPath();
+        ctx.save(); ctx.strokeStyle = 'rgba(214,144,181,.6)'; ctx.lineWidth = 1.8; ctx.beginPath();
         for (let i = 0; i <= 80; i++) {
           const M = .5 * Math.pow(2000, i / 80);
           const R = M <= 4 ? Math.pow(M, .27) : Math.min(12, 1.45 * Math.pow(M / 4, .45));
@@ -242,12 +242,12 @@
         ctx.stroke(); ctx.restore();
         [[1, '지구'], [17, '해왕성'], [318, '목성']].forEach(([M, lab]) => {
           const R = M <= 4 ? Math.pow(M, .27) : Math.min(12, 1.45 * Math.pow(M / 4, .45));
-          D.dot(ctx, QX(M), QY(R), 3, '#93a2c4', false);
-          D.text(ctx, lab, QX(M), QY(R) - 8, { size: 8.5, color: '#93a2c4', align: 'center' });
+          D.dot(ctx, QX(M), QY(R), 3, '#9a9da6', false);
+          D.text(ctx, lab, QX(M), QY(R) - 8, { size: 8.5, color: '#9a9da6', align: 'center' });
         });
         ctx.save(); ctx.shadowColor = C.lgM; ctx.shadowBlur = 12;
         D.dot(ctx, QX(mpOf(p)), QY(Rp), 5, C.lgM, true); ctx.restore();
-        D.text(ctx, '질량 (M⊕, 로그) →', qx + qw, qy + qh + 14, { size: 9, color: '#61719a', align: 'right' });
+        D.text(ctx, '질량 (M⊕, 로그) →', qx + qw, qy + qh + 14, { size: 9, color: '#6a6e78', align: 'right' });
       }
     }
   });

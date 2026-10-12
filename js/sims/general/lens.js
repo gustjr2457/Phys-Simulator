@@ -1,7 +1,7 @@
 /* [일반물리] 렌즈와 상 — 1/f = 1/u + 1/v (얇은 렌즈 공식) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { f: '#fbbf24', u: '#60a5fa', v: '#34d399', obj: '#a78bfa', img: '#f472b6' };
+  const C = { f: '#ffb020', u: '#6f9fc4', v: '#7fb894', obj: '#a98cc4', img: '#c08098' };
 
   // f=0 근처(정의 불가)를 피하기 위한 안전한 유효 초점거리
   function fEff(p) { return Math.abs(p.f) < 0.5 ? (p.f < 0 ? -0.5 : 0.5) : p.f; }
@@ -70,12 +70,12 @@
       const ho = 5; // 물체 높이(그리기용 고정값)
 
       // 광축
-      D.line(ctx, V.X(-34), axisY, V.X(34), axisY, { color: 'rgba(147,162,196,.3)' });
+      D.line(ctx, V.X(-34), axisY, V.X(34), axisY, { color: 'rgba(167,170,176,.3)' });
 
       // 렌즈(볼록/오목 기호)
       const lensX = V.X(0), lensTop = V.Y(11), lensBot = V.Y(-11);
       ctx.save();
-      ctx.strokeStyle = '#5eead4'; ctx.lineWidth = 3;
+      ctx.strokeStyle = '#68b8b0'; ctx.lineWidth = 3;
       ctx.beginPath();
       if (p.f > 0) {
         ctx.moveTo(lensX, lensTop); ctx.lineTo(lensX, lensBot);
@@ -106,7 +106,7 @@
       // 중심을 지나는 광선(항상 직진)
       const farX = V.X(34);
       const slopeCenter = (axisY - oy) / (lensX - ox);
-      D.line(ctx, ox, oy, farX, axisY + slopeCenter * (farX - lensX), { color: '#93a2c4', width: 1.6, dash: [5, 5] });
+      D.line(ctx, ox, oy, farX, axisY + slopeCenter * (farX - lensX), { color: '#9a9da6', width: 1.6, dash: [5, 5] });
 
       if (isFinite(v)) {
         const ix = V.X(v), iy = V.Y(m * ho);
@@ -126,7 +126,7 @@
           D.arrow(ctx, ix, axisY, 0, iy - axisY, { color: C.img, width: 3, hot: hl === 'v', label: '허상(점선)' });
         }
       } else {
-        D.text(ctx, '상이 무한히 멀리 맺힘(평행광선)', w / 2, 30, { size: 12, color: '#61719a', align: 'center' });
+        D.text(ctx, '상이 무한히 멀리 맺힘(평행광선)', w / 2, 30, { size: 12, color: '#6a6e78', align: 'center' });
       }
     }
   });

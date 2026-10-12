@@ -5,8 +5,8 @@
    유체에 적용한 것이고, 벤투리관·피토관·캐비테이션·분무기가 모두 여기서 나온다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { Q: '#60a5fa', D1: '#93a2c4', D2: '#5eead4', rho: '#a78bfa',
-              v1: '#93a2c4', v2: '#fb7185', dp: '#fbbf24' };
+  const C = { Q: '#6f9fc4', D1: '#9a9da6', D2: '#68b8b0', rho: '#a98cc4',
+              v1: '#9a9da6', v2: '#c4705f', dp: '#ffb020' };
   const PVAP = 2340;                 // 20 °C 물의 포화 증기압 [Pa]
   const PATM = 101325;
 
@@ -89,11 +89,11 @@
         { label: '속도 비 v₂/v₁ = (D₁/D₂)²', value: ratio, unit: '배', color: C.D2, dec: 2 },
         { label: '압력 차 Δp', value: dp / 1000, unit: 'kPa', color: C.dp, dec: 2 },
         { label: '목의 절대 압력', value: p2 / 1000, unit: 'kPa', dec: 1,
-          color: p2 < PVAP ? '#fb7185' : (p2 < PATM * .5 ? '#fbbf24' : '#34d399') },
+          color: p2 < PVAP ? '#c4705f' : (p2 < PATM * .5 ? '#ffb020' : '#7fb894') },
         { label: '압력이 몇 기압 내려갔나', value: dp / PATM, unit: '기압', dec: 3, color: C.dp },
         { label: '동압 ½ρv₂²', value: .5 * p.rho * v2 * v2 / 1000, unit: 'kPa', dec: 2, color: C.v2 },
-        { label: '레이놀즈 수 (입구)', value: reOf(p), unit: '', dec: 0, color: '#93a2c4' },
-        { label: '캐비테이션', wide: true, color: cavitates(p) ? '#fb7185' : '#34d399',
+        { label: '레이놀즈 수 (입구)', value: reOf(p), unit: '', dec: 0, color: '#9a9da6' },
+        { label: '캐비테이션', wide: true, color: cavitates(p) ? '#c4705f' : '#7fb894',
           value: cavitates(p) ? '발생! 압력이 증기압 아래로 — 물이 끓어 기포가 생긴다' : '없음 (목 압력이 증기압보다 높다)' },
         { label: '같은 조건을 공기로 바꾸면 Δp', value: dp / p.rho * 1.2 / 1000, unit: 'kPa', dec: 4, wide: true, color: C.rho }
       ];
@@ -159,12 +159,12 @@
         top.push([xx, cy - hh]); bot.push([xx, cy + hh]);
       }
       ctx.save();
-      ctx.fillStyle = 'rgba(96,165,250,.08)';
+      ctx.fillStyle = 'rgba(135,169,211,.08)';
       ctx.beginPath();
       top.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]));
       for (let i = bot.length - 1; i >= 0; i--) ctx.lineTo(bot[i][0], bot[i][1]);
       ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = 'rgba(200,211,239,.7)'; ctx.lineWidth = 2.4; ctx.lineJoin = 'round';
+      ctx.strokeStyle = 'rgba(207,214,232,.7)'; ctx.lineWidth = 2.4; ctx.lineJoin = 'round';
       [top, bot].forEach(arr => { ctx.beginPath(); arr.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke(); });
       ctx.restore();
 
@@ -172,7 +172,7 @@
       ctx.save();
       for (let k = 0; k < 7; k++) {
         const lane = -1 + 2 * (k + .5) / 7;
-        ctx.strokeStyle = 'rgba(96,165,250,.22)'; ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(135,169,211,.22)'; ctx.lineWidth = 1;
         ctx.beginPath();
         for (let i = 0; i <= N; i++) { const u = i / N; const yy = cy + lane * halfOf(u) * .86; i ? ctx.lineTo(x0 + pw * u, yy) : ctx.moveTo(x0 + pw * u, yy); }
         ctx.stroke();
@@ -181,7 +181,7 @@
       st.dots.forEach(q => {
         const lane = -1 + 2 * q.lane;
         const yy = cy + lane * halfOf(q.u) * .86;
-        D.dot(ctx, x0 + pw * q.u, yy, 2.4, 'rgba(147,197,253,.85)', false);
+        D.dot(ctx, x0 + pw * q.u, yy, 2.4, 'rgba(175,199,225,.85)', false);
       });
 
       /* ── 속도 화살표 ── */
@@ -200,14 +200,14 @@
       const gH = 100;
       const pMax = PATM * 1.05, pMin = Math.min(0, p2Of(p) - 8000);
       const GY = pp => gTop + gH - clamp((pp - pMin) / (pMax - pMin), 0, 1) * gH;
-      D.text(ctx, '압력계 (관 안의 압력)', x0, gTop - 9, { size: 10.5, color: '#61719a' });
-      D.line(ctx, x0 - 6, GY(PATM), x0 + pw + 6, GY(PATM), { color: 'rgba(147,162,196,.35)', dash: [4, 5] });
-      D.text(ctx, '1 기압', x0 + pw + 10, GY(PATM) + 4, { size: 9, color: '#93a2c4' });
-      D.line(ctx, x0 - 6, GY(PVAP), x0 + pw + 6, GY(PVAP), { color: 'rgba(251,113,133,.45)', dash: [3, 3] });
+      D.text(ctx, '압력계 (관 안의 압력)', x0, gTop - 9, { size: 10.5, color: '#6a6e78' });
+      D.line(ctx, x0 - 6, GY(PATM), x0 + pw + 6, GY(PATM), { color: 'rgba(167,170,176,.35)', dash: [4, 5] });
+      D.text(ctx, '1 기압', x0 + pw + 10, GY(PATM) + 4, { size: 9, color: '#9a9da6' });
+      D.line(ctx, x0 - 6, GY(PVAP), x0 + pw + 6, GY(PVAP), { color: 'rgba(216,148,158,.45)', dash: [3, 3] });
       // 두 기준선이 붙으면 라벨을 아래로 밀고, 그래도 겹치면 선만 남긴다
       const gapPV = GY(PVAP) - GY(PATM);
-      if (gapPV > 20) D.text(ctx, '증기압', x0 + pw + 10, GY(PVAP) + 4, { size: 9, color: '#fb7185' });
-      else if (gapPV > -20) D.text(ctx, '증기압', x0 + pw + 10, GY(PATM) + 18, { size: 9, color: '#fb7185' });
+      if (gapPV > 20) D.text(ctx, '증기압', x0 + pw + 10, GY(PVAP) + 4, { size: 9, color: '#c4705f' });
+      else if (gapPV > -20) D.text(ctx, '증기압', x0 + pw + 10, GY(PATM) + 18, { size: 9, color: '#c4705f' });
       // 압력 곡선
       ctx.save();
       ctx.strokeStyle = C.dp; ctx.lineWidth = 2.2;
@@ -222,7 +222,7 @@
       // 측정관 두 개
       [[.10, C.v1], [.5, C.v2]].forEach(([u, cc]) => {
         const v = vOf(u), pp = PATM - .5 * p.rho * (v * v - v1 * v1);
-        D.line(ctx, x0 + pw * u, cy - halfOf(u), x0 + pw * u, GY(pp), { color: 'rgba(200,211,239,.35)', width: 5 });
+        D.line(ctx, x0 + pw * u, cy - halfOf(u), x0 + pw * u, GY(pp), { color: 'rgba(207,214,232,.35)', width: 5 });
         ctx.save(); ctx.strokeStyle = cc; ctx.lineWidth = 3; ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(x0 + pw * u, GY(pp)); ctx.lineTo(x0 + pw * u, cy - halfOf(u)); ctx.stroke(); ctx.restore();
         D.dot(ctx, x0 + pw * u, GY(pp), 4, cc, true);
@@ -237,14 +237,14 @@
           const yy = cy + (((i * 37) % 11) / 10 - .5) * halfOf(u) * 1.5;
           D.dot(ctx, x0 + pw * u + Math.sin(st.t * 6 + i) * 4, yy, 1.6 + (i % 3), 'rgba(255,255,255,.65)', false);
         }
-        D.tag(ctx, '캐비테이션! 물이 끓어 기포가 생긴다', x0 + pw * .5, cy + halfOf(.5) + 26, '#fb7185', true);
+        D.tag(ctx, '캐비테이션! 물이 끓어 기포가 생긴다', x0 + pw * .5, cy + halfOf(.5) + 26, '#c4705f', true);
       }
 
       /* ── 요약 ── */
       D.text(ctx, 'A₁v₁ = A₂v₂  →  v₂/v₁ = (D₁/D₂)² = ' + fmt(Math.pow(p.D1 / p.D2, 2), 2) + ' 배',
         x0, h - 36, { size: 12, color: hl === 'Q' ? '#fff' : C.Q, bold: true });
       D.text(ctx, 'ρ = ' + fmt(p.rho, 0) + ' kg/m³   ·   목 압력 ' + fmt(p2Of(p) / 1000, 1) + ' kPa   ·   Re = ' + fmt(reOf(p), 0),
-        x0, h - 16, { size: 11, color: '#93a2c4' });
+        x0, h - 16, { size: 11, color: '#9a9da6' });
     }
   });
 })();

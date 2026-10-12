@@ -6,14 +6,14 @@
    보이저·카시니·파커 탐사선이 전부 이 수법으로 목적지에 갔다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { vinf: '#fb7185', rp: '#5eead4', pl: '#fbbf24', app: '#a78bfa',
-              delta: '#f472b6', gain: '#34d399' };
+  const C = { vinf: '#c4705f', rp: '#68b8b0', pl: '#ffb020', app: '#a98cc4',
+              delta: '#c08098', gain: '#7fb894' };
 
   const PLANETS = [
-    { n: '금성', mu: 3.2486e5, R: 6052, V: 35.02, c: '#fbbf24' },
-    { n: '지구', mu: 3.9860e5, R: 6371, V: 29.78, c: '#60a5fa' },
-    { n: '목성', mu: 1.2669e8, R: 69911, V: 13.07, c: '#fb923c' },
-    { n: '토성', mu: 3.7931e7, R: 58232, V: 9.69, c: '#5eead4' }
+    { n: '금성', mu: 3.2486e5, R: 6052, V: 35.02, c: '#ffb020' },
+    { n: '지구', mu: 3.9860e5, R: 6371, V: 29.78, c: '#6f9fc4' },
+    { n: '목성', mu: 1.2669e8, R: 69911, V: 13.07, c: '#d1824a' },
+    { n: '토성', mu: 3.7931e7, R: 58232, V: 9.69, c: '#68b8b0' }
   ];
   const plOf = p => PLANETS[clamp(Math.round(p.pl), 0, 3)];
   const eccOf = p => { const q = plOf(p); return 1 + (p.rp * q.R) * p.vinf * p.vinf / q.mu; };
@@ -82,18 +82,18 @@
         { label: '행성', value: q.n, color: q.c },
         { label: '행성 공전 속도', value: q.V, unit: 'km/s', color: q.c, dec: 2 },
         { label: '최근접 거리', value: p.rp * q.R, unit: 'km', color: C.rp, dec: 0 },
-        { label: '쌍곡선 이심률 e', value: e, unit: '', dec: 3, color: '#93a2c4' },
+        { label: '쌍곡선 이심률 e', value: e, unit: '', dec: 3, color: '#9a9da6' },
         { label: '편향각 δ', value: s.d * 180 / Math.PI, unit: '°', color: C.delta, dec: 1 },
         { label: '행성 기준 속도 변화 |Δv∞|', value: 2 * p.vinf * Math.sin(s.d / 2), unit: 'km/s', dec: 2, color: C.vinf },
-        { label: '태양 기준 — 접근 속도', value: s.si, unit: 'km/s', dec: 2, color: '#93a2c4' },
+        { label: '태양 기준 — 접근 속도', value: s.si, unit: 'km/s', dec: 2, color: '#9a9da6' },
         { label: '태양 기준 — 이탈 속도', value: s.so, unit: 'km/s', dec: 2, color: C.gain },
-        { label: '속도 이득 Δv', value: gain, unit: 'km/s', color: gain >= 0 ? C.gain : '#fb7185', dec: 2 },
-        { label: '이론상 최대 이득 (2v∞)', value: 2 * p.vinf, unit: 'km/s', dec: 1, color: '#fbbf24' },
+        { label: '속도 이득 Δv', value: gain, unit: 'km/s', color: gain >= 0 ? C.gain : '#c4705f', dec: 2 },
+        { label: '이론상 최대 이득 (2v∞)', value: 2 * p.vinf, unit: 'km/s', dec: 1, color: '#ffb020' },
         { label: '최대 대비 달성률', value: gain / (2 * p.vinf) * 100, unit: '%', dec: 1, color: C.gain },
-        { label: '효과', wide: true, color: gain > .5 ? '#34d399' : (gain < -.5 ? '#fb7185' : '#fbbf24'),
+        { label: '효과', wide: true, color: gain > .5 ? '#7fb894' : (gain < -.5 ? '#c4705f' : '#ffb020'),
           value: gain > .5 ? '가속 스윙바이 — 행성 뒤쪽을 지나며 끌려간다' :
                  (gain < -.5 ? '감속 스윙바이 — 안쪽 행성으로 가려면 이것이 필요' : '거의 방향 전환만') },
-        { label: '행성이 잃는 속도', value: 1e-24, unit: 'km/s', dec: 0, wide: true, color: '#4b5a80' }
+        { label: '행성이 잃는 속도', value: 1e-24, unit: 'km/s', dec: 0, wide: true, color: '#4a4d55' }
       ];
     },
 
@@ -142,7 +142,7 @@
       const lx = w * .26, cy = h * .36;
       const pr = clamp(w * .022, 12, 24);
       D.text(ctx, '행성 기준 — 속력은 그대로, 방향만 꺾인다', lx, cy - h * .25,
-        { size: 11, color: '#61719a', align: 'center' });
+        { size: 11, color: '#6a6e78', align: 'center' });
       // 행성
       ctx.save(); if (hl === 'pl') { ctx.shadowColor = q.c; ctx.shadowBlur = 20; }
       const g1 = ctx.createRadialGradient(lx, cy, 0, lx, cy, pr);
@@ -157,7 +157,7 @@
       const ang0 = Math.atan2(s.vin[1], s.vin[0]) + Math.PI;    // 들어오는 방향
       const turnSgn = Math.sin(p.app * Math.PI / 180) >= 0 ? -1 : 1;
       ctx.save();
-      ctx.strokeStyle = hl === 'delta' ? '#f472b6' : 'rgba(244,114,182,.8)'; ctx.lineWidth = 2.4;
+      ctx.strokeStyle = hl === 'delta' ? '#c08098' : 'rgba(214,144,181,.8)'; ctx.lineWidth = 2.4;
       if (hl === 'delta') { ctx.shadowColor = C.delta; ctx.shadowBlur = 12; }
       ctx.beginPath();
       const axisAng = ang0 + turnSgn * (Math.PI - nuMax);
@@ -180,13 +180,13 @@
       // 입·출 v∞ 벡터
       const VS = clamp(90 / Math.max(p.vinf, 1), 3, 9);
       D.arrow(ctx, lx - s.vin[0] * VS * 2.2, cy + s.vin[1] * VS * 2.2, s.vin[0] * VS, -s.vin[1] * VS,
-        { color: 'rgba(147,162,196,.9)', width: 2.4, head: 7, label: 'v∞ 입', ly: -10 });
+        { color: 'rgba(167,170,176,.9)', width: 2.4, head: 7, label: 'v∞ 입', ly: -10 });
       D.arrow(ctx, lx + s.vout[0] * VS * 1.4, cy - s.vout[1] * VS * 1.4, s.vout[0] * VS, -s.vout[1] * VS,
         { color: C.vinf, width: 2.4, head: 7, hot: hl === 'vinf', label: 'v∞ 출', ly: -10 });
       // 편향각 표시
       D.tag(ctx, 'δ = ' + fmt(d * 180 / Math.PI, 1) + '°', lx, cy + h * .21, C.delta, hl === 'delta');
       D.text(ctx, '|v∞| = ' + fmt(p.vinf, 1) + ' km/s  (입·출 동일)', lx, cy + h * .21 + 22,
-        { size: 10, color: '#93a2c4', align: 'center' });
+        { size: 10, color: '#9a9da6', align: 'center' });
       D.dim(ctx, lx, cy, lx + rpPx * .7, cy - rpPx * .7,
         'r_p = ' + fmt(p.rp, 2) + 'R', C.rp, hl === 'rp');
 
@@ -194,7 +194,7 @@
       const rx = w * .72, ry = cy;
       const ar = Math.min(w * .20, h * .22);
       D.text(ctx, '태양 기준 — 속도가 통째로 달라진다', rx, ry - h * .25,
-        { size: 11, color: '#61719a', align: 'center' });
+        { size: 11, color: '#6a6e78', align: 'center' });
       const SS = ar / Math.max(s.so, s.si, q.V + p.vinf) * .9;
       const ox = rx - ar * .5, oy = ry + ar * .4;
       // 행성 공전 속도
@@ -203,26 +203,26 @@
         { size: 10, color: q.c, align: 'center' });
       // 입 (회색) / 출 (초록)
       D.arrow(ctx, ox + q.V * SS, oy, s.vin[0] * SS, -s.vin[1] * SS,
-        { color: 'rgba(147,162,196,.8)', width: 2.2, head: 7 });
+        { color: 'rgba(167,170,176,.8)', width: 2.2, head: 7 });
       D.arrow(ctx, ox + q.V * SS, oy, s.vout[0] * SS, -s.vout[1] * SS,
         { color: C.vinf, width: 2.2, head: 7, hot: hl === 'app' });
       D.arrow(ctx, ox, oy, s.sin[0] * SS, -s.sin[1] * SS,
-        { color: 'rgba(200,211,239,.75)', width: 2.6, head: 8, dash: [5, 4] });
+        { color: 'rgba(207,214,232,.75)', width: 2.6, head: 8, dash: [5, 4] });
       ctx.save(); if (hl === 'gain') { ctx.shadowColor = C.gain; ctx.shadowBlur = 14; }
       D.arrow(ctx, ox, oy, s.sout[0] * SS, -s.sout[1] * SS,
         { color: C.gain, width: 3.2, head: 9 }); ctx.restore();
       D.text(ctx, '전 ' + fmt(s.si, 2), ox + s.sin[0] * SS * .6, oy - s.sin[1] * SS * .6 - 8,
-        { size: 10, color: '#93a2c4' });
+        { size: 10, color: '#9a9da6' });
       D.text(ctx, '후 ' + fmt(s.so, 2), ox + s.sout[0] * SS * .85, oy - s.sout[1] * SS * .85 - 8,
         { size: 11, color: C.gain, bold: true });
       D.tag(ctx, (gain >= 0 ? '+' : '') + fmt(gain, 2) + ' km/s' + (gain >= 0 ? ' 가속' : ' 감속'),
-        rx, ry + h * .21, gain >= 0 ? C.gain : '#fb7185', hl === 'gain');
+        rx, ry + h * .21, gain >= 0 ? C.gain : '#c4705f', hl === 'gain');
       D.text(ctx, '이론상 최대 ' + fmt(2 * p.vinf, 1) + ' km/s의 ' + fmt(gain / (2 * p.vinf) * 100, 0) + '%',
-        rx, ry + h * .21 + 22, { size: 10, color: '#93a2c4', align: 'center' });
+        rx, ry + h * .21 + 22, { size: 10, color: '#9a9da6', align: 'center' });
 
       /* ── 요약 ── */
       D.text(ctx, '연료 소모: 0   ·   행성이 잃는 속도: 측정 불가 수준',
-        36, h - 16, { size: 11, color: '#4b5a80' });
+        36, h - 16, { size: 11, color: '#4a4d55' });
     }
   });
 })();

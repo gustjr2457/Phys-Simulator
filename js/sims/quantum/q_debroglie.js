@@ -1,7 +1,7 @@
 /* [양자역학] 드브로이 파장 — 왜 야구공은 양자처럼 안 보이나 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { obj: '#f472b6', vexp: '#fbbf24', lam: '#5eead4', p: '#a78bfa', m: '#f472b6', v: '#fbbf24' };
+  const C = { obj: '#c08098', vexp: '#ffb020', lam: '#68b8b0', p: '#a98cc4', m: '#c08098', v: '#ffb020' };
   const H = 6.62607015e-34;
 
   // 비교 대상 — 질량(kg)과 "그 물체 세계의 크기"(m)
@@ -71,7 +71,7 @@
         { label: '비교 — ' + o.sizeName, value: o.size.toExponential(1).replace('e', ' ×10^'), unit: 'm' },
         { label: 'λ ÷ 물체 크기', value: ratio > 1e-3 ? fmt(ratio, 3) : ratio.toExponential(1).replace('e', ' ×10^'), unit: '배' },
         {
-          label: '판정', wide: true, color: ratio > .3 ? '#34d399' : (ratio > .01 ? '#fbbf24' : '#fb7185'),
+          label: '판정', wide: true, color: ratio > .3 ? '#7fb894' : (ratio > .01 ? '#ffb020' : '#c4705f'),
           value: ratio > .3 ? '✔ 파동성이 뚜렷하게 드러납니다 (회절·간섭 관찰 가능)'
             : ratio > .01 ? '△ 파동성이 희미하게 남아 있습니다'
               : '✘ 파장이 너무 짧아 파동성이 완전히 숨습니다 — 고전적으로 행동'
@@ -127,11 +127,11 @@
       ctx.save();
       if (hl === 'obj' || hl === 'm') { ctx.shadowColor = C.obj; ctx.shadowBlur = 20; }
       const g = ctx.createRadialGradient(cx - R * .3, cy - R * .3, 2, cx, cy, R);
-      g.addColorStop(0, '#fde7f3'); g.addColorStop(1, C.obj);
+      g.addColorStop(0, '#e4dade'); g.addColorStop(1, C.obj);
       ctx.fillStyle = g;
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
       ctx.restore();
-      D.text(ctx, o.icon, cx, cy + 6, { size: 17, color: '#3a0d22', align: 'center', bold: true });
+      D.text(ctx, o.icon, cx, cy + 6, { size: 17, color: '#311623', align: 'center', bold: true });
       D.text(ctx, o.name, cx, cy + R + 18, { size: 12, color: C.obj, align: 'center', bold: hl === 'obj' });
 
       // 속도 화살표
@@ -155,25 +155,25 @@
       }
       ctx.stroke(); ctx.restore();
       D.text(ctx, ratio > .3 ? '파동성이 드러남' : (ratio > .01 ? '파동성이 희미함' : '파동성이 숨음 — 사실상 알갱이'),
-        wx0, cy - 40, { size: 10.5, color: ratio > .3 ? '#34d399' : (ratio > .01 ? '#fbbf24' : '#fb7185') });
+        wx0, cy - 40, { size: 10.5, color: ratio > .3 ? '#7fb894' : (ratio > .01 ? '#ffb020' : '#c4705f') });
 
       /* ── 아래쪽: 로그 자 ── */
       const rx0 = 70, rx1 = w - 40, ry = h * .70;
       const X = m10 => rx0 + (m10 - LO) / (HI - LO) * (rx1 - rx0);
-      D.line(ctx, rx0, ry, rx1, ry, { color: 'rgba(147,162,196,.5)', width: 2 });
-      D.text(ctx, '길이 비교 — 한 칸마다 10배', rx0, ry - 56, { size: 11, color: '#93a2c4' });
+      D.line(ctx, rx0, ry, rx1, ry, { color: 'rgba(167,170,176,.5)', width: 2 });
+      D.text(ctx, '길이 비교 — 한 칸마다 10배', rx0, ry - 56, { size: 11, color: '#9a9da6' });
 
       // 10의 거듭제곱 눈금
       for (let e = LO; e <= HI; e += 5) {
         const x = X(e);
-        D.line(ctx, x, ry - 5, x, ry + 5, { color: 'rgba(147,162,196,.35)' });
-        D.text(ctx, '10' + String(e).replace('-', '⁻'), x, ry + 19, { size: 9, color: '#4a5878', align: 'center' });
+        D.line(ctx, x, ry - 5, x, ry + 5, { color: 'rgba(167,170,176,.35)' });
+        D.text(ctx, '10' + String(e).replace('-', '⁻'), x, ry + 19, { size: 9, color: '#4a4d55', align: 'center' });
       }
       // 기준점
       MARKS.forEach((mk, i) => {
         const x = X(Math.log10(mk.x));
-        D.line(ctx, x, ry, x, ry - 16 - (i % 2) * 13, { color: 'rgba(147,162,196,.3)', dash: [2, 3] });
-        D.text(ctx, mk.t, x, ry - 20 - (i % 2) * 13, { size: 9, color: '#61719a', align: 'center' });
+        D.line(ctx, x, ry, x, ry - 16 - (i % 2) * 13, { color: 'rgba(167,170,176,.3)', dash: [2, 3] });
+        D.text(ctx, mk.t, x, ry - 20 - (i % 2) * 13, { size: 9, color: '#6a6e78', align: 'center' });
       });
 
       // 물체 크기 눈금
@@ -193,11 +193,11 @@
       if (Math.abs(xl - xs) > 24) {
         const ym = ry + 40;
         D.dim(ctx, Math.min(xl, xs), ym, Math.max(xl, xs), ym,
-          Math.abs(Math.log10(ratio)).toFixed(0) + '자릿수 차이', '#fbbf24', false);
+          Math.abs(Math.log10(ratio)).toFixed(0) + '자릿수 차이', '#ffb020', false);
       }
 
       if (Math.log10(lam) < LO)
-        D.tag(ctx, '자 밖으로 벗어남 — 너무 짧아 표시할 수 없습니다', rx0 + 150, ry + 74, '#fb7185', true);
+        D.tag(ctx, '자 밖으로 벗어남 — 너무 짧아 표시할 수 없습니다', rx0 + 150, ry + 74, '#c4705f', true);
     }
   });
 })();

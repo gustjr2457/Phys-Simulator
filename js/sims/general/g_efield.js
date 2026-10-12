@@ -6,8 +6,8 @@
    '끌어당기는 언덕'과 '밀어내는 언덕'이 함께 존재한다는 것만 다르다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { q1: '#fb7185', q2: '#60a5fa', d: '#93a2c4', qt: '#fbbf24',
-              E: '#5eead4', V: '#a78bfa', F: '#f472b6' };
+  const C = { q1: '#c4705f', q2: '#6f9fc4', d: '#9a9da6', qt: '#ffb020',
+              E: '#68b8b0', V: '#a98cc4', F: '#c08098' };
   const K = 8.988e9;              // 쿨롱 상수
   const SCALE = 1 / 100;          // 화면 1 px = 1 cm
 
@@ -80,9 +80,9 @@
     graphs: [{
       title: '시험전하의 에너지 — 합은 보존된다', xmin: 4, window: 8,
       series: [
-        { key: 'KE', label: '운동에너지', color: '#fb923c' },
+        { key: 'KE', label: '운동에너지', color: '#d1824a' },
         { key: 'PE', label: '전기 퍼텐셜', color: C.V },
-        { key: 'TOT', label: '합', color: '#e8eefc' }
+        { key: 'TOT', label: '합', color: '#e6e7ea' }
       ]
     }],
     sample(st, p) {
@@ -109,13 +109,13 @@
         { label: '중앙의 전위 V', value: mid.v, unit: 'V', color: C.V, dec: 0 },
         { label: '시험전하 위치의 E', value: at.mag, unit: 'N/C', color: C.E, dec: 0 },
         { label: '시험전하 위치의 V', value: at.v, unit: 'V', color: C.V, dec: 0 },
-        { label: '전체 전하량 (멀리서 보면)', value: p.q1 + p.q2, unit: 'nC', dec: 1, color: '#93a2c4' },
-        { label: '배치', wide: true, color: '#fbbf24',
+        { label: '전체 전하량 (멀리서 보면)', value: p.q1 + p.q2, unit: 'nC', dec: 1, color: '#9a9da6' },
+        { label: '배치', wide: true, color: '#ffb020',
           value: p.q1 * p.q2 < 0 ? (Math.abs(p.q1 + p.q2) < .01 ? '전기 쌍극자 — 멀리서는 거의 안 보인다' : '서로 다른 부호') :
                  (p.q1 * p.q2 > 0 ? '같은 부호 — 사이에 전기장 0인 중립점이 있다' : '한쪽이 0') },
         { label: '전기장이 0인 지점 (축 위)', wide: true, color: C.E,
           value: neutral !== null ? 'x = ' + fmt(neutral, 2) + ' cm' : (p.q1 * p.q2 < 0 ? '없다 (부호가 달라서)' : '—') },
-        { label: '시험전하 상태', wide: true, color: st.gone ? '#fb7185' : '#34d399',
+        { label: '시험전하 상태', wide: true, color: st.gone ? '#c4705f' : '#7fb894',
           value: st.gone ? '전하에 흡수되거나 화면 밖으로 나갔다' : '전기력선을 따라 움직이는 중' }
       ];
     },
@@ -175,15 +175,15 @@
       for (let i = 0; i < gw; i++) for (let j = 0; j < gh2; j++) {
         const u = clamp((G(i, j) + G(i + 1, j) + G(i, j + 1) + G(i + 1, j + 1)) / 4 / vmax, -1, 1);
         if (Math.abs(u) < .012) continue;
-        ctx.fillStyle = u > 0 ? 'rgba(251,113,133,' + (Math.abs(u) * .40) + ')'
-                              : 'rgba(96,165,250,' + (Math.abs(u) * .40) + ')';
+        ctx.fillStyle = u > 0 ? 'rgba(216,148,158,' + (Math.abs(u) * .40) + ')'
+                              : 'rgba(135,169,211,' + (Math.abs(u) * .40) + ')';
         ctx.fillRect(i * cell, 24 + j * cell, cell + .5, cell + .5);
       }
       ctx.restore();
 
       // 등전위선 — 격자에서 등고선이 지나는 변만 짧게 긋는다
       ctx.save();
-      ctx.strokeStyle = hl === 'V' ? 'rgba(232,238,252,.75)' : 'rgba(232,238,252,.26)';
+      ctx.strokeStyle = hl === 'V' ? 'rgba(236,240,248,.75)' : 'rgba(236,240,248,.26)';
       ctx.lineWidth = hl === 'V' ? 1.6 : 1.1;
       ctx.beginPath();
       [-1600, -800, -400, -200, 200, 400, 800, 1600].forEach(lev => {
@@ -199,7 +199,7 @@
 
       /* ── 전기력선 ── */
       ctx.save();
-      ctx.strokeStyle = hl === 'E' ? 'rgba(94,234,212,.95)' : 'rgba(94,234,212,.55)';
+      ctx.strokeStyle = hl === 'E' ? 'rgba(122,206,193,.95)' : 'rgba(122,206,193,.55)';
       ctx.lineWidth = hl === 'E' ? 1.8 : 1.3;
       [0, 1].forEach(i => {
         const q = i ? p.q2 : p.q1;
@@ -232,11 +232,11 @@
         const r = 7 + Math.abs(q) * .9;
         ctx.save();
         if (hl === key) { ctx.shadowColor = q > 0 ? C.q1 : C.q2; ctx.shadowBlur = 20; }
-        ctx.fillStyle = q > 0 ? '#fb7185' : '#60a5fa';
+        ctx.fillStyle = q > 0 ? '#c4705f' : '#6f9fc4';
         ctx.beginPath(); ctx.arc(X(P[i][0]), Y(P[i][1]), r, 0, 7); ctx.fill();
         ctx.restore();
         D.text(ctx, q > 0 ? '+' : '−', X(P[i][0]), Y(P[i][1]) + 5,
-          { size: 15, color: '#0a1120', align: 'center', bold: true });
+          { size: 15, color: '#0a0b0c', align: 'center', bold: true });
         D.text(ctx, fmt(q, 1) + ' nC', X(P[i][0]), Y(P[i][1]) + r + 15,
           { size: 10, color: q > 0 ? C.q1 : C.q2, align: 'center', bold: hl === key });
       });
@@ -256,7 +256,7 @@
 
       /* ── 시험전하 ── */
       if (st.trail.length > 1) {
-        ctx.save(); ctx.strokeStyle = 'rgba(251,191,36,.7)'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+        ctx.save(); ctx.strokeStyle = 'rgba(227,180,60,.7)'; ctx.lineWidth = 2; ctx.lineJoin = 'round';
         ctx.beginPath();
         st.trail.forEach((q, i) => i ? ctx.lineTo(X(q[0]), Y(q[1])) : ctx.moveTo(X(q[0]), Y(q[1])));
         ctx.stroke(); ctx.restore();
@@ -268,8 +268,8 @@
         if (f.mag > 1) D.arrow(ctx, X(st.x), Y(st.y), f.ex / f.mag * 24, -f.ey / f.mag * 24,
           { color: C.E, width: 2.2, head: 7, hot: hl === 'E' });
       }
-      D.text(ctx, '노란 점: 시험전하 (+1 nC) — 전기력선을 따라 움직인다', 16, h - 10, { size: 10, color: '#61719a' });
-      D.text(ctx, '배경색 = 전위 (붉은 높음 / 파란 낮음) · 흰 점선 = 등전위선', 16, 18, { size: 10, color: '#61719a' });
+      D.text(ctx, '노란 점: 시험전하 (+1 nC) — 전기력선을 따라 움직인다', 16, h - 10, { size: 10, color: '#6a6e78' });
+      D.text(ctx, '배경색 = 전위 (붉은 높음 / 파란 낮음) · 흰 점선 = 등전위선', 16, 18, { size: 10, color: '#6a6e78' });
     }
   });
 })();

@@ -1,7 +1,7 @@
 /* [항공우주공학] 호만 전이 궤도 — 두 번의 점화로 궤도를 바꾸기 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { h1: '#5eead4', h2: '#fbbf24', dv1: '#34d399', dv2: '#f472b6', dv: '#a78bfa', tt: '#60a5fa' };
+  const C = { h1: '#68b8b0', h2: '#ffb020', dv1: '#7fb894', dv2: '#c08098', dv: '#a98cc4', tt: '#6f9fc4' };
   const MU = 3.986e14, RE = 6.371e6, TS = 1400;
 
   const r1of = p => RE + p.h1 * 1000;
@@ -100,7 +100,7 @@
         { label: '현재 고도', value: (r - RE) / 1000, unit: 'km', dec: 0 },
         { label: '현재 속력', value: Math.hypot(st.vx, st.vy) / 1000, unit: 'km/s' },
         { label: '목표 궤도 주기', value: 2 * Math.PI * Math.sqrt(Math.pow(r2of(p), 3) / MU) / 3600, unit: '시간' },
-        { label: '단계', value: names[st.phase], wide: true, color: ['#5eead4', '#fbbf24', '#34d399'][st.phase] }
+        { label: '단계', value: names[st.phase], wide: true, color: ['#68b8b0', '#ffb020', '#7fb894'][st.phase] }
       ];
     },
 
@@ -149,7 +149,7 @@
 
       // 실제 자취 (전이 타원은 비행하면서 그대로 그려집니다)
       ctx.save();
-      ctx.strokeStyle = st.phase === 1 ? 'rgba(167,139,250,.95)' : 'rgba(94,234,212,.75)';
+      ctx.strokeStyle = st.phase === 1 ? 'rgba(181,167,222,.95)' : 'rgba(122,206,193,.75)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       st.trail.forEach((q, i) => i ? ctx.lineTo(X(q[0]), Y(q[1])) : ctx.moveTo(X(q[0]), Y(q[1])));
@@ -159,7 +159,7 @@
       const RP = Math.max(6, RE * k);
       ctx.save();
       const eg = ctx.createRadialGradient(X(0) - RP * .3, Y(0) - RP * .3, RP * .1, X(0), Y(0), RP);
-      eg.addColorStop(0, '#4a9de0'); eg.addColorStop(1, '#0d2f52');
+      eg.addColorStop(0, '#669ac4'); eg.addColorStop(1, '#2d2f32');
       ctx.fillStyle = eg; ctx.beginPath(); ctx.arc(X(0), Y(0), RP, 0, 7); ctx.fill();
       ctx.restore();
 
@@ -182,7 +182,7 @@
       // Δv 예산 막대
       const bx = 20, by = h - 96, bw = Math.min(250, w * .28);
       const tot = dv1of(p) + dv2of(p), mx = Math.max(tot, 1) * 1.05;
-      D.text(ctx, 'Δv 예산 (= 필요한 연료)', bx, by - 8, { size: 11.5, color: hl === 'dv' ? '#fff' : '#61719a', bold: hl === 'dv' });
+      D.text(ctx, 'Δv 예산 (= 필요한 연료)', bx, by - 8, { size: 11.5, color: hl === 'dv' ? '#fff' : '#6a6e78', bold: hl === 'dv' });
       D.bar(ctx, bx, by, bw, 11, dv1of(p), mx, C.dv1, null, hl === 'dv1' || st.phase === 1);
       D.text(ctx, 'Δv₁ ' + fmt(dv1of(p), 0) + ' m/s', bx + bw + 8, by + 10, { size: 10.5, color: C.dv1, bold: hl === 'dv1' });
       D.bar(ctx, bx, by + 18, bw, 11, dv2of(p), mx, C.dv2, null, hl === 'dv2' || st.phase === 2);
@@ -192,9 +192,9 @@
 
       // 단계 표시
       const names = ['① 출발 원궤도', '② 전이 타원', '③ 목표 궤도 도착'];
-      D.text(ctx, names[st.phase], 20, 26, { size: 13, color: ['#5eead4', '#a78bfa', '#34d399'][st.phase], bold: true });
-      D.text(ctx, '전이 시간 ' + fmt(ttof(p) / 3600, 2) + ' 시간 · 시간 배속 ×' + TS, 20, 46, { size: 10.5, color: hl === 'tt' ? '#fff' : '#4a5878' });
-      if (st.phase === 2) D.tag(ctx, '목표 궤도 진입 성공 — 원궤도로 안정화되었습니다', w / 2, h - 16, '#34d399', true);
+      D.text(ctx, names[st.phase], 20, 26, { size: 13, color: ['#68b8b0', '#a98cc4', '#7fb894'][st.phase], bold: true });
+      D.text(ctx, '전이 시간 ' + fmt(ttof(p) / 3600, 2) + ' 시간 · 시간 배속 ×' + TS, 20, 46, { size: 10.5, color: hl === 'tt' ? '#fff' : '#4a4d55' });
+      if (st.phase === 2) D.tag(ctx, '목표 궤도 진입 성공 — 원궤도로 안정화되었습니다', w / 2, h - 16, '#7fb894', true);
     }
   });
 })();

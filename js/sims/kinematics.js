@@ -1,7 +1,7 @@
 /* 등가속도 직선 운동 — v = v₀ + at,  s = v₀t + ½at² */
 (function () {
   const D = PS.D, fmt = PS.fmt;
-  const C = { v0: '#a78bfa', a: '#fbbf24', t: '#94a3b8', v: '#60a5fa', s: '#34d399' };
+  const C = { v0: '#a98cc4', a: '#ffb020', t: '#8b8f99', v: '#6f9fc4', s: '#7fb894' };
 
   function car(ctx, x, y, w, h, color, alpha) {
     ctx.save();
@@ -11,7 +11,7 @@
     D.roundRect(ctx, x - w * .28, y - h * 1.34, w * .56, h * .5, 4);
     ctx.fillStyle = color; ctx.globalAlpha *= .75; ctx.fill();
     ctx.globalAlpha = alpha === undefined ? 1 : alpha;
-    ctx.fillStyle = '#0a1120';
+    ctx.fillStyle = '#0a0b0c';
     [-w * .28, w * .28].forEach(dx => {
       ctx.beginPath(); ctx.arc(x + dx, y - h * .38 + h * .38, h * .2, 0, 7); ctx.fill();
       ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
@@ -99,8 +99,8 @@
       ctx.save();
       const tick = xmax - xmin > 60 ? 20 : (xmax - xmin > 30 ? 10 : 5);
       for (let m = Math.ceil(xmin / tick) * tick; m <= xmax; m += tick) {
-        D.line(ctx, X(m), gy, X(m), gy + 7, { color: 'rgba(147,162,196,.3)' });
-        D.text(ctx, m + ' m', X(m), gy + 20, { size: 10, color: '#61719a', align: 'center' });
+        D.line(ctx, X(m), gy, X(m), gy + 7, { color: 'rgba(167,170,176,.3)' });
+        D.text(ctx, m + ' m', X(m), gy + 20, { size: 10, color: '#6a6e78', align: 'center' });
       }
       ctx.restore();
       D.ground(ctx, 20, w - 20, gy, 0);
@@ -110,10 +110,10 @@
       let lastLbl = -1e9;                       // 잔상이 촘촘해지면 숫자는 건너뛴다
       st.marks.forEach(m => {
         const mx = X(m.x);
-        car(ctx, mx, gy, 46, 26, '#3b4a6b', hotT ? .85 : .45);
-        D.line(ctx, mx, gy, mx, gy - 46, { color: hotT ? C.t : 'rgba(147,162,196,.25)', dash: [3, 4] });
+        car(ctx, mx, gy, 46, 26, '#4f5157', hotT ? .85 : .45);
+        D.line(ctx, mx, gy, mx, gy - 46, { color: hotT ? C.t : 'rgba(167,170,176,.25)', dash: [3, 4] });
         if (mx - lastLbl > 22) {
-          D.text(ctx, m.n + 's', mx, gy - 52, { size: 10, color: hotT ? C.t : '#3f4d6e', align: 'center', bold: hotT });
+          D.text(ctx, m.n + 's', mx, gy - 52, { size: 10, color: hotT ? C.t : '#52555b', align: 'center', bold: hotT });
           lastLbl = mx;
         }
       });
@@ -129,7 +129,7 @@
 
       // 수레
       const cx = X(st.x);
-      car(ctx, cx, gy, 52, 30, hl === 'v' ? '#7ab6ff' : '#4d7fc7');
+      car(ctx, cx, gy, 52, 30, hl === 'v' ? '#9ebadb' : '#6483b0');
 
       // 속도 화살표 (위)
       D.arrow(ctx, cx, gy - 54, PS.clamp(st.v * 7, -230, 230), 0,
@@ -142,7 +142,7 @@
         D.tag(ctx, 'a = 0 (등속도)', cx, gy - 12, C.a, hl === 'a');
       }
 
-      if (st.done) D.tag(ctx, '측정 종료 — ↺ 처음으로', w / 2, 26, '#fbbf24', true);
+      if (st.done) D.tag(ctx, '측정 종료 — ↺ 처음으로', w / 2, 26, '#ffb020', true);
     }
   });
 })();

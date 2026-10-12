@@ -1,7 +1,7 @@
 /* [양자역학] 터널링 — 벽을 스며 통과한다 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { E: '#fbbf24', V: '#fb7185', d: '#5eead4', T: '#34d399', R: '#f472b6', kap: '#a78bfa' };
+  const C = { E: '#ffb020', V: '#c4705f', d: '#68b8b0', T: '#7fb894', R: '#c08098', kap: '#a98cc4' };
   const HBAR = 1.054571817e-34, ME = 9.1093837e-31, QE = 1.602176634e-19;
 
   const kOf = eV => Math.sqrt(2 * ME * eV * QE) / HBAR;              // 1/m
@@ -76,7 +76,7 @@
         { label: '드브로이 파장 λ', value: lam, unit: 'nm', color: C.E, dec: 3 },
         { label: '에너지 부족분 V₀ − E', value: Math.max(p.V - p.E, 0), unit: 'eV', color: C.V },
         {
-          label: '고전역학이라면', wide: true, color: under ? '#fb7185' : '#34d399',
+          label: '고전역학이라면', wide: true, color: under ? '#c4705f' : '#7fb894',
           value: under ? '✘ 절대 통과 불가 (에너지 부족) — 그런데 실제로는 ' + (T > 1e-4 ? fmt(T * 100, 2) + '%' : (T * 100).toExponential(1) + '%') + ' 통과'
             : '✔ 항상 통과 — 그런데 양자역학에서는 일부가 되튕깁니다'
         }
@@ -132,15 +132,15 @@
       const bx0 = (x0 + x1) / 2 - p.d * PPNM / 2, bx1 = bx0 + p.d * PPNM;
 
       // 바닥
-      D.line(ctx, x0, baseY, x1, baseY, { color: 'rgba(147,162,196,.4)', width: 1.5 });
-      D.text(ctx, '위치 →', x1, baseY + 18, { size: 9.5, color: '#4a5878', align: 'right' });
-      D.text(ctx, '에너지 ↑', x0 - 6, topY - 6, { size: 9.5, color: '#4a5878' });
+      D.line(ctx, x0, baseY, x1, baseY, { color: 'rgba(167,170,176,.4)', width: 1.5 });
+      D.text(ctx, '위치 →', x1, baseY + 18, { size: 9.5, color: '#4a4d55', align: 'right' });
+      D.text(ctx, '에너지 ↑', x0 - 6, topY - 6, { size: 9.5, color: '#4a4d55' });
 
       // 장벽
       ctx.save();
       if (hl === 'V' || hl === 'd') { ctx.shadowColor = C.V; ctx.shadowBlur = 18; }
       const vg = ctx.createLinearGradient(0, EY(p.V), 0, baseY);
-      vg.addColorStop(0, 'rgba(251,113,133,.55)'); vg.addColorStop(1, 'rgba(251,113,133,.18)');
+      vg.addColorStop(0, 'rgba(216,148,158,.55)'); vg.addColorStop(1, 'rgba(216,148,158,.18)');
       ctx.fillStyle = vg;
       ctx.fillRect(bx0, EY(p.V), bx1 - bx0, baseY - EY(p.V));
       ctx.restore();
@@ -225,7 +225,7 @@
 
       /* ── 확률 막대 ── */
       const mx = 48, mw = Math.min(300, w * .36), my = h - 44;
-      D.text(ctx, '반사 R 와 투과 T', mx, my - 10, { size: 11, color: '#93a2c4' });
+      D.text(ctx, '반사 R 와 투과 T', mx, my - 10, { size: 11, color: '#9a9da6' });
       D.roundRect(ctx, mx, my, mw, 15, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       ctx.save();
       ctx.fillStyle = C.R; D.roundRect(ctx, mx, my, mw * R, 15, 5); ctx.fill();
@@ -236,7 +236,7 @@
       D.text(ctx, '투과 ' + (T > 1e-4 ? fmt(T * 100, 3) + ' %' : (T * 100).toExponential(2) + ' %'),
         mx + mw + 10, my + 12, { size: 12, color: C.T, bold: true });
 
-      if (!under) D.tag(ctx, '에너지가 장벽보다 높은데도 일부가 되튕깁니다 (공명 투과)', w / 2, 26, '#fbbf24', true);
+      if (!under) D.tag(ctx, '에너지가 장벽보다 높은데도 일부가 되튕깁니다 (공명 투과)', w / 2, 26, '#ffb020', true);
     }
   });
 })();

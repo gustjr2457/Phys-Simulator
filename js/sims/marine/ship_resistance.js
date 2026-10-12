@@ -6,8 +6,8 @@
    그래서 긴 배가 빠르고, 선박의 설계 속력은 Fn 0.25 근처에 모여 있다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { L: '#5eead4', Vs: '#fb7185', Cb: '#fbbf24',
-              Fn: '#f472b6', RF: '#60a5fa', RW: '#fb923c', RT: '#e8eefc', P: '#a78bfa' };
+  const C = { L: '#68b8b0', Vs: '#c4705f', Cb: '#ffb020',
+              Fn: '#c08098', RF: '#6f9fc4', RW: '#d1824a', RT: '#e6e7ea', P: '#a98cc4' };
   const G = 9.81, RHO = 1025, NU = 1.19e-6, FORM = 1.18;
   const KN = .5144;                    // 1 노트 = 0.5144 m/s
   const RAMP = 14;                     // 설정 속력까지 가속하는 시간(초)
@@ -93,18 +93,18 @@
       return [
         { label: '현재 속력', value: V / KN, unit: 'kn', color: C.Vs, dec: 1 },
         { label: '프루드 수 Fn', value: Fn, unit: '', color: C.Fn, dec: 3 },
-        { label: '레이놀즈 수 Re', value: ReOf(V, p), unit: '', dec: 0, color: '#93a2c4' },
+        { label: '레이놀즈 수 Re', value: ReOf(V, p), unit: '', dec: 0, color: '#9a9da6' },
         { label: '마찰저항 R_F', value: rf / 1000, unit: 'kN', color: C.RF, dec: 1 },
         { label: '조파저항 R_W', value: rw / 1000, unit: 'kN', color: C.RW, dec: 1 },
         { label: '전체 저항 R_T', value: rt / 1000, unit: 'kN', color: C.RT, dec: 1 },
         { label: '조파저항 비율', value: wf * 100, unit: '%', dec: 1, color: C.RW },
         { label: '유효마력 EHP', value: rt * V / 1e6, unit: 'MW', color: C.P, dec: 2 },
-        { label: '배가 만드는 파도 λ', value: lam, unit: 'm', dec: 1, color: '#fbbf24' },
-        { label: 'λ / L', value: lam / p.L, unit: '', dec: 2, color: '#fbbf24' },
+        { label: '배가 만드는 파도 λ', value: lam, unit: 'm', dec: 1, color: '#ffb020' },
+        { label: 'λ / L', value: lam / p.L, unit: '', dec: 2, color: '#ffb020' },
         { label: '배수량 (대략)', value: d.disp * 1.025, unit: 't', dec: 0, color: C.Cb },
-        { label: '젖은 표면적 S', value: d.S, unit: 'm²', dec: 0, color: '#93a2c4' },
+        { label: '젖은 표면적 S', value: d.S, unit: 'm²', dec: 0, color: '#9a9da6' },
         { label: '지금 어느 영역인가', wide: true,
-          color: Fn < .22 ? '#34d399' : (Fn < .32 ? '#fbbf24' : '#fb7185'),
+          color: Fn < .22 ? '#7fb894' : (Fn < .32 ? '#ffb020' : '#c4705f'),
           value: Fn < .22 ? '경제 속력 — 마찰이 지배, 조파는 작다' :
                  (Fn < .32 ? '설계 속력대 — 조파가 자라기 시작' :
                   (Fn < .42 ? '제1 험프 근처 — 저항이 급증' : '고속 영역 — 조파가 지배, 동력이 폭증')) }
@@ -183,9 +183,9 @@
       for (let x = 0; x <= w; x += 4) ctx.lineTo(x, sea + eta(x));
       ctx.lineTo(w, h); ctx.closePath();
       const wg = ctx.createLinearGradient(0, sea - amp, 0, h);
-      wg.addColorStop(0, 'rgba(37,99,164,.30)'); wg.addColorStop(1, 'rgba(10,30,62,.12)');
+      wg.addColorStop(0, 'rgba(61,100,140,.30)'); wg.addColorStop(1, 'rgba(34,35,38,.12)');
       ctx.fillStyle = wg; ctx.fill();
-      ctx.strokeStyle = hl === 'Fn' ? 'rgba(244,114,182,.9)' : 'rgba(125,190,255,.65)';
+      ctx.strokeStyle = hl === 'Fn' ? 'rgba(214,144,181,.9)' : 'rgba(160,190,220,.65)';
       ctx.lineWidth = 2; ctx.stroke();
       ctx.restore();
       // 흐르는 기준 거품(배가 움직인다는 표시)
@@ -208,11 +208,11 @@
       hull.push([sternX, sea + draftPx * .5]);
       ctx.save();
       if (hl === 'L' || hl === 'Cb') { ctx.shadowColor = hl === 'L' ? C.L : C.Cb; ctx.shadowBlur = 18; }
-      D.poly(ctx, hull, { fill: 'rgba(200,211,239,.26)', stroke: '#c8d3ef', width: 2 });
+      D.poly(ctx, hull, { fill: 'rgba(207,214,232,.26)', stroke: '#c8cad2', width: 2 });
       ctx.restore();
       // 상부 구조
       D.roundRect(ctx, sternX + Lpx * .08, sea - deckPx - 22, Lpx * .16, 22, 2);
-      ctx.fillStyle = 'rgba(200,211,239,.4)'; ctx.fill();
+      ctx.fillStyle = 'rgba(207,214,232,.4)'; ctx.fill();
       // 흘수선
       D.line(ctx, sternX - 6, sea, bowX + 6, sea, { color: 'rgba(255,255,255,.3)', dash: [4, 4] });
       D.dim(ctx, sternX, sea - deckPx - 36, bowX, sea - deckPx - 36, 'L = ' + fmt(p.L, 0) + ' m', C.L, hl === 'L');
@@ -221,7 +221,7 @@
       if (V > .4 && lamPx > 14) {
         const wy = sea + draftPx + 26;
         D.dim(ctx, bowX, wy, bowX - Math.min(lamPx, bowX - 20), wy,
-          'λ = ' + fmt(lam, 0) + ' m  (λ/L = ' + fmt(lam / p.L, 2) + ')', '#fbbf24', false);
+          'λ = ' + fmt(lam, 0) + ' m  (λ/L = ' + fmt(lam / p.L, 2) + ')', '#ffb020', false);
       }
       // 속력 화살표
       D.arrow(ctx, bowX + 18, sea - deckPx - 14, clamp(18 + V * 4, 18, 64), 0,
@@ -232,7 +232,7 @@
       const bx = 56, byy = Math.min(h - 150, sea + draftPx + 70), bw = Math.min(w * .42, 280);
       if (byy + 56 < h) {
         const rmax = Math.max(rt, 1) * 1.1;
-        D.text(ctx, '저항의 구성', bx, byy - 24, { size: 10.5, color: '#61719a' });
+        D.text(ctx, '저항의 구성', bx, byy - 24, { size: 10.5, color: '#6a6e78' });
         [['R_F 마찰', rf, C.RF, hl === 'RF'], ['R_W 조파', rw, C.RW, hl === 'RW']].forEach(([lab, v, col, hot], k) => {
           D.bar(ctx, bx, byy + k * 30, bw, 15, v, rmax, col, lab + '  ' + fmt(v / 1000, 1) + ' kN', hot);
         });
@@ -245,7 +245,7 @@
       const qx = w - qw - 44, qy = Math.min(h - qh - 46, sea + draftPx + 62);
       if (qw > 120 && qy > sea) {
         D.roundRect(ctx, qx, qy, qw, qh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-        D.text(ctx, '저항계수 – 프루드 수', qx + 4, qy - 8, { size: 10.5, color: '#61719a' });
+        D.text(ctx, '저항계수 – 프루드 수', qx + 4, qy - 8, { size: 10.5, color: '#6a6e78' });
         const FMAX = .55;
         const cmax = .0062;
         const QX = ff => qx + clamp(ff / FMAX, 0, 1) * qw;
@@ -263,19 +263,19 @@
         // 험프 표시
         [[.33, '제1 험프'], [.49, '제2 험프']].forEach(([ff, lab]) => {
           if (ff > FMAX) return;
-          D.line(ctx, QX(ff), qy, QX(ff), qy + qh, { color: 'rgba(251,146,60,.3)', dash: [3, 4] });
-          D.text(ctx, lab, QX(ff), qy + 12, { size: 8.5, color: 'rgba(251,146,60,.85)', align: 'center' });
+          D.line(ctx, QX(ff), qy, QX(ff), qy + qh, { color: 'rgba(230,148,81,.3)', dash: [3, 4] });
+          D.text(ctx, lab, QX(ff), qy + 12, { size: 8.5, color: 'rgba(230,148,81,.85)', align: 'center' });
         });
         // 경제 속력대
-        ctx.save(); ctx.fillStyle = 'rgba(52,211,153,.08)';
+        ctx.save(); ctx.fillStyle = 'rgba(82,181,145,.08)';
         ctx.fillRect(qx, qy, QX(.22) - qx, qh); ctx.restore();
-        D.text(ctx, '경제', qx + 4, qy + qh - 6, { size: 8.5, color: 'rgba(52,211,153,.8)' });
+        D.text(ctx, '경제', qx + 4, qy + qh - 6, { size: 8.5, color: 'rgba(82,181,145,.8)' });
         // 현재 위치
         D.line(ctx, QX(Fn), qy, QX(Fn), qy + qh, { color: 'rgba(255,255,255,.35)' });
         D.dot(ctx, QX(Fn), QY(CWof(V, p)), 4, C.RW, true);
         D.dot(ctx, QX(Fn), QY(CFof(V, p)), 4, C.RF, true);
-        D.text(ctx, 'Fn →', qx + qw, qy + qh + 14, { size: 9, color: '#61719a', align: 'right' });
-        D.text(ctx, fmt(Fn, 3), QX(Fn), qy + qh + 14, { size: 9.5, color: '#e8eefc', align: 'center' });
+        D.text(ctx, 'Fn →', qx + qw, qy + qh + 14, { size: 9, color: '#6a6e78', align: 'right' });
+        D.text(ctx, fmt(Fn, 3), QX(Fn), qy + qh + 14, { size: 9.5, color: '#e6e7ea', align: 'center' });
       }
     }
   });

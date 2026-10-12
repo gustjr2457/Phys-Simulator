@@ -1,7 +1,7 @@
 /* [항공우주공학] 다단 로켓과 단 분리 — Δv = Σ Isp·g₀·ln(m_start/m_end) */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { n: '#5eead4', Isp1: '#fbbf24', Isp2: '#a78bfa', lam: '#f472b6', pay: '#34d399', pitch: '#60a5fa', dv: '#5eead4' };
+  const C = { n: '#68b8b0', Isp1: '#ffb020', Isp2: '#a98cc4', lam: '#c08098', pay: '#7fb894', pitch: '#6f9fc4', dv: '#68b8b0' };
   const G0 = 9.80665, MU = 3.986e14, RE = 6.371e6;
   const M_TOT = 300000;          // 이륙 총질량 300 t 고정
   const RATIO = .25;             // 상단은 바로 아래 단의 25 %
@@ -207,7 +207,7 @@
       const dv = totalDv(p), one = singleDv(p);
       const rows = [
         { label: '총 Δv (모든 단 합계)', value: dv, unit: 'm/s', color: C.dv, dec: 0 },
-        { label: '중력 손실 (누적)', value: st.gLoss, unit: 'm/s', color: '#fb7185', dec: 0 },
+        { label: '중력 손실 (누적)', value: st.gLoss, unit: 'm/s', color: '#c4705f', dec: 0 },
         { label: '고도', value: (ob.r - RE) / 1000, unit: 'km', color: C.n },
         { label: '속도', value: ob.v, unit: 'm/s', color: C.pitch, dec: 0 },
         { label: '현재 질량', value: st.m / 1000, unit: 't', color: C.lam },
@@ -218,12 +218,12 @@
         value: q.dv, unit: 'm/s', dec: 0, color: i === 0 ? C.Isp1 : C.Isp2
       }));
       rows.push({
-        label: '같은 질량·연료를 1단으로 만들면', wide: true, color: '#fb7185',
+        label: '같은 질량·연료를 1단으로 만들면', wide: true, color: '#c4705f',
         value: fmt(one, 0) + ' m/s   (다단이 ' + fmt(dv - one, 0) + ' m/s 이득)'
       });
       rows.push({
         label: '궤도 판정', wide: true,
-        color: st.verdict === 'orbit' ? '#34d399' : (st.verdict === 'escape' ? '#a78bfa' : (st.verdict ? '#fb7185' : '#fbbf24')),
+        color: st.verdict === 'orbit' ? '#7fb894' : (st.verdict === 'escape' ? '#a98cc4' : (st.verdict ? '#c4705f' : '#ffb020')),
         value: st.verdict === 'orbit' ? '✔ 궤도 진입 성공 (근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' km)'
           : st.verdict === 'escape' ? '지구 탈출 궤도 — Δv 과잉'
             : st.verdict === 'crash' ? '✘ 추락'
@@ -269,7 +269,7 @@
       const dark = clamp(alt / 90000, 0, 1);
       ctx.save();
       const sky = ctx.createLinearGradient(0, 0, 0, h);
-      sky.addColorStop(0, 'rgba(4,7,16,1)');
+      sky.addColorStop(0, 'rgba(10,10,11,1)');
       sky.addColorStop(1, 'rgba(' + Math.round(10 + 30 * (1 - dark)) + ',' + Math.round(24 + 70 * (1 - dark)) + ',' + Math.round(48 + 82 * (1 - dark)) + ',1)');
       ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h); ctx.restore();
       for (let i = 0; i < 80; i++) {
@@ -291,7 +291,7 @@
       gg.addColorStop(1, 'rgb(' + mix(12, 20) + ',' + mix(42, 29) + ',' + mix(74, 34) + ')');
       ctx.fillStyle = gg; ctx.fill(); ctx.restore();
       ctx.save();
-      ctx.strokeStyle = 'rgba(120,200,255,.16)'; ctx.lineWidth = clamp(100000 * k, 1.2, 44);
+      ctx.strokeStyle = 'rgba(156,193,219,.16)'; ctx.lineWidth = clamp(100000 * k, 1.2, 44);
       ctx.beginPath(); ctx.arc(ecx, ecy, Rpx + ctx.lineWidth * .5, angC - dAng * 1.4, angC + dAng * 1.4); ctx.stroke();
       ctx.restore();
 
@@ -303,27 +303,27 @@
         ctx.save();
         for (let a = stepA; a < span * 1.3; a += stepA) {
           const rr = (RE + a) * k;
-          ctx.strokeStyle = 'rgba(147,162,196,.16)'; ctx.lineWidth = 1;
+          ctx.strokeStyle = 'rgba(167,170,176,.16)'; ctx.lineWidth = 1;
           ctx.beginPath(); ctx.arc(ecx, ecy, rr, angC - dAng, angC + dAng); ctx.stroke();
           const ly = yAtLeft(rr);
           // 왼쪽 위 HUD·아래 이벤트 로그·카르만 선 라벨과 겹치지 않을 때만 숫자를 붙인다
           if (isFinite(ly) && ly > top + 106 && ly < bot - 62 && Math.abs(a - 100000) > stepA * .6) {
             D.text(ctx, a >= 1000 ? fmt(a / 1000, a >= 10000 ? 0 : 1) + ' km' : fmt(a, 0) + ' m', LBL + 4, ly - 4,
-              { size: 9.5, color: 'rgba(147,162,196,.55)' });
+              { size: 9.5, color: 'rgba(167,170,176,.55)' });
           }
         }
         ctx.restore();
         const kr = (RE + 100000) * k;
-        ctx.save(); ctx.strokeStyle = 'rgba(94,234,212,.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([7, 6]);
+        ctx.save(); ctx.strokeStyle = 'rgba(122,206,193,.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([7, 6]);
         ctx.beginPath(); ctx.arc(ecx, ecy, kr, angC - dAng, angC + dAng); ctx.stroke(); ctx.restore();
         const ky = yAtLeft(kr);
         if (isFinite(ky) && ky > top + 106 && ky < bot)
-          if (ky > top + 110) D.text(ctx, '카르만 선 100 km', LBL + 4, ky - 6, { size: 10.5, color: '#5eead4' });
+          if (ky > top + 110) D.text(ctx, '카르만 선 100 km', LBL + 4, ky - 6, { size: 10.5, color: '#68b8b0' });
       }
 
       /* 자취 */
       ctx.save();
-      ctx.strokeStyle = 'rgba(94,234,212,.7)'; ctx.lineWidth = 1.8;
+      ctx.strokeStyle = 'rgba(122,206,193,.7)'; ctx.lineWidth = 1.8;
       ctx.beginPath();
       st.trail.forEach((q, i) => i ? ctx.lineTo(X(q[0]), Y(q[1])) : ctx.moveTo(X(q[0]), Y(q[1])));
       ctx.stroke(); ctx.restore();
@@ -335,7 +335,7 @@
         const rp = s.rm * k; if (rp < .7) return;
         const sx = X(s.x), sy = Y(s.y);
         if (sx < -80 || sx > w + 80 || sy < -80 || sy > h + 80) return;
-        ctx.save(); ctx.globalAlpha = al; ctx.fillStyle = '#cbd5e1';
+        ctx.save(); ctx.globalAlpha = al; ctx.fillStyle = '#d4d5d8';
         ctx.beginPath(); ctx.arc(sx, sy, rp, 0, 7); ctx.fill(); ctx.restore();
       });
 
@@ -357,7 +357,7 @@
         ctx.fillRect(-halfW, yBot - hh, halfW * 2, hh);
       };
       const nozzles = (yBot, halfW, n, scale) => {
-        ctx.fillStyle = '#4a5878';
+        ctx.fillStyle = '#4a4d55';
         const nh = RSbase * .055 * scale;
         for (let i = 0; i < n; i++) {
           const ox = n === 1 ? 0 : (-halfW * .5 + i * halfW / (n - 1));
@@ -380,8 +380,8 @@
         ctx.save();
         ctx.globalAlpha = clamp(1 - (d.age - 4) / 3, 0, 1);
         ctx.translate(dx, dy); ctx.rotate(d.ang);
-        cylinder(hh / 2, hh, halfW, ['#5d6b88', '#98a6c2', '#4e5a75']);
-        ctx.strokeStyle = '#3c4763'; ctx.lineWidth = 1;
+        cylinder(hh / 2, hh, halfW, ['#6d7078', '#a9abb1', '#5d6066']);
+        ctx.strokeStyle = '#4c4e53'; ctx.lineWidth = 1;
         ctx.strokeRect(-halfW, -hh / 2, halfW * 2, hh);
         nozzles(hh / 2, halfW, 2, 1);
         ctx.restore();
@@ -405,9 +405,9 @@
         const fl = (RS * .3 + cur.Isp * .1 * (RS / 110)) * (.85 + .3 * Math.random());
         const y0 = RS / 2 + nozH;
         const fg = ctx.createLinearGradient(0, y0, 0, y0 + fl * 1.25);
-        fg.addColorStop(0, 'rgba(255,255,235,.95)');
-        fg.addColorStop(.18, st.idx === 0 ? 'rgba(255,190,70,.88)' : 'rgba(160,200,255,.82)');
-        fg.addColorStop(1, 'rgba(251,113,133,0)');
+        fg.addColorStop(0, 'rgba(253,253,237,.95)');
+        fg.addColorStop(.18, st.idx === 0 ? 'rgba(232,183,93,.88)' : 'rgba(186,204,229,.82)');
+        fg.addColorStop(1, 'rgba(216,148,158,0)');
         ctx.fillStyle = fg;
         ctx.beginPath();
         ctx.moveTo(-RW * .75, y0);
@@ -421,21 +421,21 @@
       live.forEach((q, i) => {
         const hh = RS * (q.m / massSum) * .92;
         const isCur = i === 0;
-        cylinder(yCur, hh, RW, isCur ? ['#8fa0c0', '#f4f8ff', '#7d8cab'] : ['#7b89a8', '#d8e2f4', '#6d7b98']);
+        cylinder(yCur, hh, RW, isCur ? ['#a3a6ac', '#f7f9fc', '#8f9299'] : ['#8c8f97', '#dde4ef', '#7c8089']);
         // 남은 추진제 (현재 단만)
         if (isCur) {
           // 탱크 유리창처럼 가운데 좁은 띠로만 남은 연료를 보여 준다
           const pf = clamp(st.propLeft / q.prop, 0, 1);
           const sw = RW * .34;
           ctx.save();
-          ctx.globalAlpha = .30; ctx.fillStyle = '#0b1220';
+          ctx.globalAlpha = .30; ctx.fillStyle = '#141517';
           ctx.fillRect(-sw, yCur - hh, sw * 2, hh);
           ctx.globalAlpha = .8; ctx.fillStyle = C.lam;
           ctx.fillRect(-sw, yCur - hh * pf, sw * 2, hh * pf);
           ctx.restore();
         }
         // 단 이음부(인터스테이지) — 어두운 띠
-        ctx.fillStyle = '#48546f';
+        ctx.fillStyle = '#575a60';
         ctx.fillRect(-RW * 1.04, yCur - hh - RSbase * .012, RW * 2.08, RSbase * .024);
         yCur -= hh;
       });
@@ -443,7 +443,7 @@
       // 탑재체 + 페어링 (오자이브 노즈)
       const payH = RS * (p.payload * 1000 / massSum) * .92;
       const RWp = RW * .88;
-      cylinder(yCur, payH, RWp, ['#1f7a5a', '#4ade9f', '#1a6b4f']);
+      cylinder(yCur, payH, RWp, ['#306955', '#66c29b', '#295c4a']);
       const noseH = RS * .19;
       ctx.beginPath();
       ctx.moveTo(-RWp, yCur - payH);
@@ -451,12 +451,12 @@
       ctx.quadraticCurveTo(RWp * .82, yCur - payH - noseH * .72, RWp, yCur - payH);
       ctx.closePath();
       const ng = ctx.createLinearGradient(-RWp, 0, RWp, 0);
-      ng.addColorStop(0, '#9fadc8'); ng.addColorStop(.38, '#eef3fb'); ng.addColorStop(1, '#8b99b6');
+      ng.addColorStop(0, '#b0b2b7'); ng.addColorStop(.38, '#f0f4f9'); ng.addColorStop(1, '#9c9fa5');
       ctx.fillStyle = ng; ctx.fill();
 
       // 핀 (1단이 남아 있을 때만)
       if (st.idx === 0) {
-        ctx.fillStyle = '#6b7896';
+        ctx.fillStyle = '#7a7e87';
         ctx.beginPath(); ctx.moveTo(-RW, RS / 2 - RS * .17); ctx.lineTo(-RW - RS * .12, RS / 2 + RS * .03); ctx.lineTo(-RW, RS / 2); ctx.fill();
         ctx.beginPath(); ctx.moveTo(RW, RS / 2 - RS * .17); ctx.lineTo(RW + RS * .12, RS / 2 + RS * .03); ctx.lineTo(RW, RS / 2); ctx.fill();
       }
@@ -465,22 +465,22 @@
       /* HUD */
       const vr = st.vx * ur[0] + st.vy * ur[1];
       const vh = Math.sqrt(Math.max(0, v * v - vr * vr));
-      D.text(ctx, 'T + ' + mmss(st.mt), 28, top + 8, { size: 15, color: '#e8eefc', bold: true, mono: true });
+      D.text(ctx, 'T + ' + mmss(st.mt), 28, top + 8, { size: 15, color: '#e6e7ea', bold: true, mono: true });
       D.text(ctx, (st.burning ? (st.idx + 1) + '단 연소 중' : '관성 비행') + '  ·  ' + Math.round(p.stages) + '단 로켓',
-        28, top + 26, { size: 11, color: st.burning ? C.n : '#61719a' });
+        28, top + 26, { size: 11, color: st.burning ? C.n : '#6a6e78' });
       D.text(ctx, fmt(alt / 1000, 1) + ' km', 28, top + 50, { size: 20, color: C.n, bold: true });
       D.text(ctx, '수평 ' + fmt(vh, 0) + ' / 필요 ' + fmt(Math.sqrt(MU / ob.r), 0) + ' m/s', 28, top + 70, { size: 12, color: C.pitch });
-      D.text(ctx, '질량 ' + fmt(st.m / 1000, 1) + ' t · 시간 배속 ×' + (st.burning ? TS_BURN : TS_COAST), 28, top + 88, { size: 10, color: '#4a5878' });
+      D.text(ctx, '질량 ' + fmt(st.m / 1000, 1) + ' t · 시간 배속 ×' + (st.burning ? TS_BURN : TS_COAST), 28, top + 88, { size: 10, color: '#4a4d55' });
 
       st.events.slice(-5).forEach((e, i, arr) => {
         D.text(ctx, 'T+' + mmss(e.mt) + '  ' + e.label, 28, bot - 6 - (arr.length - 1 - i) * 15,
-          { size: 10.5, color: i === arr.length - 1 ? '#e8eefc' : '#61719a' });
+          { size: 10.5, color: i === arr.length - 1 ? '#e6e7ea' : '#6a6e78' });
       });
 
       /* 단별 Δv 막대 */
       const gx = w - 196, gy = top + 110, gw = 172;
       const MAXDV = 13000, dv = totalDv(p), one = singleDv(p);
-      D.text(ctx, '단별 Δv', gx, gy - 10, { size: 11, color: hl === 'dv' ? '#fff' : '#93a2c4', bold: hl === 'dv' });
+      D.text(ctx, '단별 Δv', gx, gy - 10, { size: 11, color: hl === 'dv' ? '#fff' : '#9a9da6', bold: hl === 'dv' });
       let yb = gy;
       S.forEach((q, i) => {
         const on = st.burning && i === st.idx;
@@ -492,16 +492,16 @@
       D.bar(ctx, gx, yb + 4, gw, 14, dv, MAXDV, C.dv, null, hl === 'dv');
       D.text(ctx, '합계 ' + fmt(dv, 0) + ' m/s', gx, yb + 32, { size: 12, color: C.dv, bold: true });
       // 1단 환산 비교
-      D.bar(ctx, gx, yb + 42, gw, 9, one, MAXDV, '#fb7185', null, false);
-      D.text(ctx, '1단으로 만들면 ' + fmt(one, 0), gx, yb + 64, { size: 10, color: '#fb7185' });
+      D.bar(ctx, gx, yb + 42, gw, 9, one, MAXDV, '#c4705f', null, false);
+      D.text(ctx, '1단으로 만들면 ' + fmt(one, 0), gx, yb + 64, { size: 10, color: '#c4705f' });
       const lx = gx + gw * (7800 / MAXDV);
-      D.line(ctx, lx, gy - 6, lx, yb + 52, { color: '#34d399', dash: [4, 4], width: 2 });
-      D.text(ctx, '궤도 속도', lx + 4, gy - 10, { size: 9.5, color: '#34d399' });
+      D.line(ctx, lx, gy - 6, lx, yb + 52, { color: '#7fb894', dash: [4, 4], width: 2 });
+      D.text(ctx, '궤도 속도', lx + 4, gy - 10, { size: 9.5, color: '#7fb894' });
 
-      if (st.verdict === 'orbit') D.tag(ctx, '✔ 궤도 진입 성공 — 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' / 원지점 ' + fmt((ob.ra - RE) / 1000, 0) + ' km', w / 2, top + 10, '#34d399', true);
-      else if (st.verdict === 'escape') D.tag(ctx, '지구 탈출 궤도', w / 2, top + 10, '#a78bfa', true);
-      else if (st.verdict === 'suborbital') D.tag(ctx, '준궤도 — Δv가 부족해 다시 떨어집니다', w / 2, top + 10, '#fb7185', true);
-      if (st.done) D.tag(ctx, '↺ 처음으로', w / 2, top + 34, '#fbbf24', true);
+      if (st.verdict === 'orbit') D.tag(ctx, '✔ 궤도 진입 성공 — 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' / 원지점 ' + fmt((ob.ra - RE) / 1000, 0) + ' km', w / 2, top + 10, '#7fb894', true);
+      else if (st.verdict === 'escape') D.tag(ctx, '지구 탈출 궤도', w / 2, top + 10, '#a98cc4', true);
+      else if (st.verdict === 'suborbital') D.tag(ctx, '준궤도 — Δv가 부족해 다시 떨어집니다', w / 2, top + 10, '#c4705f', true);
+      if (st.done) D.tag(ctx, '↺ 처음으로', w / 2, top + 34, '#ffb020', true);
     }
   });
 })();

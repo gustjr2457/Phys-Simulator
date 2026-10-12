@@ -4,7 +4,7 @@
    계산 없이 눈으로 확인한다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { lambda: '#fbbf24', f: '#60a5fa', E: '#f472b6' };
+  const C = { lambda: '#ffb020', f: '#6f9fc4', E: '#c08098' };
 
   // 파장(nm, 380~750 가시광선) → 대략적인 RGB (단순화된 근사식)
   function wavelengthToRGB(nm) {
@@ -110,7 +110,7 @@
       const cy = V.Y(-0.3);
       const col = wavelengthToRGB(p.lambda);
 
-      D.text(ctx, '파동으로 본 빛', V.X(0), V.Y(1.15), { size: 11.5, color: '#93a2c4' });
+      D.text(ctx, '파동으로 본 빛', V.X(0), V.Y(1.15), { size: 11.5, color: '#9a9da6' });
       // 파동 표현
       ctx.save();
       ctx.strokeStyle = col.css; ctx.lineWidth = 3;
@@ -125,7 +125,7 @@
       ctx.stroke();
       ctx.restore();
 
-      D.text(ctx, '광자(알갱이)로 본 빛', V.X(0), V.Y(-1.05), { size: 11.5, color: '#93a2c4' });
+      D.text(ctx, '광자(알갱이)로 본 빛', V.X(0), V.Y(-1.05), { size: 11.5, color: '#9a9da6' });
       D.line(ctx, V.X(-0.3), V.Y(-1.3), V.X(8.2), V.Y(-1.3), { color: 'rgba(255,255,255,.12)', width: 1 });
       st.photons.forEach(ph => {
         D.dot(ctx, V.X(ph.x), V.Y(-1.3 + ph.y * .55), 5, col.css, hl === 'E');
@@ -140,7 +140,7 @@
       }
       const mx = barX0 + barW * clamp((p.lambda - 380) / (750 - 380), 0, 1);
       D.line(ctx, mx, barY - 6, mx, barY + 20, { color: '#fff', width: 2, hot: hl === 'lambda' });
-      D.tag(ctx, fmt(p.lambda, 0) + ' nm', mx, barY - 16, '#e8eefc', hl === 'lambda');
+      D.tag(ctx, fmt(p.lambda, 0) + ' nm', mx, barY - 16, '#e6e7ea', hl === 'lambda');
     }
   });
 })();

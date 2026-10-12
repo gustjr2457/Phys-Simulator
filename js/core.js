@@ -5,6 +5,26 @@ const PS = (function () {
   const sims = [];
   const byId = Object.create(null);
 
+  /* 계측기 팔레트 — 기호 색은 여기서만 정의한다.
+     시뮬레이션의 const C = {...} 는 이 이름들을 가리키고,
+     테마를 바꿀 때는 이 표 하나만 갈아끼우면 된다.
+     원색을 쓰지 않는 것이 이 테마의 규칙이다. */
+  const PAL = {
+    amber:  '#ffb020',   // 강조 — 결과값, 주목시킬 양
+    steel:  '#6f9fc4',   // 입력 — 속도·거리처럼 사용자가 미는 양
+    sage:   '#7fb894',   // 누적 — 적분된 양, 에너지
+    rust:   '#c4705f',   // 손실 — 저항·감쇠·마찰
+    violet: '#a98cc4',   // 초기조건 — 처음에 주어지는 양
+    teal:   '#68b8b0',   // 파동·장
+    dusty:  '#c08098',   // 보조 비교값
+    burnt:  '#d1824a',   // 열·온도
+    ink:    '#e6e7ea',   // 글자 1단계
+    ink2:   '#9a9da6',   // 글자 2단계
+    ink3:   '#6a6e78',   // 글자 3단계 — 눈금, 캡션
+    line:   '#4a4d55',   // 보조선
+    stage:  '#0a0b0c'    // 무대 바탕
+  };
+
   function register(def) {
     def.params = def.params || [];
     def.vars = def.vars || {};
@@ -19,7 +39,7 @@ const PS = (function () {
       const v = def.vars[k];
       v.key = k;
       v.symbol = v.symbol || k;
-      v.color = v.color || '#93a2c4';
+      v.color = v.color || '#9a9da6';
     });
     sims.push(def);
     byId[def.id] = def;
@@ -109,7 +129,7 @@ const PS = (function () {
       if (align === 'left') tx = x;
       if (align === 'right') tx = x - w;
       D.roundRect(ctx, tx, y - h / 2, w, h, 6);
-      ctx.fillStyle = 'rgba(8,14,28,.82)'; ctx.fill();
+      ctx.fillStyle = 'rgba(13,14,16,.88)'; ctx.fill();
       ctx.strokeStyle = color; ctx.globalAlpha = hot ? 1 : .5; ctx.lineWidth = 1; ctx.stroke();
       ctx.globalAlpha = 1;
       ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -121,7 +141,7 @@ const PS = (function () {
       o = o || {};
       ctx.save();
       ctx.font = (o.bold ? 'bold ' : '') + (o.size || 12) + 'px ' + (o.mono ? 'Consolas,monospace' : '"Malgun Gothic",sans-serif');
-      ctx.fillStyle = o.color || '#93a2c4';
+      ctx.fillStyle = o.color || '#9a9da6';
       ctx.textAlign = o.align || 'left';
       ctx.textBaseline = o.base || 'alphabetic';
       if (o.glow) { ctx.shadowColor = o.color; ctx.shadowBlur = 10; }
@@ -189,7 +209,7 @@ const PS = (function () {
       const ux = dx / L, uy = dy / L, px = -uy, py = ux;
       const n = o.coils || 8, amp = o.amp || 11, lead = Math.min(14, L * .18);
       ctx.save();
-      ctx.strokeStyle = o.color || '#93a2c4';
+      ctx.strokeStyle = o.color || '#9a9da6';
       ctx.lineWidth = o.hot ? 3.4 : 2.2;
       ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       if (o.hot) { ctx.shadowColor = o.color; ctx.shadowBlur = 12; }
@@ -211,7 +231,7 @@ const PS = (function () {
     /* 점성 감쇠기(대시포트) */
     dashpot(ctx, x1, y1, x2, y2, o) {
       o = o || {};
-      const col = o.color || '#93a2c4';
+      const col = o.color || '#9a9da6';
       const L = y2 - y1, w = o.width || 16;
       ctx.save();
       ctx.strokeStyle = col; ctx.lineWidth = o.hot ? 3 : 2; ctx.lineCap = 'round';
@@ -247,9 +267,9 @@ const PS = (function () {
     /* 지면 해칭 */
     ground(ctx, x0, x1, y, offset) {
       ctx.save();
-      ctx.strokeStyle = 'rgba(147,162,196,.45)'; ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(167,170,176,.45)'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
-      ctx.strokeStyle = 'rgba(147,162,196,.2)'; ctx.lineWidth = 1.2;
+      ctx.strokeStyle = 'rgba(167,170,176,.2)'; ctx.lineWidth = 1.2;
       ctx.beginPath();
       const step = 16;
       let s = -((offset || 0) % step);
@@ -310,11 +330,11 @@ const PS = (function () {
       ctx.beginPath(); ctx.moveTo(L, Y(0)); ctx.lineTo(L + pw, Y(0)); ctx.stroke();
     }
     ctx.restore();
-    D.text(ctx, fmt(ymax, 1), L - 5, T + 8, { size: 9.5, color: '#61719a', align: 'right' });
-    D.text(ctx, fmt(ymin, 1), L - 5, T + ph, { size: 9.5, color: '#61719a', align: 'right' });
-    D.text(ctx, fmt(x0, 1), L, h - 5, { size: 9.5, color: '#61719a' });
+    D.text(ctx, fmt(ymax, 1), L - 5, T + 8, { size: 9.5, color: '#6a6e78', align: 'right' });
+    D.text(ctx, fmt(ymin, 1), L - 5, T + ph, { size: 9.5, color: '#6a6e78', align: 'right' });
+    D.text(ctx, fmt(x0, 1), L, h - 5, { size: 9.5, color: '#6a6e78' });
     const xUnit = g.xUnit === undefined ? 's' : g.xUnit;   // 빈 문자열이면 단위 없이
-    D.text(ctx, fmt(xmax, 1) + (xUnit ? ' ' + xUnit : ''), L + pw, h - 5, { size: 9.5, color: '#61719a', align: 'right' });
+    D.text(ctx, fmt(xmax, 1) + (xUnit ? ' ' + xUnit : ''), L + pw, h - 5, { size: 9.5, color: '#6a6e78', align: 'right' });
 
     g.series.forEach(s => {
       const hot = hlKey === s.key;
@@ -337,5 +357,5 @@ const PS = (function () {
     });
   }
 
-  return { register, sims, byId, view, D, drawGraph, fmt, clamp, lerp };
+  return { register, sims, byId, view, D, drawGraph, fmt, clamp, lerp, PAL };
 })();

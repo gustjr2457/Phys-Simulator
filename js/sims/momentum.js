@@ -1,7 +1,7 @@
 /* 운동량과 충격량 — p = mv,  I = FΔt = Δp,  운동량 보존 */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { m1: '#60a5fa', v1: '#93c5fd', m2: '#f472b6', v2: '#f9a8d4', e: '#fbbf24', I: '#34d399', F: '#34d399', dtc: '#a78bfa', p: '#e8eefc' };
+  const C = { m1: '#6f9fc4', v1: '#afc7e1', m2: '#c08098', v2: '#cfa2b2', e: '#ffb020', I: '#7fb894', F: '#7fb894', dtc: '#a98cc4', p: '#e6e7ea' };
   const LIM = 10.5;
   const half = m => (0.6 + 0.07 * m) / 2;
 
@@ -30,8 +30,8 @@
     vars: {
       p: { symbol: 'p', label: '운동량', unit: 'kg·m/s', color: C.p,
         where: '화면 위쪽 <b>가로 막대</b>입니다. 위 두 막대는 각 수레, 맨 아래 흰 막대는 <b>두 운동량의 합</b>이며 충돌 전후로 변하지 않습니다.' },
-      m: { symbol: 'm', label: '질량', unit: 'kg', color: '#c4b5fd', where: '수레의 크기입니다.' },
-      v: { symbol: 'v', label: '속도', unit: 'm/s', color: '#c4b5fd', where: '수레 위 화살표입니다.' },
+      m: { symbol: 'm', label: '질량', unit: 'kg', color: '#bdb0d4', where: '수레의 크기입니다.' },
+      v: { symbol: 'v', label: '속도', unit: 'm/s', color: '#bdb0d4', where: '수레 위 화살표입니다.' },
       I: { symbol: 'I', label: '충격량', unit: 'N·s', color: C.I,
         where: '충돌 순간 두 수레가 서로에게 준 <b>초록 화살표</b>입니다. 크기는 같고 방향은 반대이며, 각 수레의 운동량 변화량 Δp와 정확히 같습니다.' },
       F: { symbol: 'F', label: '충돌 중 평균 힘', unit: 'N', color: C.F,
@@ -74,7 +74,7 @@
       series: [
         { key: 'p1', label: 'p₁', color: C.m1 },
         { key: 'p2', label: 'p₂', color: C.m2 },
-        { key: 'ptot', label: 'p₁+p₂ (합)', color: '#e8eefc' }
+        { key: 'ptot', label: 'p₁+p₂ (합)', color: '#e6e7ea' }
       ]
     }],
     sample(st, p) {
@@ -92,7 +92,7 @@
         { label: '총 운동량 (보존)', value: p1 + p2, unit: 'kg·m/s', color: '#fff', wide: true },
         { label: '충격량 |I| = |Δp|', value: st.hit ? Math.abs(st.J) : 0, unit: 'N·s', color: C.I },
         { label: '평균 힘 F = I/Δt', value: F, unit: 'N', color: C.F },
-        { label: '운동 에너지 (충돌 전 → 후)', wide: true, color: p.e < 1 ? '#fb7185' : '#34d399',
+        { label: '운동 에너지 (충돌 전 → 후)', wide: true, color: p.e < 1 ? '#c4705f' : '#7fb894',
           value: fmt(st.K0, 1) + ' → ' + fmt(K, 1) + ' J' + (p.e < 1 && st.hit ? '  (' + fmt(100 * (1 - K / st.K0), 0) + '% 손실)' : '') }
       ];
     },
@@ -117,10 +117,10 @@
       const gy = h * .70;
 
       // 레일
-      D.line(ctx, V.X(-LIM), gy, V.X(LIM), gy, { color: 'rgba(147,162,196,.5)', width: 3 });
+      D.line(ctx, V.X(-LIM), gy, V.X(LIM), gy, { color: 'rgba(167,170,176,.5)', width: 3 });
       for (let m = -10; m <= 10; m += 2) {
-        D.line(ctx, V.X(m), gy, V.X(m), gy + 6, { color: 'rgba(147,162,196,.25)' });
-        D.text(ctx, m + '', V.X(m), gy + 19, { size: 9.5, color: '#4a5878', align: 'center' });
+        D.line(ctx, V.X(m), gy, V.X(m), gy + 6, { color: 'rgba(167,170,176,.25)' });
+        D.text(ctx, m + '', V.X(m), gy + 19, { size: 9.5, color: '#4a4d55', align: 'center' });
       }
 
       const cart = (x, m, v, col, colv, name, hotM, hotV) => {
@@ -131,9 +131,9 @@
         D.roundRect(ctx, px - wpx / 2, gy - hpx - 6, wpx, hpx, 5);
         ctx.fillStyle = col; ctx.fill();
         ctx.restore();
-        [-wpx * .3, wpx * .3].forEach(dx => D.dot(ctx, px + dx, gy - 3, 4.5, '#0a1120'));
+        [-wpx * .3, wpx * .3].forEach(dx => D.dot(ctx, px + dx, gy - 3, 4.5, '#0a0b0c'));
         D.text(ctx, name, px, gy - hpx - 12, { size: 10.5, color: col, align: 'center', bold: hotM });
-        D.text(ctx, fmt(m, 1) + 'kg', px, gy - hpx / 2, { size: 11, color: '#0a1120', align: 'center', bold: true });
+        D.text(ctx, fmt(m, 1) + 'kg', px, gy - hpx / 2, { size: 11, color: '#0a0b0c', align: 'center', bold: true });
         D.arrow(ctx, px, gy - hpx - 32, clamp(v * 16, -150, 150), 0,
           { color: colv, width: 3.5, hot: hotV, label: fmt(v, 1) + ' m/s' });
       };
@@ -154,7 +154,7 @@
         if (age < 1.4) {
           const al = 1 - age / 1.4;
           ctx.save(); ctx.globalAlpha = al;
-          D.dot(ctx, contact, gy - 40, 30 * (1 - al) + 6, 'rgba(251,191,36,.35)');
+          D.dot(ctx, contact, gy - 40, 30 * (1 - al) + 6, 'rgba(227,180,60,.35)');
           const Ipx = clamp(Math.abs(st.J) * 9, 20, 150);
           D.arrow(ctx, V.X(st.x1), gy - 84, Math.sign(st.J) * Ipx, 0,
             { color: C.I, width: 4, hot: hl === 'I' || hl === 'F', label: 'I = ' + fmt(st.J, 1) });
@@ -183,12 +183,12 @@
         D.line(ctx, zero, y - 2, zero, y + 13, { color: 'rgba(255,255,255,.3)' });
         D.text(ctx, lab + ' ' + fmt(val, 1), bx + bw + 8, y + 10, { size: 11, color: col, bold: hot });
       };
-      D.text(ctx, '운동량 p = mv  (오른쪽 +, 왼쪽 −)', bx, 18, { size: 11, color: hl === 'p' ? '#fff' : '#61719a', bold: hl === 'p' });
+      D.text(ctx, '운동량 p = mv  (오른쪽 +, 왼쪽 −)', bx, 18, { size: 11, color: hl === 'p' ? '#fff' : '#6a6e78', bold: hl === 'p' });
       barRow(26, p1, C.m1, 'p₁', hl === 'm1' || hl === 'v1' || hl === 'p');
       barRow(42, p2, C.m2, 'p₂', hl === 'm2' || hl === 'v2' || hl === 'p');
-      barRow(60, p1 + p2, '#e8eefc', '합', hl === 'p');
+      barRow(60, p1 + p2, '#e6e7ea', '합', hl === 'p');
 
-      if (st.done) D.tag(ctx, '수레가 트랙 끝에 닿았습니다 — ↺ 처음으로', w / 2, 26, '#fbbf24', true);
+      if (st.done) D.tag(ctx, '수레가 트랙 끝에 닿았습니다 — ↺ 처음으로', w / 2, 26, '#ffb020', true);
     }
   });
 })();

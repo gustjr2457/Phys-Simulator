@@ -9,7 +9,7 @@
    이 시뮬레이션은 순수 고전역학(탈출 속도) 공식만으로도 정확히 같은 r_s를 보여준다. */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { M: '#fbbf24', R: '#60a5fa', vesc: '#f472b6', bh: '#93a2c4' };
+  const C = { M: '#ffb020', R: '#6f9fc4', vesc: '#c08098', bh: '#9a9da6' };
   const G = 6.674e-11, C_LIGHT = 2.998e8, M_SUN = 1.989e30;
 
   function compute(p) {
@@ -44,7 +44,7 @@
     vars: {
       R: { symbol: 'R', label: '실제 반지름', unit: 'km', color: C.R, where: '지금 압축된 <b>실제 반지름</b>입니다.' },
       vesc: { symbol: 'v_esc', label: '탈출 속도', unit: '', color: C.vesc, where: '이 천체 표면에서 <b>영원히 벗어나려면 필요한 최소 속도</b>입니다. 빛의 속력(c)에 도달하면 그 무엇도(빛조차도) 빠져나갈 수 없습니다.' },
-      rs: { symbol: 'r_s', label: '슈바르츠실트 반지름', unit: 'km', color: '#fb7185', where: '탈출 속도가 정확히 빛의 속력이 되는 반지름입니다. 실제 반지름이 이보다 작아지면 블랙홀입니다.' }
+      rs: { symbol: 'r_s', label: '슈바르츠실트 반지름', unit: 'km', color: '#c4705f', where: '탈출 속도가 정확히 빛의 속력이 되는 반지름입니다. 실제 반지름이 이보다 작아지면 블랙홀입니다.' }
     },
     formulas: [
       { name: '탈출 속도(뉴턴 역학, 정확한 식)', tpl: '{vesc} = √(2G{M} ⁄ {R})' },
@@ -60,8 +60,8 @@
         { label: '실제 반지름', value: c.R_m / 1000, unit: 'km', dec: c.R_m / 1000 < 100 ? 1 : 0, color: C.R },
         { label: '탈출 속도(빛의 속력 대비)', value: Math.min(c.vesc / C_LIGHT, 1) * 100, unit: '%', dec: 2, color: C.vesc },
         { label: '평균 밀도', value: c.density, unit: 'kg/m³', dec: 0, color: C.bh, wide: true },
-        { label: '슈바르츠실트 반지름', value: c.rs_m / 1000, dec: c.rs_m / 1000 < 100 ? 2 : 0, unit: 'km', color: '#fb7185' },
-        { label: '지금 상태', value: classify(c), color: c.isBH ? '#fb7185' : '#e8eefc', wide: true }
+        { label: '슈바르츠실트 반지름', value: c.rs_m / 1000, dec: c.rs_m / 1000 < 100 ? 2 : 0, unit: 'km', color: '#c4705f' },
+        { label: '지금 상태', value: classify(c), color: c.isBH ? '#c4705f' : '#e6e7ea', wide: true }
       ];
     },
 
@@ -100,22 +100,22 @@
 
       if (c.isBH) {
         ctx.save();
-        ctx.fillStyle = '#020308';
+        ctx.fillStyle = '#050505';
         ctx.beginPath(); ctx.arc(cx, cy, visR, 0, 7); ctx.fill();
-        ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2; ctx.globalAlpha = .8 + Math.sin(st.t * 3) * .15;
+        ctx.strokeStyle = '#ffb020'; ctx.lineWidth = 2; ctx.globalAlpha = .8 + Math.sin(st.t * 3) * .15;
         ctx.beginPath(); ctx.arc(cx, cy, visR + 4, 0, 7); ctx.stroke();
         ctx.restore();
-        D.tag(ctx, '사건의 지평선', cx, cy - visR - 20, '#fbbf24', true);
+        D.tag(ctx, '사건의 지평선', cx, cy - visR - 20, '#ffb020', true);
         // 빨려 들어가는 입자 몇 개(장식용 애니메이션)
         for (let i = 0; i < 5; i++) {
           const ang = i * 1.4 + st.t * (1.2 + i * .3);
           const rr = visR + 30 + ((st.t * 40 + i * 60) % 140);
           const rad = visR + 170 - rr;
           if (rad < visR + 2) continue;
-          D.dot(ctx, cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad * .4, 2.4, '#93a2c4', false);
+          D.dot(ctx, cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad * .4, 2.4, '#9a9da6', false);
         }
       } else {
-        const glow = c.density > 1e16 ? '#dbeafe' : (c.density > 1e8 ? '#a78bfa' : '#fde68a');
+        const glow = c.density > 1e16 ? '#e4ebf5' : (c.density > 1e8 ? '#a98cc4' : '#f0de97');
         ctx.save();
         const g = ctx.createRadialGradient(cx - visR * .3, cy - visR * .3, 1, cx, cy, visR);
         g.addColorStop(0, '#ffffff'); g.addColorStop(.4, glow); g.addColorStop(1, C.M);
@@ -125,14 +125,14 @@
         ctx.restore();
       }
 
-      D.text(ctx, classify(c), cx, cy + visR + 34, { size: 13, color: c.isBH ? '#fb7185' : '#e8eefc', align: 'center', bold: true });
+      D.text(ctx, classify(c), cx, cy + visR + 34, { size: 13, color: c.isBH ? '#c4705f' : '#e6e7ea', align: 'center', bold: true });
 
       // 탈출 속도 게이지(빛의 속력 대비)
       const gaugeW = Math.min(360, w * .5), gx = cx - gaugeW / 2, gy = h - 56;
       const frac = clamp(c.vesc / C_LIGHT, 0, 1);
-      D.text(ctx, '탈출 속도 (빛의 속력 대비)', cx, gy - 12, { size: 10.5, color: '#61719a', align: 'center' });
-      D.bar(ctx, gx, gy, gaugeW, 14, frac, 1, frac > .95 ? '#fb7185' : C.vesc, null, hl === 'vesc');
-      D.text(ctx, fmt(frac * 100, 1) + '% c', cx, gy + 28, { size: 11.5, color: '#e8eefc', align: 'center' });
+      D.text(ctx, '탈출 속도 (빛의 속력 대비)', cx, gy - 12, { size: 10.5, color: '#6a6e78', align: 'center' });
+      D.bar(ctx, gx, gy, gaugeW, 14, frac, 1, frac > .95 ? '#c4705f' : C.vesc, null, hl === 'vesc');
+      D.text(ctx, fmt(frac * 100, 1) + '% c', cx, gy + 28, { size: 11.5, color: '#e6e7ea', align: 'center' });
     }
   });
 })();

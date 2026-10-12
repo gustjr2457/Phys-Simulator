@@ -243,7 +243,7 @@
       node.classList.toggle('ch-ok', ok);
       node.classList.toggle('ch-done-ever', achieved.has(c.id) && !ok);
       const badge = node.querySelector('[data-badge]');
-      badge.textContent = ok ? '✅' : (achieved.has(c.id) ? '✔' : '·');
+      badge.textContent = ok ? '●' : (achieved.has(c.id) ? '✔' : '·');
     });
   }
 
@@ -258,7 +258,7 @@
       rows.forEach(r => {
         const d = el('div', 'ro' + (r.wide ? ' wide' : ''));
         d.innerHTML = '<div class="rl">' + r.label + '</div><div class="rv" data-v style="color:' +
-          (r.color || '#e8eefc') + '">—</div>';
+          (r.color || '#e6e7ea') + '">—</div>';
         box.appendChild(d);
       });
     }
@@ -266,7 +266,7 @@
       const v = box.children[i].querySelector('[data-v]');
       v.innerHTML = (typeof r.value === 'number' ? fmt(r.value, r.dec) : r.value) +
         (r.unit ? '<span class="ru">' + r.unit + '</span>' : '');
-      v.style.color = r.color || '#e8eefc';
+      v.style.color = r.color || '#e6e7ea';
     });
   }
 

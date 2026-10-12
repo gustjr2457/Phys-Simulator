@@ -1,7 +1,7 @@
 /* [선박공학·복원성] 선박의 복원성 — GM = KB + BM − KG,  GZ = (GM + ½BM·tan²θ)·sinθ */
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
-  const C = { B: '#5eead4', d: '#60a5fa', KG: '#f472b6', th: '#fbbf24', GM: '#34d399', GZ: '#a78bfa', BM: '#5eead4' };
+  const C = { B: '#68b8b0', d: '#6f9fc4', KG: '#c08098', th: '#ffb020', GM: '#7fb894', GZ: '#a98cc4', BM: '#68b8b0' };
   const RHO = 1025, G = 9.81;
 
   const BMof = p => p.B * p.B / (12 * p.d);
@@ -78,12 +78,12 @@
         { label: '부심 높이 KB', value: KBof(p), unit: 'm', color: C.d },
         { label: '메타센터 반지름 BM', value: BMof(p), unit: 'm', color: C.BM },
         { label: '메타센터 높이 KM', value: KBof(p) + BMof(p), unit: 'm' },
-        { label: 'GM (복원성)', value: GM, unit: 'm', color: GM > 0 ? C.GM : '#fb7185' },
+        { label: 'GM (복원성)', value: GM, unit: 'm', color: GM > 0 ? C.GM : '#c4705f' },
         { label: '현재 경사각 θ', value: th * 180 / Math.PI, unit: '°', color: C.th },
         { label: '복원정 GZ', value: GZ, unit: 'm', color: C.GZ, dec: 3 },
         { label: '복원 모멘트 (m당)', value: W * GZ / 1000, unit: 'kN·m', dec: 0 },
         { label: '횡요 주기 T', value: Troll, unit: 's' },
-        { label: '판정', wide: true, color: GM > .15 ? '#34d399' : (GM > 0 ? '#fbbf24' : '#fb7185'),
+        { label: '판정', wide: true, color: GM > .15 ? '#7fb894' : (GM > 0 ? '#ffb020' : '#c4705f'),
           value: st.capsized ? '⚠ 전복 (capsized)' :
             (GM > .15 ? '안정 — 스스로 일어섭니다' :
               (GM > 0 ? '복원력 부족 — 매우 느린 횡요' : '불안정 GM<0 → 횡경사각 ' + fmt(loll, 0) + '°로 기울어 멈춤')) }
@@ -118,15 +118,15 @@
       /* ── 바다 ─────────────────────────────── */
       ctx.save();
       const sea = ctx.createLinearGradient(0, oy, 0, h);
-      sea.addColorStop(0, 'rgba(56,120,180,.35)'); sea.addColorStop(1, 'rgba(16,40,72,.55)');
+      sea.addColorStop(0, 'rgba(80,119,156,.35)'); sea.addColorStop(1, 'rgba(42,43,46,.55)');
       ctx.fillStyle = sea; ctx.fillRect(0, oy, w, h - oy);
       ctx.restore();
       ctx.save();
-      ctx.strokeStyle = 'rgba(147,196,230,.5)'; ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(163,193,214,.5)'; ctx.lineWidth = 2;
       ctx.beginPath();
       for (let x = 0; x <= w; x += 6) ctx.lineTo(x, oy + Math.sin(x * .045 + st.t * 1.7) * 3);
       ctx.stroke(); ctx.restore();
-      D.text(ctx, '수면', 12, oy - 8, { size: 10, color: 'rgba(147,196,230,.7)' });
+      D.text(ctx, '수면', 12, oy - 8, { size: 10, color: 'rgba(163,193,214,.7)' });
 
       /* ── 선체 ─────────────────────────────── */
       const H = Math.max(p.d * 1.9, p.KG * 1.25 + 1);    // 형심(깊이)
@@ -136,16 +136,16 @@
       // 잠긴 부분(수면 아래) 클리핑
       ctx.save();
       ctx.beginPath(); ctx.rect(0, oy, w, h - oy); ctx.clip();
-      D.poly(ctx, pts, { fill: 'rgba(94,234,212,.30)' });
+      D.poly(ctx, pts, { fill: 'rgba(122,206,193,.30)' });
       ctx.restore();
-      D.poly(ctx, pts, { stroke: hl === 'B' ? '#a7f3e5' : '#93a2c4', width: 2.5, hot: hl === 'B' });
+      D.poly(ctx, pts, { stroke: hl === 'B' ? '#9ad4cc' : '#9a9da6', width: 2.5, hot: hl === 'B' });
       // 갑판 표시
-      D.line(ctx, X(-p.B / 2, H), Y(-p.B / 2, H), X(p.B / 2, H), Y(p.B / 2, H), { color: '#dbe4f6', width: 3 });
+      D.line(ctx, X(-p.B / 2, H), Y(-p.B / 2, H), X(p.B / 2, H), Y(p.B / 2, H), { color: '#e0e6f1', width: 3 });
 
       // 중심선(용골 K → 갑판)
       D.line(ctx, X(0, 0), Y(0, 0), X(0, H), Y(0, H), { color: 'rgba(255,255,255,.28)', dash: [4, 5] });
-      D.dot(ctx, X(0, 0), Y(0, 0), 4, '#93a2c4');
-      D.text(ctx, 'K', X(0, 0) - 14, Y(0, 0) + 4, { size: 11, color: '#93a2c4', bold: true });
+      D.dot(ctx, X(0, 0), Y(0, 0), 4, '#9a9da6');
+      D.text(ctx, 'K', X(0, 0) - 14, Y(0, 0) + 4, { size: 11, color: '#9a9da6', bold: true });
 
       // 부심 B: 기울었을 때 잠긴 단면의 도심 (직립 현측 근사)
       const tanth = clamp(Math.tan(th), -3, 3);
@@ -156,7 +156,7 @@
       const Mx = X(0, KB + BM), My = Y(0, KB + BM);
 
       // 부력 작용선 (B에서 연직 위로)
-      D.line(ctx, Bx, By + 30, Bx, My - 34, { color: 'rgba(94,234,212,.5)', dash: [4, 5], width: 1.4 });
+      D.line(ctx, Bx, By + 30, Bx, My - 34, { color: 'rgba(122,206,193,.5)', dash: [4, 5], width: 1.4 });
 
       // 힘 화살표
       D.arrow(ctx, Bx, By, 0, -64, { color: C.B, width: 4, hot: hl === 'KB', label: '부력', lx: -26, ly: -8 });
@@ -183,7 +183,7 @@
       pt(Mx, My, 'M', C.GM, hl === 'GM' || hl === 'BM', 1);
 
       // GM 표시 (G ↔ M)
-      D.dim(ctx, Gx - 26, Gy, Mx - 26, My, 'GM = ' + fmt(GM, 2) + ' m', GM > 0 ? C.GM : '#fb7185', hl === 'GM');
+      D.dim(ctx, Gx - 26, Gy, Mx - 26, My, 'GM = ' + fmt(GM, 2) + ' m', GM > 0 ? C.GM : '#c4705f', hl === 'GM');
 
       // 경사각 표시 — 선체가 기울면 B·K·G 라벨이 움직이므로, 겹치지 않는 화면 아래쪽에 둔다
       D.tag(ctx, 'θ = ' + fmt(th * 180 / Math.PI, 1) + '°', ox, h - 20, C.th, hl === 'th');
@@ -201,10 +201,10 @@
       D.roundRect(ctx, px, py, pw, ph, 8);
       ctx.fillStyle = 'rgba(255,255,255,.025)'; ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.stroke();
-      D.text(ctx, 'GZ 곡선 — 복원정 vs 경사각', px, py - 12, { size: 11.5, color: '#93a2c4' });
+      D.text(ctx, 'GZ 곡선 — 복원정 vs 경사각', px, py - 12, { size: 11.5, color: '#9a9da6' });
       D.line(ctx, px, GY(0), px + pw, GY(0), { color: 'rgba(255,255,255,.2)' });
       D.line(ctx, GX(0), py, GX(0), py + ph, { color: 'rgba(255,255,255,.1)' });
-      [-40, -20, 20, 40].forEach(a => D.text(ctx, a + '°', GX(a), py + ph - 4, { size: 9.5, color: '#61719a', align: 'center' }));
+      [-40, -20, 20, 40].forEach(a => D.text(ctx, a + '°', GX(a), py + ph - 4, { size: 9.5, color: '#6a6e78', align: 'center' }));
 
       ctx.save();
       ctx.strokeStyle = C.GZ; ctx.lineWidth = hl === 'GZ' || hl === 'GM' ? 3 : 2.2;
@@ -215,7 +215,7 @@
 
       // 소각도 근사선 GM·sinθ
       ctx.save();
-      ctx.strokeStyle = 'rgba(52,211,153,.45)'; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = 'rgba(82,181,145,.45)'; ctx.lineWidth = 1.4; ctx.setLineDash([4, 4]);
       ctx.beginPath();
       for (let a = -AMAX; a <= AMAX; a += 2) {
         const v = GM * Math.sin(a * Math.PI / 180);
@@ -223,14 +223,14 @@
         a === -AMAX ? ctx.moveTo(GX(a), yy) : ctx.lineTo(GX(a), yy);
       }
       ctx.stroke(); ctx.restore();
-      D.text(ctx, '점선: 소각도 근사 GM·sinθ', px + 8, py + 16, { size: 10, color: 'rgba(52,211,153,.7)' });
+      D.text(ctx, '점선: 소각도 근사 GM·sinθ', px + 8, py + 16, { size: 10, color: 'rgba(82,181,145,.7)' });
 
       const cdeg = clamp(th * 180 / Math.PI, -AMAX, AMAX);
       D.line(ctx, GX(cdeg), py, GX(cdeg), py + ph, { color: C.th, dash: [3, 4], hot: hl === 'th' });
       D.dot(ctx, GX(cdeg), GY(clamp(GZ, -gzmax, gzmax)), 6, '#fff', true);
 
-      if (GM < 0) D.tag(ctx, 'GM < 0 — 똑바로 서지 못합니다', px + pw / 2, py + ph + 22, '#fb7185', true);
-      if (st.capsized) D.tag(ctx, '⚠ 전복 — ↺ 처음으로', w / 2, 26, '#fb7185', true);
+      if (GM < 0) D.tag(ctx, 'GM < 0 — 똑바로 서지 못합니다', px + pw / 2, py + ph + 22, '#c4705f', true);
+      if (st.capsized) D.tag(ctx, '⚠ 전복 — ↺ 처음으로', w / 2, 26, '#c4705f', true);
     }
   });
 })();
