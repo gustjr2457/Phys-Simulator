@@ -63,7 +63,14 @@
   </header>
 
   <section class="stage">
-    <canvas id="cv" role="img" aria-label="시뮬레이션 화면"></canvas>
+    <div class="cv-wrap">
+      <canvas id="cv" role="img" aria-label="시뮬레이션 화면"></canvas>
+      <!-- 형광 잔광 층: 화면의 빛 번짐. 원본(#cv)은 선명하게 두고 이 층만 시간에 따라 서서히 사라진다 -->
+      <canvas id="cvHalo" aria-hidden="true"></canvas>
+      <canvas id="cvGlow" aria-hidden="true"></canvas>
+      <!-- 글자 층: D.text · D.tag 는 빛 번짐 위에 따로 그려 늘 선명하다 -->
+      <canvas id="cvText" aria-hidden="true"></canvas>
+    </div>
     <div class="stage-bar">
       <button id="btnPlay" class="btn primary" aria-keyshortcuts="Space"><span class="ico" aria-hidden="true">▶</span><span id="playLabel" class="btn-text">재생</span></button>
       <button id="btnReset" class="btn" aria-keyshortcuts="R"><span class="ico" aria-hidden="true">↺</span><span class="btn-text">처음으로</span></button>
@@ -71,7 +78,7 @@
         <span class="speed-word">속도</span> <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1">
         <b id="speedVal">1.0×</b>
       </label>
-      <div class="clock">t = <b id="clock">0.00</b> s</div>
+      <div class="clock"><span class="run-led" aria-hidden="true"></span>t = <b id="clock">0.00</b> s</div>
     </div>
   </section>
 

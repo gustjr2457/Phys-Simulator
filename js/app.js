@@ -24,6 +24,7 @@
   let graphCanvases = [];
 
   const cv = $('#cv'), ctx = cv.getContext('2d');
+  const cvText = $('#cvText'), tctx = cvText.getContext('2d');   // 글자 층 (core.js textTarget)
   let W = 0, H = 0, dpr = 1;
 
   /* ── 1. 캔버스 크기와 화면 배율 ─────────────────────
@@ -44,8 +45,54 @@
     c.getContext('2d').setTransform(dpr * s, 0, 0, dpr * s, 0, 0);
     return { w: r.width / s, h: r.height / s };
   }
+  /* ── 형광 잔광(phosphor) ─────────────────────────
+     원본(#cv)은 매 프레임 정확히 다시 그린다. 그 위의 #cvGlow 는 원본을 반 해상도로 받아
+     css 로 흐리게 번지게 한 "빛" 층인데, 매 프레임 지우지 않고 지수 이동 평균으로 섞는다:
+         빛 ← (1 − f)·빛 + f·원본,   f = 1 − e^(−Δt/τ)
+     그래서 멈춘 것은 원본과 똑같은 빛으로 수렴하고(밝아지지 않는다), 움직이는 것은 지나온 자리에
+     빛이 τ 동안 남아 혜성 꼬리가 된다. 강조가 켜지고 꺼질 때, 시뮬레이션을 바꿀 때도 빛이 녹듯 바뀐다.
+     τ 는 주사율과 무관하게 실제 시간 기준이다. 움직임 줄이기 설정이면 꼬리 없이 빛만 남긴다. */
+  const glow = $('#cvGlow'), gctx = glow.getContext('2d');
+  const halo = $('#cvHalo'), hctx = halo.getContext('2d');
+  const fxOn = !/[?&]fx=off/.test(location.search);
+  if (!fxOn) document.documentElement.classList.add('fx-off');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const TAU = .22, TAU_BOOT = .7, BOOT_UNTIL = performance.now() + 1400;   // 처음 1.4초는 천천히 데워진다
+  let gW = 1, gH = 1;
+  function sizeGlow() {
+    const r = cv.getBoundingClientRect();
+    gW = glow.width = Math.max(1, Math.round(r.width / 2));
+    gH = glow.height = Math.max(1, Math.round(r.height / 2));
+    gctx.fillStyle = '#000'; gctx.fillRect(0, 0, gW, gH);
+    halo.width = Math.max(1, Math.round(gW / 2)); halo.height = Math.max(1, Math.round(gH / 2));
+  }
+  function glowFrame(dtSec) {
+    if (!fxOn || !dtSec) return;
+    const tau = reduceMotion.matches ? 0 : (performance.now() < BOOT_UNTIL ? TAU_BOOT : TAU);
+    const f = tau ? 1 - Math.exp(-dtSec / tau) : 1;
+    // 검은 불투명 바탕 위에서 섞는다 — 픽셀 값이 곧 보이는 밝기가 되어 css 의 contrast 로 문턱을 걸 수 있다
+    // (넓은 반투명 면은 어두워서 잘려 나가고, 밝은 선·점만 번진다). 검정은 screen 혼합에서 빛을 더하지 않는다.
+    gctx.globalCompositeOperation = 'source-over';              // 빛 × (1 − f) — 검정 쪽으로 식는다
+    gctx.globalAlpha = f; gctx.fillStyle = '#000'; gctx.fillRect(0, 0, gW, gH);
+    gctx.globalCompositeOperation = 'lighter';                  // + f · 원본  (선형 합)
+    gctx.drawImage(cv, 0, 0, gW, gH);
+    gctx.globalCompositeOperation = 'source-over'; gctx.globalAlpha = 1;
+    hctx.drawImage(glow, 0, 0, halo.width, halo.height);   // 후광은 이미 섞인 빛을 작게 받아 넓게 번지게만 한다
+  }
+  // 도전 과제를 처음 달성한 순간 — 무대 전체가 한 번 빛난다 (드문 순간, 모션 단계 c 에서만)
+  // (css 의 filter 와 같은 함수 목록이어야 중간값이 부드럽게 보간된다)
+  function glowPulse() {
+    if (!fxOn || reduceMotion.matches || !document.documentElement.classList.contains('m-c')) return;
+    glow.animate([{ opacity: .85, filter: getComputedStyle(glow).filter },
+                  { opacity: 1, filter: 'contrast(1.6) blur(.9rem) brightness(3) saturate(1.7)', offset: .25 },
+                  { opacity: .85, filter: getComputedStyle(glow).filter }],
+                 { duration: 900, easing: 'cubic-bezier(.23,1,.32,1)' });
+  }
+
   function resizeAll() {
     const s = sizeCanvas(cv, true); W = s.w; H = s.h;
+    sizeCanvas(cvText, true);
+    sizeGlow();
     graphCanvases.forEach(g => { const q = sizeCanvas(g.canvas, false); g.w = q.w; g.h = q.h; });
     draw();
   }
@@ -355,6 +402,7 @@
       if (first) {
         node.classList.add('ch-new'); setTimeout(() => node.classList.remove('ch-new'), 900);
         $('#announcer').textContent = '도전 과제 달성: ' + c.title;
+        glowPulse();
       }
       node.classList.toggle('ch-ok', ok);
       node.classList.toggle('ch-done-ever', achieved.has(c.id) && !ok);
@@ -380,6 +428,7 @@
     $('#challenges').innerHTML = ''; $('#questRoom').classList.add('hidden'); challengeSig = '';
     graphCanvases.forEach(g => ro.unobserve(g.canvas)); graphCanvases = []; $('#graphs').innerHTML = '';
     D.bg(ctx, W, H);
+    tctx.clearRect(0, 0, W, H);
     syncPlay();
   }
 
@@ -387,6 +436,7 @@
   function load(id, push) {
     if (!id) { loadEmpty(); return; }
     sim = PS.byId[id];
+    st = null;   // 이전 시뮬레이션의 상태를 새 시뮬레이션이 그리지 않게 — reset() 전까지 draw() 는 건너뛴다
     P = {}; sim.params.forEach(p => P[p.key] = p.value);
     pinned = null; hl = null;
     lastOf[sim.mode || 'basic'] = id;
@@ -398,7 +448,8 @@
     document.title = sim.title + ' — PhysLab';
     cv.setAttribute('aria-label', sim.title + '. ' + sim.tagline);
     buildPanel(); buildGraphs();
-    reset(); resizeAll();
+    // 크기를 먼저 정하고 그린다 — 주소로 바로 들어오면 첫 그리기 때 캔버스가 아직 0×0 이다
+    resizeAll(); reset();
     playing = true; syncPlay();
     setUrl(id, push);
     store.set('last', id);
@@ -434,6 +485,7 @@
   }
 
   function syncPlay() {
+    $('.stage').classList.toggle('is-paused', !playing);   // RUN 표시등
     $('#playLabel').textContent = playing ? '일시정지' : '재생';
     $('#btnPlay').querySelector('.ico').textContent = playing ? '❚❚' : '▶';
   }
@@ -576,11 +628,16 @@
 
   /* ── 8. 그리기 + 메인 루프 (고정 시간 간격 적분) ── */
   let clockText = '';
+  let drawError = null;
   function draw() {
-    if (!sim || !st) return;
+    if (!sim || !st || W < 2 || H < 2) return;   // 레이아웃 전(0×0)에는 그리지 않는다
     D.bg(ctx, W, H);
+    tctx.clearRect(0, 0, W, H);
+    ctx.__text = tctx;
     ctx.__labels = W < 600 ? [] : null;   // 폰처럼 좁은 무대에서만 라벨 충돌 회피 (core.js avoidLabels)
-    sim.draw(ctx, st, P, { w: W, h: H, hl: hl, playing: playing });
+    // 시뮬레이션 하나의 예외가 앱 전체 루프를 멈추지 않게 한다 (같은 오류는 한 번만 알린다)
+    try { sim.draw(ctx, st, P, { w: W, h: H, hl: hl, playing: playing }); drawError = null; }
+    catch (e) { if (drawError !== e.message) { drawError = e.message; console.error(sim.id + ' draw:', e); } }
     updateReadouts();
     updateChallenges();
     graphCanvases.forEach(g => PS.drawGraph(g.ctx, g.w, g.h, g.def, hist, hl));
@@ -592,7 +649,7 @@
   const DT = 1 / 480;
   function frame(now) {
     requestAnimationFrame(frame);
-    if (!sim) return;
+    if (!sim || !st) return;
     if (!last) last = now;
     let real = Math.min((now - last) / 1000, .05);
     last = now;
@@ -606,9 +663,19 @@
         sampleAcc += DT;
         if (sampleAcc >= 1 / 60) { sample(); sampleAcc = 0; }
       }
+      // 남은 시간은 짧은 스텝 하나로 마저 진행한다. 이게 없으면 144 Hz 에서는 프레임마다 3스텝·4스텝이
+      // 번갈아 돌아 화면 위 진행이 ±20 % 출렁인다(165 Hz 는 31 %). 이제 시뮬레이션 시간 = 실제 시간.
+      // 모든 시뮬레이션의 step 은 dt 비례이거나 st.t 로 직접 계산한다 (발생·타이머도 rate·dt 누적).
+      if (acc > 1e-7 && !st.done) {
+        sim.step(st, P, acc);
+        st.t += acc;
+        sampleAcc += acc;
+        acc = 0;
+      }
       if (st.done) { playing = false; syncPlay(); }
     }
     draw();
+    glowFrame(real);
   }
 
   /* ── 9. 키보드 · 컨트롤 바 ─────────────────────── */
@@ -649,6 +716,6 @@
   setSpeed(Math.min(2, Math.max(.1, +store.get('speed', 1) || 1)));
   markEmptyModes();
   const startId = idFromHash() || (PS.byId[store.get('last', '')] ? store.get('last', '') : PS.sims[0].id);
+  requestAnimationFrame(frame);   // 루프를 먼저 — 첫 시뮬레이션을 여는 중 문제가 생겨도 앱은 살아 있다
   switchToSim(startId, false);
-  requestAnimationFrame(frame);
 })();

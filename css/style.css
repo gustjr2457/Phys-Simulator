@@ -1,8 +1,8 @@
 /* =========================================================
    PhysLab — 계측기 테마 (흑연 + 호박색 단일 강조)
    규칙 셋:
-     1. 장식용 그라디언트·글로우를 쓰지 않는다. 빛남은 "지금 강조된 것"
-        이라는 뜻으로만 쓰고, 그 외의 입체감은 위쪽 1px 하이라이트로 만든다.
+     1. UI 껍데기(패널·버튼)에는 장식용 그라디언트·글로우를 쓰지 않는다. 입체감은 위쪽 1px 하이라이트로 만든다.
+        빛은 무대 안에서만 — 오실로스코프 형광면처럼 그림 자체가 빛나고 잔광을 남긴다(#cvGlow · #cvHalo).
      2. 강조색은 호박색 하나뿐이다. 다른 색은 기호 색이며 의미를 갖는다.
      3. 모서리는 거의 깎지 않는다(3px). 알약 모양은 쓰지 않는다.
    ========================================================= */
@@ -230,7 +230,22 @@ button{font-family:inherit}
   border:1px solid var(--line);border-radius:var(--radius);
   overflow:hidden;display:flex;flex-direction:column;
 }
-#cv{flex:1;min-height:0;width:100%;display:block}
+/* 무대 캔버스 + 형광 잔광 층(app.js 의 glowFrame). 잔광 층은 원본을 반 해상도로 받아 흐리게 번지게 하고
+   화면 혼합(screen)으로 빛만 더한다 — 원본 그림과 글자는 그대로 선명하다. */
+.cv-wrap{position:relative;flex:1;min-height:0}
+#cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* 2단 블룸: #cvGlow = 좁고 진한 빛, #cvHalo = 그 빛을 4분의 1 해상도로 받아 넓게 퍼뜨린 후광 */
+#cvHalo{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;
+  filter:contrast(1.6) blur(1.6rem) brightness(1.8) saturate(1.6);mix-blend-mode:screen;opacity:.5}
+#cvGlow{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;
+  /* contrast 로 문턱: 보이는 밝기 0.19 이하(넓은 반투명 면)는 0, 0.81 이상은 최대 → 그다음 번지게 */
+  filter:contrast(1.6) blur(.45rem) brightness(1.65) saturate(1.5);mix-blend-mode:screen;opacity:.85}
+#cvText{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.fx-off #cvGlow,.fx-off #cvHalo{display:none}
+/* 가장자리를 살짝 어둡게 — 브라운관 같은 깊이. 모서리 끝에서만 28% 로, 가장자리 라벨은 거의 그대로다 */
+.cv-wrap::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(130% 125% at 50% 45%,transparent 62%,rgba(0,0,0,.28) 100%)}
+.fx-off .cv-wrap::after{display:none}
 .stage-bar{
   display:flex;align-items:center;gap:0.6429rem;
   padding:0.5714rem 0.7857rem;border-top:1px solid var(--line);
@@ -254,6 +269,10 @@ button{font-family:inherit}
 .speed b{color:var(--tx);width:2.4286rem;font-family:var(--mono)}
 .speed input{width:6.8571rem}
 .clock{margin-left:auto;color:var(--tx2);font-size:0.8571rem;font-family:var(--mono)}
+/* RUN 표시등 — 재생 중 호박색, 정지하면 꺼진다 (숨쉬기 움직임은 motion.css) */
+.run-led{display:inline-block;width:.4286rem;height:.4286rem;border-radius:50%;margin-right:.5rem;vertical-align:.08rem;
+  background:var(--acc);box-shadow:0 0 .4rem var(--acc),0 0 .15rem var(--acc-hi)}
+.is-paused .run-led{background:var(--line2);box-shadow:none}
 .clock b{color:var(--acc);font-size:0.9643rem;font-weight:500}
 
 #graphs{display:flex;gap:0.7143rem;margin-top:0.7143rem;height:10.8571rem}

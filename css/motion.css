@@ -144,7 +144,35 @@
   to{opacity:1;transform:none}
 }
 
+/* 11. 처음 열었을 때만 — 계측기 전원을 넣는 순간. 호박색 주사선이 위에서 아래로 훑으며 화면이 켜진다.
+       잔광 층(app.js)도 처음 1.4초는 천천히 데워져서 빛이 뒤따라 차오른다.
+       한 방문에 한 번뿐이라 드문 순간의 몫으로 쓴다. 모두 transform·clip-path 로만 움직인다. */
+.m-c.first-load .cv-wrap{animation:boot-reveal 820ms var(--ease-in-out) both}
+.m-c.first-load .stage::after{
+  content:'';position:absolute;left:0;right:0;top:0;height:100%;pointer-events:none;z-index:2;
+  background:linear-gradient(to bottom,transparent calc(100% - 3.2rem),rgba(255,176,32,.10) calc(100% - 3px),
+             rgba(255,196,96,.95) calc(100% - 2px),rgba(255,176,32,.0) 100%);
+  animation:boot-scan 820ms var(--ease-in-out) both;
+}
+@keyframes boot-reveal{
+  from{clip-path:inset(0 0 100% 0)}
+  to{clip-path:inset(0 0 0 0)}
+}
+@keyframes boot-scan{
+  0%  {transform:translateY(-100%);opacity:1}
+  85% {transform:translateY(-6%);opacity:1}
+  100%{transform:translateY(0);opacity:0}
+}
+
+/* 12. RUN 표시등 — 재생 중에만 2.4초 주기로 숨 쉰다. 실제 계측기의 상태 표시처럼 시야 가장자리에서 "돌고 있다"만 알린다.
+       투명도만 움직이고, 정지하면 멈춘 채 꺼진다. */
+.m-c .stage:not(.is-paused) .run-led{animation:led-breathe 2.4s ease-in-out infinite}
+@keyframes led-breathe{0%,100%{opacity:1}50%{opacity:.4}}
+
 @media (prefers-reduced-motion:reduce){
+  .m-c .stage .run-led{animation:none}
   .m-c .challenge.ch-new .ch-badge{animation:none}
   .m-c.first-load #simlist > *{animation:none}
+  .m-c.first-load .cv-wrap,.m-c.first-load .stage::after{animation:none}
+  .m-c.first-load .stage::after{display:none}
 }

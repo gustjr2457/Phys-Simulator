@@ -118,6 +118,19 @@ const PS = (function () {
     return dy;
   }
 
+  /* 글자 층. 앱은 무대 캔버스(ctx) 위에 빛 번짐 층을, 그 위에 글자 전용 캔버스(ctx.__text)를 둔다.
+     D.text · D.tag 는 같은 좌표 변환·투명도로 글자 층에 그려서, 밝은 물체 근처에서도 빛에 씻기지 않고
+     번지지도 않는다. 글자 층이 없는 캔버스(그래프, 점검 도구)에서는 지금처럼 그 캔버스에 그린다.
+     (확인: 74종 어디에서도 clip() 영역 안에서 글자를 그리지 않는다) */
+  function textTarget(ctx) {
+    const g = ctx.__text;
+    if (!g) { ctx.save(); return ctx; }
+    g.save();
+    g.setTransform(ctx.getTransform());
+    g.globalAlpha = ctx.globalAlpha;
+    return g;
+  }
+
   const D = {
     bg(ctx, w, h) { ctx.clearRect(0, 0, w, h); },
 
@@ -165,9 +178,9 @@ const PS = (function () {
 
     /* 배경이 있는 작은 라벨 */
     tag(ctx, text, x, y, color, hot, align) {
-      ctx.save();
-      ctx.font = (hot ? 'bold ' : '') + '12px "Malgun Gothic",sans-serif';
-      const w = ctx.measureText(text).width + 12;
+      const g = textTarget(ctx);
+      g.font = (hot ? 'bold ' : '') + '12px "Malgun Gothic",sans-serif';
+      const w = g.measureText(text).width + 12;
       const h = 19;
       let tx = x - w / 2;
       if (align === 'left') tx = x;
@@ -175,32 +188,33 @@ const PS = (function () {
       const k = keepIn(ctx, x, y, tx, tx + w, y - h / 2, y + h / 2);
       tx += k[0]; y += k[1];
       y += avoidLabels(ctx, tx, tx + w, y - h / 2, y + h / 2, text);
-      D.roundRect(ctx, tx, y - h / 2, w, h, 6);
-      ctx.fillStyle = 'rgba(13,14,16,.88)'; ctx.fill();
-      ctx.strokeStyle = color; ctx.globalAlpha = hot ? 1 : .5; ctx.lineWidth = 1; ctx.stroke();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(text, tx + w / 2, y + .5);
-      ctx.restore();
+      const a0 = g.globalAlpha;
+      D.roundRect(g, tx, y - h / 2, w, h, 6);
+      g.fillStyle = 'rgba(13,14,16,.88)'; g.fill();
+      g.strokeStyle = color; g.globalAlpha = a0 * (hot ? 1 : .5); g.lineWidth = 1; g.stroke();
+      g.globalAlpha = a0;
+      g.fillStyle = color; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(text, tx + w / 2, y + .5);
+      g.restore();
     },
 
     text(ctx, t, x, y, o) {
       o = o || {};
-      ctx.save();
-      ctx.font = (o.bold ? 'bold ' : '') + (o.size || 12) + 'px ' + (o.mono ? 'Consolas,monospace' : '"Malgun Gothic",sans-serif');
-      ctx.fillStyle = o.color || '#9a9da6';
-      ctx.textAlign = o.align || 'left';
-      ctx.textBaseline = o.base || 'alphabetic';
-      if (o.glow) { ctx.shadowColor = o.color; ctx.shadowBlur = 10; }
+      const g = textTarget(ctx);
+      g.font = (o.bold ? 'bold ' : '') + (o.size || 12) + 'px ' + (o.mono ? 'Consolas,monospace' : '"Malgun Gothic",sans-serif');
+      g.fillStyle = o.color || '#9a9da6';
+      g.textAlign = o.align || 'left';
+      g.textBaseline = o.base || 'alphabetic';
+      if (o.glow) { g.shadowColor = o.color; g.shadowBlur = 10; }
       if (o.keep !== false) {
-        const m = ctx.measureText(t), al = ctx.textAlign;
+        const m = g.measureText(t), al = g.textAlign;
         const lx = al === 'center' ? x - m.width / 2 : (al === 'right' || al === 'end') ? x - m.width : x;
         const k = keepIn(ctx, x, y, lx, lx + m.width, y - m.actualBoundingBoxAscent, y + m.actualBoundingBoxDescent);
         x += k[0]; y += k[1];
         y += avoidLabels(ctx, lx + k[0], lx + k[0] + m.width, y - m.actualBoundingBoxAscent, y + m.actualBoundingBoxDescent, t);
       }
-      ctx.fillText(t, x, y);
-      ctx.restore();
+      g.fillText(t, x, y);
+      g.restore();
     },
 
     roundRect(ctx, x, y, w, h, r) {
@@ -395,7 +409,7 @@ const PS = (function () {
       ctx.save();
       ctx.strokeStyle = s.color; ctx.lineWidth = hot ? 2.6 : 1.8;
       ctx.lineJoin = 'round';
-      if (hot) { ctx.shadowColor = s.color; ctx.shadowBlur = 10; }
+      ctx.shadowColor = s.color; ctx.shadowBlur = hot ? 12 : 5;   // 곡선은 늘 은은하게 빛나고, 강조되면 더 밝게
       ctx.beginPath();
       let started = false;
       hist.forEach(p => {
