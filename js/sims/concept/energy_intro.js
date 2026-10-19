@@ -175,8 +175,16 @@
       ctx.save(); if (hl === 'K') { ctx.shadowColor = C.K; ctx.shadowBlur = 16; }
       ctx.fillStyle = C.K; ctx.fillRect(bxx, bot - lh - uh - kh, bwid, kh); ctx.restore();
 
-      D.text(ctx, '항상 이 높이', bxx + bwid + 10, top + bh * (1 - clamp(st.E0 / maxE, 0, 1)) + 4,
-        { size: 9.5, color: '#6a6e78' });
+      // 칸 이름 — 칸이 충분히 높을 때만 칸 안에 (색만으로는 무엇이 무엇인지 알기 어렵다)
+      const seg = (y0, hh, name) => { if (hh >= 16) D.text(ctx, name, bxx + bwid / 2, y0 + hh / 2 + 4, { size: 10, color: '#0d0e10', align: 'center', bold: true }); };
+      seg(bot - lh - uh - kh, kh, '운동');
+      seg(bot - lh - uh, uh, '위치');
+      seg(bot - lh, lh, '열');
+
+      // "항상 이 높이" — 막대 오른쪽에 자리가 없으면(좁은 화면) 왼쪽에 붙인다. 막대 위에 얹히면 읽히지 않는다
+      const ey0 = top + bh * (1 - clamp(st.E0 / maxE, 0, 1)) + 4;
+      if (bxx + bwid + 10 + 62 <= w) D.text(ctx, '항상 이 높이', bxx + bwid + 10, ey0, { size: 9.5, color: '#6a6e78' });
+      else D.text(ctx, '항상 이 높이', bxx - 8, ey0, { size: 9.5, color: '#6a6e78', align: 'right' });
     }
   });
 })();

@@ -59,23 +59,51 @@
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const TAU = .22, TAU_BOOT = .7, BOOT_UNTIL = performance.now() + 1400;   // 처음 1.4초는 천천히 데워진다
   let gW = 1, gH = 1;
+  /* 빛의 재료 — 고역 통과 + 원본 조금.
+       재료 = |원본 − 흐린 원본| + 0.2 · 원본
+     얇은 선·점은 흐리게 하면 크게 퍼지므로 빼도 거의 그대로 남고, 넓은 면(에너지 막대·게이지·색 지도)의
+     안쪽은 흐려도 값이 같아 0 이 된다. 그래서 면은 제 색을 지키고 테두리와 칸 경계만 네온처럼 빛난다.
+     0.2 · 원본은 별·지구처럼 스스로 빛나는 물체가 밋밋해지지 않게 남기는 몫이다.
+     캔버스 filter 를 못 쓰는 브라우저에서는 고역 통과 없이 원본의 절반만 쓴다. */
+  const src = document.createElement('canvas'), sctx = src.getContext('2d');
+  const blr = document.createElement('canvas'), bctx = blr.getContext('2d');
+  const canFilter = typeof bctx.filter === 'string';
+  // 반 해상도 픽셀. 32종 측정(면 위 빛 / 선 위 빛, 원본 0.71 / 0.66):
+  //   6px → 0.18 / 0.62,  4px → 0.05 / 0.57,  3px → 0.01 / 0.52.  면은 93 % 줄이고 선은 86 % 남기는 4px.
+  const HP_BLUR = 4;
+  const BASE = canFilter ? .2 : .5;
   function sizeGlow() {
     const r = cv.getBoundingClientRect();
-    gW = glow.width = Math.max(1, Math.round(r.width / 2));
-    gH = glow.height = Math.max(1, Math.round(r.height / 2));
+    gW = glow.width = src.width = blr.width = Math.max(1, Math.round(r.width / 2));
+    gH = glow.height = src.height = blr.height = Math.max(1, Math.round(r.height / 2));
     gctx.fillStyle = '#000'; gctx.fillRect(0, 0, gW, gH);
     halo.width = Math.max(1, Math.round(gW / 2)); halo.height = Math.max(1, Math.round(gH / 2));
+  }
+  function glowSource() {
+    sctx.globalCompositeOperation = 'source-over'; sctx.globalAlpha = 1;
+    sctx.fillStyle = '#000'; sctx.fillRect(0, 0, gW, gH);
+    if (canFilter) {
+      sctx.drawImage(cv, 0, 0, gW, gH);                          // A = 원본
+      bctx.filter = 'none'; bctx.fillStyle = '#000'; bctx.fillRect(0, 0, gW, gH);
+      bctx.filter = 'blur(' + HP_BLUR + 'px)'; bctx.drawImage(cv, 0, 0, gW, gH); bctx.filter = 'none';   // B = 흐린 원본
+      sctx.globalCompositeOperation = 'difference'; sctx.drawImage(blr, 0, 0);              // |A − B|
+    }
+    sctx.globalCompositeOperation = 'lighter'; sctx.globalAlpha = BASE;
+    sctx.drawImage(cv, 0, 0, gW, gH);                            // + BASE · 원본
+    sctx.globalCompositeOperation = 'source-over'; sctx.globalAlpha = 1;
+    return src;
   }
   function glowFrame(dtSec) {
     if (!fxOn || !dtSec) return;
     const tau = reduceMotion.matches ? 0 : (performance.now() < BOOT_UNTIL ? TAU_BOOT : TAU);
     const f = tau ? 1 - Math.exp(-dtSec / tau) : 1;
-    // 검은 불투명 바탕 위에서 섞는다 — 픽셀 값이 곧 보이는 밝기가 되어 css 의 contrast 로 문턱을 걸 수 있다
-    // (넓은 반투명 면은 어두워서 잘려 나가고, 밝은 선·점만 번진다). 검정은 screen 혼합에서 빛을 더하지 않는다.
+    const S = glowSource();
+    // 검은 불투명 바탕 위에서 섞는다 — 픽셀 값이 곧 보이는 밝기가 되어 css 의 contrast 로 문턱을 걸 수 있다.
+    // 검정은 screen 혼합에서 빛을 더하지 않는다.
     gctx.globalCompositeOperation = 'source-over';              // 빛 × (1 − f) — 검정 쪽으로 식는다
     gctx.globalAlpha = f; gctx.fillStyle = '#000'; gctx.fillRect(0, 0, gW, gH);
-    gctx.globalCompositeOperation = 'lighter';                  // + f · 원본  (선형 합)
-    gctx.drawImage(cv, 0, 0, gW, gH);
+    gctx.globalCompositeOperation = 'lighter';                  // + f · 재료  (선형 합)
+    gctx.drawImage(S, 0, 0);
     gctx.globalCompositeOperation = 'source-over'; gctx.globalAlpha = 1;
     hctx.drawImage(glow, 0, 0, halo.width, halo.height);   // 후광은 이미 섞인 빛을 작게 받아 넓게 번지게만 한다
   }

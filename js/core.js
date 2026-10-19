@@ -122,6 +122,17 @@ const PS = (function () {
      D.text · D.tag 는 같은 좌표 변환·투명도로 글자 층에 그려서, 밝은 물체 근처에서도 빛에 씻기지 않고
      번지지도 않는다. 글자 층이 없는 캔버스(그래프, 점검 도구)에서는 지금처럼 그 캔버스에 그린다.
      (확인: 74종 어디에서도 clip() 영역 안에서 글자를 그리지 않는다) */
+  /* 밝은 글자인가 — 글자 층의 윤곽(헤일로)을 두를지 정한다. 색 문자열마다 한 번만 계산한다. */
+  const lightCache = Object.create(null);
+  let colorCtx = null;
+  function isLight(c) {
+    if (c in lightCache) return lightCache[c];
+    colorCtx = colorCtx || document.createElement('canvas').getContext('2d');
+    colorCtx.fillStyle = '#000'; colorCtx.fillStyle = c;
+    const f = colorCtx.fillStyle, v = f[0] === '#' ? [1, 3, 5].map(i => parseInt(f.substr(i, 2), 16)) : (f.match(/[d.]+/g) || [0, 0, 0]).slice(0, 3).map(Number);
+    return (lightCache[c] = (.299 * v[0] + .587 * v[1] + .114 * v[2]) > 70);
+  }
+
   function textTarget(ctx) {
     const g = ctx.__text;
     if (!g) { ctx.save(); return ctx; }
@@ -212,6 +223,15 @@ const PS = (function () {
         const k = keepIn(ctx, x, y, lx, lx + m.width, y - m.actualBoundingBoxAscent, y + m.actualBoundingBoxDescent);
         x += k[0]; y += k[1];
         y += avoidLabels(ctx, lx + k[0], lx + k[0] + m.width, y - m.actualBoundingBoxAscent, y + m.actualBoundingBoxDescent, t);
+      }
+      // 헤일로 — 글자 층에서 밝은 글자는 무대 배경색 윤곽을 두른다. 어두운 바탕에서는 보이지 않고,
+      // 밝은 막대·면 위에서만 글자 둘레를 파내 읽히게 한다 (지도 라벨과 같은 방식).
+      if (ctx.__text && o.halo !== false && isLight(g.fillStyle)) {
+        g.save();
+        g.shadowColor = 'transparent'; g.shadowBlur = 0;
+        g.lineJoin = 'round'; g.lineWidth = 3; g.strokeStyle = 'rgba(10,11,12,.82)';
+        g.strokeText(t, x, y);
+        g.restore();
       }
       g.fillText(t, x, y);
       g.restore();

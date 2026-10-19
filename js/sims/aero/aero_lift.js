@@ -372,10 +372,12 @@
       const bx = px, byy = py + ph + 40;
       const maxF = Math.max(L, W) * 1.15 / 1000;
       D.text(ctx, '양력과 무게의 균형', bx, byy - 8, { size: 11, color: '#6a6e78' });
-      D.bar(ctx, bx, byy, pw, 12, L / 1000, maxF, C.L, null, hl === 'L');
-      D.text(ctx, '양력 ' + fmt(L / 1000, 1) + ' kN', bx + pw + 6, byy + 11, { size: 10.5, color: C.L, align: 'right' });
-      D.bar(ctx, bx, byy + 20, pw, 12, W / 1000, maxF, C.W, null, hl === 'm');
-      D.text(ctx, '무게 ' + fmt(W / 1000, 1) + ' kN', bx + pw + 6, byy + 31, { size: 10.5, color: C.W, align: 'right' });
+      // 막대 오른쪽 84px 은 라벨 자리 — 라벨을 막대 위에 얹으면 같은 색끼리 겹쳐 읽히지 않는다
+      const bw2 = pw - 84;
+      D.bar(ctx, bx, byy, bw2, 12, L / 1000, maxF, C.L, null, hl === 'L');
+      D.text(ctx, '양력 ' + fmt(L / 1000, 1) + ' kN', bx + bw2 + 6, byy + 11, { size: 10.5, color: C.L });
+      D.bar(ctx, bx, byy + 20, bw2, 12, W / 1000, maxF, C.W, null, hl === 'm');
+      D.text(ctx, '무게 ' + fmt(W / 1000, 1) + ' kN', bx + bw2 + 6, byy + 31, { size: 10.5, color: C.W });
     }
   });
 })();
