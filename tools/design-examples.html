@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PhysLab — DESIGN.md 적용 예시</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+KR:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* DESIGN.md 토큰 — 문서의 colors / rounded 를 그대로 옮겼다 */
+:root{
+  --primary:#cc785c; --primary-active:#a9583e;
+  --ink:#141413; --body:#3d3d3a; --body-strong:#252523; --muted:#6c6a64; --muted-soft:#8e8b82;
+  --hairline:#e6dfd8; --hairline-soft:#ebe6df;
+  --canvas:#faf9f5; --surface-soft:#f5f0e8; --surface-card:#efe9de; --surface-cream-strong:#e8e0d2;
+  --surface-dark:#181715; --surface-dark-elevated:#252320; --surface-dark-soft:#1f1e1b;
+  --on-dark:#faf9f5; --on-dark-soft:#a09d96;
+  --accent-teal:#5db8a6; --accent-amber:#e8a55a;
+  --r-sm:6px; --r-md:8px; --r-lg:12px; --r-xl:16px;
+  /* Copernicus·StyreneB는 라이선스 글꼴 → 문서의 대체 지침대로. 한글은 Noto Serif KR / Pretendard 로 받는다 */
+  --display:"Cormorant Garamond","Noto Serif KR",Georgia,serif;
+  --sans:"Inter","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  --mono:"JetBrains Mono",Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface-soft);color:var(--ink);font-family:var(--sans);padding:40px 24px 80px}
+.pg{max-width:1200px;margin:0 auto}
+.pg-head{margin-bottom:44px}
+.pg-head h1{font-family:var(--display);font-weight:500;font-size:40px;letter-spacing:-.8px;line-height:1.1;margin:0 0 12px}
+.pg-head p{margin:0;font-size:14.5px;color:var(--body);line-height:1.7;max-width:760px}
+.block{margin-bottom:64px}
+.blk-top{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.blk-n{font-size:12px;font-weight:500;color:var(--primary);letter-spacing:1.2px}
+.blk-top h2{font-family:var(--display);font-weight:500;font-size:28px;letter-spacing:-.3px;margin:0}
+.cost{font-size:12px;font-weight:500;padding:3px 11px;border-radius:999px;background:var(--surface-card);color:var(--body)}
+.cost.lo{background:#e3efe6;color:#2f6a43}.cost.hi{background:#f6e2da;color:#8a3e26}
+.blk-note{font-size:14px;color:var(--body);line-height:1.7;margin:0 0 18px;max-width:900px}
+.blk-note b{color:var(--ink);font-weight:500}
+
+/* ── 공통 셸 골격 ── */
+.shell{display:grid;grid-template-columns:200px minmax(0,1fr) 262px;height:430px;overflow:hidden;font-size:13px;border-radius:var(--r-lg)}
+.nav{display:flex;flex-direction:column;overflow:hidden;padding:16px 12px}
+.brand{display:flex;gap:9px;align-items:center;margin-bottom:16px}
+.mark{width:26px;height:26px;flex:none;display:grid;place-items:center;font-family:var(--display);font-size:19px;font-weight:600}
+.brand b{font-family:var(--display);font-size:20px;font-weight:500;letter-spacing:-.3px}
+.tabs{display:flex;gap:2px;margin-bottom:14px}
+.tab{font-size:11.5px;font-weight:500;padding:6px 9px;border-radius:var(--r-md)}
+.cat{font-size:10.5px;font-weight:500;letter-spacing:1.2px;margin:12px 4px 6px}
+.item{padding:8px 10px;border-radius:var(--r-md);font-size:12.5px;line-height:1.3;margin-bottom:2px}
+.item small{display:block;font-size:10.5px;margin-top:2px}
+.main{display:flex;flex-direction:column;min-width:0;padding:18px 20px;overflow:hidden}
+.pill{display:inline-block;font-size:11px;font-weight:500;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.main h3{font-family:var(--display);font-weight:500;font-size:28px;letter-spacing:-.5px;line-height:1.1;margin:0}
+.lede{font-size:12px;line-height:1.55;margin:6px 0 0}
+.stage{flex:1;min-height:0;margin-top:12px;border-radius:var(--r-lg);overflow:hidden;display:flex;flex-direction:column}
+.stage canvas{flex:1;min-height:0;width:100%;display:block}
+.bar{display:flex;align-items:center;gap:8px;padding:8px 12px}
+.btn{font-size:12px;font-weight:500;padding:7px 14px;border-radius:var(--r-md)}
+.clock{margin-left:auto;font-family:var(--mono);font-size:11.5px}
+.panel{overflow:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:12px}
+.card{padding:13px 14px;border-radius:var(--r-lg)}
+.card h4{margin:0 0 9px;font-size:10.5px;font-weight:500;letter-spacing:1.2px}
+.fx{margin-bottom:9px}
+.fname{font-size:10.5px;margin-bottom:2px}
+.fbody{font-family:var(--display);font-size:20px;line-height:1.5}
+.fbody i{font-style:italic}
+.term{font-weight:600;font-style:italic;border-bottom:1.5px solid currentColor}
+.ctrl{margin-bottom:10px}
+.ctop{display:flex;align-items:baseline;gap:6px;font-size:11.5px;margin-bottom:6px}
+.csym{font-family:var(--display);font-style:italic;font-weight:600;font-size:15px;min-width:16px}
+.clab{flex:1}
+.cval{font-family:var(--mono);font-size:12px;font-weight:500}
+.track{height:4px;border-radius:999px;position:relative}
+.thumb{position:absolute;top:-6px;width:16px;height:16px;border-radius:50%}
+.ro{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rb{padding:8px 10px;border-radius:var(--r-md)}
+.rl{font-size:10px;margin-bottom:2px}
+.rv{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.3px;line-height:1.1}
+
+/* ── A. 크림 크롬 + 다크 무대 ── */
+.A{background:var(--canvas);border:1px solid var(--hairline)}
+.A .nav{background:var(--canvas);border-right:1px solid var(--hairline)}
+.A .mark{color:var(--primary)}
+.A .tab{color:var(--muted)} .A .tab.on{background:var(--surface-card);color:var(--ink)}
+.A .cat{color:var(--muted-soft)}
+.A .item{color:var(--body)} .A .item small{color:var(--muted-soft)}
+.A .item.on{background:var(--surface-card);color:var(--ink)}
+.A .pill{background:var(--surface-card);color:var(--body)}
+.A .lede{color:var(--body)}
+.A .stage{background:var(--surface-dark)}
+.A .bar{background:var(--surface-dark-elevated)}
+.A .btn{background:var(--surface-dark-soft);color:var(--on-dark);border:1px solid #34312c}
+.A .btn.pri{background:var(--primary);color:#fff;border-color:var(--primary)}
+.A .clock{color:var(--on-dark-soft)} .A .clock b{color:var(--on-dark);font-weight:500}
+.A .panel{background:var(--canvas);border-left:1px solid var(--hairline)}
+.A .card{background:var(--surface-card)}
+.A .card h4{color:var(--muted)}
+.A .fname,.A .rl{color:var(--muted)} .A .clab{color:var(--body)}
+.A .track{background:var(--surface-cream-strong)} .A .thumb{border:2px solid var(--canvas)}
+.A .rb{background:var(--canvas)}
+
+/* ── B. 전면 웜 다크 ── */
+.B{background:var(--surface-dark);color:var(--on-dark);border:1px solid #2c2a26}
+.B .nav{background:#141311;border-right:1px solid #2c2a26}
+.B .mark{color:var(--primary)}
+.B .tab{color:var(--on-dark-soft)} .B .tab.on{background:var(--surface-dark-elevated);color:var(--on-dark)}
+.B .cat{color:#77746d}
+.B .item{color:#c9c5bd} .B .item small{color:#77746d}
+.B .item.on{background:var(--surface-dark-elevated);color:var(--on-dark)}
+.B .pill{background:var(--surface-dark-elevated);color:var(--on-dark-soft)}
+.B .lede{color:var(--on-dark-soft)}
+.B .stage{background:#100f0e;border:1px solid #2c2a26}
+.B .bar{background:var(--surface-dark-soft);border-top:1px solid #2c2a26}
+.B .btn{background:var(--surface-dark-elevated);color:var(--on-dark);border:1px solid #3a3732}
+.B .btn.pri{background:var(--primary);color:#fff;border-color:var(--primary)}
+.B .clock{color:var(--on-dark-soft)} .B .clock b{color:var(--on-dark);font-weight:500}
+.B .panel{background:#141311;border-left:1px solid #2c2a26}
+.B .card{background:var(--surface-dark-soft)}
+.B .card h4{color:#77746d}
+.B .fname,.B .rl{color:#77746d} .B .clab{color:#c9c5bd}
+.B .track{background:#34312c} .B .thumb{border:2px solid var(--surface-dark-soft)}
+.B .rb{background:var(--surface-dark)}
+
+/* ── C. 전면 크림 (논문 도판) ── */
+.C{background:var(--canvas);border:1px solid var(--hairline)}
+.C .nav{background:var(--surface-soft);border-right:1px solid var(--hairline)}
+.C .mark{color:var(--ink)}
+.C .tab{color:var(--muted)} .C .tab.on{background:var(--surface-cream-strong);color:var(--ink)}
+.C .cat{color:var(--muted-soft)}
+.C .item{color:var(--body)} .C .item small{color:var(--muted-soft)}
+.C .item.on{color:var(--ink);background:transparent;border-left:2px solid var(--primary);border-radius:0;padding-left:9px}
+.C .pill{background:transparent;color:var(--primary);padding:0;font-size:11.5px}
+.C .lede{color:var(--body)}
+.C .stage{background:#fdfcf8;border:1px solid var(--hairline)}
+.C .bar{background:var(--canvas);border-top:1px solid var(--hairline-soft)}
+.C .btn{background:var(--canvas);color:var(--ink);border:1px solid var(--hairline)}
+.C .btn.pri{background:var(--primary);color:#fff;border-color:var(--primary)}
+.C .clock{color:var(--muted)} .C .clock b{color:var(--ink);font-weight:500}
+.C .panel{background:var(--canvas);border-left:1px solid var(--hairline)}
+.C .card{background:transparent;padding:0 2px 12px;border-radius:0;border-bottom:1px solid var(--hairline-soft)}
+.C .card h4{color:var(--muted-soft)}
+.C .fname,.C .rl{color:var(--muted)} .C .clab{color:var(--body)}
+.C .track{background:var(--surface-cream-strong)} .C .thumb{border:2px solid var(--canvas)}
+.C .rb{background:var(--surface-soft)}
+
+.legend{margin-top:56px;padding:28px 32px;background:var(--surface-dark);color:var(--on-dark);border-radius:var(--r-lg)}
+.legend h2{font-family:var(--display);font-weight:500;font-size:26px;letter-spacing:-.3px;margin:0 0 12px}
+.legend p{margin:0 0 10px;font-size:13.5px;line-height:1.75;color:var(--on-dark-soft)}
+.legend b{color:var(--on-dark);font-weight:500}
+.legend code{font-family:var(--mono);font-size:12.5px;color:var(--accent-amber)}
+</style>
+</head>
+<body>
+<div class="pg">
+
+<div class="pg-head">
+  <h1>DESIGN.md를 PhysLab에 입히는 세 가지 방법</h1>
+  <p>문서의 핵심은 크림 캔버스, 코랄 강조, 세리프 제목, 그리고 <b>제품 화면은 어두운 면 위에 둔다</b>는 리듬입니다.
+     세 예시는 그 밝음과 어둠의 경계를 어디에 긋느냐로 나뉩니다. 캔버스 안의 그림까지 각 예시의 팔레트로 다시 칠했습니다.</p>
+</div>
+
+<div id="out"></div>
+
+<div class="legend">
+  <h2>무엇을 기준으로 고르면 되나</h2>
+  <p><b>A가 문서에 가장 충실합니다.</b> 문서의 <code>product-mockup-card-dark</code>는 실제 제품 화면을 어두운 카드에 담는 컴포넌트입니다.
+     PhysLab에서는 시뮬레이션 무대가 바로 그 제품 화면에 해당하므로, 크롬은 크림으로, 무대는 다크로 두는 것이 문서의 구분 방식과 그대로 맞습니다.</p>
+  <p><b>B는 바꿔야 할 범위가 가장 작습니다.</b> 지금 무대가 이미 어둡기 때문에 캔버스 색 1,766곳을 다시 다룰 필요가 거의 없습니다.
+     대신 문서가 강조하는 크림 캔버스가 화면에 거의 남지 않아, 결과물은 이 문서보다 지금의 계측기 테마에 더 가깝습니다.</p>
+  <p><b>C는 가장 개성 있지만 바꿔야 할 범위가 가장 큽니다.</b> 무대가 흰 종이가 되므로 74개 시뮬레이션의 색을 모두 밝은 바탕용으로 다시 맞춰야 합니다.
+     지난번에 만든 <code>PS.PAL</code>이 있어서 그 작업의 상당 부분은 팔레트 표 하나로 줄어들지만,
+     무대 배경을 전제로 쓴 반투명 색과 <code>D.tag</code> 배경은 하나씩 확인해야 합니다.</p>
+</div>
+
+</div>
+
+<script>
+const EX = [
+  { cls: 'A', n: '예시 A', name: '크림 크롬 + 다크 무대', cost: ['보통', ''],
+    note: '네비·패널·제목은 <b>크림 캔버스</b> 위에, 시뮬레이션 무대만 <b>웜 다크(#181715)</b>로 둡니다. 문서의 "크림에서 다크로 넘어가는 리듬"이 화면 한 장 안에서 바로 드러납니다. 강조는 코랄 하나이고, 선택된 항목은 색을 칠하지 않고 한 단계 진한 크림 카드로만 구분합니다.',
+    pal: { stage: '#181715', grid: 'rgba(250,249,245,.045)', ink2: '#a09d96', ink3: '#77746d', glow: false,
+           sym: ['#8fb3cf', '#b49ac6', '#e8a55a', '#5db8a6', '#cc785c', '#f0d7a8'] } },
+  { cls: 'B', n: '예시 B', name: '전면 웜 다크', cost: ['낮음', 'lo'],
+    note: '화면 전체를 문서의 <b>dark surface 계열</b>로 둡니다. 지금 쓰는 흑연을 따뜻한 검정으로, 호박색을 <b>코랄</b>로, 제목을 <b>세리프</b>로 바꾸는 정도라 이식 비용이 가장 낮습니다. 문서의 코드 에디터 카드를 화면 전체로 넓힌 느낌입니다.',
+    pal: { stage: '#100f0e', grid: 'rgba(250,249,245,.04)', ink2: '#a09d96', ink3: '#6f6c66', glow: false,
+           sym: ['#8fb3cf', '#b49ac6', '#e8a55a', '#5db8a6', '#cc785c', '#f0d7a8'] } },
+  { cls: 'C', n: '예시 C', name: '전면 크림 — 논문 도판', cost: ['높음', 'hi'],
+    note: '무대까지 <b>크림 종이</b>로 둬서 시뮬레이션이 학술지에 실린 그림처럼 보이게 합니다. 카드 테두리 대신 <b>머리카락 굵기 구분선</b>을 쓰고, 오른쪽 패널은 교과서 여백처럼 읽힙니다. 기호 색은 밝은 바탕용 <b>잉크 색</b>으로 다시 잡습니다.',
+    pal: { stage: '#fdfcf8', grid: 'rgba(20,20,19,.055)', ink2: '#6c6a64', ink3: '#8e8b82', glow: false,
+           sym: ['#2f5d82', '#6b4f8a', '#a8681c', '#2f7a6b', '#b8583a', '#141413'] } }
+];
+
+const SHELL = `
+<div class="nav">
+  <div class="brand"><div class="mark">&Phi;</div><b>PhysLab</b></div>
+  <div class="tabs"><span class="tab on">항공우주</span><span class="tab">선박</span><span class="tab">기계</span></div>
+  <div class="cat">비행역학</div>
+  <div class="item on">항력과 양항비<small>왜 가장 느린 속도가 아닐까</small></div>
+  <div class="item">양력의 발생<small>받음각과 실속</small></div>
+  <div class="item">마하수와 충격파<small>압축성이 시작되는 곳</small></div>
+  <div class="cat">궤도역학</div>
+  <div class="item">원궤도와 탈출속도<small>붙잡히느냐 벗어나느냐</small></div>
+</div>
+<div class="main">
+  <div><span class="pill">항공우주공학 · 비행역학</span>
+    <h3>항력과 양항비</h3>
+    <p class="lede">유해항력은 빨라질수록, 유도항력은 느려질수록 커진다. 두 곡선이 만나는 곳이 가장 멀리 가는 속도다.</p></div>
+  <div class="stage"><canvas></canvas>
+    <div class="bar"><span class="btn pri">&#9654; 재생</span><span class="btn">&#8634; 처음으로</span>
+      <span class="clock">t = <b>12.40</b> s</span></div></div>
+</div>
+<div class="panel">
+  <div class="card"><h4>공식</h4>
+    <div class="fx"><div class="fname">항력 계수</div>
+      <div class="fbody"><i>C</i><sub>D</sub> = <span class="term" style="color:SYM2">C<sub>D0</sub></span> + <span class="term" style="color:SYM3">C<sub>L</sub></span><sup>2</sup>/<i>&pi;</i><span class="term" style="color:SYM1">AR</span><i>e</i></div></div>
+    <div class="fx"><div class="fname">양항비</div>
+      <div class="fbody"><span class="term" style="color:SYM4">L/D</span> = <span class="term" style="color:SYM3">C<sub>L</sub></span> / <i>C</i><sub>D</sub></div></div>
+  </div>
+  <div class="card"><h4>변수 조절</h4>
+    <div class="ctrl"><div class="ctop"><span class="csym" style="color:SYM0">V</span><span class="clab">비행 속도</span><span class="cval" style="color:SYM0">60 m/s</span></div>
+      <div class="track"><div class="thumb" style="background:SYM0;left:16%"></div></div></div>
+    <div class="ctrl"><div class="ctop"><span class="csym" style="color:SYM1">AR</span><span class="clab">날개 가로세로비</span><span class="cval" style="color:SYM1">10.0</span></div>
+      <div class="track"><div class="thumb" style="background:SYM1;left:46%"></div></div></div>
+  </div>
+  <div class="card"><h4>측정값</h4>
+    <div class="ro"><div class="rb"><div class="rl">양력계수</div><div class="rv" style="color:SYM3">0.389</div></div>
+      <div class="rb"><div class="rl">양항비</div><div class="rv" style="color:SYM4">14.2</div></div></div>
+  </div>
+</div>`;
+
+const out = document.getElementById('out'), stages = [];
+EX.forEach(t => {
+  let html = SHELL;
+  t.pal.sym.forEach((c, k) => { html = html.split('SYM' + k).join(c); });
+  const b = document.createElement('div'); b.className = 'block';
+  b.innerHTML = `<div class="blk-top"><span class="blk-n">${t.n}</span><h2>${t.name}</h2>
+      <span class="cost ${t.cost[1]}">이식 비용 ${t.cost[0]}</span></div>
+    <p class="blk-note">${t.note}</p><div class="shell ${t.cls}">${html}</div>`;
+  out.appendChild(b);
+  stages.push([b.querySelector('canvas'), t.pal]);
+});
+
+/* 레이아웃·웹폰트가 자리 잡은 뒤에 그려야 비트맵이 늘어나지 않는다 */
+const redraw = () => stages.forEach(([cv, p]) => drawStage(cv, p));
+requestAnimationFrame(() => requestAnimationFrame(redraw));
+addEventListener('resize', redraw);
+if (document.fonts) document.fonts.ready.then(redraw);
+
+function drawStage(cv, P) {
+  const dpr = devicePixelRatio || 1, r = cv.getBoundingClientRect();
+  const w = Math.round(r.width), h = Math.round(r.height);
+  if (w < 40 || h < 40) return;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+  const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const SF = '"Inter","Pretendard","Malgun Gothic",sans-serif', DF = '"Cormorant Garamond","Noto Serif KR",serif', MF = '"JetBrains Mono",monospace';
+
+  c.fillStyle = P.stage; c.fillRect(0, 0, w, h);
+  c.strokeStyle = P.grid; c.lineWidth = 1;
+  for (let x = 0; x < w; x += 28) { c.beginPath(); c.moveTo(x + .5, 0); c.lineTo(x + .5, h); c.stroke(); }
+  for (let y = 0; y < h; y += 28) { c.beginPath(); c.moveTo(0, y + .5); c.lineTo(w, y + .5); c.stroke(); }
+
+  const L = 54, R = w - 22, T = 30, B = h - 34, pw = R - L, ph = B - T;
+  c.strokeStyle = P.ink3; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(L, T); c.lineTo(L, B); c.lineTo(R, B); c.stroke();
+
+  /* W/S=700 N/m², S=16 m², AR=10, e=0.8, C_D0=0.025 → (L/D)max 는 38 m/s 부근 */
+  const VLO = 18, VHI = 115, DMAX = 2400, W = 700 * 16;
+  const X = v => L + (v - VLO) / (VHI - VLO) * pw, Y = d => B - d / DMAX * ph;
+  const para = v => .5 * 1.225 * v * v * .025 * 16;
+  const indu = v => 2 * W * W / (1.225 * v * v * 16 * Math.PI * 10 * .8);
+  const curve = (f, col, lw) => {
+    c.strokeStyle = col; c.lineWidth = lw; c.beginPath(); let open = false;
+    for (let v = VLO + 1; v <= VHI; v++) {
+      const y = Y(f(v));
+      if (y < T || y > B) { if (open) { c.stroke(); c.beginPath(); open = false; } continue; }
+      if (open) c.lineTo(X(v), y); else { c.moveTo(X(v), y); open = true; }
+    }
+    if (open) c.stroke();
+  };
+  curve(para, P.sym[2], 1.7);
+  curve(indu, P.sym[3], 1.7);
+  curve(v => para(v) + indu(v), P.sym[4], 2.6);
+
+  const best = Math.pow(4 * W * W / (1.225 * 1.225 * .025 * 256 * Math.PI * 10 * .8), .25);
+  const bx = X(best), by = Y(para(best) + indu(best));
+  c.setLineDash([3, 4]); c.strokeStyle = P.sym[5]; c.globalAlpha = .7;
+  c.beginPath(); c.moveTo(bx, by); c.lineTo(bx, B); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+  c.fillStyle = P.sym[5]; c.beginPath(); c.arc(bx, by, 4, 0, 7); c.fill();
+
+  const txt = (s, x, y, col, size, f, al) => {
+    c.fillStyle = col; c.font = (size || 10) + 'px ' + (f || SF); c.textAlign = al || 'left'; c.fillText(s, x, y);
+  };
+  txt('그림 1.  속도에 따른 항력의 두 성분', L, T - 12, P.ink2, 13, DF);
+  txt('유해항력', X(74) + 7, Y(para(74)) + 4, P.sym[2], 10);
+  txt('유도항력', X(26) + 6, Y(indu(26)) - 7, P.sym[3], 10);
+  txt('합 = 필요 추력', X(56) + 5, Y(para(56) + indu(56)) - 9, P.sym[4], 10.5);
+  txt('(L/D)max', bx + 8, by + 4, P.sym[5], 10.5);
+  txt('V (m/s)', R, h - 11, P.ink3, 9.5, MF, 'right');
+  txt(DMAX + ' N', L - 6, T + 4, P.ink3, 9.5, MF, 'right');
+  txt('0', L - 6, B + 3, P.ink3, 9.5, MF, 'right');
+  txt(Math.round(best) + ' m/s', bx, B + 15, P.sym[5], 9.5, MF, 'center');
+
+  /* 기체와 힘 화살표 — 기호 색이 화면 어디에 작용하는지 */
+  c.save(); c.translate(X(86), T + 36);
+  c.strokeStyle = P.ink2; c.lineWidth = 1.4;
+  c.beginPath(); c.moveTo(-16, 0); c.lineTo(14, 0); c.moveTo(-2, 0); c.lineTo(-9, -9); c.moveTo(-2, 0); c.lineTo(-9, 9); c.stroke();
+  const arr = (dx, dy, col, lab) => {
+    c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 1.8;
+    c.beginPath(); c.moveTo(0, 0); c.lineTo(dx, dy); c.stroke();
+    const a = Math.atan2(dy, dx);
+    c.beginPath(); c.moveTo(dx, dy);
+    c.lineTo(dx - 6 * Math.cos(a - .4), dy - 6 * Math.sin(a - .4));
+    c.lineTo(dx - 6 * Math.cos(a + .4), dy - 6 * Math.sin(a + .4)); c.closePath(); c.fill();
+    txt(lab, dx + (dx > 0 ? 5 : -5), dy + (dy < 0 ? -3 : 11), col, 13, DF, dx > 0 ? 'left' : 'right');
+  };
+  arr(0, -22, P.sym[3], 'L'); arr(-24, 0, P.sym[4], 'D'); arr(26, 0, P.sym[0], 'V');
+  c.restore();
+}
+</script>
+</body>
+</html>
