@@ -1,0 +1,151 @@
+/* =========================================================
+   PhysLab 모션 예시 — Emil Kowalski 디자인 엔지니어링 원칙 적용
+   주소 뒤에 ?motion=a | b | c 를 붙일 때만 켜진다. 아무것도 없으면 이 파일은
+   아무 효과가 없다(모든 규칙이 html.m-a / m-b / m-c 아래에 묶여 있다).
+     a  정돈  — 새 애니메이션 없이 기존 모션의 잘못만 고친다
+     b  절제  — a + 가끔 쓰는 곳(모달·힌트)에만 전환        ← b는 a를 포함
+     c  여운  — b + 드문 순간(첫 달성·첫 방문)에만 즐거움     ← c는 b를 포함
+   판단 기준: "얼마나 자주 보나"가 먼저다. 하루 수십~수백 번 보는 것
+   (시뮬레이션 전환, 슬라이더, Space 재생)은 움직이지 않는다.
+   ========================================================= */
+:root{
+  --ease-out:cubic-bezier(.23,1,.32,1);       /* 들어오고 나가는 UI */
+  --ease-in-out:cubic-bezier(.77,0,.175,1);   /* 화면 위에서 이동 */
+  --ease-pop:cubic-bezier(.34,1.56,.64,1);    /* 살짝 넘치는 반동 — c의 드문 순간에만 */
+}
+
+/* ─────────────── A. 정돈 ─────────────── */
+
+/* 1. transition:.12s 는 사실상 transition: all 이다. 바뀌는 속성만 명시한다. */
+.m-a :is(.group-menu-btn,.group-card,.mode,.formula-index-btn,.fx-sim,.nav-item,
+         .btn,.preset,.challenge,.ch-hint-btn,.modal-close){
+  transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease,
+             transform 160ms var(--ease-out);
+}
+.m-a .fx-jump{transition:opacity 120ms ease}
+
+/* 2. 누름 피드백 — 인터페이스가 눌렀다는 걸 들었다고 답한다.
+      :active 는 마우스·터치로만 걸리므로 Space/R 단축키에는 자동으로 움직임이 없다. */
+.m-a :is(.btn,.preset,.mode,.group-menu-btn,.formula-index-btn,.ch-hint-btn,.modal-close):active{
+  transform:scale(.97);
+}
+.m-a :is(.group-card,.fx-sim):active{transform:scale(.99)}   /* 면적이 큰 것은 더 작게 */
+
+/* 3. 기호 강조가 줄 높이를 1px 밀던 것을 없앤다.
+      border-bottom 2px → 3px 는 레이아웃을 바꾼다. 같은 굵기 표현을 box-shadow 로. */
+.m-a .term{transition:background-color 120ms ease,text-shadow 120ms ease,box-shadow 120ms ease}
+.m-a .term:hover,.m-a .term.on{border-bottom-width:2px}
+.m-a .term:hover{box-shadow:inset 0 -1px 0 currentColor}
+.m-a .term.on{box-shadow:inset 0 -1px 0 currentColor,0 0 0 1px rgba(255,255,255,.14)}
+
+/* 4. 슬라이더 손잡이 — 마우스를 올릴 때 키가 크던 것(height)을, 잡았을 때만
+      transform 으로 살짝 늘린다. 가장 자주 만지는 조작이라 아주 작게. */
+.m-a input[type=range]::-webkit-slider-thumb{transition:transform 120ms var(--ease-out)}
+.m-a input[type=range]:hover::-webkit-slider-thumb{height:16px}
+.m-a input[type=range]:active::-webkit-slider-thumb{transform:scaleY(1.18)}
+
+/* 5. 움직임 줄이기 설정 — 0이 아니라 "덜". 색·투명도는 남기고 위치·크기 변화만 뺀다. */
+@media (prefers-reduced-motion:reduce){
+  .m-a :is(.btn,.preset,.mode,.group-menu-btn,.formula-index-btn,.ch-hint-btn,.modal-close,
+           .group-card,.fx-sim):active{transform:none}
+  .m-a input[type=range]:active::-webkit-slider-thumb{transform:none}
+}
+
+/* ─────────────── B. 절제 ─────────────── */
+
+/* 6. 모달 — 가끔 여는 것이라 표준 전환 대상. 화면 중앙에 뜨므로 원점도 중앙이 맞다.
+      열림 220ms, 닫힘 140ms — 시스템이 응답하는 쪽(닫힘)이 더 빨라야 한다.
+      display:none 토글을 그대로 쓰면서 애니메이션되도록 allow-discrete + @starting-style. */
+.m-b .modal-overlay{
+  opacity:1;
+  transition:opacity 200ms ease,display 200ms allow-discrete,overlay 200ms allow-discrete;
+}
+.m-b .modal-overlay .modal{
+  transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out);
+}
+.m-b .modal-overlay.hidden{
+  opacity:0;
+  transition:opacity 140ms ease-out,display 140ms allow-discrete,overlay 140ms allow-discrete;
+}
+.m-b .modal-overlay.hidden .modal{
+  transform:scale(.97);opacity:0;
+  transition:transform 140ms ease-out,opacity 140ms ease-out;
+}
+@starting-style{
+  .m-b .modal-overlay:not(.hidden){opacity:0}
+  .m-b .modal-overlay:not(.hidden) .modal{transform:scale(.97);opacity:0}
+}
+/* Esc 로 닫을 때는 움직이지 않는다 — 키보드 동작은 애니메이션하지 않는다 */
+.m-b .modal-overlay[data-instant],
+.m-b .modal-overlay[data-instant] .modal{transition:none}
+
+/* 7. 힌트 — 툭 튀어나오던 것을 위에서 4px 내려오며 나타나게.
+      높이는 애니메이션하지 않는다(레이아웃). transform·opacity 만. */
+.m-b .ch-hint{
+  transition:opacity 180ms var(--ease-out),transform 180ms var(--ease-out),display 180ms allow-discrete;
+}
+.m-b .ch-hint[hidden]{
+  display:none;opacity:0;transform:translateY(-4px);
+  transition:opacity 120ms ease-out,transform 120ms ease-out,display 120ms allow-discrete;
+}
+@starting-style{
+  .m-b .ch-hint:not([hidden]){opacity:0;transform:translateY(-4px)}
+}
+
+/* 8. 도전 과제 상태 — 조건을 넘나들 때 테두리가 깜빡이지 않고 번지게.
+      슬라이더로 경계를 오가면 빠르게 반복되므로 keyframes 가 아니라 transition. */
+.m-b .ch-badge{display:inline-block;transition:color 200ms ease}
+
+@media (prefers-reduced-motion:reduce){
+  .m-b .modal-overlay .modal,
+  .m-b .modal-overlay.hidden .modal{transform:none}
+  .m-b .ch-hint[hidden]{transform:none}
+  @starting-style{
+    .m-b .modal-overlay:not(.hidden) .modal{transform:none}
+    .m-b .ch-hint:not([hidden]){transform:none}
+  }
+}
+
+/* ─────────────── C. 여운 ─────────────── */
+
+/* 9. 도전 과제 첫 달성 — 세션에 과제당 한 번뿐인 드문 순간이라 즐거움을 줘도 된다.
+      app.js 가 처음 달성한 순간에만 .ch-new 를 900ms 붙인다. 시뮬레이션을 열자마자
+      이미 만족된 과제는 사용자가 한 일이 아니므로 축하하지 않는다. */
+.m-c .challenge{position:relative;overflow:hidden}
+.m-c .challenge.ch-new .ch-badge{animation:ch-pop 420ms var(--ease-pop) both}
+.m-c .challenge.ch-new::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:rgba(127,184,148,.16);
+  animation:ch-sweep 700ms var(--ease-in-out) both;
+}
+@keyframes ch-pop{
+  from{transform:scale(.4);opacity:.3}
+  to{transform:scale(1);opacity:1}
+}
+@keyframes ch-sweep{
+  0%  {clip-path:inset(0 100% 0 0);opacity:1}
+  55% {clip-path:inset(0 0 0 0);opacity:1}
+  100%{clip-path:inset(0 0 0 0);opacity:0}
+}
+
+/* 10. 처음 열었을 때만 왼쪽 목록이 위에서부터 차례로 — 35ms 간격.
+       시뮬레이션·분류를 바꿀 때마다 다시 하지 않는다(하루 수십 번).
+       투명도가 0에서 시작해도 클릭은 막지 않는다. */
+.m-c.first-load #simlist > *{animation:list-rise 260ms var(--ease-out) both}
+.m-c.first-load #simlist > :nth-child(2){animation-delay:35ms}
+.m-c.first-load #simlist > :nth-child(3){animation-delay:70ms}
+.m-c.first-load #simlist > :nth-child(4){animation-delay:105ms}
+.m-c.first-load #simlist > :nth-child(5){animation-delay:140ms}
+.m-c.first-load #simlist > :nth-child(6){animation-delay:175ms}
+.m-c.first-load #simlist > :nth-child(7){animation-delay:210ms}
+.m-c.first-load #simlist > :nth-child(8){animation-delay:245ms}
+.m-c.first-load #simlist > :nth-child(n+9){animation-delay:280ms}
+@keyframes list-rise{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .m-c .challenge.ch-new .ch-badge{animation:none}
+  .m-c.first-load #simlist > *{animation:none}
+}

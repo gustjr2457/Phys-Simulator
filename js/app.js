@@ -214,7 +214,8 @@
     if (!list.length) { card.classList.add('hidden'); return; }
     card.classList.remove('hidden');
     const sig = sim.id + '|' + list.map(c => c.id).join('|');
-    if (sig !== challengeSig) {
+    const fresh = sig !== challengeSig;   // 방금 열었다 — 이미 만족된 과제는 사용자가 한 일이 아니다
+    if (fresh) {
       challengeSig = sig;
       box.innerHTML = '';
       list.forEach(c => {
@@ -237,9 +238,12 @@
     list.forEach((c, i) => {
       let ok = false;
       try { ok = !!c.check({ P: P, st: st, t: st.t }); } catch (e) { ok = false; }
+      const first = ok && !achieved.has(c.id) && !fresh;
       if (ok) achieved.add(c.id);
       const node = box.children[i];
       if (!node) return;
+      // 세션에서 처음 달성한 순간에만 표시 — 모션 예시 c 가 이 순간을 쓴다
+      if (first) { node.classList.add('ch-new'); setTimeout(() => node.classList.remove('ch-new'), 900); }
       node.classList.toggle('ch-ok', ok);
       node.classList.toggle('ch-done-ever', achieved.has(c.id) && !ok);
       const badge = node.querySelector('[data-badge]');
@@ -396,6 +400,7 @@
 
   function openFormulaModal() {
     buildFormulaIndex();
+    delete $('#formulaModal').dataset.instant;
     $('#formulaModal').classList.remove('hidden');
     $('#formulaSearch').value = '';
     filterFormulas('');
@@ -469,7 +474,10 @@
   $('#formulaModal').onclick = e => { if (e.target.id === 'formulaModal') closeFormulaModal(); };
   $('#formulaSearch').oninput = e => filterFormulas(e.target.value);
   window.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !$('#formulaModal').classList.contains('hidden')) closeFormulaModal();
+    // 키보드로 닫을 때는 움직이지 않는다 (data-instant → css/motion.css)
+    if (e.key === 'Escape' && !$('#formulaModal').classList.contains('hidden')) {
+      $('#formulaModal').dataset.instant = ''; closeFormulaModal();
+    }
   });
 
   /* ── 대분류 선택 메뉴 ─────────────────────── */
@@ -490,14 +498,20 @@
       box.appendChild(card);
     });
   }
-  function openGroupModal() { buildGroupMenu(); syncTabs(); $('#groupModal').classList.remove('hidden'); }
+  function openGroupModal() {
+    buildGroupMenu(); syncTabs();
+    delete $('#groupModal').dataset.instant;
+    $('#groupModal').classList.remove('hidden');
+  }
   function closeGroupModal() { $('#groupModal').classList.add('hidden'); }
 
   $('#btnGroupMenu').onclick = openGroupModal;
   $('#btnCloseGroups').onclick = closeGroupModal;
   $('#groupModal').onclick = e => { if (e.target.id === 'groupModal') closeGroupModal(); };
   window.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !$('#groupModal').classList.contains('hidden')) closeGroupModal();
+    if (e.key === 'Escape' && !$('#groupModal').classList.contains('hidden')) {
+      $('#groupModal').dataset.instant = ''; closeGroupModal();
+    }
   });
 
   document.querySelectorAll('.mode').forEach(b => {

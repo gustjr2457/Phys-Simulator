@@ -7,6 +7,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/motion.css">
+<script>
+/* 모션 예시 스위치 — ?motion=a|b|c 일 때만 켠다. 없으면 아무것도 바뀌지 않는다 (css/motion.css 참고) */
+(function () {
+  var m = (new URLSearchParams(location.search).get('motion') || '').toLowerCase();
+  var on = { a: ['m-a'], b: ['m-a', 'm-b'], c: ['m-a', 'm-b', 'm-c'] }[m];
+  if (!on) return;
+  var d = document.documentElement;
+  on.concat('first-load').forEach(function (c) { d.classList.add(c); });
+  addEventListener('load', function () { setTimeout(function () { d.classList.remove('first-load'); }, 900); });
+})();
+</script>
 </head>
 <body>
 
