@@ -167,14 +167,16 @@
       D.line(ctx, ballX, ballY, ballX, ground, { color: C.h, dash: [4, 5], width: hl === 'h' ? 2.5 : 1.4, hot: hl === 'h' });
       D.tag(ctx, 'h = ' + fmt(H(st.x), 2) + ' m', ballX, (ballY + ground) / 2, C.h, hl === 'h');
 
-      // 중력 화살표
+      // 중력 화살표 — 라벨은 질량 라벨(움직이는 방향의 반대편)과 반대쪽에 둔다. g 가 작으면 화살표가 짧아 공 바로 옆까지 올라온다
+      const ms = st.dir > 0 ? -1 : 1;
       D.arrow(ctx, ballX, ballY, 0, clamp(p.g * 4.5, 10, 90),
-        { color: C.g, width: 2.5, hot: hl === 'g', label: 'g', lx: -20, ly: 10 });
+        { color: C.g, width: 2.5, hot: hl === 'g', label: 'g', lx: -ms * 20, ly: 10 });
 
       // 속도 화살표(접선 방향)
       const tx = st.dir * cos, ty = -st.dir * sin;
       D.arrow(ctx, ballX, ballY, tx * clamp(st.v * 9, 0, 130), ty * clamp(st.v * 9, 0, 130),
-        { color: C.v, width: 3.5, hot: hl === 'v' || hl === 'K', label: 'v = ' + fmt(st.v, 1) + ' m/s', ly: -16 });
+        // 라벨은 공 꼭대기보다 위 — 느릴 때 화살표가 짧아 중간점이 공 안에 들어가도 공에 가리지 않게
+        { color: C.v, width: 3.5, hot: hl === 'v' || hl === 'K', label: 'v = ' + fmt(st.v, 1) + ' m/s', ly: -(r + 14) });
 
       ctx.save();
       if (hl === 'm') { ctx.shadowColor = C.m; ctx.shadowBlur = 24; }
@@ -183,7 +185,15 @@
       ctx.fillStyle = bg;
       ctx.beginPath(); ctx.arc(ballX, ballY, r, 0, 7); ctx.fill();
       ctx.restore();
-      D.text(ctx, fmt(p.m, 1) + ' kg', ballX, ballY + r + 14, { size: 10, color: C.m, align: 'center', bold: hl === 'm' });
+      // 질량 — 공 안에 들어가면 공 안에 쓴다. 공이 작으면 공 옆, 움직이는 방향의 반대편
+      // (위는 속도 라벨, 아래는 높이 태그 "h = …"와 중력 라벨 자리다).
+      const mTxt = fmt(p.m, 1) + 'kg';
+      ctx.save(); ctx.font = 'bold 9px "Malgun Gothic",sans-serif'; const mW = ctx.measureText(mTxt).width; ctx.restore();
+      if (mW + 4 <= r * 2) D.text(ctx, mTxt, ballX, ballY + 3, { size: 9, color: '#130b1a', align: 'center', bold: true });
+      else {
+        D.text(ctx, fmt(p.m, 1) + ' kg', ballX + ms * (r + 6), ballY + 4,
+          { size: 10, color: C.m, align: ms < 0 ? 'right' : 'left', bold: hl === 'm' });
+      }
 
       // 에너지 막대 (오른쪽)
       const U = p.m * p.g * H(st.x), K = Math.max(0, st.E - U);
@@ -204,13 +214,15 @@
       // 총 에너지 선
       const ey = bot - bh * (st.E / maxE);
       D.line(ctx, bxx - 10, ey, bxx + bwid + 10, ey, { color: C.E, width: hl === 'E' ? 3 : 2, hot: hl === 'E' });
-      D.text(ctx, 'E ' + fmt(st.E, 0) + 'J', bxx + bwid + 12, ey + 4, { size: 10.5, color: C.E, bold: hl === 'E' });
+      // 마찰이 작으면 현재 E 선과 "처음 E" 선이 붙는다 — 그때는 처음 E 라벨을 선 위로, 현재 E 라벨을 선 아래로 벌린다
+      const ly0 = p.mu > 0 ? bot - bh * (st.E0 / maxE) : -1e9, close = Math.abs(ey - ly0) < 15;
+      D.text(ctx, 'E ' + fmt(st.E, 0) + 'J', bxx + bwid + 12, close ? ey + 15 : ey + 4, { size: 10.5, color: C.E, bold: hl === 'E' });
       D.text(ctx, 'K ' + fmt(K, 0), bxx + bwid / 2, bot - uh - kh / 2 + 4, { size: 10, color: '#111112', align: 'center', bold: true });
       D.text(ctx, 'U ' + fmt(U, 0), bxx + bwid / 2, bot - uh / 2 + 4, { size: 10, color: '#130b1a', align: 'center', bold: true });
       if (p.mu > 0) {
         const ly = bot - bh * (st.E0 / maxE);
         D.line(ctx, bxx - 10, ly, bxx + bwid + 10, ly, { color: C.mu, dash: [4, 4], hot: hl === 'mu' });
-        D.text(ctx, '처음 E', bxx + bwid + 12, ly + 4, { size: 9.5, color: C.mu });
+        D.text(ctx, '처음 E', bxx + bwid + 12, close ? ly - 5 : ly + 4, { size: 9.5, color: C.mu });
       }
     }
   });

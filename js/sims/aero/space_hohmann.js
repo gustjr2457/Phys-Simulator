@@ -173,8 +173,12 @@
       if (age < 1.6 && st.phase > 0) {
         const col = st.phase === 1 ? C.dv1 : C.dv2;
         ctx.save(); ctx.globalAlpha = 1 - age / 1.6;
+        // 점화 지점이 왼쪽 아래 "Δv 예산" 상자 근처면 라벨은 생략 — 같은 숫자가 바로 옆 예산 막대에 있다
+        const mx = sx + st.vx / v * 37, my = sy - st.vy / v * 37 - 16;
+        const nearBudget = mx < 20 + Math.min(250, w * .28) + 150 && my > h - 96 - 34;
         D.arrow(ctx, sx, sy, st.vx / v * 74, -st.vy / v * 74,
-          { color: col, width: 5, hot: true, label: (st.phase === 1 ? 'Δv₁ = ' + fmt(dv1of(p), 0) : 'Δv₂ = ' + fmt(dv2of(p), 0)) + ' m/s', ly: -16 });
+          { color: col, width: 5, hot: true, ly: -16,
+            label: nearBudget ? null : (st.phase === 1 ? 'Δv₁ = ' + fmt(dv1of(p), 0) : 'Δv₂ = ' + fmt(dv2of(p), 0)) + ' m/s' });
         D.dot(ctx, sx, sy, 12 * (1 - age / 1.6) + 4, col);
         ctx.restore();
       }

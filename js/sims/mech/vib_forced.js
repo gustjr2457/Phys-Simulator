@@ -143,7 +143,8 @@
         D.line(ctx, GX(i), py, GX(i), py + ph, { color: 'rgba(255,255,255,.05)' });
         D.text(ctx, i + '', GX(i), py + ph + 14, { size: 9.5, color: '#6a6e78', align: 'center' });
       }
-      D.text(ctx, 'r = f/fₙ', px + pw, py + ph + 14, { size: 10, color: '#6a6e78', align: 'right' });
+      // 축 이름은 눈금 숫자 한 줄 아래 — 같은 줄이면 오른쪽 끝 눈금 "3"과 포개진다
+      D.text(ctx, 'r = f/fₙ', px + pw, py + ph + 30, { size: 10, color: '#6a6e78', align: 'right' });
       D.line(ctx, px, GY(1), px + pw, GY(1), { color: 'rgba(255,255,255,.18)', dash: [4, 4] });
       D.text(ctx, 'M = 1', px + 4, GY(1) - 5, { size: 9.5, color: '#6a6e78' });
 

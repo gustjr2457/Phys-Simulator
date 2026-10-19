@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PhysLab 점검</title>
+<style>
+  body{margin:0;padding:24px;background:#0e0f11;color:#e6e7ea;font:13px/1.6 "Malgun Gothic",sans-serif}
+  h1{font-size:17px;margin:0 0 4px}
+  p{color:#9a9da6;margin:0 0 16px}
+  code,pre{font-family:Consolas,monospace;font-size:12px}
+  pre{background:#0a0b0c;border:1px solid #2a2c31;padding:12px;white-space:pre-wrap;max-height:70vh;overflow:auto}
+  .ok{color:#7fb894}.bad{color:#c4705f}
+  button{font:inherit;padding:6px 12px;background:#26282e;color:#e6e7ea;border:1px solid #42454d;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>PhysLab 점검</h1>
+<p>74종 전부를 실제 화면에서 나오는 9가지 캔버스 크기로 그려 보고 <b>예외 · 글자 겹침 · 캔버스 밖 잘림</b>을 셉니다.
+   잘림은 화면 밖으로 나간 물체(빠른 음원, 시야 밖 선박 등)에 붙은 라벨이면 정상입니다.
+   dev 서버에서 열어야 합니다 (<code>node tools/dev-server.js</code> → <code>/tools/check.html</code>).
+   크기를 바꾸려면 <code>?sizes=1542x850,760x420</code>. 결과는 <code>window.RESULT</code>에도 남습니다.</p>
+<button id="run">다시 실행</button>
+<pre id="out">준비 중…</pre>
+<script>
+/* 기본 검사 크기 = 실제 화면에서 나오는 무대 캔버스의 "논리" 크기 (app.js 의 uiScale 반영 후,
+   그래프·문제방이 있는 시뮬 기준 — 가장 빡빡한 경우).
+   27" QHD · FHD · 1440×900 · 1366×768 · 태블릿 가로 · 태블릿 세로 · 폰(430 · 390 · 360 폭) */
+const DEFAULT_SIZES = '1407x704,1132x566,799x416,725x363,705x353,733x419,507x549,436x471,417x436';
+const qs = new URLSearchParams(location.search);
+const SIZES = (qs.get('sizes') || DEFAULT_SIZES).split(',').map(s => s.split('x').map(Number));
+const DT = 1 / 480, STEPS = 1800, SNAP_EVERY = 600;
+const out = document.getElementById('out');
+
+function loadApp() {
+  return new Promise(res => {
+    const f = document.createElement('iframe');
+    f.style.cssText = 'position:fixed;left:-9999px;top:0;width:1400px;height:820px';
+    f.src = '../index.html?motion=off';
+    f.onload = () => setTimeout(() => res(f.contentWindow), 300);
+    document.body.appendChild(f);
+  });
+}
+
+/* fillText 를 가로채 글자 상자를 모은다. D.tag 안에서 그린 글자는 불투명 배경이 있다(덮는다). */
+function instrument(PS, ctx) {
+  const rec = [];
+  let inTag = 0;
+  const D = PS.D, tag0 = D.tag;
+  D.tag = function () { inTag++; try { return tag0.apply(this, arguments); } finally { inTag--; } };
+  const ft = ctx.fillText;
+  ctx.fillText = function (t, x, y) {
+    t = String(t);
+    if (t.trim()) {
+      const m = ctx.measureText(t), tr = ctx.getTransform();
+      if (Math.abs(tr.b) < 1e-6 && Math.abs(tr.c) < 1e-6) {          // 회전된 글자는 건너뛴다
+        const w = m.width;
+        let lx = x;
+        if (ctx.textAlign === 'center') lx = x - w / 2;
+        else if (ctx.textAlign === 'right' || ctx.textAlign === 'end') lx = x - w;
+        const x0 = tr.a * lx + tr.e, x1 = tr.a * (lx + w) + tr.e;
+        const y0 = tr.d * (y - m.actualBoundingBoxAscent) + tr.f, y1 = tr.d * (y + m.actualBoundingBoxDescent) + tr.f;
+        rec.push({ t, x0: Math.min(x0, x1), x1: Math.max(x0, x1), y0: Math.min(y0, y1), y1: Math.max(y0, y1),
+                   tag: inTag > 0, a: ctx.globalAlpha });
+      }
+    }
+    return ft.apply(this, arguments);
+  };
+  return { rec, restore() { D.tag = tag0; delete ctx.fillText; } };
+}
+
+function overlaps(rec) {
+  const hits = [];
+  for (let j = 1; j < rec.length; j++) {
+    const B = rec[j];
+    if (B.tag || B.a < .35) continue;                       // 나중 것이 불투명 태그면 덮는다 / 아주 흐린 글자는 장식
+    for (let i = 0; i < j; i++) {
+      const A = rec[i];
+      if (A.a < .35) continue;
+      if (A.t === B.t && Math.abs(A.x0 - B.x0) < 2 && Math.abs(A.y0 - B.y0) < 2) continue;   // 글로우용 겹쳐 그리기
+      const ix = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0), iy = Math.min(A.y1, B.y1) - Math.max(A.y0, B.y0);
+      if (ix <= 1 || iy <= 1) continue;
+      const small = Math.min((A.x1 - A.x0) * (A.y1 - A.y0), (B.x1 - B.x0) * (B.y1 - B.y0));
+      if (ix * iy > small * .2) hits.push(A.t + '  ×  ' + B.t);
+    }
+  }
+  return hits;
+}
+
+async function run() {
+  out.textContent = '앱 불러오는 중…';
+  const W = await loadApp();
+  const PS = W.eval('PS');   // core.js 의 const PS 는 window 속성이 아니다
+  const cv = W.document.createElement('canvas'), ctx = cv.getContext('2d');
+  const result = { sizes: {}, errors: [], total: { draws: 0, overlaps: 0, clipped: 0 } };
+
+  for (const [w, h] of SIZES) {
+    const key = w + 'x' + h, S = result.sizes[key] = { overlaps: {}, clipped: {}, draws: 0 };
+    cv.width = w; cv.height = h;
+    for (const sim of PS.sims) {
+      for (const pre of [null].concat(sim.presets || [])) {
+        const tag = sim.id + (pre ? ' / ' + pre.name : '');
+        try {
+          const P = {}; sim.params.forEach(p => P[p.key] = p.value);
+          if (pre) Object.assign(P, pre.set);
+          const st = sim.init(P); st.t = 0;
+          const hls = [null].concat(Object.keys(sim.vars || {}).slice(0, 3));
+          for (let i = 1; i <= STEPS; i++) {
+            sim.step(st, P, DT); st.t += DT;
+            if (i % SNAP_EVERY) continue;
+            for (const hl of hls) {
+              ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, w, h);
+              const I = instrument(PS, ctx);
+              ctx.__labels = w < 600 ? [] : null;   // 앱과 같은 조건
+              try { sim.draw(ctx, st, P, { w, h, hl, playing: true }); } finally { I.restore(); }
+              S.draws++;
+              for (const o of overlaps(I.rec)) (S.overlaps[sim.id] = S.overlaps[sim.id] || new Set()).add(o);
+              for (const r of I.rec)
+                if (r.x0 < -2 || r.x1 > w + 2 || r.y0 < -2 || r.y1 > h + 2)
+                  (S.clipped[sim.id] = S.clipped[sim.id] || new Set()).add(r.t);
+            }
+            sim.readouts && sim.readouts(st, P);
+            sim.sample && sim.sample(st, P);
+          }
+        } catch (e) { result.errors.push(key + ' ' + tag + ' → ' + e.message); }
+      }
+    }
+    const n = o => Object.values(o).reduce((a, s) => a + s.size, 0);
+    S.overlapCount = n(S.overlaps); S.clippedCount = n(S.clipped);
+    result.total.draws += S.draws; result.total.overlaps += S.overlapCount; result.total.clipped += S.clippedCount;
+    out.textContent = '검사 중… ' + key;
+    await new Promise(r => setTimeout(r));
+  }
+
+  // 보고
+  const L = [];
+  L.push('시뮬레이션 ' + PS.sims.length + '종 · 그리기 ' + result.total.draws + '회');
+  L.push('예외 ' + result.errors.length + ' · 겹침 ' + result.total.overlaps + ' · 잘림 ' + result.total.clipped);
+  L.push('');
+  for (const [k, S] of Object.entries(result.sizes)) {
+    L.push('■ ' + k + '   겹침 ' + S.overlapCount + '   잘림 ' + S.clippedCount);
+    for (const [id, set] of Object.entries(S.overlaps)) L.push('   겹침 ' + id + ': ' + [...set].slice(0, 4).join(' | '));
+    for (const [id, set] of Object.entries(S.clipped)) L.push('   잘림 ' + id + ': ' + [...set].slice(0, 4).join(' | '));
+  }
+  if (result.errors.length) { L.push(''); L.push('예외:'); result.errors.slice(0, 30).forEach(e => L.push('   ' + e)); }
+  out.innerHTML = '<span class="' + (result.errors.length + result.total.overlaps + result.total.clipped ? 'bad' : 'ok') + '">' +
+    L.shift() + '\n' + L.shift() + '</span>\n' + L.join('\n').replace(/</g, '&lt;');
+  // 집합은 JSON 으로 못 넘기므로 배열로
+  for (const S of Object.values(result.sizes)) for (const f of ['overlaps', 'clipped'])
+    for (const id in S[f]) S[f][id] = [...S[f][id]];
+  window.RESULT = result;
+  document.querySelector('iframe').remove();
+  return result;
+}
+document.getElementById('run').onclick = () => run().catch(fail);
+function fail(e) { out.innerHTML = '<span class="bad">점검 자체가 실패했습니다: ' + e.message + '</span>'; window.RESULT = { failed: e.message }; }
+run().catch(fail);
+</script>
+</body>
+</html>

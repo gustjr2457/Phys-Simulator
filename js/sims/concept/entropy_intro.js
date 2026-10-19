@@ -115,7 +115,8 @@
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
-      const V = PS.view(w, h, Object.assign({ pad: 24 }, BOX));
+      // 아래쪽 56px 은 "왼쪽 칸 비율" 막대 자리 — 상자가 높이를 꽉 채우면 막대가 캔버스 밖으로 밀려난다
+      const V = PS.view(w, h - 56, Object.assign({ pad: 24 }, BOX));
 
       // 상자
       D.line(ctx, V.X(BOX.x0), V.Y(BOX.y0), V.X(BOX.x1), V.Y(BOX.y0), { color: 'rgba(167,170,176,.55)', width: 2 });

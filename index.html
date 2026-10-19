@@ -22,7 +22,7 @@
 </head>
 <body>
 
-<aside id="nav">
+<aside id="nav" aria-label="시뮬레이션 목록">
   <div class="brand">
     <div class="logo">Φ</div>
     <div>
@@ -31,9 +31,9 @@
     </div>
   </div>
   <button id="btnGroupMenu" class="group-menu-btn" title="분야 선택">
-    <span class="gm-ico">☰</span><span id="groupLabel">기초 과정</span><span class="gm-caret">▾</span>
+    <span class="gm-ico" aria-hidden="true">☰</span><span id="groupLabel">기초 과정</span><span class="gm-caret">▾</span>
   </button>
-  <div class="modes">
+  <div class="modes" role="group" aria-label="과정">
     <button class="mode on" data-mode="concept" data-group="core" title="초급 과정 — 공식 없이 감 잡기">초급</button>
     <button class="mode" data-mode="basic" data-group="core" title="고등물리 — 물리학Ⅰ">고등물리</button>
     <button class="mode" data-mode="general" data-group="core" title="일반물리 — 역학 · 유체 · 열 · 전자기 · 파동 · 상대성">일반물리</button>
@@ -45,8 +45,8 @@
     <button class="mode" data-mode="mech" data-group="applied" title="기계공학 — 고체역학 · 파괴역학 · 열공학 · 진동공학">기계</button>
     <button class="mode" data-mode="adv" data-group="applied" title="공학응용 — 분야 공통 계측·신호">공학응용</button>
   </div>
-  <button id="btnFormulaIndex" class="formula-index-btn" title="등록된 모든 시뮬레이션의 공식을 트랙별로 모아봅니다">Σ 전체 공식 모음</button>
-  <div id="simlist"></div>
+  <button id="btnFormulaIndex" class="formula-index-btn" title="등록된 모든 시뮬레이션의 공식을 트랙별로 모아봅니다"><span aria-hidden="true">Σ</span><span class="fi-text"> 전체 공식 모음</span></button>
+  <nav id="simlist" aria-label="이 과정의 시뮬레이션"></nav>
   <footer class="nav-foot">
     <p><b>Space</b> 재생/정지 · <b>R</b> 처음으로</p>
     <p>공식의 <span class="mini-term">기호</span>에 마우스를 올려보세요.</p>
@@ -63,12 +63,12 @@
   </header>
 
   <section class="stage">
-    <canvas id="cv"></canvas>
+    <canvas id="cv" role="img" aria-label="시뮬레이션 화면"></canvas>
     <div class="stage-bar">
-      <button id="btnPlay" class="btn primary"><span class="ico">▶</span><span id="playLabel">재생</span></button>
-      <button id="btnReset" class="btn"><span class="ico">↺</span>처음으로</button>
+      <button id="btnPlay" class="btn primary" aria-keyshortcuts="Space"><span class="ico" aria-hidden="true">▶</span><span id="playLabel" class="btn-text">재생</span></button>
+      <button id="btnReset" class="btn" aria-keyshortcuts="R"><span class="ico" aria-hidden="true">↺</span><span class="btn-text">처음으로</span></button>
       <label class="speed">
-        속도 <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1">
+        <span class="speed-word">속도</span> <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1">
         <b id="speedVal">1.0×</b>
       </label>
       <div class="clock">t = <b id="clock">0.00</b> s</div>
@@ -77,8 +77,8 @@
 
   <section id="graphs"></section>
 
-  <section id="questRoom" class="quest-room hidden">
-    <div class="quest-head"><span class="quest-icon">◎</span><h3>문제방</h3><span class="quest-sub">이 시뮬레이션의 도전 과제</span></div>
+  <section id="questRoom" class="quest-room hidden" aria-labelledby="questTitle">
+    <div class="quest-head"><span class="quest-icon" aria-hidden="true">◎</span><h3 id="questTitle">문제방</h3><span class="quest-sub">이 시뮬레이션의 도전 과제</span></div>
     <div id="challenges" class="quest-list"></div>
   </section>
 </main>
@@ -89,7 +89,7 @@
     <div id="formulas"></div>
   </section>
 
-  <section class="card">
+  <section class="card" id="cardControls">
     <h3>값 바꿔보기</h3>
     <div id="controls"></div>
     <div id="presets" class="presets"></div>
@@ -98,9 +98,9 @@
     </div>
   </section>
 
-  <section class="card">
+  <section class="card" id="cardReadouts">
     <h3>측정값</h3>
-    <div id="readouts" class="readouts"></div>
+    <div id="readouts" class="readouts" aria-live="off"></div>
   </section>
 
   <section class="card" id="cardNotes">
@@ -110,25 +110,28 @@
 </aside>
 
 <div id="groupModal" class="modal-overlay hidden">
-  <div class="modal modal-sm">
+  <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="groupModalTitle">
     <div class="modal-head">
-      <h2>분야 선택</h2>
-      <button id="btnCloseGroups" class="modal-close" title="닫기(Esc)">✕</button>
+      <h2 id="groupModalTitle">분야 선택</h2>
+      <button id="btnCloseGroups" class="modal-close" title="닫기 (Esc)" aria-label="닫기">✕</button>
     </div>
     <div class="modal-body" id="groupList"></div>
   </div>
 </div>
 
 <div id="formulaModal" class="modal-overlay hidden">
-  <div class="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="formulaModalTitle">
     <div class="modal-head">
-      <h2>Σ 전체 공식 모음</h2>
-      <input type="text" id="formulaSearch" placeholder="공식 이름, 시뮬레이션 이름으로 검색…" autocomplete="off">
-      <button id="btnCloseFormulas" class="modal-close" title="닫기(Esc)">✕</button>
+      <h2 id="formulaModalTitle">Σ 전체 공식 모음</h2>
+      <input type="search" id="formulaSearch" placeholder="공식 이름, 시뮬레이션 이름으로 검색…" autocomplete="off" aria-label="공식 검색">
+      <button id="btnCloseFormulas" class="modal-close" title="닫기 (Esc)" aria-label="닫기">✕</button>
     </div>
     <div id="formulaListWrap" class="modal-body"></div>
   </div>
 </div>
+
+<!-- 화면 읽기 프로그램용 알림 (과제 달성 등) -->
+<div id="announcer" class="sr-only" aria-live="polite"></div>
 
 <script src="js/core.js"></script>
 

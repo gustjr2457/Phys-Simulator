@@ -181,7 +181,8 @@
       D.text(ctx, '최종 출력', obx, oby - 6, { size: 10.5, color: '#6a6e78' });
       D.bar(ctx, obx, oby, obw, 14, Math.abs(Vout), 5, C.Vout, null, hl === 'Vout' || hl === 'A');
       D.text(ctx, fmt(Vout, 3) + ' V', obx, oby + 44, { size: 20, color: C.Vout, bold: true });
-      D.text(ctx, '(ADC 입력 범위 0~5 V 기준)', obx, oby + 60, { size: 9.5, color: '#4a4d55' });
+      // 오른쪽 끝 가까이라 짧게 — 길면 캔버스 안으로 밀려 들어오며 증폭기의 "×이득" 글자를 덮는다
+      D.text(ctx, '(ADC 0~5 V 기준)', obx, oby + 60, { size: 9.5, color: '#4a4d55' });
       if (Math.abs(Vout) > 5) D.tag(ctx, '⚠ 포화 — 이득을 낮추세요', obx + obw / 2, oby + 78, '#c4705f', true);
     }
   });

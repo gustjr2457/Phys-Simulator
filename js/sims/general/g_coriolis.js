@@ -129,7 +129,8 @@
       const w = ui.w, h = ui.h, hl = ui.hl;
       const tf = Math.min(st.tf, tFlight(p));
       const cy = h * .40;
-      const rad = Math.min(w * .21, h * .30);
+      // 원판 아래 "ω = …" 라벨(바닥 + 26px)이 맨 아래 "지구에서라면" 제목(h − 82)과 겹치지 않는 데까지만 키운다
+      const rad = Math.max(40, Math.min(w * .21, h * .30, h * .60 - 126));
       const PX = rad / p.R;
       const r = p.v0 * tf;                        // 중심에서의 거리
       const theta = p.om * tf;                    // 원판이 돈 각도

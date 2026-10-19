@@ -159,8 +159,9 @@
       D.line(ctx, Bx, By + 30, Bx, My - 34, { color: 'rgba(122,206,193,.5)', dash: [4, 5], width: 1.4 });
 
       // 힘 화살표
-      D.arrow(ctx, Bx, By, 0, -64, { color: C.B, width: 4, hot: hl === 'KB', label: '부력', lx: -26, ly: -8 });
-      D.arrow(ctx, Gx, Gy, 0, 64, { color: C.KG, width: 4, hot: hl === 'KG', label: '무게', lx: 26, ly: 8 });
+      // 화살표 라벨(폭 약 36px 태그)은 점 라벨(B·G·M, 점에서 ±11~20px)과 수평으로 겹치지 않게 ±40px
+      D.arrow(ctx, Bx, By, 0, -64, { color: C.B, width: 4, hot: hl === 'KB', label: '부력', lx: -40, ly: -8 });
+      D.arrow(ctx, Gx, Gy, 0, 64, { color: C.KG, width: 4, hot: hl === 'KG', label: '무게', lx: 40, ly: 8 });
 
       // GZ 팔 (G에서 부력선까지 수평 거리)
       const GZ = GZof(p, th);

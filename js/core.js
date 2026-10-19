@@ -74,6 +74,50 @@ const PS = (function () {
   }
 
   /* ── 드로잉 헬퍼 ─────────────────────────────────── */
+  /* 라벨이 캔버스 가장자리에서 잘리지 않게 안쪽으로 밀어 넣는다.
+     단, 기준점(x, y)이 화면에서 멀리(24px 넘게) 벗어나 있으면 그 라벨은 화면 밖 물체에 붙어 있는
+     것이므로 그대로 둔다 — 가장자리에 남겨 두면 "보이지 않는 것"을 가리키는 엉뚱한 라벨이 된다.
+     경계 바로 바깥은 낮은 캔버스에서 레이아웃이 살짝 밀린 경우라 안으로 끌어들인다.
+     계산은 기기 픽셀(변환 적용 후)에서 하고, 결과는 지역 좌표의 이동량으로 돌려준다. */
+  function keepIn(ctx, x, y, x0, x1, y0, y1) {
+    const tr = ctx.getTransform();
+    if (Math.abs(tr.b) > 1e-6 || Math.abs(tr.c) > 1e-6 || !tr.a || !tr.d) return [0, 0];   // 회전된 글자
+    const W = ctx.canvas.width, H = ctx.canvas.height, M = 3 * Math.abs(tr.a), T = 24 * Math.abs(tr.a);
+    const ax = tr.a * x + tr.e, ay = tr.d * y + tr.f;
+    if (ax < -T || ax > W + T || ay < -T || ay > H + T) return [0, 0];
+    const X0 = tr.a * x0 + tr.e, X1 = tr.a * x1 + tr.e, Y0 = tr.d * y0 + tr.f, Y1 = tr.d * y1 + tr.f;
+    let dx = 0, dy = 0;
+    if (X1 > W - M) dx = W - M - X1;
+    if (X0 + dx < M) dx = M - X0;
+    if (Y1 > H - M) dy = H - M - Y1;
+    if (Y0 + dy < M) dy = M - Y0;
+    return [dx / tr.a, dy / tr.d];
+  }
+
+  /* 좁은 캔버스(폰)용 라벨 충돌 회피.
+     데스크톱 배치로 짠 라벨들이 폭 430px 남짓에서 서로 부딪히는 것을 막는다.
+     앱이 무대 캔버스에서만, 논리 폭이 600 미만일 때만 ctx.__labels 를 켠다 — 데스크톱 그림은 그대로다.
+     새 라벨이 앞서 그린 라벨과 겹치면 위아래로 한 줄씩(최대 두 줄) 비켜 보고, 빈자리가 없으면 그대로 둔다. */
+  function avoidLabels(ctx, x0, x1, y0, y1, t) {
+    const L = ctx.__labels;
+    if (!L) return 0;
+    const tr = ctx.getTransform();
+    if (Math.abs(tr.b) > 1e-6 || Math.abs(tr.c) > 1e-6 || !tr.d) return 0;
+    const box = dy => ({ x0: tr.a * x0 + tr.e, x1: tr.a * x1 + tr.e, y0: tr.d * (y0 + dy) + tr.f, y1: tr.d * (y1 + dy) + tr.f });
+    const hits = b => L.some(o => !(o.t === t && Math.abs(o.x0 - b.x0) < 2 && Math.abs(o.y0 - b.y0) < 2) &&
+      Math.min(o.x1, b.x1) - Math.max(o.x0, b.x0) > 1 && Math.min(o.y1, b.y1) - Math.max(o.y0, b.y0) > 1);
+    const H = ctx.canvas.height, line = (y1 - y0) + 3;
+    let dy = 0;
+    if (hits(box(0))) {
+      for (const k of [1, -1, 2, -2]) {
+        const b = box(k * line);
+        if (b.y0 >= 0 && b.y1 <= H && !hits(b)) { dy = k * line; break; }
+      }
+    }
+    const f = box(dy); f.t = t; L.push(f);
+    return dy;
+  }
+
   const D = {
     bg(ctx, w, h) { ctx.clearRect(0, 0, w, h); },
 
@@ -128,6 +172,9 @@ const PS = (function () {
       let tx = x - w / 2;
       if (align === 'left') tx = x;
       if (align === 'right') tx = x - w;
+      const k = keepIn(ctx, x, y, tx, tx + w, y - h / 2, y + h / 2);
+      tx += k[0]; y += k[1];
+      y += avoidLabels(ctx, tx, tx + w, y - h / 2, y + h / 2, text);
       D.roundRect(ctx, tx, y - h / 2, w, h, 6);
       ctx.fillStyle = 'rgba(13,14,16,.88)'; ctx.fill();
       ctx.strokeStyle = color; ctx.globalAlpha = hot ? 1 : .5; ctx.lineWidth = 1; ctx.stroke();
@@ -145,6 +192,13 @@ const PS = (function () {
       ctx.textAlign = o.align || 'left';
       ctx.textBaseline = o.base || 'alphabetic';
       if (o.glow) { ctx.shadowColor = o.color; ctx.shadowBlur = 10; }
+      if (o.keep !== false) {
+        const m = ctx.measureText(t), al = ctx.textAlign;
+        const lx = al === 'center' ? x - m.width / 2 : (al === 'right' || al === 'end') ? x - m.width : x;
+        const k = keepIn(ctx, x, y, lx, lx + m.width, y - m.actualBoundingBoxAscent, y + m.actualBoundingBoxDescent);
+        x += k[0]; y += k[1];
+        y += avoidLabels(ctx, lx + k[0], lx + k[0] + m.width, y - m.actualBoundingBoxAscent, y + m.actualBoundingBoxDescent, t);
+      }
       ctx.fillText(t, x, y);
       ctx.restore();
     },

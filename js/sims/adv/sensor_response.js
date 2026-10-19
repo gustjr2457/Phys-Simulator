@@ -92,7 +92,10 @@
       const TMAX = 160;
 
       /* ── 비커와 온도계 ─────────────────────── */
-      const bx = w * .12, bw = 150, bTop = h * .3, bH = h * .45;
+      // 가로 배치(물통 · 표시기 · 눈금 막대)는 넓은 화면 기준 약 520px 이 필요하다.
+      // 폰처럼 좁으면 여백과 표시기 폭을 줄여 눈금 막대까지 캔버스 안에 들인다.
+      const narrow = w < 600;
+      const bx = narrow ? 14 : w * .12, bw = narrow ? 110 : 150, bTop = h * .3, bH = h * .45;
       // 물
       ctx.save();
       const wg = ctx.createLinearGradient(0, bTop, 0, bTop + bH);
@@ -124,8 +127,9 @@
       D.text(ctx, '온도 센서', px, bTop - 78, { size: 10.5, color: '#9a9da6', align: 'center' });
 
       // 디지털 표시기
-      const dx = bx + bw + 46, dy = bTop - 4;
-      D.roundRect(ctx, dx, dy, 168, 78, 10);
+      const DW = narrow ? 140 : 168;
+      const dx = bx + bw + (narrow ? 20 : 46), dy = bTop - 4;
+      D.roundRect(ctx, dx, dy, DW, 78, 10);
       ctx.fillStyle = '#08090a'; ctx.fill();
       ctx.strokeStyle = '#2a2c31'; ctx.lineWidth = 1; ctx.stroke();
       D.text(ctx, '센서 출력 (샘플링)', dx + 12, dy + 18, { size: 10, color: '#6a6e78' });
@@ -133,7 +137,7 @@
       D.text(ctx, '연속 출력 ' + fmt(st.y, 1) + ' ℃', dx + 12, dy + 70, { size: 10, color: C.y });
 
       // 온도 막대
-      const sbx = dx + 190, sby = bTop, sbh = bH;
+      const sbx = dx + DW + (narrow ? 10 : 22), sby = bTop, sbh = bH;
       const lvl = v => sby + sbh - clamp((v - 0) / TMAX, 0, 1) * sbh;
       D.roundRect(ctx, sbx, sby, 26, sbh, 6); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       ctx.save();

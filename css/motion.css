@@ -39,10 +39,8 @@
 .m-a .term:hover{box-shadow:inset 0 -1px 0 currentColor}
 .m-a .term.on{box-shadow:inset 0 -1px 0 currentColor,0 0 0 1px rgba(255,255,255,.14)}
 
-/* 4. 슬라이더 손잡이 — 마우스를 올릴 때 키가 크던 것(height)을, 잡았을 때만
-      transform 으로 살짝 늘린다. 가장 자주 만지는 조작이라 아주 작게. */
+/* 4. 슬라이더 손잡이 — 잡았을 때만 transform 으로 살짝 늘린다. 가장 자주 만지는 조작이라 아주 작게. */
 .m-a input[type=range]::-webkit-slider-thumb{transition:transform 120ms var(--ease-out)}
-.m-a input[type=range]:hover::-webkit-slider-thumb{height:16px}
 .m-a input[type=range]:active::-webkit-slider-thumb{transform:scaleY(1.18)}
 
 /* 5. 움직임 줄이기 설정 — 0이 아니라 "덜". 색·투명도는 남기고 위치·크기 변화만 뺀다. */

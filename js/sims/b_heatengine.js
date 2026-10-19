@@ -181,7 +181,8 @@
       D.text(ctx, '반드시 버려야 하는 열', cx - wQc / 2 - 58, cy + 98, { size: 9.5, color: C.Qc, align: 'center' });
 
       /* ── 효율 게이지 ── */
-      const gx = Math.min(w - 86, cx + rw / 2 + 120), gTop = cy - 150, gH = 250, gW = 34;
+      // 막대 위에 "100%"(−24)와 "η = …"(−10) 두 줄이 들어갈 자리를 남기고, 낮은 캔버스에서는 막대를 줄인다
+      const gx = Math.min(w - 86, cx + rw / 2 + 120), gTop = Math.max(cy - 150, 42), gH = Math.min(250, h - gTop - 30), gW = 34;
       if (gx + gW + 50 < w + 50) {
         D.roundRect(ctx, gx, gTop, gW, gH, 6); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
         // 불가능 영역 (카르노 위)

@@ -170,7 +170,8 @@
         ctx.stroke();
       }
       ctx.restore();
-      D.text(ctx, '더하는 파동들 (' + N + '개)', px0, cy - amp * 1.52 - 24,
+      // 낮은 캔버스에서는 맨 위 제목(y = 26)보다 아래에 머문다
+      D.text(ctx, '더하는 파동들 (' + N + '개)', px0, Math.max(cy - amp * 1.52 - 24, 46),
         { size: 10, color: hl === 'N' ? '#fff' : C.N, bold: hl === 'N' });
 
       // |ψ|² 확률

@@ -141,7 +141,7 @@
       });
 
       // 물질파 — 파장이 물체보다 길면 큰 파동, 짧으면 촘촘한 선
-      const wx0 = cx - 150, wx1 = cx - R - 10;
+      const wx0 = Math.max(cx - 150, 12), wx1 = cx - R - 10;   // 좁은 캔버스에서 왼쪽 밖으로 나가지 않게
       const visible = clamp(ratio, 0, 1);
       ctx.save();
       ctx.strokeStyle = C.lam; ctx.lineWidth = hl === 'lam' ? 3 : 2;

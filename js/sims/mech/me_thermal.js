@@ -237,7 +237,8 @@
       const w1 = rw * (ri / total), w2 = rw * (rc / total);
       D.line(ctx, rx - 16, ry + 16, rx, ry + 16, { color: C.T, width: 2.4 });
       D.dot(ctx, rx - 16, ry + 16, 4, C.T, hl === 'T');
-      D.text(ctx, 'T = ' + fmt(st.T, 1) + '°C', rx - 18, ry + 6, { size: 10, color: C.T, align: 'right' });
+      // 온도 라벨은 단자 점 아래 — 위쪽은 왼쪽 컵의 "Q = …" 태그가 지나가는 높이다
+      D.text(ctx, 'T = ' + fmt(st.T, 1) + '°C', rx - 10, ry + 36, { size: 10, color: C.T, align: 'right' });
       // 저항 토막(지그재그) — 폭이 저항 비중
       const zig = (x, wd, col, hot) => {
         if (wd < 3) return;

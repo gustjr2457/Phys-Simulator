@@ -134,7 +134,8 @@
       // 바닥
       D.line(ctx, x0, baseY, x1, baseY, { color: 'rgba(167,170,176,.4)', width: 1.5 });
       D.text(ctx, '위치 →', x1, baseY + 18, { size: 9.5, color: '#4a4d55', align: 'right' });
-      D.text(ctx, '에너지 ↑', x0 - 6, topY - 6, { size: 9.5, color: '#4a4d55' });
+      // 축 이름은 축 왼쪽 여백(x0 = 50)에 — 오른쪽에 두면 높은 에너지에서 파동 라벨과 포개진다
+      D.text(ctx, '에너지 ↑', x0 - 6, topY + 4, { size: 9.5, color: '#4a4d55', align: 'right' });
 
       // 장벽
       ctx.save();

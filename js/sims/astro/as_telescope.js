@@ -198,7 +198,8 @@
 
       /* ── 망원경 비교 ── */
       const bx = 48, by = h - 112, bw = Math.min(w - 96, 500);
-      D.text(ctx, '구경 비교 — 분해능은 1/D, 집광력은 D²', bx, by - 10, { size: 10.5, color: '#6a6e78' });
+      // 제목은 눈금 라벨 줄(by - 2)보다 한 줄 위 — 첫 라벨 "사람 눈"이 막대 위쪽 왼끝에 온다
+      D.text(ctx, '구경 비교 — 분해능은 1/D, 집광력은 D²', bx, by - 20, { size: 10.5, color: '#6a6e78' });
       const LO = Math.log10(.005), HI = Math.log10(45);
       const BX = d => bx + bw * clamp((Math.log10(clamp(d, .005, 45)) - LO) / (HI - LO), 0, 1);
       D.line(ctx, bx, by + 10, bx + bw, by + 10, { color: 'rgba(167,170,176,.25)', width: 2 });
