@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/motion.css">
 <script>
-/* 모션 예시 스위치 — ?motion=a|b|c 일 때만 켠다. 없으면 아무것도 바뀌지 않는다 (css/motion.css 참고) */
+/* 모션 단계 — 기본은 c(여운). 비교용으로 ?motion=off|a|b 를 붙이면 그 단계로 본다 (css/motion.css 참고) */
 (function () {
-  var m = (new URLSearchParams(location.search).get('motion') || '').toLowerCase();
+  var m = (new URLSearchParams(location.search).get('motion') || 'c').toLowerCase();
   var on = { a: ['m-a'], b: ['m-a', 'm-b'], c: ['m-a', 'm-b', 'm-c'] }[m];
   if (!on) return;
   var d = document.documentElement;
