@@ -35,9 +35,10 @@
     init(p) { return { x: p.A, v: 0 }; },
     step(st, p, dt) {
       // 감쇠가 없는 이상적인 조화진동이므로 수치 적분 대신 정확한 해를 그대로 쓴다(에너지 오차 0).
-      const w = omega(p);
-      st.x = p.A * Math.cos(w * st.t);
-      st.v = -p.A * w * Math.sin(w * st.t);
+      // 앱은 step 이 끝난 뒤 st.t 에 dt 를 더한다 — 이 step 이 만드는 상태는 시각 st.t + dt 의 것이다
+      const w = omega(p), T = st.t + dt;
+      st.x = p.A * Math.cos(w * T);
+      st.v = -p.A * w * Math.sin(w * T);
     },
 
     graphs: [{

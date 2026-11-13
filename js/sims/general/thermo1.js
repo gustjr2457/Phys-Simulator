@@ -37,12 +37,13 @@
     step(st, p, dt) {
       // 등압 팽창은 정확한 해석해가 있으므로 수치 적분 없이 직접 계산한다 → 오차 0
       const r = rate(p), tc = tCap(p);
-      const t = Math.min(st.t, tc);
+      // 이 step 이 만드는 상태는 시각 st.t + dt 의 것이다 (앱이 step 뒤에 st.t 를 늘린다)
+      const t = Math.min(st.t + dt, tc);
       st.V = V0 + r * t;
       st.Q = p.q * t;
       st.W = p.P * (st.V - V0);
       st.dU = st.Q - st.W;
-      st.done = st.t >= tc;
+      st.done = st.t + dt >= tc;
     },
 
     graphs: [{

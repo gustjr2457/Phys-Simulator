@@ -317,6 +317,7 @@
         P[p.key] = parseFloat(r.value);
         top.querySelector('[data-v]').textContent = fmt(P[p.key], p.dec);
         r.setAttribute('aria-valuetext', valueText());
+        if (restartIfEnded()) return;
         if (p.reset) reset(); else draw();
       };
       r.onmouseenter = r.onfocus = () => setHL(p.key);
@@ -330,7 +331,7 @@
     (sim.presets || []).forEach(pr => {
       const b = el('button', 'preset', pr.name);
       b.type = 'button';
-      b.onclick = () => { Object.assign(P, pr.set); buildPanel(); reset(); };
+      b.onclick = () => { Object.assign(P, pr.set); buildPanel(); if (!restartIfEnded()) reset(); };
       pbox.appendChild(b);
     });
 
@@ -481,6 +482,14 @@
     playing = true; syncPlay();
     setUrl(id, push);
     store.set('last', id);
+  }
+
+  // 시뮬레이션이 스스로 끝난 뒤(st.done — 전복·추락·완주 등) 값을 바꾸면, 바뀐 값으로 처음부터 다시 진행한다.
+  // 사용자가 직접 일시정지한 경우는 끝난 것이 아니므로 그대로 둔다.
+  function restartIfEnded() {
+    if (!sim || !st || !st.done) return false;
+    reset(); playing = true; syncPlay();
+    return true;
   }
 
   function reset() {
@@ -746,4 +755,18 @@
   const startId = idFromHash() || (PS.byId[store.get('last', '')] ? store.get('last', '') : PS.sims[0].id);
   requestAnimationFrame(frame);   // 루프를 먼저 — 첫 시뮬레이션을 여는 중 문제가 생겨도 앱은 살아 있다
   switchToSim(startId, false);
+
+  /* 점검용: ?advance=초 — 시작하자마자 그만큼 진행한 장면을 멈춘 채로 그린다.
+     headless 브라우저는 애니메이션 프레임을 거의 돌리지 않아서, 자동 점검(tools/daily-check.js)이
+     "시간이 흐른 뒤의 화면"을 찍으려면 이렇게 미리 진행시켜야 한다. 빛 층도 곧바로 안정 상태로 맞춘다. */
+  const advance = parseFloat(new URLSearchParams(location.search).get('advance'));
+  if (advance > 0 && sim && st) {
+    let ss = 0;
+    while (st.t < advance && !st.done) {
+      sim.step(st, P, DT); st.t += DT; ss += DT;
+      if (ss >= 1 / 60) { sample(); ss = 0; }
+    }
+    playing = false; syncPlay();
+    draw(); glowFrame(10);
+  }
 })();

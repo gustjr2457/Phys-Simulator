@@ -83,7 +83,7 @@
 
     init(p) { return { f: 0, track: [], done: false }; },
     step(st, p, dt) {
-      st.f = Math.min(1, st.t / LIFE);
+      st.f = Math.min(1, (st.t + dt) / LIFE);   // 이 step 이 만드는 상태는 시각 st.t + dt
       const s = stateOf(p.M, st.f);
       const last = st.track[st.track.length - 1];
       if (!last || Math.abs(Math.log10(s.L) - last[1]) > .012 || Math.abs(Math.log10(s.T) - last[0]) > .004)

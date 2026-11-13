@@ -133,7 +133,13 @@
         ctx.restore();
         [-wpx * .3, wpx * .3].forEach(dx => D.dot(ctx, px + dx, gy - 3, 4.5, '#0a0b0c'));
         D.text(ctx, name, px, gy - hpx - 12, { size: 10.5, color: col, align: 'center', bold: hotM });
-        D.text(ctx, fmt(m, 1) + 'kg', px, gy - hpx / 2, { size: 11, color: '#0a0b0c', align: 'center', bold: true });
+        // 질량 — 수레 안에 들어가면 어두운 글자로. 넘치면(작은 수레) 같은 자리에 밝은 글자로 쓴다:
+        // 밝은 글자는 글자 층에서 어두운 헤일로를 둘러 수레 색 위에서도, 삐져나온 검은 바탕 위에서도 읽힌다.
+        // (수레 아래는 바닥 눈금 숫자 자리라 옮길 수 없다)
+        const mt = fmt(m, 1) + 'kg';
+        ctx.save(); ctx.font = 'bold 11px "Malgun Gothic",sans-serif'; const mw = ctx.measureText(mt).width; ctx.restore();
+        if (mw + 6 <= wpx) D.text(ctx, mt, px, gy - hpx / 2, { size: 11, color: '#0a0b0c', align: 'center', bold: true });
+        else D.text(ctx, mt, px, gy - hpx / 2, { size: 11, color: '#e6e7ea', align: 'center', bold: true });
         D.arrow(ctx, px, gy - hpx - 32, clamp(v * 16, -150, 150), 0,
           { color: colv, width: 3.5, hot: hotV, label: fmt(v, 1) + ' m/s' });
       };

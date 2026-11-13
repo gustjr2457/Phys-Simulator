@@ -377,7 +377,7 @@ const PS = (function () {
     // x축: 기본은 시간, xKey를 주면 그 값(예: 하중)을 x축으로 쓴다
     const xOf = g.xKey ? (p => p[g.xKey]) : (p => p.t);
     const keep = g.xKey ? (() => true) : (p => p.t >= x0);
-    let x0 = 0, xmax;
+    let x0 = 0, xmax, sweepStart = 0;
     if (g.xKey) {
       x0 = Infinity; xmax = -Infinity;
       hist.forEach(p => { const v = xOf(p); if (isFinite(v)) { x0 = Math.min(x0, v); xmax = Math.max(xmax, v); } });
@@ -385,6 +385,15 @@ const PS = (function () {
       if (g.xMin !== undefined) x0 = Math.min(x0, g.xMin);
       if (g.xMax !== undefined) xmax = Math.max(xmax, g.xMax);
       if (xmax - x0 < 1e-9) xmax = x0 + 1;
+      // 가로축 값을 되풀이해 훑는 그래프(속도·온도·진동수 스윕 등) — 한 번에 범위의 30 % 넘게 뒤로 뛰면
+      // 새 회차가 시작된 것이다. 곡선은 그 지점부터만 그린다(이전 회차와 겹치거나 끝→처음을 잇는 선이 생기지 않게).
+      // 조금씩 오가는 것(복원성 GZ 곡선처럼 흔들리며 같은 곡선을 따라가는 경우)은 회차로 보지 않는다.
+      // 축 범위는 전체 기록으로 정해 회차가 바뀌어도 축이 흔들리지 않는다.
+      const jump = (xmax - x0) * .3;
+      for (let i = hist.length - 1; i > 0; i--) {
+        const a = xOf(hist[i - 1]), b = xOf(hist[i]);
+        if (isFinite(a) && isFinite(b) && b < a - jump) { sweepStart = i; break; }
+      }
     } else {
       const tLast = hist.length ? hist[hist.length - 1].t : 0;
       xmax = Math.max(tLast, g.xmin || 4);
@@ -432,9 +441,9 @@ const PS = (function () {
       ctx.shadowColor = s.color; ctx.shadowBlur = hot ? 12 : 5;   // 곡선은 늘 은은하게 빛나고, 강조되면 더 밝게
       ctx.beginPath();
       let started = false;
-      hist.forEach(p => {
+      hist.forEach((p, i) => {
         const v = p[s.key];
-        if (!keep(p) || typeof v !== 'number' || !isFinite(v)) return;
+        if (i < sweepStart || !keep(p) || typeof v !== 'number' || !isFinite(v)) return;
         const x = X(xOf(p)), y = Y(v);
         if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
       });

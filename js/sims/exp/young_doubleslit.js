@@ -21,7 +21,9 @@
     else if (nm >= 580 && nm < 645) { r = 1; g = -(nm - 645) / (645 - 580); b = 0; }
     else if (nm >= 645 && nm <= 750) { r = 1; g = 0; b = 0; }
     const f = v => Math.round(255 * clamp(v, 0, 1));
-    return { css: 'rgb(' + f(r) + ',' + f(g) + ',' + f(b) + ')' };
+    // label — 글자용으로 45 % 밝힌 색. 순수한 파랑(rgb 0,0,255)은 어두운 무대 위에서 대비 2.4 로 거의 안 보인다
+    const L = v => Math.round(255 * clamp(v, 0, 1) + (255 - 255 * clamp(v, 0, 1)) * .45);
+    return { css: 'rgb(' + f(r) + ',' + f(g) + ',' + f(b) + ')', label: 'rgb(' + L(r) + ',' + L(g) + ',' + L(b) + ')' };
   }
 
   // 무늬 간격(실제 물리 공식, SI 단위로 계산 후 mm로 반환): Δy = λL/d
@@ -196,7 +198,7 @@
           D.line(ctx, screenX + 6 + theoPrev * 26, yMidPrev, screenX + 6 + theo * 26, yMid, { color: 'rgba(236,240,248,.55)', width: 1.3 });
         }
       }
-      D.text(ctx, '실제로 쌓인 무늬', screenX - barMax * .5, botY + 20, { size: 10, color: col, align: 'center' });
+      D.text(ctx, '실제로 쌓인 무늬', screenX - barMax * .5, botY + 20, { size: 10, color: wavelengthToRGB(p.lambda).label, align: 'center' });
       D.text(ctx, '이론 곡선', screenX + 34, botY + 20, { size: 9.5, color: '#9a9da6', align: 'center' });
 
       // 방금 도착한 광자 표시
