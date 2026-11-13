@@ -29,7 +29,9 @@
 const DEFAULT_SIZES = '1407x704,1132x566,799x416,725x363,705x353,733x419,507x549,436x471,417x436';
 const qs = new URLSearchParams(location.search);
 const SIZES = (qs.get('sizes') || DEFAULT_SIZES).split(',').map(s => s.split('x').map(Number));
+const ONLY = qs.get('only');   // 특정 시뮬레이션만 (쉼표로 여러 개)
 const DT = 1 / 480, STEPS = 1800, SNAP_EVERY = 600;
+const STAGE = [10, 11, 12];          // 무대 바탕색 — 투명 픽셀은 이 색 위에 합성해 본다
 const out = document.getElementById('out');
 
 function loadApp() {
@@ -61,12 +63,35 @@ function instrument(PS, ctx) {
         const x0 = tr.a * lx + tr.e, x1 = tr.a * (lx + w) + tr.e;
         const y0 = tr.d * (y - m.actualBoundingBoxAscent) + tr.f, y1 = tr.d * (y + m.actualBoundingBoxDescent) + tr.f;
         rec.push({ t, x0: Math.min(x0, x1), x1: Math.max(x0, x1), y0: Math.min(y0, y1), y1: Math.max(y0, y1),
-                   tag: inTag > 0, a: ctx.globalAlpha });
+                   tag: inTag > 0, a: ctx.globalAlpha, col: String(ctx.fillStyle) });
       }
     }
     return ft.apply(this, arguments);
   };
   return { rec, restore() { D.tag = tag0; delete ctx.fillText; } };
+}
+
+/* 가독성 — 어두운 글자(밝은 바탕용)가 실제로 밝은 바탕 위에 있는가.
+   밝은 글자는 앱에서 무대 배경색 헤일로를 두르므로(core.js) 어떤 바탕에서도 읽힌다 — 대상이 아니다.
+   글자를 빼고 한 번 더 그려 얻은 배경 픽셀과 글자 색의 명암 대비가 3 미만이면 잡는다. */
+const hex2 = c => { const m = c.match(/^#([0-9a-f]{6})$/i); if (m) return [0, 2, 4].map(i => parseInt(m[1].substr(i, 2), 16));
+  const n = c.match(/[\d.]+/g); return n ? n.slice(0, 3).map(Number) : [0, 0, 0]; };
+const isLight = c => { const v = hex2(c); return .299 * v[0] + .587 * v[1] + .114 * v[2] > 70; };
+const relLum = ([r, g, b]) => { const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+const contrast = (a, b) => { const x = relLum(a), y = relLum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+function legibility(rec, bgCtx, w, h) {
+  const bad = [];
+  for (const r of rec) {
+    if (r.tag || r.a < .5 || isLight(r.col)) continue;
+    const y = Math.round((r.y0 + r.y1) / 2); if (y < 0 || y >= h) continue;
+    const xs = [.2, .4, .6, .8].map(f => Math.round(r.x0 + (r.x1 - r.x0) * f)).filter(x => x >= 0 && x < w);
+    if (!xs.length) continue;
+    const bg = [0, 0, 0];
+    xs.forEach(x => { const d = bgCtx.getImageData(x, y, 1, 1).data, al = d[3] / 255; for (let k = 0; k < 3; k++) bg[k] += (d[k] * al + STAGE[k] * (1 - al)) / xs.length; });
+    const c = contrast(hex2(r.col), bg);
+    if (c < 3) bad.push(r.t.slice(0, 24) + ' (대비 ' + c.toFixed(2) + ')');
+  }
+  return bad;
 }
 
 function overlaps(rec) {
@@ -92,12 +117,16 @@ async function run() {
   const W = await loadApp();
   const PS = W.eval('PS');   // core.js 의 const PS 는 window 속성이 아니다
   const cv = W.document.createElement('canvas'), ctx = cv.getContext('2d');
-  const result = { sizes: {}, errors: [], total: { draws: 0, overlaps: 0, clipped: 0 } };
+  const result = { sizes: {}, errors: [], illegible: {}, total: { draws: 0, overlaps: 0, clipped: 0, illegible: 0 } };
+  const bgCv = W.document.createElement('canvas'), bgCtx = bgCv.getContext('2d', { willReadFrequently: true });
+  const SIMS = ONLY ? PS.sims.filter(s => ONLY.split(',').includes(s.id)) : PS.sims;
+  if (ONLY && !SIMS.length) throw new Error('only=' + ONLY + ' — 등록된 시뮬레이션이 없다');
+  result.only = ONLY || null; result.simCount = SIMS.length;
 
   for (const [w, h] of SIZES) {
     const key = w + 'x' + h, S = result.sizes[key] = { overlaps: {}, clipped: {}, draws: 0 };
-    cv.width = w; cv.height = h;
-    for (const sim of PS.sims) {
+    cv.width = w; cv.height = h; bgCv.width = w; bgCv.height = h;
+    for (const sim of SIMS) {
       for (const pre of [null].concat(sim.presets || [])) {
         const tag = sim.id + (pre ? ' / ' + pre.name : '');
         try {
@@ -118,6 +147,14 @@ async function run() {
               for (const r of I.rec)
                 if (r.x0 < -2 || r.x1 > w + 2 || r.y0 < -2 || r.y1 > h + 2)
                   (S.clipped[sim.id] = S.clipped[sim.id] || new Set()).add(r.t);
+              if (hl === null) {   // 같은 장면을 글자 없이 다시 그려 배경을 얻는다
+                bgCtx.setTransform(1, 0, 0, 1, 0, 0); bgCtx.clearRect(0, 0, w, h);
+                bgCtx.fillText = () => {};
+                const tag0 = PS.D.tag; PS.D.tag = () => {};
+                bgCtx.__labels = null;
+                try { sim.draw(bgCtx, st, P, { w, h, hl: null, playing: true }); } finally { delete bgCtx.fillText; PS.D.tag = tag0; }
+                for (const b of legibility(I.rec, bgCtx, w, h)) (result.illegible[sim.id] = result.illegible[sim.id] || new Set()).add(key + ': ' + b);
+              }
             }
             sim.readouts && sim.readouts(st, P);
             sim.sample && sim.sample(st, P);
@@ -135,25 +172,35 @@ async function run() {
   // 보고
   const L = [];
   L.push('시뮬레이션 ' + PS.sims.length + '종 · 그리기 ' + result.total.draws + '회');
-  L.push('예외 ' + result.errors.length + ' · 겹침 ' + result.total.overlaps + ' · 잘림 ' + result.total.clipped);
+  for (const id in result.illegible) result.illegible[id] = [...result.illegible[id]];
+  result.total.illegible = Object.values(result.illegible).reduce((a, v) => a + v.length, 0);
+  L.push('예외 ' + result.errors.length + ' · 겹침 ' + result.total.overlaps + ' · 잘림 ' + result.total.clipped + ' · 안 읽히는 글자 ' + result.total.illegible);
   L.push('');
   for (const [k, S] of Object.entries(result.sizes)) {
     L.push('■ ' + k + '   겹침 ' + S.overlapCount + '   잘림 ' + S.clippedCount);
     for (const [id, set] of Object.entries(S.overlaps)) L.push('   겹침 ' + id + ': ' + [...set].slice(0, 4).join(' | '));
     for (const [id, set] of Object.entries(S.clipped)) L.push('   잘림 ' + id + ': ' + [...set].slice(0, 4).join(' | '));
   }
+  for (const [id, arr] of Object.entries(result.illegible)) L.push('   안 읽힘 ' + id + ': ' + arr.slice(0, 4).join(' | '));
   if (result.errors.length) { L.push(''); L.push('예외:'); result.errors.slice(0, 30).forEach(e => L.push('   ' + e)); }
-  out.innerHTML = '<span class="' + (result.errors.length + result.total.overlaps + result.total.clipped ? 'bad' : 'ok') + '">' +
+  out.innerHTML = '<span class="' + (result.errors.length + result.total.overlaps + result.total.clipped + result.total.illegible ? 'bad' : 'ok') + '">' +
     L.shift() + '\n' + L.shift() + '</span>\n' + L.join('\n').replace(/</g, '&lt;');
   // 집합은 JSON 으로 못 넘기므로 배열로
   for (const S of Object.values(result.sizes)) for (const f of ['overlaps', 'clipped'])
     for (const id in S[f]) S[f][id] = [...S[f][id]];
   window.RESULT = result;
+  // 자동 실행(tools/daily-check.js)이 headless 브라우저의 DOM 에서 읽는다
+  const j = document.createElement('script'); j.type = 'application/json'; j.id = 'result';
+  j.textContent = JSON.stringify(result); document.body.appendChild(j);
   document.querySelector('iframe').remove();
   return result;
 }
 document.getElementById('run').onclick = () => run().catch(fail);
-function fail(e) { out.innerHTML = '<span class="bad">점검 자체가 실패했습니다: ' + e.message + '</span>'; window.RESULT = { failed: e.message }; }
+function fail(e) {
+  out.innerHTML = '<span class="bad">점검 자체가 실패했습니다: ' + e.message + '</span>'; window.RESULT = { failed: e.message };
+  const j = document.createElement('script'); j.type = 'application/json'; j.id = 'result';
+  j.textContent = JSON.stringify(window.RESULT); document.body.appendChild(j);
+}
 run().catch(fail);
 </script>
 </body>
