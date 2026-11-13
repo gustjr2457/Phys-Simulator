@@ -89,9 +89,18 @@
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
-      const xmax = Math.max(26, st.x + 8, 6);
-      const xmin = Math.min(-2, st.x - 4);
-      const k = (w - 90) / (xmax - xmin);
+      // 보이는 범위 — 수레와 진행 방향 속도 화살표가 늘 화면 안에 들게 잡는다.
+      // 예전에는 "수레 + 8 m" 여유만 두어, 폭이 좁은 폰에서 속도 화살표(최대 230 px)가 오른쪽 밖으로 뻗었다.
+      // 화살표 길이는 px 이므로 여유도 px 기준 비율로 계산한다 (X(x) = 60 + 비율 × span).
+      const amax = Math.min(230, w * .28);                         // 화살표 최대 길이 — 좁은 화면에선 짧게
+      const A = Math.min(Math.abs(st.v) * 7, amax);
+      const span = w - 90;
+      const fR = Math.max(.35, (span - 36 - (st.v > 0 ? A : 0)) / span);   // 수레가 놓일 수 있는 오른쪽 한계
+      const fL = Math.min(.5, Math.max(0, ((st.v < 0 ? A : 0) - 24) / span)); // 뒤로 갈 때의 왼쪽 한계
+      let xmin = Math.min(-2, st.x - 4);
+      const xmax = Math.max(26, 6, xmin + (st.x - xmin) / fR);
+      if (fL > 0) xmin = Math.min(xmin, (st.x - fL * xmax) / (1 - fL));
+      const k = span / (xmax - xmin);
       const X = x => 60 + (x - xmin) * k;
       const gy = h * .68;
 
@@ -132,7 +141,7 @@
       car(ctx, cx, gy, 52, 30, hl === 'v' ? '#9ebadb' : '#6483b0');
 
       // 속도 화살표 (위)
-      D.arrow(ctx, cx, gy - 54, PS.clamp(st.v * 7, -230, 230), 0,
+      D.arrow(ctx, cx, gy - 54, PS.clamp(st.v * 7, -amax, amax), 0,
         { color: C.v, width: 4, hot: hl === 'v', label: 'v = ' + fmt(st.v, 1) + ' m/s' });
       // 가속도 화살표 (아래)
       if (Math.abs(p.a) > .01) {

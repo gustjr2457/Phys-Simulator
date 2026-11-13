@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<!-- 폰 화면 캡처용 틀. headless Chrome 은 창 폭을 500px 아래로 줄이지 못한다(390 을 줘도 실제로는 500 으로
+     배치하고 잘라 찍는다). 그래서 정확한 폭의 iframe 안에 앱을 띄워 진짜 폰 배치를 만든다.
+     사용: frame.html?w=390&h=844&src=<앱 주소를 encodeURIComponent 한 것>   (tools/daily-check.js) -->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<style>html,body{margin:0;background:#2a2c31}iframe{border:0;display:block}</style>
+</head>
+<body>
+<iframe id="f" title="앱"></iframe>
+<script>
+const q = new URLSearchParams(location.search), f = document.getElementById('f');
+f.width = q.get('w') || 390; f.height = q.get('h') || 844; f.src = q.get('src') || '../index.html';
+</script>
+</body>
+</html>

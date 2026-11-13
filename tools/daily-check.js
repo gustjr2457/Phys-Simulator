@@ -87,10 +87,14 @@ function chrome(args, timeout = 300000) {
     const dir = path.join(ROOT, 'tools/daily/shots', id);
     fs.mkdirSync(dir, { recursive: true });
     const shots = [];
+    // headless Chrome 은 창 폭이 500px 아래로 내려가지 않는다 — 폰은 정확한 폭의 iframe(tools/frame.html) 안에 띄워 찍는다.
+    // (창을 390 으로 주면 500px 배치를 잘라 찍어, 오른쪽 끝의 물체가 "화면 밖"처럼 보인다)
     for (const [nm, w, h] of [['desktop', 1440, 900], ['phone', 390, 844]])
       for (const sec of [1, 6]) {
         const f = path.join(dir, `${nm}-${sec}s.png`);
-        await chrome(['--virtual-time-budget=3000', `--window-size=${w},${h}`, '--screenshot=' + f, `${base}/index.html?motion=off&advance=${sec}#/${id}`], 120000);
+        const app = `/index.html?motion=off&advance=${sec}#/${id}`;
+        const url = nm === 'phone' ? `${base}/tools/frame.html?w=${w}&h=${h}&src=${encodeURIComponent(app)}` : base + app;
+        await chrome(['--virtual-time-budget=3000', `--window-size=${Math.max(w, 500)},${h}`, '--screenshot=' + f, url], 120000);
         shots.push(path.relative(ROOT, f));
       }
     gate(4, '화면 캡처 (눈으로 확인할 것)', shots.length === 4, shots.join(', '));
