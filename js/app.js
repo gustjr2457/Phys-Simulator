@@ -140,7 +140,7 @@
 
   /* ── 2. 주소와 저장 ──────────────────────────────
      주소: #/시뮬레이션id — 링크로 공유하고, 새로고침해도 그 자리, 뒤로 가기도 된다.
-     저장: 마지막으로 본 시뮬레이션 · 재생 속도 · 달성한 도전 과제.
+     저장: 재생 속도 · 달성한 도전 과제. (시작 화면은 저장하지 않는다 — 주소가 없으면 늘 첫 화면)
      저장소를 쓸 수 없는 환경(사생활 보호 모드 등)에서도 앱은 그대로 동작한다. */
   const store = {
     get(k, d) { try { const v = localStorage.getItem('physlab.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -481,7 +481,6 @@
     resizeAll(); reset();
     playing = true; syncPlay();
     setUrl(id, push);
-    store.set('last', id);
   }
 
   // 시뮬레이션이 스스로 끝난 뒤(st.done — 전복·추락·완주 등) 값을 바꾸면, 바뀐 값으로 처음부터 다시 진행한다.
@@ -752,7 +751,9 @@
   /* ── 시작 ── */
   setSpeed(Math.min(2, Math.max(.1, +store.get('speed', 1) || 1)));
   markEmptyModes();
-  const startId = idFromHash() || (PS.byId[store.get('last', '')] ? store.get('last', '') : PS.sims[0].id);
+  // 주소에 시뮬레이션이 없으면(링크로 처음 들어온 경우) 늘 첫 화면 — 기초 물리학 › 힘이란 무엇인가? 에서 시작한다.
+  // 마지막으로 본 것을 되살리면 남에게 받은 링크도 엉뚱한 이론에서 열린다. 특정 시뮬레이션은 #/id 로 연다.
+  const startId = idFromHash() || PS.sims[0].id;
   requestAnimationFrame(frame);   // 루프를 먼저 — 첫 시뮬레이션을 여는 중 문제가 생겨도 앱은 살아 있다
   switchToSim(startId, false);
 
