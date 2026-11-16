@@ -760,7 +760,11 @@
   /* 점검용: ?advance=초 — 시작하자마자 그만큼 진행한 장면을 멈춘 채로 그린다.
      headless 브라우저는 애니메이션 프레임을 거의 돌리지 않아서, 자동 점검(tools/daily-check.js)이
      "시간이 흐른 뒤의 화면"을 찍으려면 이렇게 미리 진행시켜야 한다. 빛 층도 곧바로 안정 상태로 맞춘다. */
-  const advance = parseFloat(new URLSearchParams(location.search).get('advance'));
+  const q = new URLSearchParams(location.search);
+  // 점검용: ?preset=번호(0부터) — 그 프리셋을 누른 상태로 시작한다. 자동 점검이 dev 서버·브라우저 조작 없이 프리셋마다 캡처하려고 쓴다.
+  const pi = parseInt(q.get('preset'), 10), pr = sim && (sim.presets || [])[pi];
+  if (pr) { Object.assign(P, pr.set); buildPanel(); reset(); }
+  const advance = parseFloat(q.get('advance'));
   if (advance > 0 && sim && st) {
     let ss = 0;
     while (st.t < advance && !st.done) {

@@ -98,6 +98,20 @@ function chrome(args, timeout = 300000) {
         shots.push(path.relative(ROOT, f));
       }
     gate(4, '화면 캡처 (눈으로 확인할 것)', shots.length === 4, shots.join(', '));
+
+    /* 프리셋마다 캡처 — 극단값·실속 같은 장면을 dev 서버나 브라우저 조작 없이 눈으로 확인한다 (?preset=번호) */
+    const presets = (t.presetNames && t.presetNames[id]) || [];
+    const pshots = [];
+    for (let i = 0; i < presets.length; i++)
+      for (const [nm, w, h] of [['desktop', 1440, 900], ['phone', 390, 844]]) {
+        const f = path.join(dir, `preset${i}-${nm}-6s.png`);
+        const app = `/index.html?motion=off&preset=${i}&advance=6#/${id}`;
+        const url = nm === 'phone' ? `${base}/tools/frame.html?w=${w}&h=${h}&src=${encodeURIComponent(app)}` : base + app;
+        await chrome(['--virtual-time-budget=3000', `--window-size=${Math.max(w, 500)},${h}`, '--screenshot=' + f, url], 120000);
+        if (fs.existsSync(f)) pshots.push(path.relative(ROOT, f));
+      }
+    gate(4, `프리셋 캡처 ${presets.length}개 × 데스크톱·폰 (눈으로 확인할 것)`, pshots.length === presets.length * 2,
+      presets.map((n, i) => `${i} ${n}`).join(' · ') + (pshots.length ? '\n      ' + pshots.join(', ') : ''));
   } finally { srv.close(); }
   finish();
 

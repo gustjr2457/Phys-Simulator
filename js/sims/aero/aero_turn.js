@@ -11,17 +11,29 @@
   const nOf = p => 1 / Math.cos(p.phi * RAD);
   const Rof = p => p.V * p.V / (G * Math.tan(p.phi * RAD));
   const VtOf = p => p.Vs * Math.sqrt(nOf(p));
+  // 실속 — 날개가 낼 수 있는 최대 양력은 L_max = ½ρV²S·C_Lmax 이고, 수평 비행 실속 속도의 정의가
+  // W = ½ρVₛ²S·C_Lmax 이므로 L_max / W = (V/Vₛ)². 선회에 필요한 n 이 이보다 크면 날개는 최대치까지만 낸다.
+  // (실제로는 실속을 넘기면 양력이 오히려 줄어든다 — 여기서는 "최대치에 묶인다"까지만 보여 준다)
+  const nMaxOf = p => (p.V / p.Vs) * (p.V / p.Vs);
+  const nEffOf = p => Math.min(nOf(p), nMaxOf(p));
+  const stalled = p => nMaxOf(p) < nOf(p);                               // = V < Vₛ·√n
+  // 실제로 그리는 원의 반경 — 옆 성분 n_eff·g·sinφ 가 구심력 (실속이 아니면 R 과 같다)
+  const ReOf = p => p.V * p.V / (G * nEffOf(p) * Math.sin(p.phi * RAD));
+  // 위 성분이 무게에 모자라는 만큼 아래로 — a_z = g(n_eff·cosφ − 1) (실속이 아니면 0)
+  const azOf = p => G * (nEffOf(p) * Math.cos(p.phi * RAD) - 1);
+  const ALT_LIMIT = 600;                                                   // 이만큼 떨어지면 끝 (m)
 
   // 선회 중심을 원점에 두고, 비행기를 중심의 오른쪽(동쪽)에서 시작한다.
   // 화면 좌표(y 아래)로 시계 방향 = 오른쪽으로 기울인 선회. 진행 방향의 오른쪽이 중심.
   function start(st, p) {
-    const R = Rof(p);
+    const R = ReOf(p);
     st.x = R; st.y = 0; st.vx = 0; st.vy = p.V;
-    st.pV = p.V; st.pphi = p.phi; st.trail = [{ x: st.x, y: st.y }]; st.acc = 0; st.head = 0;
+    st.pV = p.V; st.pphi = p.phi; st.pVs = p.Vs; st.trail = [{ x: st.x, y: st.y }]; st.acc = 0; st.head = 0;
+    st.alt = 0; st.vz = 0; st.done = false;
   }
   // 가속도 — 양력의 옆 성분 L·sinφ/m = n·g·sinφ, 속도에 수직(진행 방향 오른쪽)
   function acc(vx, vy, p) {
-    const v = Math.hypot(vx, vy) || 1, a = nOf(p) * G * Math.sin(p.phi * RAD);
+    const v = Math.hypot(vx, vy) || 1, a = nEffOf(p) * G * Math.sin(p.phi * RAD);
     return [-vy / v * a, vx / v * a];
   }
   // 자취의 세 점을 지나는 원의 반지름 — 공식이 아니라 실제로 그려진 길에서 잰다
@@ -75,12 +87,17 @@
     init(p) { const st = {}; start(st, p); return st; },
     step(st, p, dt) {
       // 속도나 기울기를 바꾸면 그 자리에서 새 원을 시작한다 (방향은 그대로)
-      if (p.V !== st.pV || p.phi !== st.pphi) {
-        const v = Math.hypot(st.vx, st.vy) || 1, ux = st.vx / v, uy = st.vy / v, R = Rof(p);
+      if (p.V !== st.pV || p.phi !== st.pphi || p.Vs !== st.pVs) {
+        const v = Math.hypot(st.vx, st.vy) || 1, ux = st.vx / v, uy = st.vy / v, R = ReOf(p);
         const cx = st.x - uy * R, cy = st.y + ux * R;          // 진행 방향 오른쪽 R 에 새 중심
         st.x -= cx; st.y -= cy; st.vx = ux * p.V; st.vy = uy * p.V;
-        st.pV = p.V; st.pphi = p.phi; st.trail = [{ x: st.x, y: st.y }]; st.acc = 0;
+        st.pV = p.V; st.pphi = p.phi; st.pVs = p.Vs; st.trail = [{ x: st.x, y: st.y }]; st.acc = 0;
+        if (!stalled(p)) st.vz = 0;                       // 실속에서 빠져나오면 더 떨어지지 않는다 (잃은 고도는 그대로)
       }
+      // 고도 — 실속이면 위 성분이 모자라 일정한 가속도로 떨어진다 (정확한 등가속도 식)
+      const az = azOf(p);
+      st.alt += st.vz * dt + .5 * az * dt * dt; st.vz += az * dt;
+      if (st.alt <= -ALT_LIMIT) { st.alt = -ALT_LIMIT; st.done = true; }
       // RK4 — 10 ms 이하로 쪼갠다
       let left = dt;
       while (left > 1e-12) {
@@ -120,22 +137,24 @@
 
     readouts(st, p) {
       const n = nOf(p), R = Rof(p), om = G * Math.tan(p.phi * RAD) / p.V / RAD, Vt = VtOf(p);
-      const Rm = measured(st), spd = Math.hypot(st.vx, st.vy), ok = p.V >= Vt;
+      const Rm = measured(st), spd = Math.hypot(st.vx, st.vy), ok = !stalled(p);
       return [
-        { label: '하중 배수 n', value: n, unit: 'G', color: C.n, dec: 3 },
+        { label: '하중 배수 n (필요)', value: n, unit: 'G', color: C.n, dec: 3 },
         { label: '선회 반경 R (공식)', value: R, unit: 'm', color: C.R, dec: 1 },
         { label: '잰 선회 반경 (자취)', value: Rm === null ? '1초 날면 표시' : Rm, unit: Rm === null ? '' : 'm', color: C.R, dec: 1 },
         { label: '선회율 ω', value: om, unit: '°/s', color: C.omega, dec: 3 },
         { label: '한 바퀴 시간', value: 360 / om, unit: 's', color: C.omega, dec: 1 },
         { label: '구심 가속도', value: G * Math.tan(p.phi * RAD), unit: 'm/s²', color: C.R, dec: 3 },
         { label: '선회 중 실속 속도', value: Vt, unit: 'm/s', color: C.Vt, dec: 2 },
+        { label: '날개가 낼 수 있는 최대 하중 (V/Vₛ)²', value: nMaxOf(p), unit: 'G', color: ok ? C.n : C.Vs, dec: 3 },
+        { label: '고도 변화', value: st.alt, unit: 'm', color: st.alt < -0.05 ? C.Vs : C.V, dec: 1 },
         { label: '지금 속력', value: spd, unit: 'm/s', color: C.V, dec: 3 },
-        { label: '60 kg 학생이 느끼는 몸무게', value: 60 * n, unit: 'kg', color: C.n, dec: 1 },
+        { label: '60 kg 학생이 느끼는 몸무게', value: 60 * nEffOf(p), unit: 'kg', color: C.n, dec: 1 },
         { label: '양력이 받쳐야 하는 무게', wide: true, color: C.n,
           value: '비행기 무게의 ' + fmt(n, 2) + '배 — 위 성분 L·cosφ = W, 옆 성분 L·sinφ = 구심력' },
         { label: '실속 여유', wide: true, color: ok ? C.V : C.Vs,
           value: ok ? '지금 속도가 선회 실속 속도보다 ' + fmt(p.V - Vt, 1) + ' m/s 빠르다 — 안전'
-                    : '실속! 선회 실속 속도보다 ' + fmt(Vt - p.V, 1) + ' m/s 느리다 — 덜 기울이거나 더 빨리' }
+                    : '실속! 날개가 ' + fmt(nMaxOf(p), 2) + ' G 까지만 낸다 — 원이 커지고 1초에 ' + fmt(-azOf(p), 1) + ' m/s 씩 더 빨리 떨어진다' }
       ];
     },
 
@@ -171,7 +190,8 @@
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl, narrow = w < 600;
-      const n = nOf(p), R = Rof(p), Vt = VtOf(p), ph = p.phi * RAD, stall = p.V < Vt;
+      const n = nOf(p), R = Rof(p), Vt = VtOf(p), ph = p.phi * RAD, stall = stalled(p);
+      const Re = ReOf(p), nE = nEffOf(p);                // 실제로 그리는 원 · 실제로 나는 하중
 
       /* ── 배치: 넓으면 왼쪽(위에서 본 선회)·오른쪽(뒤에서 본 비행기), 좁으면 위·아래 ── */
       let A, B;                                         // A: 위에서 본 판, B: 뒤에서 본 판 {x0,y0,x1,y1}
@@ -191,14 +211,19 @@
       D.text(ctx, '위에서 본 선회', A.x0 + 4, A.y0 - 10, { size: 11, color: PAL.ink2, bold: true });
       const acx = (A.x0 + A.x1) / 2, acy = (A.y0 + A.y1) / 2 + (narrow ? 0 : -10);
       const rpx = Math.max(20, Math.min(A.x1 - A.x0, A.y1 - A.y0 - (narrow ? 22 : 50)) / 2 - (narrow ? 12 : 34));
-      const S = rpx / R;                                // 1 m → px
+      const S = rpx / Re;                               // 1 m → px (실속이면 실제 원이 계획한 원보다 크다)
       const SX = x => acx + x * S, SY = y => acy + y * S;
 
       // 앞으로 갈 길 (점선 원)과 지나온 자취
       ctx.save(); ctx.strokeStyle = 'rgba(167,170,176,.28)'; ctx.setLineDash([4, 6]); ctx.lineWidth = 1.2;
       ctx.beginPath(); ctx.arc(acx, acy, rpx, 0, 7); ctx.stroke(); ctx.restore();
+      if (stall) {   // 계획한 원 — 날개가 힘이 모자라 이 원을 돌지 못한다
+        ctx.save(); ctx.strokeStyle = 'rgba(196,112,95,.55)'; ctx.setLineDash([2, 5]); ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.arc(acx, acy, R * S, 0, 7); ctx.stroke(); ctx.restore();
+        D.text(ctx, '계획한 원 (못 돈다)', acx, acy - R * S - 6, { size: 9.5, color: C.Vs, align: 'center' });
+      }
       if (st.trail.length > 1) {
-        ctx.save(); ctx.strokeStyle = 'rgba(111,159,196,.65)'; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+        ctx.save(); ctx.strokeStyle = stall ? 'rgba(196,112,95,.75)' : 'rgba(111,159,196,.65)'; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
         ctx.beginPath();
         st.trail.forEach((q, i) => i ? ctx.lineTo(SX(q.x), SY(q.y)) : ctx.moveTo(SX(q.x), SY(q.y)));
         ctx.lineTo(SX(st.x), SY(st.y)); ctx.stroke(); ctx.restore();
@@ -210,7 +235,7 @@
       D.dot(ctx, acx, acy, 3.5, PAL.ink2);
       D.text(ctx, '선회 중심', acx - ex * 30, acy - ey * 16 + 4, { size: 10, color: PAL.ink2, align: 'center' });
       D.line(ctx, acx, acy, bx, by, { color: C.R, width: hl === 'R' ? 2.6 : 1.8, hot: hl === 'R' });
-      const rTxt = 'R = ' + (R >= 1000 ? fmt(R / 1000, 2) + ' km' : fmt(R, 0) + ' m');
+      const rTxt = 'R = ' + (Re >= 1000 ? fmt(Re / 1000, 2) + ' km' : fmt(Re, 0) + ' m');
       if (narrow) D.tag(ctx, rTxt, A.x1 - 4, A.y0 - 2, C.R, hl === 'R', 'right');     // 폰: 원이 작아 판 오른쪽 위에
       else D.tag(ctx, rTxt, acx + (bx - acx) * .5 - ey * 14, acy + (by - acy) * .5 + ex * 14, C.R, hl === 'R');
 
@@ -227,12 +252,12 @@
       D.arrow(ctx, bx, by, ux * va, uy * va, { color: C.V, width: 2.6, head: 8, hot: hl === 'V' });
       D.text(ctx, 'V', bx + ux * (va + 10), by + uy * (va + 10) + 4, { size: 11, color: C.V, align: 'center', bold: true });
       // 축척 막대
-      const sbm = nice(R * .8), sbp = sbm * S, sbx = A.x0 + 8, sby = A.y1 - 8;
+      const sbm = nice(Re * .8), sbp = sbm * S, sbx = A.x0 + 8, sby = A.y1 - 8;
       D.line(ctx, sbx, sby, sbx + sbp, sby, { color: PAL.ink2, width: 2 });
       D.line(ctx, sbx, sby - 4, sbx, sby + 2, { color: PAL.ink2, width: 1.5 });
       D.line(ctx, sbx + sbp, sby - 4, sbx + sbp, sby + 2, { color: PAL.ink2, width: 1.5 });
       D.text(ctx, sbm >= 1000 ? fmt(sbm / 1000, 0) + ' km' : fmt(sbm, 0) + ' m', sbx + sbp + 6, sby + 4, { size: 10, color: PAL.ink2 });
-      D.text(ctx, '한 바퀴 ' + fmt(2 * Math.PI * R / p.V, 0) + ' 초', A.x1 - 4, A.y1 - 4,
+      D.text(ctx, '한 바퀴 ' + fmt(2 * Math.PI * Re / p.V, 0) + ' 초', A.x1 - 4, A.y1 - 4,
         { size: narrow ? 10 : 10.5, color: C.omega, align: 'right', bold: hl === 'omega' });
 
       /* ── B. 뒤에서 본 비행기와 힘 ── */
@@ -264,18 +289,27 @@
       D.text(ctx, 'φ = ' + fmt(p.phi, 0) + '°', px + (ar + 10) * Math.cos(pa), py + (ar + 10) * Math.sin(pa) + 8,
         { size: 11, color: C.phi, bold: true });
       // 힘: 무게 W(아래), 양력 L(날개에 수직), 그 두 성분
-      const Lx = Math.sin(ph) * n * k, Ly = -Math.cos(ph) * n * k;      // = (k·tanφ, −k)
+      const Lx = Math.sin(ph) * nE * k, Ly = -Math.cos(ph) * nE * k;    // 실속이 아니면 (k·tanφ, −k)
       D.arrow(ctx, px, py, 0, k, { color: C.W, width: 2.6, head: 8, hot: false });
       D.text(ctx, 'W 무게', px - 8, py + k - 2, { size: 10.5, color: C.W, align: 'right', bold: true });
-      D.line(ctx, px, py, px, py - k, { color: C.n, dash: [4, 4], width: 1.6 });
-      D.line(ctx, px, py - k, px + Lx, py + Ly, { color: C.n, dash: [4, 4], width: 1.2 });
+      D.line(ctx, px, py, px, py + Ly, { color: C.n, dash: [4, 4], width: 1.6 });
+      D.line(ctx, px, py + Ly, px + Lx, py + Ly, { color: C.n, dash: [4, 4], width: 1.2 });
       D.arrow(ctx, px, py, Lx, 0, { color: C.n, width: 2, head: 7, dash: [5, 3], hot: hl === 'R' });
       D.arrow(ctx, px, py, Lx, Ly, { color: C.n, width: 3.2, head: 10, hot: hl === 'n' });
-      D.tag(ctx, 'L = ' + fmt(n, 2) + ' W', px + Lx + 8, py + Ly, C.n, hl === 'n', 'left');
-      D.text(ctx, 'L·cosφ = W', px - 8, py - k + 4, { size: 10, color: C.n, align: 'right' });
+      D.tag(ctx, 'L = ' + fmt(nE, 2) + ' W' + (stall ? ' (최대)' : ''), px + Lx + 8, py + Ly, C.n, hl === 'n', 'left');
+      D.text(ctx, stall ? 'L·cosφ < W' : 'L·cosφ = W', px - 8, py + Ly + 4, { size: 10, color: stall ? C.Vs : C.n, align: 'right' });
+      if (stall) {   // 위 성분이 무게에 모자라는 만큼 — 아래로 남는 힘
+        // 비행기 근처는 날개·φ 호·라벨로 붐벼서, 같은 축척의 화살표를 오른쪽 빈자리에 따로 그린다
+        const net = Math.max((1 - nE * Math.cos(ph)) * k, 6), ax = px + bw * .42, ay = py + 10;
+        D.arrow(ctx, ax, ay, 0, net, { color: C.Vs, width: 3, head: 9, hot: true });
+        D.text(ctx, '남는 힘 = W − L·cosφ', ax + 10, ay + 10, { size: 10, color: C.Vs, bold: true });
+        D.text(ctx, '↓ 고도를 잃는다', ax + 10, ay + 24, { size: 10, color: C.Vs });
+        D.text(ctx, '고도 ' + fmt(st.alt, 0) + ' m', B.x0 + 4, B.y0 + (narrow ? 24 : 30), { size: narrow ? 11 : 12, color: C.Vs, bold: true });
+      }
       D.text(ctx, 'L·sinφ → 선회 중심', px + Math.max(Lx, span) + 8, py - 6, { size: 10, color: C.n });
-      D.text(ctx, (narrow ? '' : '조종사가 느끼는 무게 ') + '×' + fmt(n, 2) + ' (' + fmt(n, 2) + ' G)',
-        B.x1 - 4, B.y0 + (narrow ? 4 : 8), { size: narrow ? 11 : 12, color: C.n, align: 'right', bold: true });
+      // 조종사가 실제로 느끼는 무게는 날개가 실제로 낸 양력 — 실속이면 필요한 n 이 아니라 n_eff
+      D.text(ctx, (narrow ? '' : '조종사가 느끼는 무게 ') + '×' + fmt(nE, 2) + ' (' + fmt(nE, 2) + ' G)' + (stall ? (narrow ? '' : ' — 필요 ' + fmt(n, 2) + ' G') : ''),
+        B.x1 - 4, B.y0 + (narrow ? 4 : 8), { size: narrow ? 11 : 12, color: stall ? C.Vs : C.n, align: 'right', bold: true });
 
       /* ── 속도 막대: 지금 속도 V 와 선회 실속 속도 Vₛ′ ── */
       const gx0 = B.x0 + (narrow ? 8 : 14), gx1 = B.x1 - (narrow ? 8 : 14), gy = B.y1 - (narrow ? 12 : 18);
@@ -288,7 +322,8 @@
       D.text(ctx, '실속 ' + fmt(Vt, 0), GX(Vt), gy - 12, { size: 10, color: C.Vt, align: 'center', bold: hl === 'Vt' });
       D.text(ctx, 'V ' + fmt(p.V, 0), GX(p.V), gy + 19, { size: 10, color: C.V, align: 'center', bold: hl === 'V' });
       if (!narrow) D.text(ctx, 'm/s', gx1, gy + 19, { size: 9.5, color: PAL.ink3, align: 'right' });
-      if (stall) D.tag(ctx, '실속! 이 기울기에서는 ' + fmt(Vt, 0) + ' m/s 보다 빨라야', (B.x0 + B.x1) / 2, py + k + (narrow ? 20 : 30), C.Vs, true);
+      if (stall) D.tag(ctx, st.done ? '실속으로 ' + ALT_LIMIT + ' m 추락 — 값을 바꾸면 다시 출발' : '실속! 이 기울기에서는 ' + fmt(Vt, 0) + ' m/s 보다 빨라야',
+        (B.x0 + B.x1) / 2, py + k + (narrow ? 20 : 30), C.Vs, true);
     }
   });
 })();

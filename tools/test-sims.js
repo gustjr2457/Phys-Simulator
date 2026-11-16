@@ -124,7 +124,8 @@ if (args.includes('--list')) {
   PS.sims.forEach(s => console.log([s.mode || 'basic', s.category, s.id, s.title].join(' | ')));
   process.exit(0);
 }
-const report = { sims: PS.sims.length, smoke: {}, nonFinite: {}, lintWarn: {}, physics: {}, strict: strictId, fail: [] };
+const report = { sims: PS.sims.length, smoke: {}, nonFinite: {}, lintWarn: {}, physics: {}, strict: strictId, fail: [], presetNames: {} };
+if (strictId && PS.byId[strictId]) report.presetNames[strictId] = (PS.byId[strictId].presets || []).map(p => p.name);
 for (const sim of PS.sims) {
   const sm = smoke(PS, sim);
   if (sm.errs.length) { report.smoke[sim.id] = sm.errs; report.fail.push(`스모크 ${sim.id}: ${sm.errs[0]}`); }
