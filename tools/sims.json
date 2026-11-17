@@ -78,6 +78,7 @@
   "js/sims/mech/vib_free.js",
   "js/sims/mech/vib_forced.js",
   "js/sims/adv/sensor_strain.js",
+  "js/sims/adv/sensor_pitot.js",
   "js/sims/adv/sensor_response.js"
  ]
 }
