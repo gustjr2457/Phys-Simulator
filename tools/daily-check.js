@@ -8,6 +8,8 @@
      2. 중학생이 이해하는가    test-sims --strict : 한국어 설명·기호마다 "어디에서 작용하는지"·알아두기·프리셋·과제
      3. 애니메이션이 맞는가    test-sims : 스모크(전 프리셋) + tests/physics/<id>.js 독립 계산 비교 3개 이상
                               check.html : 9가지 화면 크기 × 전 프리셋 × 강조 상태에서 그리기 예외 0
+                              audit-sims : 기본값·프리셋이 슬라이더 범위·step 격자 위에, 열자마자 참인 과제 0
+                              check.html?stress : 기본·전부 최소·전부 최대·프리셋 × 6초 그리기 예외 0, 실제 앱 콘솔 에러 0
      4. 가독성                 check.html : 글자 겹침 0 · 캔버스 밖 잘림 0 · 안 읽히는 글자 0 (새 시뮬레이션)
                               + 기존 73종에 겹침·예외가 새로 생기지 않았는가
    ========================================================= */
@@ -21,7 +23,8 @@ const BROWSERS = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/P
   '/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/chromium-browser', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'];
 const BROWSER = BROWSERS.find(p => fs.existsSync(p));
 
-const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json',
+  '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2' };
 function serve() {
   return new Promise(res => {
     const srv = http.createServer((q, r) => {
@@ -60,6 +63,13 @@ function chrome(args, timeout = 300000) {
   gate(3, '물리 독립 계산 비교 (tests/physics)', !physFails.length && ph.length >= 3,
     physFails.length ? physFails.join(' / ') : `${ph.filter(c => c.ok).length}/${ph.length} 통과`);
 
+  /* 기준 3 — 정의 감사: 기본값·프리셋이 슬라이더 범위·격자 위에 있는가, 열자마자 참인 과제가 없는가 */
+  let a;
+  try { a = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, 'audit-sims.js'), '--json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); }
+  catch (e) { a = JSON.parse(e.stdout); }
+  const aBad = [].concat(a.range, a.grid, a.challengeTrue, a.errors);
+  gate(3, '정의 감사 (범위·step 격자·시작 시 참인 과제·극한 실행)', !aBad.length, aBad.length ? aBad.slice(0, 4).join(' / ') : '0');
+
   if (!BROWSER) { gate(4, '브라우저 점검', false, 'Chrome/Edge 를 찾지 못했다'); return finish(); }
   const srv = await serve(), base = `http://127.0.0.1:${srv.address().port}`;
   try {
@@ -82,6 +92,24 @@ function chrome(args, timeout = 300000) {
         if (mine.length) gate(3, '새 시뮬레이션 그리기 예외', false, mine[0]);
       }
     }
+
+    /* 기준 3 — 극한 실행: 전 시뮬레이션 × (기본·전부 최소·전부 최대·각 프리셋) × 6초 그리기 + 실제 앱 콘솔 에러 */
+    const sd = await chrome(['--virtual-time-budget=1800000', '--window-size=1400,900', '--dump-dom', `${base}/tools/check.html?stress`], 900000);
+    const sm = sd.match(/<script type="application\/json" id="result">([\s\S]*?)<\/script>/);
+    if (!sm) gate(3, '극한 실행 (기본·최소·최대·프리셋 × 6초)', false, '결과를 읽지 못했다');
+    else {
+      const S = JSON.parse(sm[1]);
+      const bad = S.failed ? [S.failed] : S.errors.concat(S.console);
+      gate(3, '극한 실행 (기본·최소·최대·프리셋 × 6초) · 앱 콘솔 에러', !bad.length,
+        bad.length ? bad.slice(0, 4).join(' / ') : `${S.total.runs}회 실행 · 그리기 ${S.total.draws}회 · 앱에서 ${S.total.appViews}종 열기 — 예외·콘솔 에러 0`);
+    }
+
+    /* 기준 4 — ?fx=off 가 빛 층을 끄는가 (빛 번짐 없이 보고 싶은 사람·느린 기기용) */
+    const fxDom = await chrome(['--virtual-time-budget=3000', '--window-size=1400,900', '--dump-dom', `${base}/index.html?fx=off&motion=off`], 120000);
+    const fxOn = await chrome(['--virtual-time-budget=3000', '--window-size=1400,900', '--dump-dom', `${base}/index.html?motion=off`], 120000);
+    const htmlClass = d => ((d.match(/<html[^>]*class="([^"]*)"/) || [])[1] || '');
+    const offOk = /\bfx-off\b/.test(htmlClass(fxDom)), onOk = !/\bfx-off\b/.test(htmlClass(fxOn));
+    gate(4, '?fx=off 로 빛 층 끄기', offOk && onOk, offOk && onOk ? '?fx=off → fx-off 적용, 기본 → 빛 층 켜짐' : `?fx=off: ${offOk ? '꺼짐' : '안 꺼짐'} · 기본: ${onOk ? '켜짐' : '꺼져 있음'}`);
 
     /* 화면 캡처 — 데스크톱·폰 × 시작 직후·몇 초 뒤. 사람이 보는 실제 화면(빛 효과 포함) */
     const dir = path.join(ROOT, 'tools/daily/shots', id);

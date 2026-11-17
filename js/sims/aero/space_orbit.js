@@ -94,9 +94,10 @@
         { label: '이 높이의 원궤도 속도', value: vc / 1000, unit: 'km/s' },
         { label: '탈출 속도', value: Math.SQRT2 * vc / 1000, unit: 'km/s', color: '#c4705f' },
         { label: '이심률 e', value: e, unit: '', color: C.e, dec: 3 },
-        { label: '공전 주기 T', value: isFinite(a) ? 2 * Math.PI * Math.sqrt(a * a * a / MU) / 60 : NaN, unit: '분', color: C.T, dec: 1 },
-        { label: '근지점 고도', value: isFinite(a) ? (a * (1 - e) - RE) / 1000 : NaN, unit: 'km', dec: 0 },
-        { label: '원지점 고도', value: isFinite(a) ? (a * (1 + e) - RE) / 1000 : NaN, unit: 'km', dec: 0 },
+        { label: '공전 주기 T', value: isFinite(a) ? 2 * Math.PI * Math.sqrt(a * a * a / MU) / 60 : '돌아오지 않음', unit: isFinite(a) ? '분' : '', color: C.T, dec: 1 },
+        // 근지점은 탈출 궤도(포물선·쌍곡선)에도 있다 — 모든 원뿔곡선에 맞는 r_p = h²/(μ(1+e)) 로 (타원이면 a(1−e) 와 같다)
+        { label: '근지점 고도', value: isFinite(a) ? (a * (1 - e) - RE) / 1000 : (hAng * hAng / (MU * (1 + e)) - RE) / 1000, unit: 'km', dec: 0 },
+        { label: '원지점 고도', value: isFinite(a) ? (a * (1 + e) - RE) / 1000 : '돌아오지 않음', unit: isFinite(a) ? 'km' : '', dec: 0 },
         { label: '궤도 형태', wide: true, color: !isFinite(a) ? '#c4705f' : (e < .02 ? '#7fb894' : '#ffb020'),
           value: !isFinite(a) ? '탈출 궤도 (포물선/쌍곡선)' : (e < .02 ? '원 궤도' : '타원 궤도') }
       ];

@@ -41,9 +41,9 @@
     params: [
       { key: 'E', symbol: 'E', label: '탄성계수', unit: 'GPa', min: 50, max: 400, step: 10, value: 200, color: C.E, dec: 0, reset: true,
         where: '선도 <b>초반 직선의 기울기</b>입니다. 재료가 얼마나 "뻣뻣한가"로, 강철 200 · 알루미늄 70 · 티타늄 110 GPa입니다. 강도와는 다른 성질이라 E가 커도 더 센 재료는 아닙니다.' },
-      { key: 'sy', symbol: 'σ_y', label: '항복강도', unit: 'MPa', min: 100, max: 900, step: 25, value: 350, color: C.sy, dec: 0, reset: true,
+      { key: 'sy', symbol: 'σ_y', label: '항복강도', unit: 'MPa', min: 100, max: 900, step: 10, value: 350, color: C.sy, dec: 0, reset: true,
         where: '직선이 <b>꺾이는 높이(노란 선)</b>입니다. 이 응력을 넘는 순간부터 영구 변형이 남습니다. 구조설계는 이 선 아래에서만 이뤄집니다.' },
-      { key: 'A', symbol: 'A', label: '단면적', unit: 'mm²', min: 20, max: 200, step: 5, value: 80, color: C.A, dec: 0, reset: true,
+      { key: 'A', symbol: 'A', label: '단면적', unit: 'mm²', min: 20, max: 200, step: 5, value: 50, color: C.A, dec: 0, reset: true,
         where: '시편의 <b>굵기</b>입니다. 응력 σ = F/A이므로, 굵게 하면 같은 하중에서 응력이 낮아져 더 많이 버팁니다. 재료가 아니라 <b>형상</b>을 바꾸는 방법입니다.' },
       { key: 'rate', symbol: 'ε̇', label: '당기는 속도', unit: '%/s', min: .5, max: 6, step: .5, value: 2, color: C.rate,
         where: '인장시험기가 시편을 <b>늘리는 속도</b>입니다. 선도의 모양은 바꾸지 않고, 실험이 끝나는 시간만 바꿉니다(화면 속도 조절용).' }

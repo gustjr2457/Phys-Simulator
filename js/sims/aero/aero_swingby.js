@@ -44,9 +44,9 @@
         where: '스윙바이할 <b>행성</b>입니다. 중력(µ)이 클수록 많이 꺾이고, 공전 속도가 빠를수록 얻을 수 있는 속도가 큽니다 — 목성은 둘 다 커서 최고의 가속 발판입니다.' },
       { key: 'vinf', symbol: 'v∞', label: '행성 기준 접근 속도', unit: 'km/s', min: 2, max: 25, step: .5, value: 10, color: C.vinf, dec: 1, reset: true,
         where: '행성에서 <b>아주 멀리서 본 탐사선의 속도</b>입니다. 이론상 최대 이득이 2v∞이지만, 빠를수록 덜 꺾여서(쌍곡선이 펴져서) 실제 이득은 중간에 최대가 됩니다.' },
-      { key: 'rp', symbol: 'r_p', label: '최근접 거리 (행성 반지름 배수)', unit: '', min: 1.05, max: 30, step: .05, value: 3, color: C.rp, dec: 2, reset: true,
+      { key: 'rp', symbol: 'r_p', label: '최근접 거리 (행성 반지름 배수)', unit: '', min: 1.05, max: 30, step: .05, value: 10, color: C.rp, dec: 2, reset: true,
         where: '행성 중심에서 <b>얼마나 가까이 스쳐 지나가는가</b>입니다. 가까울수록 많이 꺾여 이득이 커지지만, 대기와 방사선대가 한계를 만듭니다.' },
-      { key: 'app', symbol: 'θ', label: '접근 방향', unit: '°', min: 10, max: 170, step: 5, value: 150, color: C.app, dec: 0, reset: true,
+      { key: 'app', symbol: 'θ', label: '접근 방향', unit: '°', min: 10, max: 170, step: 5, value: 60, color: C.app, dec: 0, reset: true,
         where: '접근 속도 v∞가 <b>행성 진행 방향과 이루는 각</b>입니다. 행성 <b>뒤쪽으로</b> 지나가면 가속(슬링샷), <b>앞쪽으로</b> 지나가면 감속됩니다 — 수성 탐사선은 일부러 감속 스윙바이를 씁니다.' }
     ],
     vars: {

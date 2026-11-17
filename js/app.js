@@ -54,7 +54,7 @@
      τ 는 주사율과 무관하게 실제 시간 기준이다. 움직임 줄이기 설정이면 꼬리 없이 빛만 남긴다. */
   const glow = $('#cvGlow'), gctx = glow.getContext('2d');
   const halo = $('#cvHalo'), hctx = halo.getContext('2d');
-  const fxOn = !/[?&]fx=off/.test(location.search);
+  const fxOn = !/[?&]fx=off\b/.test(location.search);
   if (!fxOn) document.documentElement.classList.add('fx-off');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const TAU = .22, TAU_BOOT = .7, BOOT_UNTIL = performance.now() + 1400;   // 처음 1.4초는 천천히 데워진다
@@ -384,6 +384,7 @@
 
   /* ── 5. 도전 과제: 지금 슬라이더·시뮬레이션 상태가 목표를 만족하는지 매 프레임 확인 ── */
   let challengeSig = '';
+  let challengeArmed = new Set();   // 이번에 연 뒤 한 번이라도 조건이 거짓이었던 과제 id
   // simId -> Set(challengeId) — "한 번이라도 성공"한 과제. 새로고침해도 남는다.
   const challengeAchieved = {};
   Object.entries(store.get('achieved', {})).forEach(([k, v]) => { challengeAchieved[k] = new Set(v); });
@@ -399,6 +400,7 @@
     const fresh = sig !== challengeSig;   // 방금 열었다 — 이미 만족된 과제는 사용자가 한 일이 아니다
     if (fresh) {
       challengeSig = sig;
+      challengeArmed = new Set();
       box.innerHTML = '';
       list.forEach(c => {
         const d = el('div', 'challenge');
@@ -423,8 +425,10 @@
     list.forEach((c, i) => {
       let ok = false;
       try { ok = !!c.check({ P: P, st: st, t: st.t }); } catch (e) { ok = false; }
-      const first = ok && !achieved.has(c.id) && !fresh;
-      if (ok && !achieved.has(c.id)) { achieved.add(c.id); saveAchieved(); }
+      // 연 뒤에 한 번이라도 거짓이었던 과제만 달성으로 친다 — 열자마자 참인 것은 사용자가 한 일이 아니다
+      if (!ok) challengeArmed.add(c.id);
+      const first = ok && challengeArmed.has(c.id) && !achieved.has(c.id);
+      if (first) { achieved.add(c.id); saveAchieved(); }
       const node = box.children[i];
       if (!node) return;
       // 처음 달성한 순간에만 — 화면(motion.css 의 .ch-new)과 화면 읽기 프로그램 둘 다에 알린다

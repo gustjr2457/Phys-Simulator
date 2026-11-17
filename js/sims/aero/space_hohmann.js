@@ -19,7 +19,7 @@
     params: [
       { key: 'h1', symbol: 'h₁', label: '출발 궤도 고도', unit: 'km', min: 300, max: 2000, step: 50, value: 400, color: C.h1, reset: true, dec: 0,
         where: '<b>청록색 안쪽 원</b>입니다. 보통 로켓이 먼저 도달하는 저궤도(LEO)이며, 여기서 첫 번째 점화를 합니다.' },
-      { key: 'h2', symbol: 'h₂', label: '목표 궤도 고도', unit: 'km', min: 1000, max: 40000, step: 500, value: 35786, color: C.h2, reset: true, dec: 0,
+      { key: 'h2', symbol: 'h₂', label: '목표 궤도 고도', unit: 'km', min: 1000, max: 40000, step: 1, value: 35786, color: C.h2, reset: true, dec: 0,
         where: '<b>노란색 바깥 원</b>입니다. 35,786 km가 지구 자전과 같은 주기를 갖는 <b>정지궤도(GEO)</b>입니다. 멀수록 Δv도 전이 시간도 커집니다.' }
     ],
     vars: {

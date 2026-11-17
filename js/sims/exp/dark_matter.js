@@ -35,7 +35,7 @@
     params: [
       { key: 'Mvis', symbol: 'M_vis', label: '보이는 질량(별, 가스 전체)', unit: '×10¹⁰M☉', min: 0.5, max: 6, step: .1, value: 3, color: C.vis, dec: 1,
         where: '이 은하에서 <b>눈에 보이는(빛을 내는) 질량</b> 전체입니다.' },
-      { key: 'a', symbol: 'a', label: '보이는 물질이 퍼진 정도(스케일 반지름)', unit: 'kpc', min: 1, max: 6, step: .5, value: 3, color: '#a98cc4',
+      { key: 'a', symbol: 'a', label: '보이는 물질이 퍼진 정도(스케일 반지름)', unit: 'kpc', min: 1, max: 6, step: .1, value: 3, color: '#a98cc4',
         where: '별들이 은하 중심 주위에 <b>얼마나 넓게 퍼져 있는지</b>입니다. 클수록 질량이 더 넓은 영역에 흩어져 있습니다.' },
       { key: 'vdark', symbol: 'v_dark', label: '암흑물질이 만드는 회전 속도', unit: 'km/s', min: 0, max: 250, step: 5, value: 0, color: C.dark, dec: 0,
         where: '보이지 않는 질량(암흑물질 헤일로)이 혼자 만들어내는 회전 속도입니다. 이 헤일로 모델(등온구)의 특징은, 어느 반지름에서나 <b>이 값이 똑같다</b>는 것입니다 — 그래서 회전 곡선이 평평해집니다.' }

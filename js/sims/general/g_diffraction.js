@@ -34,11 +34,11 @@
     tagline: '빛이 직진한다는 건 근사일 뿐입니다. 틈을 좁힐수록 빛은 그림자 안쪽으로 더 많이 돌아 들어가고, 틈이 파장만 해지면 거의 모든 방향으로 퍼집니다.',
 
     params: [
-      { key: 'a', symbol: 'a', label: '슬릿 폭', unit: 'µm', min: .3, max: 200, step: .5, value: 10, color: C.a, dec: 1, reset: true,
+      { key: 'a', symbol: 'a', label: '슬릿 폭', unit: 'µm', min: .3, max: 200, step: .1, value: 10, color: C.a, dec: 1, reset: true,
         where: '빛이 지나가는 <b>틈의 폭</b>입니다. 좁힐수록 더 넓게 퍼집니다 — <b>직관과 반대</b>라서 회절이 파동의 결정적 증거가 됩니다.' },
       { key: 'lam', symbol: 'λ', label: '빛의 파장', unit: 'nm', min: 380, max: 750, step: 5, value: 550, color: C.lam, dec: 0, reset: true,
         where: '빛의 <b>파장</b>(색)입니다. 길수록(붉을수록) 더 많이 퍼집니다 — 그래서 같은 슬릿에 백색광을 넣으면 가장자리가 무지개처럼 갈라집니다.' },
-      { key: 'Ls', symbol: 'L', label: '스크린까지 거리', unit: 'm', min: .2, max: 5, step: .1, value: 1, color: C.Ls, dec: 1,
+      { key: 'Ls', symbol: 'L', label: '스크린까지 거리', unit: 'm', min: .2, max: 5, step: .1, value: .8, color: C.Ls, dec: 1,
         where: '슬릿에서 <b>스크린까지의 거리</b>입니다. 각도는 그대로지만 멀수록 무늬가 통째로 커집니다 — 각도를 거리로 환산해 주는 값입니다.' }
     ],
     vars: {
@@ -75,7 +75,7 @@
       return [
         { label: 'λ / a (퍼짐의 척도)', value: r, unit: '', color: C.a, dec: 4 },
         { label: '첫 어두운 무늬 각 θ₁', value: spread ? 90 : th1(p) * 180 / Math.PI, unit: '°', color: C.th, dec: 2 },
-        { label: '중앙 무늬 폭 W', value: isFinite(W) ? W * 1000 : Infinity, unit: 'mm', color: C.wid, dec: 2 },
+        { label: '중앙 무늬 폭 W', value: isFinite(W) ? W * 1000 : '슬릿이 파장보다 좁음 (어두운 무늬 없음)', unit: isFinite(W) ? 'mm' : '', color: C.wid, dec: 2 },   // sinθ₁ = λ/a > 1
         { label: '슬릿 폭은 파장의 몇 배', value: 1 / r, unit: '배', dec: 1, color: C.a },
         { label: '보이는 어두운 무늬 개수 (한쪽)', value: spread ? 0 : Math.floor(1 / r), unit: '개', dec: 0, color: '#9a9da6' },
         { label: '중앙 무늬에 들어오는 빛', value: 90.3, unit: '%', dec: 1, color: C.lam },
@@ -84,8 +84,8 @@
           value: spread ? '모든 방향으로 퍼진다 — 슬릿이 파장보다 좁아 "직진"이 의미 없다' :
                  (r > .05 ? '뚜렷하게 퍼진다 — 파동성이 눈에 보인다' :
                   (r > .005 ? '약간 퍼진다' : '거의 직진 — 기하광학 근사가 잘 맞는다')) },
-        { label: '같은 슬릿에 붉은빛(700 nm)이면 W', value: isFinite(W) ? 2 * p.Ls * Math.tan(Math.asin(Math.min(.999, 700e-9 / (p.a * 1e-6)))) * 1000 : Infinity,
-          unit: 'mm', dec: 2, color: '#c4705f' },
+        { label: '같은 슬릿에 붉은빛(700 nm)이면 W', value: isFinite(W) ? 2 * p.Ls * Math.tan(Math.asin(Math.min(.999, 700e-9 / (p.a * 1e-6)))) * 1000 : '슬릿이 파장보다 좁음 (어두운 무늬 없음)',
+          unit: isFinite(W) ? 'mm' : '', dec: 2, color: '#c4705f' },
         { label: '같은 슬릿에 보랏빛(400 nm)이면 W', value: 2 * p.Ls * Math.tan(Math.asin(Math.min(.999, 400e-9 / (p.a * 1e-6)))) * 1000,
           unit: 'mm', dec: 2, color: '#a98cc4' }
       ];

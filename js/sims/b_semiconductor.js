@@ -33,7 +33,7 @@
     tagline: '고체 속 전자는 아무 에너지나 가질 수 없고 "띠" 안에만 있습니다. 그 사이 틈이 얼마나 큰지가 도체·반도체·부도체를 가릅니다 — 반도체는 그 틈이 열로 겨우 넘을 만합니다.',
 
     params: [
-      { key: 'Eg', symbol: 'E_g', label: '띠간격', unit: 'eV', min: 0, max: 8, step: .02, value: 1.12, color: C.Eg, dec: 2,
+      { key: 'Eg', symbol: 'E_g', label: '띠간격', unit: 'eV', min: 0, max: 8, step: .02, value: .66, color: C.Eg, dec: 2,
         where: '가전자띠와 전도띠 사이의 <b>에너지 틈</b>입니다. 이 값 하나가 물질이 도체인지 반도체인지 부도체인지를 결정합니다 — 실리콘 1.12 eV, 다이아몬드 5.5 eV.' },
       { key: 'T', symbol: 'T', label: '온도', unit: 'K', min: 100, max: 700, step: 5, value: 300, color: C.T, dec: 0,
         where: '<b>절대 온도</b>입니다. 열에너지 kT가 전자를 띠 너머로 밀어 올립니다. 반도체는 온도가 오르면 전도성이 <b>좋아지는데</b>, 금속은 반대로 나빠집니다 — 결정적인 차이입니다.' },

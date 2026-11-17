@@ -21,7 +21,7 @@
     params: [
       { key: 'N', symbol: 'N', label: '입자 수', unit: '개', min: 10, max: 50, step: 2, value: 36, color: C.N, reset: true, dec: 0,
         where: '항아리 안 <b>전체 입자 개수</b>입니다. 클수록 "다시 전부 한쪽으로 몰리는" 요동은 사실상 불가능해집니다.' },
-      { key: 'rate', symbol: 'λ', label: '칸 이동 시도 빈도', unit: '/s', min: 5, max: 60, step: 5, value: 25, color: C.rate,
+      { key: 'rate', symbol: 'λ', label: '칸 이동 시도 빈도', unit: '/s', min: 5, max: 60, step: 1, value: 25, color: C.rate,
         where: '1초에 <b>입자 하나가 칸을 옮겨볼 기회</b>가 몇 번 오는지입니다. 클수록 평형에 더 빨리 도달합니다.' }
     ],
     vars: {

@@ -28,7 +28,7 @@
     tagline: '질량과 에너지는 다른 두 가지가 아니라 같은 것의 두 이름입니다. c²이 워낙 큰 숫자라, 아주 조금의 질량만 사라져도 엄청난 에너지가 나옵니다.',
 
     params: [
-      { key: 'rxn', symbol: 'η', label: '반응 (0석탄 1핵분열 2핵융합 3태양 4반물질)', unit: '', min: 0, max: 4, step: 1, value: 1, color: C.rxn, dec: 0, reset: true,
+      { key: 'rxn', symbol: 'η', label: '반응 (0석탄 1핵분열 2핵융합 3태양 4반물질)', unit: '', min: 0, max: 4, step: 1, value: 0, color: C.rxn, dec: 0, reset: true,
         where: '어떤 반응으로 에너지를 꺼내는가입니다. 각 반응이 <b>질량의 몇 %를 에너지로 바꾸는지</b>가 다르고, 그 비율 하나가 모든 차이를 만듭니다.' },
       { key: 'lgm', symbol: 'm', label: '연료 질량 (10^x kg)', unit: '', min: -3, max: 3, step: .1, value: 0, color: C.lgm, dec: 1, reset: true,
         where: '반응에 쓰는 <b>연료의 질량</b>(로그 눈금, 0 = 1 kg)입니다. 나오는 에너지는 여기에 정비례합니다.' }

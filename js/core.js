@@ -129,7 +129,7 @@ const PS = (function () {
     if (c in lightCache) return lightCache[c];
     colorCtx = colorCtx || document.createElement('canvas').getContext('2d');
     colorCtx.fillStyle = '#000'; colorCtx.fillStyle = c;
-    const f = colorCtx.fillStyle, v = f[0] === '#' ? [1, 3, 5].map(i => parseInt(f.substr(i, 2), 16)) : (f.match(/[d.]+/g) || [0, 0, 0]).slice(0, 3).map(Number);
+    const f = colorCtx.fillStyle, v = f[0] === '#' ? [1, 3, 5].map(i => parseInt(f.substr(i, 2), 16)) : (f.match(/[\d.]+/g) || [0, 0, 0]).slice(0, 3).map(Number);
     return (lightCache[c] = (.299 * v[0] + .587 * v[1] + .114 * v[2]) > 70);
   }
 

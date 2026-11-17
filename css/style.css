@@ -500,6 +500,8 @@ input[type=range]:focus-visible{outline-offset:1px}
   .brand h1{font-size:1rem}
   #simlist{flex-basis:100%;order:5;border-top:1px solid var(--line);padding:.4286rem .5714rem}
   .modes{overflow-x:auto;flex:1;min-width:0}
+  /* 탭이 줄어들면 "고등물…"처럼 잘린다 — 제 폭을 지키고 넘치면 띠를 가로로 민다 */
+  .mode{flex:none}
   .speed{margin-left:0}
   .speed input{width:5.5rem}
   /* 재생 막대를 한 줄로 — 글자는 화면에서만 감추고 화면 읽기 프로그램에는 남긴다 */

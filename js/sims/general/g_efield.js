@@ -39,7 +39,7 @@
     params: [
       { key: 'q1', symbol: 'q₁', label: '왼쪽 전하', unit: 'nC', min: -10, max: 10, step: .5, value: 5, color: C.q1, dec: 1,
         where: '<b>왼쪽 전하</b>입니다. 양(+)이면 전기력선이 뻗어 나가고 전위 언덕이 솟아오르며(붉은색), 음(−)이면 빨려 들어가고 골짜기가 됩니다(파란색).' },
-      { key: 'q2', symbol: 'q₂', label: '오른쪽 전하', unit: 'nC', min: -10, max: 10, step: .5, value: -5, color: C.q2, dec: 1,
+      { key: 'q2', symbol: 'q₂', label: '오른쪽 전하', unit: 'nC', min: -10, max: 10, step: .5, value: -3, color: C.q2, dec: 1,
         where: '<b>오른쪽 전하</b>입니다. 부호를 같게 하면 두 전하 사이에 전기장이 0인 <b>중립점</b>이 생기고, 반대로 하면(쌍극자) 전기력선이 한쪽에서 다른 쪽으로 이어집니다.' },
       { key: 'd', symbol: 'd', label: '두 전하 간격', unit: 'cm', min: 3, max: 16, step: .5, value: 8, color: C.d, dec: 1, reset: true,
         where: '두 전하 사이의 <b>거리</b>입니다. 쿨롱 힘은 거리의 제곱에 반비례하므로, 간격을 절반으로 줄이면 서로 당기거나 미는 힘이 4배가 됩니다.' },

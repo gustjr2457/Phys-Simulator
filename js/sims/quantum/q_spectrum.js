@@ -37,9 +37,9 @@
     params: [
       { key: 'Z', symbol: 'Z', label: '원자 번호 (수소 → Li²⁺)', unit: '', min: 1, max: 3, step: 1, value: 1, color: C.Z, dec: 0,
         where: '핵의 <b>(+)전하 수</b>입니다. 전자를 당기는 힘이 세질수록 모든 준위가 아래로 깊어지고(E ∝ Z²), 같은 전이에서도 더 큰 에너지의 광자가 나옵니다.' },
-      { key: 'ni', symbol: 'nᵢ', label: '출발 준위 (높은 쪽)', unit: '', min: 2, max: 7, step: 1, value: 3, color: C.ni, dec: 0,
+      { key: 'ni', symbol: 'nᵢ', label: '출발 준위 (높은 쪽)', unit: '', min: 2, max: 7, step: 1, value: 4, color: C.ni, dec: 0,
         where: '전자가 <b>떨어지기 전</b>에 있던 준위입니다. 왼쪽 사다리에서 노란 점으로 표시되며, 여기서 아래로 떨어질 때 광자가 나옵니다.' },
-      { key: 'nf', symbol: 'n_f', label: '도착 준위 (낮은 쪽)', unit: '', min: 1, max: 6, step: 1, value: 2, color: C.nf, dec: 0,
+      { key: 'nf', symbol: 'n_f', label: '도착 준위 (낮은 쪽)', unit: '', min: 1, max: 6, step: 1, value: 3, color: C.nf, dec: 0,
         where: '전자가 <b>내려앉는</b> 준위입니다. 이 값이 계열을 정합니다 — 1이면 자외선(라이먼), 2면 가시광선(발머), 3이면 적외선(파셴).' }
     ],
     vars: {

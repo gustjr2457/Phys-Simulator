@@ -89,7 +89,7 @@
           value: stagT(p) > 1200 ? '알루미늄은 녹는다 — 티타늄·니켈합금이 필요' :
                  (stagT(p) > 500 ? '알루미늄 한계 근처 — 콩코드가 이 영역' :
                   (stagT(p) > 350 ? '주의할 수준의 가열' : '열은 문제가 되지 않는다')) },
-        { label: '압축성 보정 (1/√(1−M²))', value: isFinite(pg) ? pg : Infinity, dec: 3, color: '#ffb020' },
+        { label: '압축성 보정 (1/√(1−M²))', value: isFinite(pg) ? pg : '초음속에서는 적용 안 됨', dec: 3, color: '#ffb020' },   // M ≥ 1 이면 √ 안이 0 이하
         { label: '해수면이었다면 마하수', value: p.V / (20.0468 * Math.sqrt(288.15 + p.Tdel)), dec: 3, color: '#9a9da6' }
       ];
     },

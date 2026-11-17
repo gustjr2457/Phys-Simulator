@@ -18,18 +18,8 @@ const args = process.argv.slice(2);
 const strictId = args.includes('--strict') ? args[args.indexOf('--strict') + 1] : null;
 const asJson = args.includes('--json');
 
-/* ── 1. index.html 의 순서대로 core.js 와 시뮬레이션을 vm 안에 싣는다 ── */
-function loadPS() {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  const files = [...html.matchAll(/<script src="(js\/[^"]+)"><\/script>/g)].map(m => m[1]).filter(f => f !== 'js/app.js');   // app.js 는 화면 전용
-  const ctx = vm.createContext({ console, Math, Date, JSON, Object, Array, Number, String, Set, Map, isFinite, isNaN, parseFloat, parseInt });
-  for (const f of files) {
-    let src = fs.readFileSync(path.join(ROOT, f), 'utf8');
-    if (f === 'js/core.js') src = src.replace(/^const PS = /m, 'var PS = ');   // vm 전역으로 꺼내기
-    vm.runInContext(src, ctx, { filename: f });
-  }
-  return { PS: ctx.PS, files };
-}
+/* ── 1. index.html 의 순서대로 core.js 와 시뮬레이션을 vm 안에 싣는다 (tools/lib/load-ps.js) ── */
+const { loadPS } = require('./lib/load-ps');
 
 /* ── 2. 설명 점검 — 기준 2(중학생 이해)의 기계적으로 확인할 수 있는 부분 ──
    사람의 판단이 필요한 부분(비유가 적절한가, 말이 쉬운가)은 절차서(SKILL.md)에서 화면과 함께 본다. */

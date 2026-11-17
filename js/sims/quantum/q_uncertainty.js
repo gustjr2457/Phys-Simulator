@@ -50,11 +50,11 @@
     tagline: '위치를 좁히려면 여러 파장을 섞어야 하고, 파장을 하나로 맞추면 위치가 무한히 퍼집니다. 신비로운 규칙이 아니라 — 짧은 북소리에 여러 음이 섞이는 것과 똑같은, 모든 파동의 성질입니다.',
 
     params: [
-      { key: 'sk', symbol: 'Δk', label: '섞는 파장의 범위', unit: '/nm', min: .15, max: 2.5, step: .05, value: .8, color: C.sk, dec: 2,
+      { key: 'sk', symbol: 'Δk', label: '섞는 파장의 범위', unit: '/nm', min: .15, max: 2.5, step: .05, value: .3, color: C.sk, dec: 2,
         where: '오른쪽 <b>운동량 막대그래프의 폭</b>입니다. 넓게 섞을수록 파속이 좁아지고(위치를 잘 알게 되고), 좁게 섞을수록 파속이 길게 퍼집니다. 이 하나가 불확정성의 전부입니다.' },
       { key: 'k0', symbol: 'k₀', label: '중심 파수', unit: '/nm', min: 2, max: 14, step: .5, value: 7, color: C.k0, dec: 1,
         where: '섞는 파장들의 <b>중심값</b>입니다. 운동량 p = ħk 이므로 이 값이 곧 평균 운동량입니다. 폭은 그대로 두고 중심만 옮겨도 불확정성은 변하지 않습니다.' },
-      { key: 'N', symbol: 'N', label: '실제로 더하는 파동 수', unit: '개', min: 1, max: 25, step: 1, value: 15, color: C.N, dec: 0,
+      { key: 'N', symbol: 'N', label: '실제로 더하는 파동 수', unit: '개', min: 1, max: 25, step: 1, value: 10, color: C.N, dec: 0,
         where: '몇 개의 사인파를 <b>실제로 더할 것인가</b>입니다. 1개면 끝없이 이어지는 순수한 파동, 2~3개면 마디가 반복되는 맥놀이, 많이 더해야 비로소 <b>한 덩어리로 뭉친 파속</b>이 됩니다.' }
     ],
     vars: {

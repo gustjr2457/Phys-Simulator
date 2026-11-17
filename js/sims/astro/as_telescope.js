@@ -46,13 +46,13 @@
     tagline: '망원경을 키우는 이유는 둘입니다 — 빛을 더 모으고(D²), 더 잘게 보는 것(1/D). 빛이 파동인 이상 점은 점으로 맺히지 않고, 그 한계가 분해능입니다.',
 
     params: [
-      { key: 'lgD', symbol: 'D', label: '구경 (10^x m)', unit: '', min: -2.2, max: 1.6, step: .02, value: .38, color: C.lgD, dec: 2, reset: true,
+      { key: 'lgD', symbol: 'D', label: '구경 (10^x m)', unit: '', min: -2.2, max: 1.6, step: .001, value: .38, color: C.lgD, dec: 2, reset: true,
         where: '망원경 <b>주경의 지름</b>(로그 눈금, 0.38 = 2.4 m 허블)입니다. 분해능은 1/D로, 집광력은 D²로 좋아집니다 — 아래 비교 막대에서 현재 위치를 보세요.' },
       { key: 'lam', symbol: 'λ', label: '관측 파장', unit: 'nm', min: 300, max: 3000, step: 25, value: 550, color: C.lam, dec: 0,
         where: '보고 있는 <b>빛의 파장</b>입니다. 파장이 길수록(적외선) 회절이 심해져 같은 구경에서도 흐릿해집니다 — JWST가 허블보다 크면서도 해상도가 비슷한 이유입니다.' },
       { key: 'lgsep', symbol: 'Δθ', label: '두 별의 각거리 (10^x ″)', unit: '', min: -2.5, max: .7, step: .02, value: -1, color: C.lgsep, dec: 2,
         where: '관측하려는 <b>쌍성 두 별 사이의 각도</b>(로그 눈금, −1 = 0.1초각)입니다. 이 값이 분해능보다 커야 둘로 보입니다.' },
-      { key: 'seeing', symbol: 's', label: '대기 시상', unit: '″', min: 0, max: 2, step: .05, value: 0, color: C.seeing, dec: 2,
+      { key: 'seeing', symbol: 's', label: '대기 시상', unit: '″', min: 0, max: 2, step: .01, value: 0, color: C.seeing, dec: 2,
         where: '<b>대기가 흔들어 별상을 번지게 하는 정도</b>입니다. 0 = 우주(허블·JWST), 0.4 = 최상급 산꼭대기, 1~2 = 보통 지상. 구경을 아무리 키워도 이 값보다 잘게 볼 수는 없습니다.' }
     ],
     vars: {

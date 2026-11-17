@@ -58,9 +58,9 @@
     tagline: '별에 온도계를 꽂을 수는 없습니다. 그런데도 온도를 아는 이유는 — 분광기로 파장을 훑으면 나오는 봉우리의 위치가 오직 온도 하나로 정해지기 때문입니다.',
 
     params: [
-      { key: 'T', symbol: 'T', label: '표면 온도', unit: 'K', min: 2500, max: 40000, step: 100, value: 5772, color: C.T, dec: 0,
+      { key: 'T', symbol: 'T', label: '표면 온도', unit: 'K', min: 2500, max: 40000, step: 1, value: 3500, color: C.T, dec: 0,
         where: '별 표면의 <b>유효 온도</b>입니다. 스펙트럼 봉우리의 위치(λ_max)와 별의 색을 동시에 결정하며, 왼쪽 별 그림의 색이 실제 그 온도의 색입니다.' },
-      { key: 'lgR', symbol: 'R', label: '별의 반지름 (10^x R☉)', unit: '', min: -2.3, max: 3.1, step: .02, value: 0, color: C.R, dec: 2,
+      { key: 'lgR', symbol: 'R', label: '별의 반지름 (10^x R☉)', unit: '', min: -2.3, max: 3.1, step: .01, value: 0, color: C.R, dec: 2,
         where: '태양 반지름을 1로 둔 <b>별의 크기</b>(로그 눈금 — 백색왜성 0.008부터 적색초거성 1000까지 담기 위함)입니다. 색(온도)에는 전혀 영향을 주지 않고 <b>광도만</b> 바꿉니다 — L = 4πR²σT⁴.' }
     ],
     vars: {

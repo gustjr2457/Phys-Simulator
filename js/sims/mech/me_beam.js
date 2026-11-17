@@ -27,7 +27,7 @@
         where: '고정단에서 하중까지의 <b>뻗은 길이</b>입니다. 처짐에 <b>세제곱</b>으로 들어가므로 가장 무서운 변수입니다 — 길이를 2배로 하면 처짐은 8배.' },
       { key: 'b', symbol: 'b', label: '단면 폭', unit: 'mm', min: 10, max: 120, step: 5, value: 50, color: C.b, dec: 0,
         where: '단면의 <b>가로 폭</b>(오른쪽 단면도)입니다. I = bh³/12에서 1제곱으로만 들어가므로, 폭을 2배로 해도 처짐은 절반밖에 줄지 않습니다.' },
-      { key: 'h', symbol: 'h', label: '단면 높이', unit: 'mm', min: 10, max: 120, step: 5, value: 25, color: C.h, dec: 0,
+      { key: 'h', symbol: 'h', label: '단면 높이', unit: 'mm', min: 10, max: 120, step: 1, value: 25, color: C.h, dec: 0,
         where: '단면의 <b>세로 높이</b>(굽힘 방향)입니다. I에 <b>세제곱</b>으로 들어가 처짐을 지배합니다. H형강·I형강이 위아래로 긴 이유입니다.' },
       { key: 'E', symbol: 'E', label: '탄성계수', unit: 'GPa', min: 50, max: 250, step: 10, value: 200, color: C.E, dec: 0,
         where: '재료의 <b>뻣뻣함</b>입니다(강철 200 · 알루미늄 70 GPa). 처짐에 반비례하지만, 단면 높이와 달리 선택의 폭이 좁습니다.' }

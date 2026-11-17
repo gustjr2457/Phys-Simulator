@@ -34,7 +34,7 @@
     tagline: '별까지의 거리를 재는 가장 정직한 방법. 지구가 공전하는 동안 가까운 별이 배경별에 대해 그리는 작은 타원 — 그 각도 하나면 됩니다.',
 
     params: [
-      { key: 'lgd', symbol: 'd', label: '별까지의 거리 (10^x pc)', unit: '', min: 0, max: 4.3, step: .02, value: .114, color: C.lgd, dec: 2, reset: true,
+      { key: 'lgd', symbol: 'd', label: '별까지의 거리 (10^x pc)', unit: '', min: 0, max: 4.3, step: .001, value: .422, color: C.lgd, dec: 2, reset: true,
         where: '별까지의 <b>거리</b>입니다(로그 눈금). 멀수록 시차가 작아져 — 왼쪽 그림의 두 시선이 평행에 가까워지고, 오른쪽 하늘에서 별이 그리는 타원이 작아집니다.' },
       { key: 'lgs', symbol: 'σ', label: '측정 정밀도 (10^x µas)', unit: '', min: 0, max: 5.2, step: .1, value: 1.3, color: C.lgs, dec: 1,
         where: '망원경이 별의 위치를 재는 <b>오차</b>입니다(로그 눈금). 가이아 20 µas · 허블 100 µas · 지상 망원경 수만 µas. 오른쪽 하늘 그림에서 측정점이 흩어지는 정도입니다.' }
@@ -88,7 +88,7 @@
         { label: '거리 (광년)', value: d * PC_LY, unit: '광년', color: C.d, dec: d > 100 ? 0 : 2 },
         { label: '측정 정밀도 σ', value: sg, unit: 'µas', color: C.lgs, dec: sg > 100 ? 0 : 2 },
         { label: '신호 대 잡음비 S/N', value: sn, unit: '', color: C.sn, dec: 2 },
-        { label: '거리 오차', value: sn > .2 ? 100 / sn : Infinity, unit: '%', dec: 1,
+        { label: '거리 오차', value: sn > .2 ? 100 / sn : '측정 불가 (오차가 시차보다 큼)', unit: sn > .2 ? '%' : '', dec: 1,
           color: sn >= 10 ? '#7fb894' : (sn >= 5 ? '#ffb020' : '#c4705f') },
         { label: '이 정밀도로 잴 수 있는 최대 거리', value: dMax(p), unit: 'pc', dec: 0, color: '#9a9da6' },
         { label: '판정', wide: true, color: sn >= 10 ? '#7fb894' : (sn >= 5 ? '#ffb020' : '#c4705f'),

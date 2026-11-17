@@ -39,7 +39,15 @@ function loadApp() {
     const f = document.createElement('iframe');
     f.style.cssText = 'position:fixed;left:-9999px;top:0;width:1400px;height:820px';
     f.src = '../index.html?motion=off';
-    f.onload = () => setTimeout(() => res(f.contentWindow), 300);
+    f.onload = () => {
+      // 앱 안의 콘솔 에러·처리 안 된 예외를 모은다 (그리기 예외는 app.js 가 잡아 console.error 로 남긴다)
+      const W = f.contentWindow; W.__errs = [];
+      const ce = W.console.error.bind(W.console);
+      W.console.error = (...a) => { W.__errs.push(a.map(x => x && x.stack ? x.stack.split('\n')[0] : String(x)).join(' ')); ce(...a); };
+      W.addEventListener('error', e => W.__errs.push('error: ' + e.message));
+      W.addEventListener('unhandledrejection', e => W.__errs.push('rejection: ' + e.reason));
+      setTimeout(() => res(W), 300);
+    };
     document.body.appendChild(f);
   });
 }
@@ -112,10 +120,68 @@ function overlaps(rec) {
   return hits;
 }
 
+/* ?stress — 극한 실행. 78종 × (기본 · 전부 최소 · 전부 최대 · 각 프리셋) 을 init → 6초 step 하며 1초마다
+   readouts · sample · draw 하고, 이어서 실제 앱에서 시뮬레이션마다 열고 프리셋을 눌러 콘솔 에러를 모은다.
+   예외만 본다 — 극한값에서의 글자 겹침은 가독성 관문(기본 모드)의 대상이 아니다. */
+async function stress(W, PS) {
+  const result = { mode: 'stress', errors: [], console: [], total: { draws: 0, runs: 0, appViews: 0 } };
+  const sizes = qs.get('sizes') ? SIZES : [[1407, 704], [417, 436]];
+  const SIMS = ONLY ? PS.sims.filter(s => ONLY.split(',').includes(s.id)) : PS.sims;
+  const cv = W.document.createElement('canvas'), ctx = cv.getContext('2d');
+  for (const sim of SIMS) {
+    const lo = {}, hi = {};
+    sim.params.forEach(p => { lo[p.key] = p.min; hi[p.key] = p.max; });
+    const sets = [['기본', {}]].concat((sim.presets || []).map(pr => ['프리셋 ' + pr.name, pr.set]), [['전부 최소', lo], ['전부 최대', hi]]);
+    for (const [tag, set] of sets) for (const [w, h] of sizes) {
+      cv.width = w; cv.height = h;
+      try {
+        const P = {}; sim.params.forEach(p => P[p.key] = p.value); Object.assign(P, set);
+        const st = sim.init(P); st.t = 0; result.total.runs++;
+        const hl = Object.keys(sim.vars || {})[0] || null;
+        for (let i = 1; i <= 6 * 480; i++) {
+          if (!st.done) { sim.step(st, P, DT); st.t += DT; }
+          if (i % 480) continue;
+          sim.readouts(st, P); sim.sample && sim.sample(st, P);
+          for (const h0 of [null, hl]) {
+            ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, w, h);
+            ctx.__labels = w < 600 ? [] : null;
+            sim.draw(ctx, st, P, { w, h, hl: h0, playing: true }); result.total.draws++;
+          }
+        }
+      } catch (e) { result.errors.push(sim.id + ' ' + tag + ' ' + w + 'x' + h + ' → ' + e.message); }
+    }
+    out.textContent = '극한 실행 중… ' + sim.id;
+    await new Promise(r => setTimeout(r));
+  }
+  // 실제 앱: 시뮬레이션마다 열고, 프리셋을 하나씩 누르며 몇 프레임씩 돌린다 (app.js 의 측정값·과제·그래프·빛 층 경로까지)
+  // headless 는 화면 밖 iframe 의 애니메이션 프레임을 거의 돌리지 않는다 — 프레임을 기다리되 시간 제한을 둔다
+  const frames = n => Promise.race([
+    new Promise(r => { let k = 0; const f = () => (++k >= n ? r() : W.requestAnimationFrame(f)); W.requestAnimationFrame(f); }),
+    new Promise(r => setTimeout(r, 40 * n))]);
+  W.__errs.forEach(m => result.console.push('(처음 불러올 때) ' + m));
+  for (const sim of SIMS) {
+    const before = W.__errs.length;
+    W.location.hash = '#/' + sim.id; await frames(4);
+    for (const b of W.document.querySelectorAll('#presets .preset')) { b.click(); await frames(3); }
+    result.total.appViews++;
+    W.__errs.slice(before).forEach(m => result.console.push(sim.id + ': ' + m));
+  }
+  const bad = result.errors.length + result.console.length;
+  out.innerHTML = '<span class="' + (bad ? 'bad' : 'ok') + '">극한 실행 ' + result.total.runs + '회 · 그리기 ' + result.total.draws + '회 · 앱에서 연 시뮬레이션 ' +
+    result.total.appViews + '종\n예외 ' + result.errors.length + ' · 콘솔 에러 ' + result.console.length + '</span>\n' +
+    result.errors.concat(result.console).slice(0, 40).join('\n').replace(/</g, '&lt;');
+  window.RESULT = result;
+  const j = document.createElement('script'); j.type = 'application/json'; j.id = 'result';
+  j.textContent = JSON.stringify(result); document.body.appendChild(j);
+  document.querySelector('iframe').remove();
+  return result;
+}
+
 async function run() {
   out.textContent = '앱 불러오는 중…';
   const W = await loadApp();
   const PS = W.eval('PS');   // core.js 의 const PS 는 window 속성이 아니다
+  if (qs.has('stress')) return stress(W, PS);
   const cv = W.document.createElement('canvas'), ctx = cv.getContext('2d');
   const result = { sizes: {}, errors: [], illegible: {}, total: { draws: 0, overlaps: 0, clipped: 0, illegible: 0 } };
   const bgCv = W.document.createElement('canvas'), bgCtx = bgCv.getContext('2d', { willReadFrequently: true });

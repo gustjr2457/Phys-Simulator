@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>PhysLab og:image</title>
+<!-- 공유 미리보기 이미지(img/og.png, 1200×630)의 원본. 다시 만들 때:
+     chrome --headless=new --hide-scrollbars --force-device-scale-factor=1 --window-size=1200,630 --screenshot=img/og.png tools/og-image.html -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#0e0f11;color:#e6e7ea;
+    font-family:'IBM Plex Sans KR','Malgun Gothic',sans-serif}
+  .wrap{position:relative;width:1200px;height:630px}
+  svg{position:absolute;inset:0}
+  .txt{position:absolute;left:84px;top:96px}
+  h1{margin:0;font-size:88px;font-weight:600;letter-spacing:-1px}
+  p{margin:18px 0 0;font-size:34px;color:#a7aab0;font-weight:400}
+  .meta{position:absolute;left:84px;bottom:72px;font-family:'IBM Plex Mono',monospace;font-size:24px;color:#6b6e76;letter-spacing:.5px}
+  .meta b{color:#e6e7ea;font-weight:500}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <svg width="1200" height="630" viewBox="0 0 1200 630">
+    <defs>
+      <filter id="g" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+    </defs>
+    <!-- 무대: 바닥선과 눈금 -->
+    <line x1="560" y1="520" x2="1130" y2="520" stroke="#3a3c42" stroke-width="2"/>
+    <g stroke="#3a3c42" stroke-width="2">
+      <line x1="600" y1="520" x2="600" y2="532"/><line x1="700" y1="520" x2="700" y2="532"/><line x1="800" y1="520" x2="800" y2="532"/>
+      <line x1="900" y1="520" x2="900" y2="532"/><line x1="1000" y1="520" x2="1000" y2="532"/><line x1="1100" y1="520" x2="1100" y2="532"/>
+    </g>
+    <!-- 포물선 궤적: 앞으로 갈 길(점선)과 지나온 길 -->
+    <path d="M600 520 Q850 40 1100 520" fill="none" stroke="#4a4d55" stroke-width="3" stroke-dasharray="8 10"/>
+    <!-- 지나온 길 = 같은 포물선의 t = 0~0.34 부분 (x = 600 + 500t, y = 520 − 960·t(1−t)) -->
+    <path d="M600 520 Q685 356.8 770 304.6" fill="none" stroke="#ffb020" stroke-width="5" stroke-linecap="round" filter="url(#g)" opacity=".6"/>
+    <path d="M600 520 Q685 356.8 770 304.6" fill="none" stroke="#ffb020" stroke-width="4" stroke-linecap="round"/>
+    <!-- 같은 시간 간격 자취 (가로 간격이 일정 = 가로 등속) -->
+    <g fill="#ffb020" opacity=".55"><circle cx="634" cy="459.2" r="5"/><circle cx="668" cy="407.2" r="5"/><circle cx="702" cy="364.1" r="5"/><circle cx="736" cy="329.9" r="5"/></g>
+    <!-- 공과 속도 성분: vy/vx = 960(1−2t)/500 = 0.614 (위로), 중력은 아래 -->
+    <circle cx="770" cy="304.6" r="22" fill="#ffb020" filter="url(#g)" opacity=".7"/>
+    <circle cx="770" cy="304.6" r="16" fill="#ffb020"/>
+    <g stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M770 304.6 L900 304.6" stroke="#6f9fc4"/><path d="M886 295.6 L900 304.6 L886 313.6" stroke="#6f9fc4"/>
+      <path d="M770 304.6 L770 224.8" stroke="#7fb894"/><path d="M761 238.8 L770 224.8 L779 238.8" stroke="#7fb894"/>
+      <path d="M770 304.6 L770 394" stroke="#c4705f"/><path d="M761 380 L770 394 L779 380" stroke="#c4705f"/>
+    </g>
+    <g font-family="IBM Plex Mono, monospace" font-size="26" font-weight="500">
+      <text x="912" y="313" fill="#6f9fc4">v<tspan font-size="18" dy="6">x</tspan></text>
+      <text x="784" y="236" fill="#7fb894">v<tspan font-size="18" dy="6">y</tspan></text>
+      <text x="784" y="396" fill="#c4705f">g</text>
+    </g>
+  </svg>
+  <div class="txt">
+    <h1>PhysLab</h1>
+    <p>물리 이론을 움직이는 그림으로</p>
+  </div>
+  <div class="meta"><b>78</b> 시뮬레이션 · 기초 · 고등 · 공학 응용</div>
+</div>
+</body>
+</html>

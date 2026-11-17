@@ -17,7 +17,7 @@
         where: '스프링에 매달린 <b>블록</b>입니다. 관성을 담당하며, 커질수록 고유진동수 ωₙ = √(k/m)가 낮아져 <b>느리게</b> 흔들립니다.' },
       { key: 'k', symbol: 'k', label: '스프링 상수', unit: 'N/m', min: 20, max: 800, step: 10, value: 300, color: C.k, dec: 0,
         where: '<b>청록색 스프링</b>입니다. 제자리로 되돌리려는 복원력 −kx를 만듭니다. 단단할수록(k↑) 진동이 빨라집니다.' },
-      { key: 'c', symbol: 'c', label: '감쇠 계수', unit: 'N·s/m', min: 0, max: 160, step: 2, value: 12, color: C.c, dec: 0,
+      { key: 'c', symbol: 'c', label: '감쇠 계수', unit: 'N·s/m', min: 0, max: 160, step: 1, value: 12, color: C.c, dec: 0,
         where: '스프링 옆의 <b>대시포트(점성 감쇠기)</b>입니다. 속도에 비례하는 저항 −cẋ로 에너지를 열로 흩뜨려 진폭을 줄입니다. 자동차 쇼크업소버가 바로 이것입니다.' },
       { key: 'x0', symbol: 'x₀', label: '초기 변위', unit: 'm', min: .02, max: .25, step: .01, value: .15, color: C.x0, reset: true, dec: 2,
         where: '평형 위치에서 <b>얼마나 당겼다 놓았는가</b>입니다. 진폭의 출발점만 정할 뿐, 진동수나 감쇠 속도에는 영향을 주지 않습니다.' }

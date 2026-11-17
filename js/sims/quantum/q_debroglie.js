@@ -31,7 +31,7 @@
     params: [
       { key: 'obj', symbol: 'm', label: '대상 (전자 → 야구공)', unit: '', min: 1, max: 6, step: 1, value: 1, color: C.obj, dec: 0,
         where: '파장을 계산할 <b>물체</b>입니다. 질량이 분모에 있으므로, 무거울수록 파장이 짧아집니다. 전자(10⁻³⁰ kg)와 야구공(0.145 kg)은 질량이 <b>10²⁹배</b>나 차이 납니다.' },
-      { key: 'vexp', symbol: 'v', label: '속도 (10의 지수)', unit: '→ m/s', min: -2, max: 7, step: .1, value: 6, color: C.vexp, dec: 1,
+      { key: 'vexp', symbol: 'v', label: '속도 (10의 지수)', unit: '→ m/s', min: -2, max: 7, step: .1, value: 7, color: C.vexp, dec: 1,
         where: '속도를 <b>10의 거듭제곱</b>으로 정합니다(−2면 0.01 m/s, 6이면 10⁶ m/s). 속도도 분모에 있어 빠를수록 파장이 짧아집니다. 아무리 느리게 해도 야구공의 파장은 원자 근처에도 못 갑니다.' }
     ],
     vars: {

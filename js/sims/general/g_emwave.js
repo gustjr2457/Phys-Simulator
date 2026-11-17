@@ -34,7 +34,7 @@
     tagline: '맥스웰이 식을 정리하다 파동이 튀어나왔고, 그 속력이 빛의 속력과 같았습니다. "빛은 전자기파다"가 실험이 아니라 계산에서 먼저 나온 결론입니다.',
 
     params: [
-      { key: 'lgf', symbol: 'f', label: '진동수 (10^x Hz)', unit: '', min: 4, max: 21, step: .05, value: 14.74, color: C.lgf, dec: 2, reset: true,
+      { key: 'lgf', symbol: 'f', label: '진동수 (10^x Hz)', unit: '', min: 4, max: 21, step: .01, value: 14, color: C.lgf, dec: 2, reset: true,
         where: '전자기파의 <b>진동수</b>(로그 눈금)입니다. 이 값 하나가 파장·광자 에너지·스펙트럼 영역을 전부 결정합니다 — 전파든 X선이든 <b>같은 파동</b>이고 이것만 다릅니다.' },
       { key: 'E0', symbol: 'E₀', label: '전기장 진폭', unit: 'V/m', min: 1, max: 1200, step: 1, value: 100, color: C.E0, dec: 0,
         where: '전기장의 <b>최대 세기</b>(빨간 화살표의 길이)입니다. 세기(W/m²)는 이 값의 제곱에 비례하고, 자기장 진폭은 자동으로 E₀/c가 됩니다. 1013 V/m이 지구에 닿는 햇빛 수준입니다.' }

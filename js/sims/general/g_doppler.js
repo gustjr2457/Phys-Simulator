@@ -24,11 +24,11 @@
     params: [
       { key: 'fs', symbol: 'f', label: '음원 진동수', unit: 'Hz', min: 100, max: 2000, step: 10, value: 440, color: C.fs, dec: 0,
         where: '음원이 <b>실제로 내는 진동수</b>입니다(440 Hz = 라). 파면이 그려지는 간격을 정하고, 관찰자가 듣는 진동수의 기준이 됩니다.' },
-      { key: 'vs', symbol: 'v_s', label: '음원 속도', unit: 'm/s', min: 0, max: 700, step: 5, value: 100, color: C.vs, dec: 0, reset: true,
+      { key: 'vs', symbol: 'v_s', label: '음원 속도', unit: 'm/s', min: 0, max: 700, step: 1, value: 100, color: C.vs, dec: 0, reset: true,
         where: '<b>음원(빨간 점)이 달리는 속도</b>입니다. 앞쪽 파면을 쫓아가 촘촘하게 만듭니다. 음속을 넘으면 파면 밖으로 튀어나가 <b>마하콘</b>이 생깁니다.' },
       { key: 'vo', symbol: 'v_o', label: '관찰자 속도', unit: 'm/s', min: -150, max: 150, step: 5, value: 0, color: C.vo, dec: 0,
         where: '<b>관찰자(파란 점)의 속도</b>입니다(+면 음원 쪽으로 다가감). 관찰자가 움직이면 파장이 아니라 <b>단위 시간에 만나는 파면 수</b>가 달라집니다 — 음원이 움직일 때와 수식이 다른 이유입니다.' },
-      { key: 'v', symbol: 'v', label: '매질에서의 파동 속력', unit: 'm/s', min: 300, max: 1500, step: 10, value: 343, color: C.v, dec: 0, reset: true,
+      { key: 'v', symbol: 'v', label: '매질에서의 파동 속력', unit: 'm/s', min: 300, max: 1500, step: 1, value: 343, color: C.v, dec: 0, reset: true,
         where: '<b>매질이 정하는 파동의 속력</b>입니다(20 °C 공기 343 · 물 1480 · 헬륨 1007 m/s). 음원이 아무리 빨라도 파동 자체는 항상 이 속력으로 퍼집니다.' }
     ],
     vars: {
@@ -77,10 +77,10 @@
     readouts(st, p) {
       const M = machOf(p), fa = fApp(p), fr = fRec(p);
       return [
-        { label: '다가올 때 f′', value: isFinite(fa) ? fa : Infinity, unit: 'Hz', color: C.fa, dec: 1 },
+        { label: '다가올 때 f′', value: isFinite(fa) ? fa : '충격파 (정의되지 않음)', unit: isFinite(fa) ? 'Hz' : '', color: C.fa, dec: 1 },   // 음원이 음속 이상이면 앞쪽 파면이 겹쳐 한 진동수가 없다
         { label: '멀어질 때 f′', value: fr, unit: 'Hz', color: C.fr, dec: 1 },
-        { label: '지나가는 순간의 낙차', value: isFinite(fa) ? fa - fr : Infinity, unit: 'Hz', dec: 1, color: '#ffb020' },
-        { label: '음정 변화 (다가올 때)', value: isFinite(fa) ? semitone(fa / p.fs) : Infinity, unit: '반음', dec: 2, color: C.fa },
+        { label: '지나가는 순간의 낙차', value: isFinite(fa) ? fa - fr : '충격파 (정의되지 않음)', unit: isFinite(fa) ? 'Hz' : '', dec: 1, color: '#ffb020' },
+        { label: '음정 변화 (다가올 때)', value: isFinite(fa) ? semitone(fa / p.fs) : '충격파 (정의되지 않음)', unit: isFinite(fa) ? '반음' : '', dec: 2, color: C.fa },
         { label: '앞쪽 파장', value: isFinite(fa) ? p.v / fa : 0, unit: 'm', dec: 3, color: C.fa },
         { label: '뒤쪽 파장', value: p.v / fr, unit: 'm', dec: 3, color: C.fr },
         { label: '마하수 M', value: M, unit: '', color: C.M, dec: 3 },

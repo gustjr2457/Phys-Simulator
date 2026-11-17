@@ -38,9 +38,9 @@
     tagline: '외계행성은 거의 전부 간접 관측입니다. 행성이 별을 흔들면 스펙트럼선이 떨리고(시선속도법), 별 앞을 지나가면 별빛이 아주 조금 어두워집니다(트랜싯법).',
 
     params: [
-      { key: 'lgM', symbol: 'M_p', label: '행성 질량 (10^x M⊕)', unit: '', min: -.3, max: 3, step: .05, value: 0, color: C.lgM, dec: 2, reset: true,
+      { key: 'lgM', symbol: 'M_p', label: '행성 질량 (10^x M⊕)', unit: '', min: -.3, max: 3, step: .05, value: 2.5, color: C.lgM, dec: 2, reset: true,
         where: '행성의 <b>질량</b>(로그 눈금, 0 = 지구 · 2.5 = 목성)입니다. 시선속도 K에 정비례해서, 무거울수록 별을 세게 흔들어 찾기 쉬워집니다.' },
-      { key: 'lga', symbol: 'a', label: '공전 반지름 (10^x AU)', unit: '', min: -1.7, max: .7, step: .05, value: 0, color: C.lga, dec: 2, reset: true,
+      { key: 'lga', symbol: 'a', label: '공전 반지름 (10^x AU)', unit: '', min: -1.7, max: .8, step: .001, value: .716, color: C.lga, dec: 2, reset: true,
         where: '행성이 별에서 <b>얼마나 떨어져 도는가</b>(로그 눈금, 0 = 1 AU = 지구 궤도)입니다. 가까울수록 주기가 짧고, K도 트랜싯 확률도 커져 압도적으로 찾기 쉽습니다.' },
       { key: 'Ms', symbol: 'M★', label: '별의 질량', unit: 'M☉', min: .2, max: 2, step: .05, value: 1, color: C.Ms, dec: 2, reset: true,
         where: '<b>중심별의 질량</b>입니다. 가벼운 별일수록 같은 행성에 더 크게 흔들리고, 별도 작아서 트랜싯이 더 깊어집니다 — 적색왜성이 외계행성 사냥의 주 무대인 이유입니다.' },
@@ -130,7 +130,7 @@
       {
         id: 'earth', title: '제2의 지구는 왜 어려운가',
         desc: '태양 같은 별(0.9~1.1 M☉)의 1 AU 궤도에 지구 질량 행성을 놓고, 시선속도 K와 트랜싯 깊이가 얼마나 작은지 확인하세요.',
-        hint: '세 슬라이더를 모두 기본값 근처로. K는 0.09 m/s, 깊이는 84 ppm이 나옵니다 — 둘 다 현재 기술의 한계선입니다.',
+        hint: '행성 질량과 공전 반지름을 0(= 10⁰, 지구 질량·1 AU)으로, 별의 질량은 1 M☉로. K는 0.09 m/s, 깊이는 84 ppm이 나옵니다 — 둘 다 현재 기술의 한계선입니다.',
         check: ({ P }) => P.Ms >= .9 && P.Ms <= 1.1 && aOf(P) >= .9 && aOf(P) <= 1.1 && mpOf(P) >= .8 && mpOf(P) <= 1.3
       },
       {

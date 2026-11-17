@@ -43,8 +43,8 @@
         : (v > 0 ? '실상 · ' + (m < 0 ? '뒤집힘' : '바로 섬') : '허상 · ' + (m < 0 ? '뒤집힘' : '바로 섬'));
       return [
         { label: '렌즈 종류', value: p.f > 0 ? '볼록렌즈(모음)' : '오목렌즈(퍼뜨림)', color: C.f },
-        { label: '상거리 v', value: isFinite(v) ? v : Infinity, unit: '', dec: 2, color: C.v },
-        { label: '배율 m = −v/u', value: isFinite(m) ? m : Infinity, dec: 2, color: C.img },
+        { label: '상거리 v', value: isFinite(v) ? v : '∞ (상이 맺히지 않음)', unit: '', dec: 2, color: C.v },   // 물체가 초점 위면 굴절된 빛이 나란히 나간다
+        { label: '배율 m = −v/u', value: isFinite(m) ? m : '∞ (상이 맺히지 않음)', dec: 2, color: C.img },
         { label: '상의 종류', value: kind, wide: true, color: v > 0 ? C.v : C.img }
       ];
     },

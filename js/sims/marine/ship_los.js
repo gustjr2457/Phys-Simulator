@@ -44,13 +44,13 @@
     tagline: '자율운항은 두 가지를 동시에 합니다 — 항로를 벗어나지 않기(LOS 유도)와 부딪히지 않기(CPA 판정 + 우현 변침). 이 둘이 시스템의 뼈대입니다.',
 
     params: [
-      { key: 'look', symbol: 'Δ', label: '전방주시거리', unit: 'm', min: 100, max: 2000, step: 50, value: 500, color: C.look, dec: 0, reset: true,
+      { key: 'look', symbol: 'Δ', label: '전방주시거리', unit: 'm', min: 100, max: 2000, step: 10, value: 500, color: C.look, dec: 0, reset: true,
         where: '항로 위 <b>얼마나 앞을 보고 조타할 것인가</b>입니다(청록 원). 짧으면 빠르게 복귀하지만 과도하게 꺾이고(진동), 길면 부드럽지만 느리게 수렴합니다.' },
       { key: 'V', symbol: 'V', label: '자선 속력', unit: 'kn', min: 4, max: 24, step: .5, value: 14, color: C.V, dec: 1, reset: true,
         where: '<b>내 배의 속력</b>입니다. 빠를수록 선회 반경이 커져 항로 복귀가 어려워지고, 충돌 회피에 쓸 수 있는 시간도 줄어듭니다.' },
       { key: 'tV', symbol: 'V_t', label: '타선 속력', unit: 'kn', min: 0, max: 24, step: .5, value: 12, color: C.tV, dec: 1, reset: true,
         where: '<b>마주 오는 배의 속력</b>(노란 배)입니다. 0으로 두면 정지 장애물이 됩니다.' },
-      { key: 'tC', symbol: 'χ_t', label: '타선 침로', unit: '°', min: 0, max: 359, step: 5, value: 200, color: C.tC, dec: 0, reset: true,
+      { key: 'tC', symbol: 'χ_t', label: '타선 침로', unit: '°', min: 0, max: 359, step: 1, value: 200, color: C.tC, dec: 0, reset: true,
         where: '타선이 <b>가는 방향</b>입니다(0° = 동쪽/오른쪽). 자선 항로를 가로지르도록 맞추면 횡단 상황(crossing)이 만들어집니다.' },
       { key: 'Rs', symbol: 'R_s', label: '안전 반경', unit: 'm', min: 200, max: 2000, step: 50, value: 700, color: C.Rs, dec: 0,
         where: '이 거리 안으로 접근하면 위험하다고 판단하는 <b>경계</b>(분홍 원)입니다. 최근접 거리(CPA)가 이보다 작아질 것으로 예측되면 회피 기동에 들어갑니다.' }

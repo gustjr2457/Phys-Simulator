@@ -24,7 +24,7 @@
         where: '배의 <b>폭</b>입니다. BM = B²/(12d)에서 <b>제곱</b>으로 들어가므로 복원성에 가장 강력하게 작용합니다. 폭이 넓은 배가 잘 안 넘어지는 이유입니다.' },
       { key: 'd', symbol: 'd', label: '흘수', unit: 'm', min: 1.5, max: 9, step: .25, value: 4, color: C.d, reset: true, dec: 2,
         where: '물에 <b>잠긴 깊이</b>입니다. 파란 수면선 아래 부분이며, 깊을수록 부심 KB는 올라가지만 BM은 작아집니다.' },
-      { key: 'KG', symbol: 'KG', label: '무게중심 높이', unit: 'm', min: 1, max: 12, step: .25, value: 5, color: C.KG, reset: true, dec: 2,
+      { key: 'KG', symbol: 'KG', label: '무게중심 높이', unit: 'm', min: 1, max: 12, step: .05, value: 5, color: C.KG, reset: true, dec: 2,
         where: '용골(K)에서 <b>무게중심 G까지의 높이</b>입니다. 분홍색 G점의 위치이며, 화물을 높이 쌓을수록 커져 GM을 갉아먹습니다. <b>복원성 사고의 주범</b>입니다.' },
       { key: 'th0', symbol: 'θ₀', label: '초기 경사각', unit: '°', min: 2, max: 35, step: 1, value: 15, color: C.th, reset: true, dec: 0,
         where: '파도나 바람에 <b>처음 기울어진 각도</b>입니다. 여기서 손을 떼면 배가 어떻게 움직이는지 보세요.' }
@@ -82,7 +82,7 @@
         { label: '현재 경사각 θ', value: th * 180 / Math.PI, unit: '°', color: C.th },
         { label: '복원정 GZ', value: GZ, unit: 'm', color: C.GZ, dec: 3 },
         { label: '복원 모멘트 (m당)', value: W * GZ / 1000, unit: 'kN·m', dec: 0 },
-        { label: '횡요 주기 T', value: Troll, unit: 's' },
+        { label: '횡요 주기 T', value: GM > 0 ? Troll : '복원력 없음', unit: GM > 0 ? 's' : '' },   // GM ≤ 0 이면 되돌리는 힘이 없어 흔들림 주기가 없다
         { label: '판정', wide: true, color: GM > .15 ? '#7fb894' : (GM > 0 ? '#ffb020' : '#c4705f'),
           value: st.capsized ? '⚠ 전복 (capsized)' :
             (GM > .15 ? '안정 — 스스로 일어섭니다' :

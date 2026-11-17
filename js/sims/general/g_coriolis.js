@@ -25,7 +25,7 @@
     params: [
       { key: 'om', symbol: 'ω', label: '원판 각속도', unit: 'rad/s', min: 0, max: 3, step: .05, value: 1, color: C.om, dec: 2, reset: true,
         where: '<b>원판이 도는 빠르기</b>입니다(반시계 방향). 0이면 두 그림이 똑같아지고, 클수록 오른쪽(회전계) 궤적이 심하게 휩니다. 공에 걸리는 가짜 힘의 크기를 정합니다.' },
-      { key: 'v0', symbol: 'v', label: '던지는 속도', unit: 'm/s', min: 1, max: 20, step: .5, value: 5, color: C.v0, dec: 1, reset: true,
+      { key: 'v0', symbol: 'v', label: '던지는 속도', unit: 'm/s', min: 1, max: 20, step: .5, value: 6, color: C.v0, dec: 1, reset: true,
         where: '중심에서 <b>바깥으로 던지는 속도</b>입니다. 빠를수록 금방 가장자리에 닿아 원판이 덜 돌므로 — 오히려 <b>덜 휘어 보입니다</b>.' },
       { key: 'R', symbol: 'R', label: '원판 반지름', unit: 'm', min: 2, max: 20, step: .5, value: 8, color: C.R, dec: 1, reset: true,
         where: '원판의 <b>크기</b>입니다. 크면 공이 더 오래 날아가고 그동안 원판이 더 많이 돌아, 휘는 정도가 커집니다.' },
@@ -79,7 +79,7 @@
           value: p.om === 0 ? '직선 (회전이 없으니 같다)' : '오른쪽으로 휜다 — 가짜 힘이 있는 것처럼 보인다' },
         { label: '── 지구에서라면 (위도 ' + fmt(p.lat, 0) + '°) ──', value: '', wide: true, color: '#4a4d55' },
         { label: '코리올리 매개변수 f', value: f * 1e5, unit: '×10⁻⁵ /s', color: C.lat, dec: 3 },
-        { label: '관성원 반지름 (v/f)', value: isFinite(ir) ? ir / 1000 : Infinity, unit: 'km', dec: 1, color: C.lat },
+        { label: '관성원 반지름 (v/f)', value: isFinite(ir) ? ir / 1000 : '적도: f = 0 (원을 그리지 않음)', unit: isFinite(ir) ? 'km' : '', dec: 1, color: C.lat },
         { label: '1시간 날아간 포탄의 편향', value: .5 * f * p.v0 * 3600 * 3600 / 1000, unit: 'km', dec: 1, color: C.dev },
         { label: '이 위도에서 태풍이', wide: true, color: p.lat < 5 ? '#c4705f' : '#7fb894',
           value: p.lat < 5 ? '생기지 않는다 — 코리올리 힘이 거의 0이라 회전이 시작되지 않는다' :
@@ -97,7 +97,7 @@
       '선박 항법에서도 장거리 항해에서는 이 효과가 누적됩니다 — 자이로컴퍼스는 지구 자전을 직접 이용해 진북을 찾습니다.'
     ],
     presets: [
-      { name: '기본 (ω = 1)', set: { om: 1, v0: 5, R: 8, lat: 37 } },
+      { name: '기본 (ω = 1)', set: { om: 1, v0: 6, R: 8, lat: 37 } },
       { name: '회전 없음 (직선)', set: { om: 0, v0: 5, R: 8, lat: 37 } },
       { name: '빠르게 던지면 덜 휜다', set: { om: 1, v0: 20, R: 8, lat: 37 } },
       { name: '천천히 던지면 크게 휜다', set: { om: 1.5, v0: 1.5, R: 8, lat: 37 } },

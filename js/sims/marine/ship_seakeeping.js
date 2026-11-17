@@ -40,7 +40,7 @@
     params: [
       { key: 'Hs', symbol: 'H', label: '파고', unit: 'm', min: .5, max: 12, step: .5, value: 4, color: C.Hs, dec: 1,
         where: '파도의 <b>마루에서 골까지 높이</b>입니다. 선체 운동의 크기에 정비례할 뿐, 공진이 일어나는지 여부에는 영향을 주지 않습니다.' },
-      { key: 'Tw', symbol: 'T', label: '파주기', unit: 's', min: 4, max: 18, step: .5, value: 9, color: C.Tw, dec: 1, reset: true,
+      { key: 'Tw', symbol: 'T', label: '파주기', unit: 's', min: 4, max: 18, step: .5, value: 11, color: C.Tw, dec: 1, reset: true,
         where: '파도의 <b>주기</b>입니다. 파장 λ = gT²/2π 를 정하고, 조우 주기의 바탕이 됩니다 — 너울(긴 주기)일수록 파장이 길어 배를 통째로 들어 올립니다.' },
       { key: 'V', symbol: 'V', label: '선속', unit: 'kn', min: 0, max: 26, step: .5, value: 16, color: C.V, dec: 1,
         where: '배의 <b>속력</b>입니다. 파도 쪽으로 달리면 더 자주 만나고(조우 주기 ↓), 파도와 같은 방향으로 달리면 덜 만납니다. <b>감속이 공진을 피하는 첫 번째 수단</b>입니다.' },

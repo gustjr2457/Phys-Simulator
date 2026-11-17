@@ -72,7 +72,7 @@
         { label: '투과 확률 T', value: T > 1e-4 ? fmt(T * 100, 3) + ' %' : (T * 100).toExponential(2) + ' %', color: C.T, wide: true },
         { label: '반사 확률 R', value: (1 - T) * 100, unit: '%', color: C.R, dec: 3 },
         { label: '감쇠 상수 κ', value: under ? kap / 1e9 : 0, unit: '1/nm', color: C.kap, dec: 2 },
-        { label: '벽 안 침투 깊이 1/κ', value: under ? 1e9 / kap : Infinity, unit: 'nm', dec: 3 },
+        { label: '벽 안 침투 깊이 1/κ', value: under ? 1e9 / kap : 'E ≥ V₀ (벽 위로 넘어감)', unit: under ? 'nm' : '', dec: 3 },   // 에너지가 장벽보다 높으면 벽 안에서도 진동한다(감쇠 없음)
         { label: '드브로이 파장 λ', value: lam, unit: 'nm', color: C.E, dec: 3 },
         { label: '에너지 부족분 V₀ − E', value: Math.max(p.V - p.E, 0), unit: 'eV', color: C.V },
         {
