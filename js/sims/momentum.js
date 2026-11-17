@@ -25,7 +25,7 @@
       { key: 'e', symbol: 'e', label: '반발 계수', unit: '', min: 0, max: 1, step: .05, value: 1, color: C.e, dec: 2, reset: true,
         where: '충돌 지점의 <b>노란 스프링</b>입니다. e = 1이면 완전 탄성 충돌(에너지 보존), e = 0이면 두 수레가 <b>붙어서</b> 함께 움직입니다.' },
       { key: 'dtc', symbol: 'Δt', label: '충돌 지속 시간', unit: 's', min: .01, max: .5, step: .01, value: .1, color: C.dtc, dec: 2,
-        where: '두 수레가 <b>맞닿아 힘을 주고받는 시간</b>입니다. 같은 충격량이라도 Δt가 길수록 평균 힘 F는 작아집니다 — 에어백과 매트리스의 원리!' }
+        where: '두 수레가 <b>맞닿아 힘을 주고받는 시간</b>입니다. 같은 충격량이라도 Δt가 길수록 평균 힘 F는 작아집니다. 에어백과 매트리스의 원리!' }
     ],
     vars: {
       p: { symbol: 'p', label: '운동량', unit: 'kg·m/s', color: C.p,

@@ -26,7 +26,7 @@
     id: 'q-debroglie', mode: 'quantum', category: '물질도 파동이다',
     title: '드브로이 파장',
     sub: 'λ = h / mv',
-    tagline: '전자만 파동인 게 아니라 야구공에도 파장이 있습니다. 다만 그 파장이 10⁻³⁴ m — 원자핵보다 10²⁰배나 작아서 절대 드러나지 않을 뿐입니다. 양자역학이 일상에서 안 보이는 이유가 바로 이것입니다.',
+    tagline: '전자만 파동인 게 아니라 야구공에도 파장이 있습니다. 다만 그 파장이 10⁻³⁴ m, 원자핵보다 10²⁰배나 작아서 절대 드러나지 않을 뿐입니다. 양자역학이 일상에서 안 보이는 이유가 바로 이것입니다.',
 
     params: [
       { key: 'obj', symbol: 'm', label: '대상 (전자 → 야구공)', unit: '', min: 1, max: 6, step: 1, value: 1, color: C.obj, dec: 0,
@@ -38,7 +38,7 @@
       lam: { symbol: 'λ', label: '드브로이 파장', unit: 'm', color: C.lam,
         where: '아래 <b>로그 자 위의 청록색 눈금</b>입니다. 물체 크기(분홍 눈금)와 비교해서, 비슷하면 파동성이 드러나고 훨씬 작으면 숨습니다.' },
       p: { symbol: 'p', label: '운동량', unit: 'kg·m/s', color: C.p,
-        where: '질량 × 속도입니다. 파장은 운동량에 <b>반비례</b>합니다 — 운동량이 크면 파장이 짧습니다.' },
+        where: '질량 × 속도입니다. 파장은 운동량에 <b>반비례</b>합니다. 운동량이 크면 파장이 짧습니다.' },
       m: { symbol: 'm', label: '질량', unit: 'kg', color: C.m, where: '고른 물체의 질량입니다.' },
       v: { symbol: 'v', label: '속도', unit: 'm/s', color: C.v, where: '고른 속도입니다.' }
     },
@@ -68,13 +68,13 @@
         { label: '운동량 p = mv', value: (o.m * v).toExponential(2).replace('e', ' ×10^'), unit: '', color: C.p },
         { label: '드브로이 파장 λ', value: lam.toExponential(2).replace('e', ' ×10^'), unit: 'm', color: C.lam, wide: true },
         { label: 'λ (나노미터)', value: lam * 1e9 > 1e-4 ? fmt(lam * 1e9, 4) : lam * 1e9, unit: 'nm' },
-        { label: '비교 — ' + o.sizeName, value: o.size.toExponential(1).replace('e', ' ×10^'), unit: 'm' },
+        { label: '비교 대상: ' + o.sizeName, value: o.size.toExponential(1).replace('e', ' ×10^'), unit: 'm' },
         { label: 'λ ÷ 물체 크기', value: ratio > 1e-3 ? fmt(ratio, 3) : ratio.toExponential(1).replace('e', ' ×10^'), unit: '배' },
         {
           label: '판정', wide: true, color: ratio > .3 ? '#7fb894' : (ratio > .01 ? '#ffb020' : '#c4705f'),
           value: ratio > .3 ? '✔ 파동성이 뚜렷하게 드러납니다 (회절·간섭 관찰 가능)'
             : ratio > .01 ? '△ 파동성이 희미하게 남아 있습니다'
-              : '✘ 파장이 너무 짧아 파동성이 완전히 숨습니다 — 고전적으로 행동'
+              : '✘ 파장이 너무 짧아 파동성이 완전히 숨습니다. 고전적으로 행동'
         }
       ];
     },
@@ -82,7 +82,7 @@
     notes: [
       '드브로이의 주장은 "빛이 알갱이면, 알갱이도 파동일 것"이었습니다. 실제로 <b>전자를 결정에 쏘면 회절무늬</b>가 나옵니다(1927년 데이비슨–거머 실험).',
       '파장은 질량과 속도에 <b>반비례</b>합니다. 무겁거나 빠를수록 파장이 짧아져 파동성이 숨습니다.',
-      '야구공의 파장은 약 <b>10⁻³⁴ m</b> — 원자핵(10⁻¹⁵ m)보다도 10¹⁹배 작습니다. 측정할 방법이 아예 없습니다.',
+      '야구공의 파장은 약 <b>10⁻³⁴ m</b>, 원자핵(10⁻¹⁵ m)보다도 10¹⁹배 작습니다. 측정할 방법이 아예 없습니다.',
       '<b>전자현미경</b>이 광학현미경보다 훨씬 작은 것을 보는 이유: 전자의 파장이 가시광선(500 nm)보다 수만 배 짧기 때문입니다.',
       '다음 시뮬레이션(상자 속 전자)은 이 파장이 좁은 공간에 갇히면 무슨 일이 생기는지 보여줍니다.'
     ],

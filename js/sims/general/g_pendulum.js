@@ -21,9 +21,9 @@
       { key: 'L', symbol: 'L', label: '줄 길이', unit: 'm', min: .2, max: 4, step: .05, value: 1, color: C.L, reset: true, dec: 2,
         where: '천장에서 추까지 이어진 <b>파란 줄</b>입니다. 길수록 추가 더 먼 길을 돌아오므로 왕복이 느려집니다.' },
       { key: 'th', symbol: 'θ₀', label: '처음 각도', unit: '°', min: 5, max: 80, step: 1, value: 20, color: C.th, reset: true, dec: 0,
-        where: '추를 놓기 전에 당긴 각도 — <b>보라색 점선 호</b>의 양 끝입니다. 작을 때는 주기를 거의 바꾸지 않습니다.' },
+        where: '추를 놓기 전에 당긴 각도, <b>보라색 점선 호</b>의 양 끝입니다. 작을 때는 주기를 거의 바꾸지 않습니다.' },
       { key: 'g', symbol: 'g', label: '중력 가속도', unit: 'm/s²', min: 1.6, max: 25, step: .1, value: 9.8, color: C.g, reset: true, dec: 1,
-        where: '추에 붙은 <b>주황색 아래 화살표</b>입니다. 세게 당길수록 빨리 되돌아옵니다 — 지구 9.8, 달 1.6, 목성 24.8 m/s².' }
+        where: '추에 붙은 <b>주황색 아래 화살표</b>입니다. 세게 당길수록 빨리 되돌아옵니다. 지구 9.8, 달 1.6, 목성 24.8 m/s².' }
     ],
     vars: {
       T: { symbol: 'T', label: '주기(작은 각 공식)', unit: 's', color: C.T,
@@ -85,7 +85,7 @@
         { label: '잰 주기', value: meas === null ? '한 번 왕복하면 표시' : meas, unit: meas === null ? '' : 's', dec: 3, color: C.Tb },
         { label: '공식과 비교', wide: true, color: meas === null ? C.t : (meas / Ts - 1 > .02 ? PAL.amber : C.Tb),
           value: meas === null ? '추가 오른쪽 끝으로 돌아오면 비교합니다'
-            : '잰 주기가 작은 각 공식보다 ' + fmt((meas / Ts - 1) * 100, 1) + ' % 길다' + (meas / Ts - 1 < .01 ? ' — 거의 같다' : '') }
+            : '잰 주기가 작은 각 공식보다 ' + fmt((meas / Ts - 1) * 100, 1) + ' % 길다' + (meas / Ts - 1 < .01 ? ', 거의 같다' : '') }
       ];
     },
 
@@ -106,7 +106,7 @@
       {
         id: 'three', title: '3초 진자 만들기',
         desc: '지구 중력(g = 9.8)에서 잰 주기가 2.95 ~ 3.05 초인 진자를 만들어 한 번 왕복시켜 보세요.',
-        hint: '주기는 줄 길이의 제곱근에 비례합니다. 1 m 가 약 2초이니, 3초는 (3/2)² 배 — 2 m 조금 넘게.',
+        hint: '주기는 줄 길이의 제곱근에 비례합니다. 1 m 가 약 2초이니, 3초는 (3/2)² 배, 2 m 조금 넘게.',
         check: ({ P, st }) => Math.abs(P.g - 9.8) < .05 && st.n >= 1 && Math.abs(st.lastCross / st.n - 3) <= .05
       },
       {

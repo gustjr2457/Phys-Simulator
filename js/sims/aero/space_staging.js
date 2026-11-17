@@ -61,7 +61,7 @@
       { key: 'lam', symbol: 'λ', label: '구조 효율 (추진제 비율)', unit: '', min: .80, max: .94, step: .01, value: .90, color: C.lam, reset: true, dec: 2,
         where: '각 단에서 <b>연료가 차지하는 비율</b>입니다. 나머지가 탱크·엔진 같은 <b>껍데기</b>이며, 이 껍데기를 버리는 것이 단 분리의 목적입니다. 0.90이면 껍데기가 10 %.' },
       { key: 'payload', symbol: 'm_p', label: '탑재체 질량', unit: 't', min: 2, max: 30, step: 1, value: 10, color: C.pay, reset: true, dec: 0,
-        where: '<b>실제로 궤도에 올리려는 화물</b>(위성·우주선)입니다. 로켓 맨 위 초록색 부분입니다. 무거울수록 Δv가 줄어 — 발사체 성능표의 "궤도 투입 능력"이 바로 이 값입니다.' },
+        where: '<b>실제로 궤도에 올리려는 화물</b>(위성·우주선)입니다. 로켓 맨 위 초록색 부분입니다. 무거울수록 Δv가 줄어, 발사체 성능표의 "궤도 투입 능력"이 바로 이 값입니다.' },
       { key: 'pitch', symbol: 'θ', label: '최종 기울기', unit: '°', min: 0, max: 110, step: 1, value: 90, color: C.pitch, reset: true, dec: 0,
         where: '연소 내내 로켓을 연직에서 옆으로 눕히는 <b>최종 각도</b>입니다. 앞 시뮬레이션과 같은 피치 프로그램이며, 궤도 진입의 열쇠입니다.' }
     ],
@@ -69,7 +69,7 @@
       dv: { symbol: 'Δv', label: '총 속도 증가량', unit: 'm/s', color: C.dv,
         where: '각 단의 Δv를 <b>모두 더한 값</b>입니다. 화면 오른쪽 단별 막대의 합이며, 약 9,400 m/s를 넘겨야 궤도에 오릅니다.' },
       ms: { symbol: 'm_start', label: '단 점화 시 질량', unit: 'kg', color: C.n,
-        where: '그 단에 불을 붙이는 순간의 <b>전체 질량</b>(그 단 + 위에 실린 모든 것)입니다. 아래 단들의 껍데기는 이미 버려져 포함되지 않습니다 — 이것이 다단의 이득입니다.' },
+        where: '그 단에 불을 붙이는 순간의 <b>전체 질량</b>(그 단 + 위에 실린 모든 것)입니다. 아래 단들의 껍데기는 이미 버려져 포함되지 않습니다. 이것이 다단의 이득입니다.' },
       mf: { symbol: 'm_end', label: '단 연소 종료 질량', unit: 'kg', color: C.n,
         where: '그 단의 연료를 다 태운 순간의 질량입니다. 여기서 <b>빈 껍데기를 떼어내고</b> 다음 단에 점화합니다.' }
     },
@@ -227,7 +227,7 @@
         value: st.verdict === 'orbit' ? '✔ 궤도 진입 성공 (근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' km)'
           : st.verdict === 'escape' ? '지구 탈출 궤도 (Δv 과잉)'
             : st.verdict === 'crash' ? '✘ 추락'
-              : st.verdict ? '✘ 준궤도 — 다시 떨어집니다'
+              : st.verdict ? '✘ 준궤도, 다시 떨어집니다'
                 : (st.burning ? (st.idx + 1) + '단 연소 중' : '관성 비행')
       });
       return rows;
