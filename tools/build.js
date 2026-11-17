@@ -12,7 +12,9 @@ const fs = require('fs'), path = require('path'), vm = require('vm'), crypto = r
 const ROOT = path.join(__dirname, '..');
 const CHECK = process.argv.includes('--check');
 const rd = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
-const hash = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 8);
+// 줄끝(CRLF/LF)과 무관한 해시 — Windows 에서 git 이 작업 파일을 CRLF 로 바꿔도 --check 가 흔들리지 않게
+const lf = s => s.replace(/\r\n/g, '\n');
+const hash = s => crypto.createHash('sha1').update(lf(s)).digest('hex').slice(0, 8);
 
 const { files } = JSON.parse(rd('tools/sims.json'));
 
@@ -57,7 +59,7 @@ stamp('js/typeset.js', rd('js/typeset.js'));
 stamp('js/app.js', rd('js/app.js'));
 
 const old = fs.existsSync(path.join(ROOT, 'js/catalog.js')) ? rd('js/catalog.js') : '';
-const changed = [old !== catalog && 'js/catalog.js', html0 !== html && 'index.html'].filter(Boolean);
+const changed = [lf(old) !== lf(catalog) && 'js/catalog.js', html0 !== html && 'index.html'].filter(Boolean);
 if (CHECK) {
   if (changed.length) { console.log('갱신 필요: ' + changed.join(', ') + ' — node tools/build.js'); process.exit(1); }
   console.log('색인·버전 최신 (' + entries.length + '종)'); process.exit(0);
