@@ -58,6 +58,44 @@ function lint(sim) {
   return E;
 }
 
+/* ── 2-1. 원본 파일 점검 — 기호·문구·색·글꼴 규칙 (절차서 "새 시뮬레이션이 갖춰야 할 것")
+   기존 시뮬레이션에는 경고로만, --strict 대상(새 시뮬레이션)에는 실패로 친다. */
+const LITS = /\/\/[^\n]*|\/\*[\s\S]*?\*\/|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`|"(?:[^"\\\n]|\\.)*"/g;
+const literals = src => [...src.matchAll(LITS)].map(m => m[0]).filter(s => !s.startsWith('/')).map(s => s.slice(1, -1));
+// 화면에서 innerHTML 로 들어가는 글 — "<" 뒤에 글자·/·! 가 오면 태그로 읽힌다. 허용하는 태그만 통과 ("< 0", "<0" 은 글자 그대로라 괜찮다)
+const HTML_OK = /<(?=[A-Za-z\/!?])(?!\/?(?:b|i|sub|sup|br|small)\b)/;
+function lintSource(sim, src) {
+  const E = [];
+  // 기호: 서로 다른 양이 같은 기호를 쓰지 않는다
+  const bySym = {};
+  Object.entries(sim.vars || {}).forEach(([k, v]) => (bySym[v.symbol] = bySym[v.symbol] || []).push(k));
+  Object.entries(bySym).forEach(([s, ks]) => { if (ks.length > 1) E.push(`기호 "${s}" 를 서로 다른 양(${ks.join(', ')})이 같이 쓴다`); });
+  // 공식: {변수} 뒤에 글자를 붙여 새 기호를 만들지 않는다 ({f1}_n, {E}ₙ)
+  (sim.formulas || []).forEach(f => { if (/\}(?:_|[₀-ₜᵢ-ᵪ])/.test(f.tpl)) E.push(`공식 "${f.name}": {변수} 뒤에 첨자를 붙여 새 기호를 만들었다 — vars 에 따로 둔다`); });
+  // 한자
+  if (/[一-鿿㐀-䶿]/.test(src)) E.push('한자가 섞여 있다');
+  const lits = literals(src);
+  // 줄표로 구절 잇기
+  lits.filter(l => l.includes(' — ')).slice(0, 3).forEach(l => E.push(`" — " 로 구절을 이었다: "${l.slice(0, 40)}"`));
+  // 색은 PS.PAL 이름만 (투명도는 PS.rgba)
+  lits.filter(l => /^#[0-9a-f]{3,8}$/i.test(l) || /\b(?:rgba?|hsla?)\(/i.test(l)).slice(0, 3)
+    .forEach(l => E.push(`색을 직접 적었다 "${l.slice(0, 30)}" — PS.PAL 이름이나 PS.rgba(이름, 투명도)`));
+  // 글꼴은 D.text · D.tag 를 통해서만
+  if (/\.font\s*=/.test(src)) E.push('ctx.font 를 직접 바꿨다 — 글자는 D.text · D.tag 로');
+  // 화면에 HTML 로 들어가는 글의 "<"
+  const html = [sim.tagline, ...(sim.notes || [])]
+    .concat((sim.params || []).flatMap(p => [p.label, p.where]), Object.values(sim.vars || {}).flatMap(v => [v.label, v.where]))
+    .concat((sim.challenges || []).flatMap(c => [c.title, c.desc, c.hint]), (sim.presets || []).map(p => p.name), (sim.formulas || []).map(f => f.name));
+  try {
+    const P = {}; sim.params.forEach(p => P[p.key] = p.value);
+    const st = sim.init(P); st.t = 0;
+    sim.readouts(st, P).forEach(r => { html.push(r.label); if (typeof r.value === 'string') html.push(r.value); });
+  } catch (e) { /* 스모크가 따로 잡는다 */ }
+  html.filter(t => typeof t === 'string' && HTML_OK.test(t)).slice(0, 3)
+    .forEach(t => E.push(`"<" 가 HTML 로 해석될 수 있다 (&lt; 로): "${t.slice(0, 40)}"`));
+  return E;
+}
+
 /* ── 3. 스모크 ── */
 const DT = 1 / 480;
 function smoke(PS, sim) {
@@ -109,7 +147,8 @@ function physics(PS, id) {
 }
 
 /* ── 실행 ── */
-const { PS } = loadPS();
+const { PS, files } = loadPS();
+const srcOf = Object.fromEntries(PS.sims.map((s, i) => [s.id, fs.readFileSync(path.join(ROOT, files[i + 1]), 'utf8')]));   // files[0] = core.js
 if (args.includes('--list')) {
   PS.sims.forEach(s => console.log([s.mode || 'basic', s.category, s.id, s.title].join(' | ')));
   process.exit(0);
@@ -123,7 +162,7 @@ for (const sim of PS.sims) {
   const sm = smoke(PS, sim);
   if (sm.errs.length) { report.smoke[sim.id] = sm.errs; report.fail.push(`스모크 ${sim.id}: ${sm.errs[0]}`); }
   if (sm.info.length) report.nonFinite[sim.id] = sm.info;
-  const l = lint(sim); if (l.length) report.lintWarn[sim.id] = l;
+  const l = lint(sim).concat(lintSource(sim, srcOf[sim.id])); if (l.length) report.lintWarn[sim.id] = l;
   const ph = physics(PS, sim.id);
   if (ph) { report.physics[sim.id] = ph; ph.filter(c => !c.ok).forEach(c => report.fail.push(`물리 ${sim.id} — ${c.name}: ${c.why}`)); }
 }

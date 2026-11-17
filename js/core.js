@@ -74,6 +74,15 @@ const PS = (function () {
     });
   }
 
+  /* PAL 색에 투명도만 바꿔 쓰기 — 새 색을 직접 적지 않고도 흐린 선·면을 그리게 한다.
+     PS.rgba('steel', .4) → 'rgba(111,159,196,.4)'.  PAL 이름이 아니면(#rrggbb) 그 색으로. */
+  function rgba(c, a) {
+    const h = PAL[c] || c, m = /^#([0-9a-f]{6})$/i.exec(h);
+    if (!m) return h;
+    const n = parseInt(m[1], 16);
+    return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+
   const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
   const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -515,5 +524,5 @@ const PS = (function () {
     });
   }
 
-  return { register, sims, byId, catalog, catById, setCatalog, load, loadAll, view, D, drawGraph, fmt, clamp, lerp, PAL };
+  return { register, sims, byId, catalog, catById, setCatalog, load, loadAll, view, D, drawGraph, fmt, clamp, lerp, PAL, rgba };
 })();

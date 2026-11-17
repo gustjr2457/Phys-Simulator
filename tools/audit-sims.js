@@ -16,10 +16,23 @@
    ========================================================= */
 const { loadPS, defaults } = require('./lib/load-ps');
 const asJson = process.argv.includes('--json');
+// --strict <id> — 새 시뮬레이션: 숫자 측정값의 NaN·Infinity 와 상태(st)의 NaN 을 "참고"가 아니라 실패로 친다
+const strictId = process.argv.includes('--strict') ? process.argv[process.argv.indexOf('--strict') + 1] : null;
+// 상태 안의 NaN — 숫자 필드, 숫자 배열, 한 단계 아래 객체까지 (자취 점 {x, y} 같은 것)
+function nanIn(st) {
+  const bad = [];
+  const look = (v, k) => {
+    if (typeof v === 'number') { if (Number.isNaN(v)) bad.push(k); }
+    else if (Array.isArray(v)) v.slice(-50).forEach((x, i) => typeof x === 'number' ? look(x, k + '[' + i + ']') : (x && typeof x === 'object' && Object.entries(x).forEach(([kk, vv]) => typeof vv === 'number' && look(vv, k + '[' + i + '].' + kk))));
+    else if (v && typeof v === 'object') Object.entries(v).forEach(([kk, vv]) => typeof vv === 'number' && look(vv, k + '.' + kk));
+  };
+  Object.entries(st).forEach(([k, v]) => look(v, k));
+  return bad;
+}
 const { PS } = loadPS();
 const DT = 1 / 480;
 
-const out = { range: [], grid: [], challengeTrue: [], unreachable: [], formula: [], errors: [], nonFinite: [], reached: 0 };
+const out = { range: [], grid: [], challengeTrue: [], unreachable: [], formula: [], errors: [], nonFinite: [], strict: [], reached: 0 };
 const WITNESS = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'challenge-witness.json'), 'utf8'));
 // 결과가 실행마다 같도록 시드 고정 난수
 let seed = 20261117;
@@ -88,20 +101,29 @@ for (const sim of PS.sims) {
       const st = sim.init(P); st.t = 0;
       for (let i = 0; i < 6 * 480 && !st.done; i++) { sim.step(st, P, DT); st.t += DT; }
       sim.readouts(st, P).forEach(r => {
-        if (typeof r.value === 'number' && !isFinite(r.value)) out.nonFinite.push(`${sim.id} ${tag}: "${r.label}" = ${r.value}`);
+        if (typeof r.value === 'number' && !isFinite(r.value)) {
+          out.nonFinite.push(`${sim.id} ${tag}: "${r.label}" = ${r.value}`);
+          if (sim.id === strictId) out.strict.push(`${tag}: 측정값 "${r.label}" = ${r.value} — 정의되지 않으면 이유를 문자열로`);
+        }
       });
-      sim.sample && sim.sample(st, P);
+      const smp = sim.sample && sim.sample(st, P);
+      if (sim.id === strictId) {
+        nanIn(st).slice(0, 3).forEach(k => out.strict.push(`${tag}: 상태 st.${k} = NaN`));
+        if (smp) Object.entries(smp).forEach(([k, v]) => typeof v === 'number' && Number.isNaN(v) && out.strict.push(`${tag}: 그래프 표본 ${k} = NaN`));
+      }
     } catch (e) { out.errors.push(`${sim.id} ${tag}: ${e.message}`); }
   }
 }
 
-const bad = out.range.length + out.grid.length + out.challengeTrue.length + out.unreachable.length + out.formula.length + out.errors.length;
+if (strictId && !PS.byId[strictId]) out.strict.push(`--strict: "${strictId}" 가 없다`);
+const bad = out.range.length + out.grid.length + out.challengeTrue.length + out.unreachable.length + out.formula.length + out.errors.length + out.strict.length;
 if (asJson) console.log(JSON.stringify(out, null, 1));
 else {
   const sec = (t, a) => { console.log(`\n${t} — ${a.length}`); a.forEach(x => console.log('  ' + x)); };
   sec('범위 밖', out.range); sec('격자 밖', out.grid); sec('열자마자 참인 과제', out.challengeTrue);
   sec(`달성할 수 없는 과제 (달성 가능 ${out.reached}개)`, out.unreachable); sec('공식의 없는 기호', out.formula);
   sec('극한 실행 예외', out.errors); sec('정의 안 되는 측정값 (참고)', out.nonFinite);
+  if (strictId) sec(`새 시뮬레이션 ${strictId}: NaN·Infinity`, out.strict);
   console.log(`\n시뮬레이션 ${PS.sims.length}종 — ${bad ? '고칠 것 ' + bad + '건' : '통과'}`);
 }
 process.exit(bad ? 1 : 0);

@@ -65,10 +65,16 @@ function chrome(args, timeout = 300000) {
 
   /* 기준 3 — 정의 감사: 기본값·프리셋이 슬라이더 범위·격자 위에 있는가, 열자마자 참인 과제가 없는가 */
   let a;
-  try { a = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, 'audit-sims.js'), '--json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); }
+  try { a = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, 'audit-sims.js'), '--json', '--strict', id], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); }
   catch (e) { a = JSON.parse(e.stdout); }
-  const aBad = [].concat(a.range, a.grid, a.challengeTrue, a.errors);
-  gate(3, '정의 감사 (범위·step 격자·시작 시 참인 과제·극한 실행)', !aBad.length, aBad.length ? aBad.slice(0, 4).join(' / ') : '0');
+  const aBad = [].concat(a.range, a.grid, a.challengeTrue, a.unreachable, a.formula, a.errors);
+  gate(3, '정의 감사 (범위·step 격자·공식 기호·시작 시 참인 과제·달성 가능·극한 실행)', !aBad.length, aBad.length ? aBad.slice(0, 4).join(' / ') : '0');
+  gate(3, '새 시뮬레이션 NaN·Infinity (기본·최소·최대·프리셋 6초: 측정값·상태·그래프 표본)', !a.strict.length, a.strict.length ? a.strict.slice(0, 4).join(' / ') : '0');
+
+  /* 원본 글자 — 제어 문자, 백슬래시가 빠진 정규식 (셸을 거쳐 쓴 파일에서 생긴다) */
+  let sc = '';
+  try { sc = execFileSync(process.execPath, [path.join(__dirname, 'scan-source.js')], { encoding: 'utf8' }); gate(3, '원본 글자 (제어 문자·빠진 백슬래시, js 전체)', true, sc.trim().split('\n').pop()); }
+  catch (e) { gate(3, '원본 글자 (제어 문자·빠진 백슬래시, js 전체)', false, String(e.stdout).trim().split('\n').slice(0, 3).join(' / ')); }
 
   if (!BROWSER) { gate(4, '브라우저 점검', false, 'Chrome/Edge 를 찾지 못했다'); return finish(); }
   const srv = await serve(), base = `http://127.0.0.1:${srv.address().port}`;
@@ -102,6 +108,24 @@ function chrome(args, timeout = 300000) {
       const bad = S.failed ? [S.failed] : S.errors.concat(S.console);
       gate(3, '극한 실행 (기본·최소·최대·프리셋 × 6초) · 앱 콘솔 에러', !bad.length,
         bad.length ? bad.slice(0, 4).join(' / ') : `${S.total.runs}회 실행 · 그리기 ${S.total.draws}회 · 앱에서 ${S.total.appViews}종 열기 — 예외·콘솔 에러 0`);
+    }
+
+    /* 기준 3·4 — 새 시뮬레이션을 논리 폭 900·360 에서 (절차서 규칙: 두 폭 모두에서 겹침·잘림·예외 없음) */
+    const nd = await chrome(['--virtual-time-budget=300000', '--window-size=1400,900', '--dump-dom', `${base}/tools/check.html?only=${id}&sizes=900x520,360x270`], 300000);
+    const nm = nd.match(/<script type="application\/json" id="result">([\s\S]*?)<\/script>/);
+    if (!nm) gate(4, '900×520 · 360×270 겹침·잘림', false, '결과를 읽지 못했다');
+    else {
+      const R2 = JSON.parse(nm[1]);
+      const ov2 = Object.entries(R2.sizes || {}).flatMap(([k, S]) => [].concat(...Object.values(S.overlaps)).map(x => k + ' 겹침 ' + x).concat((S.clipped[id] || []).map(x => k + ' 잘림 ' + x)));
+      const bad2 = (R2.failed ? [R2.failed] : []).concat(R2.errors || [], ov2);
+      gate(4, '900×520 · 360×270 겹침·잘림·예외 (새 시뮬레이션)', !bad2.length, bad2.length ? bad2.slice(0, 4).join(' / ') : '0');
+    }
+    const xd = await chrome(['--virtual-time-budget=600000', '--window-size=1400,900', '--dump-dom', `${base}/tools/check.html?stress&only=${id}&sizes=900x520,360x270`], 300000);
+    const xm = xd.match(/<script type="application\/json" id="result">([\s\S]*?)<\/script>/);
+    if (!xm) gate(3, '900×520 · 360×270 극한 실행', false, '결과를 읽지 못했다');
+    else {
+      const X = JSON.parse(xm[1]), bx = X.failed ? [X.failed] : X.errors.concat(X.console);
+      gate(3, '900×520 · 360×270 극한 실행 (기본·최소·최대·프리셋 × 6초)', !bx.length, bx.length ? bx.slice(0, 4).join(' / ') : `${X.total.runs}회 · 그리기 ${X.total.draws}회 예외 0`);
     }
 
     /* 기준 4 — ?fx=off 가 빛 층을 끄는가 (빛 번짐 없이 보고 싶은 사람·느린 기기용) */
