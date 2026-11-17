@@ -104,6 +104,20 @@
       { name: 'GM < 0 → 전복', set: { B: 12, d: 5, KG: 8 } },
       { name: 'GM 과대 (심한 횡요)', set: { B: 24, d: 3, KG: 2 } }
     ],
+    challenges: [
+      {
+        id: 'gm', title: '알맞은 복원성',
+        desc: 'GM 을 0.5 ~ 1.5 m 사이로 맞춰 보세요. 너무 작으면 위험하고, 너무 크면 배가 심하게 흔들립니다.',
+        hint: 'GM = KB + BM − KG 입니다. 무게중심 KG 를 올리면 GM 이 줄어듭니다.',
+        check: ({ P }) => { const gm = GMof(P); return gm >= .5 && gm <= 1.5; }
+      },
+      {
+        id: 'wide', title: '높이 실어도 넓은 배는 안전',
+        desc: '무게중심을 8 m 이상으로 높게 올리고도 GM 이 1 m 이상이 되게 만들어 보세요.',
+        hint: '메타센터 반지름 BM = B² ⁄ 12d 는 배 폭의 제곱에 비례합니다.',
+        check: ({ P }) => P.KG >= 8 && GMof(P) >= 1
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
@@ -202,7 +216,7 @@
       D.roundRect(ctx, px, py, pw, ph, 8);
       ctx.fillStyle = 'rgba(255,255,255,.025)'; ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.stroke();
-      D.text(ctx, 'GZ 곡선 — 복원정 vs 경사각', px, py - 12, { size: 11.5, color: '#9a9da6' });
+      D.text(ctx, 'GZ 곡선 (복원정 vs 경사각)', px, py - 12, { size: 11.5, color: '#9a9da6' });
       D.line(ctx, px, GY(0), px + pw, GY(0), { color: 'rgba(255,255,255,.2)' });
       D.line(ctx, GX(0), py, GX(0), py + ph, { color: 'rgba(255,255,255,.1)' });
       [-40, -20, 20, 40].forEach(a => D.text(ctx, a + '°', GX(a), py + ph - 4, { size: 9.5, color: '#6a6e78', align: 'center' }));
@@ -230,8 +244,8 @@
       D.line(ctx, GX(cdeg), py, GX(cdeg), py + ph, { color: C.th, dash: [3, 4], hot: hl === 'th' });
       D.dot(ctx, GX(cdeg), GY(clamp(GZ, -gzmax, gzmax)), 6, '#fff', true);
 
-      if (GM < 0) D.tag(ctx, 'GM < 0 — 똑바로 서지 못합니다', px + pw / 2, py + ph + 22, '#c4705f', true);
-      if (st.capsized) D.tag(ctx, '⚠ 전복 — ↺ 처음으로', w / 2, 26, '#c4705f', true);
+      if (GM < 0) D.tag(ctx, 'GM < 0 이라 똑바로 서지 못합니다', px + pw / 2, py + ph + 22, '#c4705f', true);
+      if (st.capsized) D.tag(ctx, '⚠ 전복 (↺ 처음으로)', w / 2, 26, '#c4705f', true);
     }
   });
 })();

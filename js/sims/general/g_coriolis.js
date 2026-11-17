@@ -162,7 +162,7 @@
 
       const lx = w * .27, rx = w * .72;
       /* ── 왼쪽: 관성계 (하늘에서 본 모습) ── */
-      drawDisk(lx, theta, '관성계 (하늘에서 본 모습)', '공은 완벽한 직선 — 원판이 돈다');
+      drawDisk(lx, theta, '관성계 (하늘에서 본 모습)', '공은 완벽한 직선, 원판이 돈다');
       // 직선 궤적
       ctx.save();
       ctx.strokeStyle = 'rgba(216,148,158,.75)'; ctx.lineWidth = 2.4; ctx.setLineDash([]);
@@ -181,7 +181,7 @@
         { size: 11, color: hl === 'om' ? '#fff' : C.om, align: 'center', bold: true });
 
       /* ── 오른쪽: 회전계 (원판 위에서 본 모습) ── */
-      drawDisk(rx, 0, '회전계 (원판 위에서 본 모습)', '공이 휜다 — 코리올리 힘이 있는 것처럼');
+      drawDisk(rx, 0, '회전계 (원판 위에서 본 모습)', '공이 휜다 (코리올리 힘이 있는 것처럼)');
       // 휜 궤적: 관성계의 직선을 −θ만큼 되돌린다
       ctx.save();
       ctx.strokeStyle = hl === 'dev' ? '#c08098' : 'rgba(214,144,181,.75)'; ctx.lineWidth = 2.4;
@@ -216,7 +216,7 @@
 
       /* ── 지구 비유 ── */
       const ex = 48, ey = h - 72;
-      D.text(ctx, '지구에서라면 — 코리올리 매개변수 f = 2Ω sin φ', ex, ey - 10, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '지구에서라면 코리올리 매개변수 f = 2Ω sin φ', ex, ey - 10, { size: 10.5, color: '#6a6e78' });
       const ew = Math.min(w - 300, 300);
       D.roundRect(ctx, ex, ey, ew, 12, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       ctx.save();

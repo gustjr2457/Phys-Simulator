@@ -53,7 +53,7 @@
 
   PS.register({
     id: 'as-blackbody', mode: 'astro', category: '별빛 읽기',
-    title: '별의 색과 온도 — 흑체복사',
+    title: '별의 색과 온도 (흑체복사)',
     sub: 'λ_max·T = 2.898×10⁻³ m·K',
     tagline: '별에 온도계를 꽂을 수는 없습니다. 그런데도 온도를 아는 이유는 — 분광기로 파장을 훑으면 나오는 봉우리의 위치가 오직 온도 하나로 정해지기 때문입니다.',
 
@@ -74,7 +74,7 @@
         where: '별 전체가 내는 <b>총 에너지</b>입니다. 표면적(R²)과 표면 플럭스(T⁴)의 곱이라, 크고 뜨거운 별은 압도적으로 밝습니다.' }
     },
     formulas: [
-      { name: '빈의 변위 법칙 — 색이 곧 온도', tpl: '{lmax} = 2.898×10⁶ ⁄ {T}   [nm]' },
+      { name: '빈의 변위 법칙 (색이 곧 온도)', tpl: '{lmax} = 2.898×10⁶ ⁄ {T}   [nm]' },
       { name: '슈테판-볼츠만 법칙', tpl: '{F} = σ{T}⁴' },
       { name: '별의 광도', tpl: '{L} = 4π{lgR}²σ{T}⁴' },
       { name: '플랑크 법칙 (스펙트럼의 모양)', tpl: 'B({lam},{T}) ∝ {lam}⁻⁵ ⁄ (e^(hc⁄{lam}k{T}) − 1)' }
@@ -237,7 +237,7 @@
 
       /* ── 분광형 띠 ── */
       const bx = 44, by = h - 74, bw = Math.min(w - 88, 520);
-      D.text(ctx, '분광형 — 뜨거운 쪽에서 차가운 쪽으로', bx, by - 9, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '분광형 (뜨거운 쪽에서 차가운 쪽으로)', bx, by - 9, { size: 10.5, color: '#6a6e78' });
       const TLO = Math.log10(2500), THI = Math.log10(40000);
       const BX = T => bx + bw * (1 - (Math.log10(clamp(T, 2500, 40000)) - TLO) / (THI - TLO));
       for (let i = 0; i <= 90; i++) {

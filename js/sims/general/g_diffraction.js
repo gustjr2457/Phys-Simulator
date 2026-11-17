@@ -103,7 +103,7 @@
       { name: '보통 슬릿 (10 µm)', set: { a: 10, lam: 550, Ls: 1 } },
       { name: '아주 좁은 슬릿 (1 µm)', set: { a: 1, lam: 550, Ls: 1 } },
       { name: '파장보다 좁게 (0.4 µm)', set: { a: .4, lam: 550, Ls: 1 } },
-      { name: '넓은 슬릿 — 거의 직진', set: { a: 180, lam: 400, Ls: .2 } },
+      { name: '넓은 슬릿 (거의 직진)', set: { a: 180, lam: 400, Ls: .2 } },
       { name: '붉은빛이 더 퍼진다', set: { a: 5, lam: 700, Ls: 1 } },
       { name: '보랏빛은 덜 퍼진다', set: { a: 5, lam: 400, Ls: 1 } }
     ],
@@ -186,7 +186,7 @@
         D.text(ctx, 'θ₁ = ' + fmt(t1 * 180 / Math.PI, 1) + '°', sx + 52, cy - 10,
           { size: 11, color: hl === 'th' ? '#fff' : C.th, bold: true });
       } else {
-        D.text(ctx, '어두운 무늬가 없다 — 모든 방향으로 퍼진다', sx + 14, cy - 92,
+        D.text(ctx, '어두운 무늬가 없다. 모든 방향으로 퍼진다', sx + 14, cy - 92,
           { size: 11, color: '#c4705f', bold: true });
       }
 
@@ -211,7 +211,7 @@
       /* ── 세기 곡선 ── */
       const gx = 48, gy = h - 122, gw = Math.min(w - 96, 480), gh = 86;
       D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-      D.text(ctx, '세기 분포 I(θ) = (sin β / β)²  — 중앙 봉우리에 90.3%', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '세기 분포 I(θ) = (sin β / β)², 중앙 봉우리에 90.3%', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
       ctx.save();
       ctx.strokeStyle = rgbS(.95); ctx.lineWidth = 2.2;
       if (hl === 'lam') { ctx.shadowColor = rgbS(1); ctx.shadowBlur = 12; }

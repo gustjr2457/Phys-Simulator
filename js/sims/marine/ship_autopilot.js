@@ -103,6 +103,20 @@
       { name: '외란 + Ki 없음', set: { dist: .8, Ki: 0, Kp: 1.6, Kd: 4 } },
       { name: '외란 + PID', set: { dist: .8, Ki: .3, Kp: 1.6, Kd: 4 } }
     ],
+    challenges: [
+      {
+        id: 'quick', title: '35초 안에 침로 잡기',
+        desc: '목표 침로에 35초 안에 정착하게 게인을 조정해 보세요 (재생해서 확인).',
+        hint: 'Kp 가 크면 빨리 돌지만 지나쳐서 흔들립니다. 지나침을 Kd 가 눌러 줍니다. 둘 다 조금씩 줄여 보세요.',
+        check: ({ st }) => st.settle > 0 && st.settle <= 35
+      },
+      {
+        id: 'pid', title: '바람을 이기고 정착하기',
+        desc: '외란(바람·조류)을 0.8 이상으로 두고도 목표 침로에 정착시켜 보세요 (1분쯤 걸립니다. 재생 속도를 올려도 됩니다).',
+        hint: 'PD 제어만으로는 바람에 밀린 오차가 남습니다. 적분 게인 Ki 를 조금(0.04 ~ 0.06) 넣어 보세요.',
+        check: ({ P, st }) => P.dist >= .8 - 1e-9 && P.Ki > 0 && st.settle > 0
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;

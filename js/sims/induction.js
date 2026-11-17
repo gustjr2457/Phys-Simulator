@@ -86,6 +86,20 @@
       { name: '한 번만 감기', set: { N: 1 } },
       { name: '센 자석 + 저항 작게', set: { B: 1.5, R: 1 } }
     ],
+    challenges: [
+      {
+        id: 'one-turn', title: '한 번 감은 코일로 0.3 V',
+        desc: '코일을 한 번만 감고(N = 1) 기전력 최대값을 0.3 V 넘게 만들어 보세요.',
+        hint: '기전력은 감은 수 N, 자석 세기 B, 자석 속력 v 에 모두 비례합니다. N 이 작으면 나머지를 키우세요.',
+        check: ({ P }) => P.N === 1 && peak(P) >= .3
+      },
+      {
+        id: 'big-R', title: '저항이 커도 0.5 A',
+        desc: '회로 저항을 15 Ω 이상으로 두고도 유도 전류의 최대값이 0.5 A 를 넘게 해 보세요.',
+        hint: '전류 I = V ⁄ R 입니다. 저항이 크면 기전력 V 를 그만큼 키워야 합니다.',
+        check: ({ P }) => P.R >= 15 && peak(P) / P.R >= .5
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;

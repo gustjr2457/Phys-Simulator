@@ -77,7 +77,7 @@
     },
     formulas: [
       { name: '질량-광도 관계 (주계열)', tpl: '{L} ≈ {M}^3.5' },
-      { name: '주계열 수명', tpl: 't ≈ 100억 년 × {M} ⁄ {L} = {M}^(−2.5)' },
+      { name: '주계열 수명', tpl: 't ≈ 100억 년 × {M} ⁄ {L} ≈ 100억 년 × {M}^(−2.5)' },
       { name: '광도·온도·반지름의 관계', tpl: '{L} = 4π{R}²σ{T}⁴' }
     ],
 
@@ -243,7 +243,7 @@
       /* ── 일생 막대 ── */
       const bx = 44, by = h - 62, bw = Math.min(w - 88, 540);
       const tot = totLife(p.M) * 10;
-      D.text(ctx, '일생 — 전체 ' + (tot > 100 ? fmt(tot, 0) : fmt(tot, 2)) + ' 억 년', bx, by - 26, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '일생 (전체 ' + (tot > 100 ? fmt(tot, 0) : fmt(tot, 2)) + ' 억 년)', bx, by - 26, { size: 10.5, color: '#6a6e78' });
       D.roundRect(ctx, bx, by, bw, 16, 5); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       [[0, .02, '#9a9da6'], [.02, .80, '#7fb894'], [.80, .94, '#c4705f'], [.94, 1, '#a98cc4']].forEach(([a, b, cc]) => {
         ctx.fillStyle = cc; ctx.globalAlpha = .45;

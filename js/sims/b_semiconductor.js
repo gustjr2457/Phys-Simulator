@@ -50,7 +50,7 @@
     },
     formulas: [
       { name: '열로 띠를 넘는 전자의 비율', tpl: '{n} ∝ e^(−{Eg} ⁄ 2k{T})' },
-      { name: '전도도', tpl: '{sig} ∝ {n} · (전하 운반자 수)' },
+      { name: '전도도', tpl: '{sig} ∝ {n} · μ  (운반자 수 × 이동도)' },
       { name: '상온의 열에너지', tpl: 'k{T} ≈ 0.026 eV  (300 K)' },
       { name: '분류 기준', tpl: '{Eg} ≈ 0 도체 · 0.1~3 반도체 · 3 이상 부도체' }
     ],
@@ -188,10 +188,10 @@
       // 도핑으로 생긴 여분 준위
       if (Math.round(p.dope) === 1) {
         D.line(ctx, bx + 8, SY(gap - .25), bx + bw - 8, SY(gap - .25), { color: '#6f9fc4', dash: [5, 4], width: 2, hot: hl === 'dope' });
-        D.text(ctx, 'n형 — 전도띠 바로 아래 여분 전자', bx + 10, SY(gap - .25) - 6, { size: 9.5, color: '#6f9fc4' });
+        D.text(ctx, 'n형 (전도띠 바로 아래 여분 전자)', bx + 10, SY(gap - .25) - 6, { size: 9.5, color: '#6f9fc4' });
       } else if (Math.round(p.dope) === 2) {
         D.line(ctx, bx + 8, SY(.25), bx + bw - 8, SY(.25), { color: '#c4705f', dash: [5, 4], width: 2, hot: hl === 'dope' });
-        D.text(ctx, 'p형 — 가전자띠 바로 위 빈자리(양공)', bx + 10, SY(.25) + 14, { size: 9.5, color: '#c4705f' });
+        D.text(ctx, 'p형 (가전자띠 바로 위 빈자리, 양공)', bx + 10, SY(.25) + 14, { size: 9.5, color: '#c4705f' });
       }
       D.text(ctx, '에너지 ↑', bx - 30, SY(gap + 2.6) - 6, { size: 9.5, color: '#6a6e78', align: 'right' });
       D.tag(ctx, KNAME[k].split(' —')[0], bx + bw / 2, SY(gap + 3.4), KCOL[k], true);

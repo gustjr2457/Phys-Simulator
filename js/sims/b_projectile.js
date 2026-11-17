@@ -47,8 +47,8 @@
         where: '손을 떠나서 땅에 닿을 때까지 걸린 시간입니다. 측정값 칸의 <b>"날아간 시간"</b>이 착지하는 순간 이 값에서 멈춥니다.' }
     },
     formulas: [
-      { name: '가로 — 같은 빠르기', tpl: '{x} = {v0}cos{th} · {t}' },
-      { name: '세로 — 중력이 당긴다', tpl: '{y} = {v0}sin{th} · {t} − ½{g}{t}²' },
+      { name: '가로 (같은 빠르기)', tpl: '{x} = {v0}cos{th} · {t}' },
+      { name: '세로 (중력이 당긴다)', tpl: '{y} = {v0}sin{th} · {t} − ½{g}{t}²' },
       { name: '사거리', tpl: '{R} = {v0}² sin2{th} ⁄ {g}' },
       { name: '최고 높이', tpl: '{H} = {v0}² sin²{th} ⁄ (2{g})' },
       { name: '비행 시간', tpl: '{tf} = 2{v0}sin{th} ⁄ {g}' }
@@ -112,9 +112,9 @@
       '달은 g가 지구의 약 1/6이라 같은 공이 <b>6배 멀리</b> 갑니다. 실제 지구에서는 공기 저항 때문에 45°보다 조금 낮은 각이 더 멀리 갑니다.'
     ],
     presets: [
-      { name: '45° — 가장 멀리', set: { v0: 20, th: 45, g: 9.8 } },
+      { name: '45° (가장 멀리)', set: { v0: 20, th: 45, g: 9.8 } },
       { name: '30°', set: { v0: 20, th: 30, g: 9.8 } },
-      { name: '60° — 30°와 같은 거리', set: { v0: 20, th: 60, g: 9.8 } },
+      { name: '60° (30°와 같은 거리)', set: { v0: 20, th: 60, g: 9.8 } },
       { name: '거의 수직 (85°)', set: { v0: 20, th: 85, g: 9.8 } },
       { name: '달에서 45° (g = 1.6)', set: { v0: 20, th: 45, g: 1.6 } }
     ],
@@ -212,7 +212,7 @@
         if (st.apex && Math.abs(st.vy) < uy * .12)
           D.tag(ctx, '꼭대기: vy = 0, vx 는 그대로', bx, by - 34, C.vy, false);
       } else {
-        D.tag(ctx, '착지! ' + fmt(st.tLand, 2) + ' s 동안 ' + fmt(st.x, 1) + ' m — ↺ 다시 던지기', w / 2, 22, PAL.amber, true);
+        D.tag(ctx, '착지! ' + fmt(st.tLand, 2) + ' s 동안 ' + fmt(st.x, 1) + ' m (↺ 다시 던지기)', w / 2, 22, PAL.amber, true);
       }
     }
   });

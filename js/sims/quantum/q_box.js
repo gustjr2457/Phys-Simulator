@@ -30,7 +30,7 @@
         where: '드브로이 관계 p = h/λ로 파장에서 바로 나옵니다. 파장이 짧을수록 운동량이 큽니다.' }
     },
     formulas: [
-      { name: '정상파 조건 — 반파장의 정수배만 들어간다', tpl: '{L} = {n} · {lam} ⁄ 2' },
+      { name: '정상파 조건 (반파장의 정수배만 들어간다)', tpl: '{L} = {n} · {lam} ⁄ 2' },
       { name: '드브로이 관계', tpl: '{p} = h ⁄ {lam}' },
       { name: '에너지 준위', tpl: '{E}ₙ = {n}² h² ⁄ ( 8m{L}² )' },
       { name: '바닥–첫 들뜬 준위 간격', tpl: 'E₂ − E₁ = 3h² ⁄ ( 8m{L}² )' }
@@ -75,7 +75,7 @@
       { name: '첫 들뜬 상태 (n=2)', set: { L: 1, n: 2, off: 0 } },
       { name: '높은 준위 (n=5)', set: { L: 1, n: 5, off: 0 } },
       { name: '상자를 좁히면', set: { L: .3, n: 1, off: 0 } },
-      { name: '정수가 아닌 n — 금지된 상태', set: { L: 1, n: 2, off: .5 } }
+      { name: '정수가 아닌 n (금지된 상태)', set: { L: 1, n: 2, off: .5 } }
     ],
     challenges: [
       {
@@ -136,7 +136,7 @@
       ctx.lineTo(x1, base); ctx.closePath();
       ctx.fillStyle = 'rgba(181,167,222,.22)'; ctx.fill();
       ctx.restore();
-      D.text(ctx, '|ψ|² — 전자를 발견할 확률', x0 + 6, base - 6, { size: 10, color: 'rgba(181,167,222,.9)' });
+      D.text(ctx, '|ψ|² (전자를 발견할 확률)', x0 + 6, base - 6, { size: 10, color: 'rgba(181,167,222,.9)' });
 
       /* ── 정상파 ψ ── */
       const osc = Math.cos(st.ph);

@@ -48,7 +48,7 @@
         where: '기수 끝에서 공기가 <b>완전히 멈추며 데워지는 온도</b>입니다. 마하수의 제곱으로 올라가 — 초음속기의 가장 큰 설계 제약(열 장벽)이 됩니다.' }
     },
     formulas: [
-      { name: '음속 — 온도에만 의존한다', tpl: '{a} = √(γRT) ≈ 20.05√T' },
+      { name: '음속 (온도에만 의존한다)', tpl: '{a} = √(γRT) ≈ 20.05√T' },
       { name: '마하수', tpl: '{M} = {V} ⁄ {a}' },
       { name: '마하콘 반각', tpl: 'sin μ = 1 ⁄ {M}' },
       { name: '정체점 온도 (단열 압축)', tpl: '{T0} = T(1 + 0.2{M}²)' },
@@ -243,7 +243,7 @@
         // 정체점 온도 곡선
         const ty = my + 86, th = Math.min(h - ty - 30, 70);
         if (th > 36) {
-          D.text(ctx, '정체점 온도 — 마하수의 제곱으로 오른다', mx, ty - 8, { size: 10, color: '#6a6e78' });
+          D.text(ctx, '정체점 온도 (마하수의 제곱으로 오른다)', mx, ty - 8, { size: 10, color: '#6a6e78' });
           ctx.save(); ctx.strokeStyle = C.T0; ctx.lineWidth = 2; ctx.beginPath();
           for (let m = 0; m <= MHI; m += .1) {
             const t0 = T * (1 + .2 * m * m) - 273.15;

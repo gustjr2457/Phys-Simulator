@@ -188,7 +188,7 @@
         { color: C.K, width: 2.6, head: 7, hot: hl === 'K' });
       D.tag(ctx, 'K = ' + (K < 1 ? fmt(K, 3) : fmt(K, 1)) + ' m/s', cx, cy - srad - 36, C.K, hl === 'K');
       D.line(ctx, cx - orb - 20, cy + srad + 26, cx + orb + 20, cy + srad + 26, { color: 'rgba(167,170,176,.2)', dash: [4, 5] });
-      D.text(ctx, tr ? '우리 시선 — 행성이 별 앞을 지난다' : '우리 시선 — 행성이 별을 비껴간다',
+      D.text(ctx, tr ? '우리 시선에서 행성이 별 앞을 지난다' : '우리 시선에서 행성이 별을 비껴간다',
         cx, cy + srad + 42, { size: 10, color: tr ? '#7fb894' : '#c4705f', align: 'center' });
 
       /* ── 검출 가능성 패널 ── */

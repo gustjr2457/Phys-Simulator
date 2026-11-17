@@ -60,6 +60,20 @@
       { name: '다이아몬드 → 공기(임계각 24.4°)', set: { n1: 2.42, n2: 1.0, theta1: 30 } },
       { name: '공기 → 물(들어갈 때는 항상 통과)', set: { n1: 1.0, n2: 1.33, theta1: 50 } }
     ],
+    challenges: [
+      {
+        id: 'tir', title: '빛을 가두기 (전반사)',
+        desc: '빛이 경계면을 빠져나가지 못하고 전부 반사되게 만들어 보세요.',
+        hint: '굴절률이 큰 곳에서 작은 곳으로 갈 때, 입사각이 임계각보다 크면 전반사가 일어납니다.',
+        check: ({ P }) => P.n1 > P.n2 && Math.sin(P.theta1 * D2R) > P.n2 / P.n1
+      },
+      {
+        id: 'crit30', title: '임계각이 30°인 물질',
+        desc: '공기(n₂ = 1)로 나가는 빛의 임계각이 30°(±0.5°)가 되는 물질을 찾아보세요.',
+        hint: 'sin θc = n₂ ⁄ n₁ 입니다. sin 30° = 0.5 이므로 n₁ 은 얼마일까요?',
+        check: ({ P }) => P.n2 === 1 && P.n1 > 1 && Math.abs(Math.asin(1 / P.n1) / D2R - 30) <= .5
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
@@ -91,7 +105,7 @@
         // 전반사: 같은 매질 안에서 반사
         const rx = ox - L * Math.sin(t1), ry = oy - L * Math.cos(t1);
         D.arrow(ctx, ox, oy, rx - ox, ry - oy, { color: C.tc, width: 3.5, hot: true, label: '전반사!' });
-        D.tag(ctx, '전반사 — 빛이 못 나갑니다', ox, oy - V.S(2.4), C.tc, true);
+        D.tag(ctx, '전반사 (빛이 못 나갑니다)', ox, oy - V.S(2.4), C.tc, true);
       } else {
         const t2 = Math.asin(sinT2);
         const rx = ox + L * Math.sin(t2), ry = oy - L * Math.cos(t2);

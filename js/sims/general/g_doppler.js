@@ -208,7 +208,7 @@
         }
         ctx.restore();
         D.text(ctx, lab, x0, yy + 4, { size: 10, color: cc });
-        D.text(ctx, lam > 0 ? fmt(lam, 3) + ' m  →  ' + fmt(lam > 0 ? p.v / lam : 0, 0) + ' Hz' : '파장 0 — 모든 파면이 겹침',
+        D.text(ctx, lam > 0 ? fmt(lam, 3) + ' m  →  ' + fmt(lam > 0 ? p.v / lam : 0, 0) + ' Hz' : '파장 0 (모든 파면이 겹침)',
           x0 + 128 + n * step + 10, yy + 4, { size: 10, color: cc });
       });
 

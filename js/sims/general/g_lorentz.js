@@ -53,7 +53,7 @@
     formulas: [
       { name: '로런츠 힘', tpl: '{F} = |q|{v}{B} sin{ang}' },
       { name: '회전 반지름', tpl: '{r} = m{v}⊥ ⁄ (|q|{B})' },
-      { name: '회전 주기 — 속도와 무관!', tpl: '{T} = 2πm ⁄ (|q|{B})' },
+      { name: '회전 주기 (속도와 무관!)', tpl: '{T} = 2πm ⁄ (|q|{B})' },
       { name: '나선의 피치', tpl: 'p = {v}∥ · {T}' }
     ],
 
@@ -188,7 +188,7 @@
       D.arrow(ctx, cur[0], cur[1], 0, Math.cos(st.ph) * 30,
         { color: C.F, width: 2.4, head: 7, hot: hl === 'F', label: 'F', lx: 14 });
       D.text(ctx, q.n, x0, cy + R * 1.5, { size: 11.5, color: q.c, bold: true });
-      D.text(ctx, p.ang >= 89 ? '완전한 원' : (p.ang <= 1 ? '직진 — 자기력 0' : '나선 운동'),
+      D.text(ctx, p.ang >= 89 ? '완전한 원' : (p.ang <= 1 ? '직진 (자기력 0)' : '나선 운동'),
         x0, cy + R * 1.5 + 17, { size: 10.5, color: C.ang });
 
       /* ── 단면도 (B 방향으로 본 모습) ── */

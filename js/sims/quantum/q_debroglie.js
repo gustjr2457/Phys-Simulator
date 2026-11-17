@@ -31,7 +31,7 @@
     params: [
       { key: 'obj', symbol: 'm', label: '대상 (전자 → 야구공)', unit: '', min: 1, max: 6, step: 1, value: 1, color: C.obj, dec: 0,
         where: '파장을 계산할 <b>물체</b>입니다. 질량이 분모에 있으므로, 무거울수록 파장이 짧아집니다. 전자(10⁻³⁰ kg)와 야구공(0.145 kg)은 질량이 <b>10²⁹배</b>나 차이 납니다.' },
-      { key: 'vexp', symbol: 'v', label: '속도 (10의 지수)', unit: '→ m/s', min: -2, max: 7, step: .1, value: 7, color: C.vexp, dec: 1,
+      { key: 'vexp', symbol: 'v', label: '속도 (10의 지수)', unit: '→ m/s', min: -2, max: 8, step: .1,   /* 최대 10⁸ m/s(광속의 1/3) — 전자현미경 과제(파장 0.01 nm 이하)에 닿으려면 7.9 이상이 필요하다 */ value: 7, color: C.vexp, dec: 1,
         where: '속도를 <b>10의 거듭제곱</b>으로 정합니다(−2면 0.01 m/s, 6이면 10⁶ m/s). 속도도 분모에 있어 빠를수록 파장이 짧아집니다. 아무리 느리게 해도 야구공의 파장은 원자 근처에도 못 갑니다.' }
     ],
     vars: {
@@ -43,7 +43,7 @@
       v: { symbol: 'v', label: '속도', unit: 'm/s', color: C.v, where: '고른 속도입니다.' }
     },
     formulas: [
-      { name: '드브로이 — 모든 물질은 파장을 가진다', tpl: '{lam} = h ⁄ {p}' },
+      { name: '드브로이 (모든 물질은 파장을 가진다)', tpl: '{lam} = h ⁄ {p}' },
       { name: '운동량', tpl: '{p} = {m}{v}' },
       { name: '운동 에너지로 쓰면', tpl: '{lam} = h ⁄ √( 2{m}E )' },
       { name: '파동성이 드러나는 조건', tpl: '{lam} ≳ 물체(또는 구멍)의 크기' }
@@ -154,14 +154,14 @@
         x === wx0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.stroke(); ctx.restore();
-      D.text(ctx, ratio > .3 ? '파동성이 드러남' : (ratio > .01 ? '파동성이 희미함' : '파동성이 숨음 — 사실상 알갱이'),
+      D.text(ctx, ratio > .3 ? '파동성이 드러남' : (ratio > .01 ? '파동성이 희미함' : '파동성이 숨음 (사실상 알갱이)'),
         wx0, cy - 40, { size: 10.5, color: ratio > .3 ? '#7fb894' : (ratio > .01 ? '#ffb020' : '#c4705f') });
 
       /* ── 아래쪽: 로그 자 ── */
       const rx0 = 70, rx1 = w - 40, ry = h * .70;
       const X = m10 => rx0 + (m10 - LO) / (HI - LO) * (rx1 - rx0);
       D.line(ctx, rx0, ry, rx1, ry, { color: 'rgba(167,170,176,.5)', width: 2 });
-      D.text(ctx, '길이 비교 — 한 칸마다 10배', rx0, ry - 56, { size: 11, color: '#9a9da6' });
+      D.text(ctx, '길이 비교 (한 칸마다 10배)', rx0, ry - 56, { size: 11, color: '#9a9da6' });
 
       // 10의 거듭제곱 눈금
       for (let e = LO; e <= HI; e += 5) {
@@ -197,7 +197,7 @@
       }
 
       if (Math.log10(lam) < LO)
-        D.tag(ctx, '자 밖으로 벗어남 — 너무 짧아 표시할 수 없습니다', rx0 + 150, ry + 74, '#c4705f', true);
+        D.tag(ctx, '자 밖으로 벗어남 (너무 짧아 표시할 수 없습니다)', rx0 + 150, ry + 74, '#c4705f', true);
     }
   });
 })();

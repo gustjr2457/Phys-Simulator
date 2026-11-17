@@ -82,6 +82,20 @@
       { name: '고감도 반도체 게이지', set: { GF: 5 } },
       { name: '증폭 없이 (A=1)', set: { A: 1 } }
     ],
+    challenges: [
+      {
+        id: 'fullscale', title: '30 N 에서 4 V, 포화 없이',
+        desc: '하중 30 N 일 때 증폭 후 출력이 4 V 이상이면서 포화(5 V)는 넘지 않게 맞춰 보세요.',
+        hint: '출력 = A × Vs·GF·ε ⁄ 4 입니다. 여기 전압과 게이지율을 키우면 필요한 이득이 줄어듭니다.',
+        check: ({ P }) => { const v = vbridge(P.F, P) * P.A; return P.F >= 30 && v >= 4 && v <= 5; }
+      },
+      {
+        id: 'no-amp', title: '증폭기 없이 2 mV',
+        desc: '증폭기 이득을 1 로 두고 브리지 출력만으로 2 mV 를 넘게 해 보세요.',
+        hint: '브리지 출력은 Vs·GF·ε ⁄ 4 입니다. 하중, 게이지율, 여기 전압을 키우세요.',
+        check: ({ P }) => P.A === 1 && vbridge(P.F, P) >= 2e-3
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
@@ -183,7 +197,7 @@
       D.text(ctx, fmt(Vout, 3) + ' V', obx, oby + 44, { size: 20, color: C.Vout, bold: true });
       // 오른쪽 끝 가까이라 짧게 — 길면 캔버스 안으로 밀려 들어오며 증폭기의 "×이득" 글자를 덮는다
       D.text(ctx, '(ADC 0~5 V 기준)', obx, oby + 60, { size: 9.5, color: '#4a4d55' });
-      if (Math.abs(Vout) > 5) D.tag(ctx, '⚠ 포화 — 이득을 낮추세요', obx + obw / 2, oby + 78, '#c4705f', true);
+      if (Math.abs(Vout) > 5) D.tag(ctx, '⚠ 포화. 이득을 낮추세요', obx + obw / 2, oby + 78, '#c4705f', true);
     }
   });
 })();

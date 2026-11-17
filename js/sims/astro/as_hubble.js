@@ -87,8 +87,8 @@
     ],
     presets: [
       { name: '기본 (H₀ = 70)', set: { H0: 70, d: 300 } },
-      { name: 'Planck — 초기 우주 (67.4)', set: { H0: 67.4, d: 300 } },
-      { name: 'SH0ES — 가까운 우주 (73.0)', set: { H0: 73, d: 300 } },
+      { name: 'Planck, 초기 우주 (67.4)', set: { H0: 67.4, d: 300 } },
+      { name: 'SH0ES, 가까운 우주 (73.0)', set: { H0: 73, d: 300 } },
       { name: '우주 나이 138억 년에 맞추기', set: { H0: 67.7, d: 300 } },
       { name: '아주 먼 은하 (z ≈ 0.5)', set: { H0: 70, d: 1700 } },
       { name: '처녀자리 은하단 (16.5 Mpc)', set: { H0: 70, d: 17 } }
@@ -121,7 +121,7 @@
       /* ── 팽창하는 우주 ── */
       const ux = 44, uy = 50, uw = Math.min(w * .44, 290), uh = Math.min(h * .30, 170);
       const ocx = ux + uw / 2, ocy = uy + uh / 2;
-      D.text(ctx, '팽창하는 우주 — 어느 은하에서 봐도 똑같다', ux, uy - 9, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '팽창하는 우주 (어느 은하에서 봐도 똑같다)', ux, uy - 9, { size: 10.5, color: '#6a6e78' });
       D.roundRect(ctx, ux, uy, uw, uh, 6); ctx.fillStyle = 'rgba(255,255,255,.025)'; ctx.fill();
       const phase = (st.t * .1) % 1;
       const a = 1 + .5 * phase;
@@ -163,7 +163,7 @@
         const SX = l => sx + clamp((l - L0) / (L1 - L0), 0, 1) * sw;
         // sy 기준 세로 배치: 제목 −10 / 라벨 +8, +72 / 띠 +14, +78 (높이 30) / 선 이름 +55, +119
         const BAND = 30, ROW = 64, bandY = r => sy + 14 + r * ROW;
-        D.text(ctx, '은하의 스펙트럼 — 선 무늬 전체가 통째로 밀린다', sx, sy - 10, { size: 10.5, color: '#6a6e78' });
+        D.text(ctx, '은하의 스펙트럼 (선 무늬 전체가 통째로 밀린다)', sx, sy - 10, { size: 10.5, color: '#6a6e78' });
         [[0, '정지 상태 (실험실)'], [1, '관측된 이 은하']].forEach(([row, lab]) => {
           const yy = bandY(row);
           // 연속 스펙트럼 띠
@@ -200,7 +200,7 @@
       const gx = 60, gy = Math.max(uy + uh + 56, sy + 166, h - 210), gw = Math.min(w - 120, 520), gh = Math.min(h - gy - 46, 150);
       if (gh > 60) {
         D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-        D.text(ctx, '허블 다이어그램 — 관측한 은하들', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
+        D.text(ctx, '허블 다이어그램 (관측한 은하들)', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
         const DMAX = 2000, VMAX = 90 * DMAX;
         const GX = dd => gx + clamp(dd / DMAX, 0, 1) * gw;
         const GY = vv => gy + gh - clamp(vv / VMAX, 0, 1) * gh;

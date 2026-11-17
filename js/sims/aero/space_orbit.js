@@ -55,8 +55,8 @@
       st.vx += a[0] * dtp / 2; st.vy += a[1] * dtp / 2;
 
       const r = Math.hypot(st.x, st.y);
-      if (r < RE) { st.done = true; st.msg = '대기권 재진입 — 속도가 부족했습니다'; return; }
-      if (r > RE * 12) { st.done = true; st.msg = '지구 중력권 탈출 — 돌아오지 않습니다'; return; }
+      if (r < RE) { st.done = true; st.msg = '대기권 재진입, 속도가 부족했습니다'; return; }
+      if (r > RE * 12) { st.done = true; st.msg = '지구 중력권 탈출, 돌아오지 않습니다'; return; }
 
       st.trail.push([st.x, st.y]);
       if (st.trail.length > 2400) st.trail.shift();
@@ -116,6 +116,27 @@
       { name: '탈출 궤도 (√2배)', set: { h: 500, vr: 1.42 } },
       { name: '속도 부족 → 재진입', set: { h: 800, vr: .82 } },
       { name: '고고도 원궤도', set: { h: 4000, vr: 1 } }
+    ],
+    challenges: [
+      {
+        id: 'T2h', title: '2시간에 한 바퀴',
+        desc: '원궤도(속도 배율 1)로, 한 바퀴 도는 데 2시간(±1분)이 걸리는 고도를 찾아보세요.',
+        hint: '높이 올라갈수록 원궤도 주기가 길어집니다 (케플러 제3법칙: T² ∝ r³).',
+        check: ({ P }) => {
+          const r = RE + P.h * 1000;
+          return Math.abs(P.vr - 1) < .005 && Math.abs(2 * Math.PI * Math.sqrt(r * r * r / MU) / 60 - 120) <= 1;
+        }
+      },
+      {
+        id: 'apogee5000', title: '원지점 5000 km 타원 궤도',
+        desc: '지구로 돌아오는 타원 궤도이면서 가장 먼 곳(원지점)의 고도가 5000 km 를 넘게 만들어 보세요.',
+        hint: '원궤도 속도보다 조금 빠르게 쏘면 반대편이 멀어집니다. 너무 빠르면(√2배) 돌아오지 않습니다.',
+        check: ({ P }) => {
+          const r0 = RE + P.h * 1000, v = P.vr * Math.sqrt(MU / r0), inv = 2 / r0 - v * v / MU;
+          if (inv <= 0) return false;                             // 탈출 궤도
+          return Math.max(r0, 2 / inv - r0) - RE >= 5e6;
+        }
+      }
     ],
 
     draw(ctx, st, p, ui) {
@@ -196,7 +217,7 @@
       D.text(ctx, '같은 색 부채꼴 = 같은 시간 동안 쓸고 간 넓이 (케플러 2법칙)', 18, h - 16, { size: 10.5, color: '#6a6e78' });
       D.text(ctx, '시간 배속 ×' + TS, w - 18, 24, { size: 10.5, color: '#4a4d55', align: 'right' });
 
-      if (st.done) D.tag(ctx, st.msg + ' — ↺ 처음으로', w / 2, 26, '#c4705f', true);
+      if (st.done) D.tag(ctx, st.msg + ' (↺ 처음으로)', w / 2, 26, '#c4705f', true);
     }
   });
 })();

@@ -7,7 +7,7 @@
 (function () {
   const D = PS.D, fmt = PS.fmt, clamp = PS.clamp;
   const C = { L: '#68b8b0', T: '#ffb020', mu: '#a98cc4', f: '#c4705f',
-              v: '#6f9fc4', f1: '#7fb894', A: '#c08098' };
+              v: '#6f9fc4', f1: '#7fb894', fn: '#52b591', A: '#c08098' };   // fn = 고유진동수 사다리 눈금 색
   const NMODE = 9, GAMMA = .06;        // 표시할 배진동 수 / 감쇠비
 
   const vOf = p => Math.sqrt(p.T / (p.mu / 1000));         // m/s
@@ -32,7 +32,7 @@
   PS.register({
     id: 'g-standingwave', mode: 'general', category: '파동과 광학',
     title: '정상파와 공명',
-    sub: 'f_n = n·v/2L,  v = √(T/μ)',
+    sub: 'fₙ = n·v/2L,  v = √(T/μ)',
     tagline: '양 끝이 고정된 줄은 아무 진동수로나 흔들리지 않습니다. 파장이 줄 길이에 딱 맞아떨어지는 띄엄띄엄한 진동수에서만 크게 흔들립니다 — 에너지가 양자화되는 것과 똑같은 수학입니다.',
 
     params: [
@@ -50,14 +50,16 @@
         where: '줄을 타고 가는 <b>파동의 속력</b>입니다. 장력과 선밀도만으로 정해지며, 진동수나 진폭과는 무관합니다.' },
       f1: { symbol: 'f₁', label: '기본진동수', unit: 'Hz', color: C.f1,
         where: '가장 낮은 고유진동수(한 배 진동)입니다. 들리는 <b>음높이</b>가 이것이고, 나머지 배진동수는 전부 이것의 정수배입니다.' },
+      fn: { symbol: 'fₙ', label: 'n차 고유진동수', unit: 'Hz', color: C.fn,
+        where: '아래 <b>고유진동수 사다리</b>의 n번째 눈금입니다. 기본진동수 f₁의 정수배(1·2·3…배)에만 있고, 줄은 이 눈금 위에서만 크게 흔들립니다.' },
       A: { symbol: 'A', label: '진폭', unit: '', color: C.A,
         where: '줄이 흔들리는 <b>크기</b>입니다. 구동 진동수가 고유진동수에 가까워질수록 급격히 커집니다 — 이것이 공명입니다.' }
     },
     formulas: [
       { name: '줄에서의 파동 속력', tpl: '{v} = √({T} ⁄ {mu})' },
-      { name: '고유진동수 (정상파 조건)', tpl: '{f1}_n = n · {v} ⁄ 2{L}' },
-      { name: '파장 조건 — 줄 길이에 딱 맞아야 한다', tpl: '{L} = n · λ ⁄ 2' },
-      { name: '공명', tpl: '{f} = {f1}_n  →  {A} 폭발' }
+      { name: '고유진동수 (정상파 조건)', tpl: '{fn} = n · {f1} = n · {v} ⁄ 2{L}' },
+      { name: '파장 조건 (줄 길이에 딱 맞아야 한다)', tpl: '{L} = n · λ ⁄ 2' },
+      { name: '공명', tpl: '{f} = {fn}  →  {A} 폭발' }
     ],
 
     init(p) { return { ph: 0, done: false }; },
@@ -195,22 +197,22 @@
       ctx.fillStyle = C.f; ctx.globalAlpha = .7; ctx.fill(); ctx.restore();
       D.text(ctx, fmt(p.f, 0) + ' Hz', x0 - 20, cy - 22, { size: 10, color: hl === 'f' ? '#fff' : C.f, align: 'center', bold: true });
       D.dim(ctx, x0, cy - 48, x0 + sw, cy - 48, 'L = ' + fmt(p.L, 2) + ' m', C.L, hl === 'L');
-      D.tag(ctx, res < .02 ? '공명! ' + n + '배 진동' : (res < .08 ? '공명 근처' : '공명 아님 — 거의 안 흔들린다'),
+      D.tag(ctx, res < .02 ? '공명! ' + n + '배 진동' : (res < .08 ? '공명 근처' : '공명 아님 (거의 안 흔들린다)'),
         x0 + sw / 2, cy + 74, res < .02 ? '#7fb894' : (res < .08 ? '#ffb020' : '#c4705f'), true);
 
       /* ── 고유진동수 사다리 ── */
       const lx = 52, ly = h - 96, lw = Math.min(w - 104, 500);
       const fmax = Math.max(p.f * 1.25, fnOf(p, NMODE) * 1.05);
       const LX = f => lx + clamp(f / fmax, 0, 1) * lw;
-      D.text(ctx, '고유진동수 사다리 — 이 눈금 위에서만 크게 흔들린다', lx, ly - 26, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '고유진동수 사다리 (이 눈금 위에서만 크게 흔들린다)', lx, ly - 26, { size: 10.5, color: '#6a6e78' });
       D.line(ctx, lx, ly + 16, lx + lw, ly + 16, { color: 'rgba(167,170,176,.25)', width: 2 });
       for (let k = 1; k <= NMODE; k++) {
         const fn = fnOf(p, k);
         if (fn > fmax) break;
-        const hit = Math.abs(p.f - fn) / fn < .02;
-        ctx.save(); if (hit) { ctx.shadowColor = C.f1; ctx.shadowBlur = 12; }
+        const hit = Math.abs(p.f - fn) / fn < .02, hot = hit || hl === 'fn';   // 기호 fₙ 을 가리키면 눈금 전부
+        ctx.save(); if (hot) { ctx.shadowColor = C.f1; ctx.shadowBlur = 12; }
         D.line(ctx, LX(fn), ly + 16 - (hit ? 20 : 12), LX(fn), ly + 16,
-          { color: hit ? '#7fb894' : 'rgba(82,181,145,.5)', width: hit ? 3 : 1.8 });
+          { color: hit ? '#7fb894' : hot ? C.fn : 'rgba(82,181,145,.5)', width: hot ? 3 : 1.8 });
         ctx.restore();
         D.text(ctx, k + '', LX(fn), ly + 29, { size: 9, color: hit ? '#7fb894' : '#4a4d55', align: 'center' });
       }

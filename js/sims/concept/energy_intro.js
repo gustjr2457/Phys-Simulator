@@ -150,7 +150,7 @@
       ctx.restore();
 
       if (st.settled) {
-        D.text(ctx, '가만히 멈췄어요 — 에너지가 모두 소리·열로 흩어졌습니다', bx, by - r - 16,
+        D.text(ctx, '가만히 멈췄어요. 에너지가 모두 소리·열로 흩어졌습니다', bx, by - r - 16,
           { size: 11.5, color: '#e6e7ea', align: 'center' });
       }
 

@@ -162,7 +162,7 @@
       const px0 = Math.min(w * .52, vx + vr + 44), py0 = 56;
       const pw = Math.max(170, w - px0 - 44), phh = Math.min(h * .34, 160);
       D.roundRect(ctx, px0, py0, pw, phh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-      D.text(ctx, '세기 단면 — 두 봉우리가 갈라지는가', px0 + 4, py0 - 9, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '세기 단면 (두 봉우리가 갈라지는가)', px0 + 4, py0 - 9, { size: 10.5, color: '#6a6e78' });
       const PX = a => px0 + pw * (a / (2 * span) + .5);
       const N = 150;
       // 시상이 있으면 가우시안 번짐을 더해 유효 분해능으로 환산한 프로파일을 쓴다
@@ -199,7 +199,7 @@
       /* ── 망원경 비교 ── */
       const bx = 48, by = h - 112, bw = Math.min(w - 96, 500);
       // 제목은 눈금 라벨 줄(by - 2)보다 한 줄 위 — 첫 라벨 "사람 눈"이 막대 위쪽 왼끝에 온다
-      D.text(ctx, '구경 비교 — 분해능은 1/D, 집광력은 D²', bx, by - 20, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '구경 비교 (분해능은 1/D, 집광력은 D²)', bx, by - 20, { size: 10.5, color: '#6a6e78' });
       const LO = Math.log10(.005), HI = Math.log10(45);
       const BX = d => bx + bw * clamp((Math.log10(clamp(d, .005, 45)) - LO) / (HI - LO), 0, 1);
       D.line(ctx, bx, by + 10, bx + bw, by + 10, { color: 'rgba(167,170,176,.25)', width: 2 });
@@ -216,10 +216,10 @@
       D.text(ctx, p.seeing > 0 ? '시상 ' + fmt(p.seeing, 2) + '″ (지상)' : '대기 없음 (우주)',
         bx + 280, by + 48, { size: 11, color: p.seeing > td ? C.seeing : '#7fb894' });
       if (p.seeing > td)
-        D.text(ctx, '→ 대기가 회절보다 ' + fmt(p.seeing / td, 0) + '배 큰 한계 — 구경을 키워도 소용없다',
+        D.text(ctx, '→ 대기가 회절보다 ' + fmt(p.seeing / td, 0) + '배 큰 한계라 구경을 키워도 소용없다',
           bx, by + 68, { size: 10.5, color: C.seeing });
       else
-        D.text(ctx, '→ 회절 한계에 도달 — 구경을 키우면 그만큼 좋아진다',
+        D.text(ctx, '→ 회절 한계에 도달, 구경을 키우면 그만큼 좋아진다',
           bx, by + 68, { size: 10.5, color: '#7fb894' });
     }
   });

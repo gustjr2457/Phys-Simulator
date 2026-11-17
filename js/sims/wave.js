@@ -72,6 +72,20 @@
       { name: '큰 진폭', set: { A: 1.4 } },
       { name: '느리고 긴 파동', set: { A: 1, f: .3, lam: 8 } }
     ],
+    challenges: [
+      {
+        id: 'v5', title: '파동 속력 5 m/s',
+        desc: '파동이 1초에 5 m(±0.1) 나아가게 진동수와 파장을 맞춰 보세요.',
+        hint: 'v = fλ 입니다. 진동수 1 Hz 라면 파장은 5 m.',
+        check: ({ P }) => Math.abs(P.f * P.lam - 5) <= .1
+      },
+      {
+        id: 'swell', title: '느리고 긴 너울',
+        desc: '주기 5초 이상, 파장 6 m 이상인 느리고 긴 파동을 만들어 보세요.',
+        hint: '주기 T = 1 ⁄ f 입니다. 주기가 5초 이상이려면 진동수가 0.2 Hz 이하여야 합니다.',
+        check: ({ P }) => 1 / P.f >= 5 - 1e-9 && P.lam >= 6
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl, t = st.t;

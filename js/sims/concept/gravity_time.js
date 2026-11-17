@@ -35,7 +35,7 @@
 
   PS.register({
     id: 'c-gravtime', mode: 'concept', category: '중력과 우주',
-    title: '중력과 시간 — 왜 시간은 다르게 흐르는가?',
+    title: '중력과 시간 (왜 시간은 다르게 흐르는가?)',
     sub: '빠르게 움직이거나, 중력이 강한 곳에 있으면 시간이 느려진다',
     tagline: '가운데는 지구에 남은 사람의 시계, 왼쪽은 빛에 가깝게 날아가는 로켓 안의 시계, 오른쪽은 중력이 아주 강한 곳(중성자별·블랙홀 근처)에 머무른 사람의 시계입니다. 슬라이더를 올려서 세 시계가 점점 다르게 흘러가는 걸 지켜보세요.',
 
@@ -130,7 +130,7 @@
       D.text(ctx, '느려진 비율: ' + fmt((1 - fx) * 100, 2) + '%', cxR, cy + r + 38, { size: 10.5, color: '#6a6e78', align: 'center' });
 
       const baseY = h - 62;
-      D.text(ctx, '경과 시간(임의 단위) — 막대가 길수록 그 시계 입장에서 더 많은 시간이 흐른 것', w / 2, baseY - 14, { size: 10.5, color: '#6a6e78', align: 'center' });
+      D.text(ctx, '경과 시간(임의 단위). 막대가 길수록 그 시계 입장에서 더 많은 시간이 흐른 것', w / 2, baseY - 14, { size: 10.5, color: '#6a6e78', align: 'center' });
       const barW = Math.min(150, gap * .6), maxE = Math.max(st.t, 0.6);
       D.bar(ctx, cxL - barW / 2, baseY, barW, 12, st.tauV, maxE, C.v, null, hl === 'v' || hl === 'tauV');
       D.bar(ctx, cxM - barW / 2, baseY, barW, 12, st.t, maxE, C.ref, null, hl === 'tref');

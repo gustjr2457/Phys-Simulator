@@ -110,6 +110,29 @@
       { name: '가벼운 것이 무거운 것에', set: { m1: 1, m2: 8, v1: 5, v2: 0, e: 1 } },
       { name: '에어백 효과 (Δt 크게)', set: { dtc: .4 } }
     ],
+    challenges: [
+      {
+        id: 'stop', title: '부딪친 수레를 그 자리에 세우기',
+        desc: '① 수레가 ② 수레에 부딪친 뒤 ① 수레가 그 자리에 딱 멈추게 만들어 보세요 (당구공처럼).',
+        hint: '질량이 같고, 반발 계수 e = 1 이고, ② 수레가 서 있으면 ① 의 운동량이 ② 로 전부 넘어갑니다.',
+        check: ({ P }) => {
+          if (!(P.v1 > P.v2)) return false;                       // 부딪치려면 ① 이 ② 보다 빨라야 한다
+          const M = P.m1 + P.m2, w1 = ((P.m1 - P.e * P.m2) * P.v1 + (1 + P.e) * P.m2 * P.v2) / M;
+          return Math.abs(w1) < .05;
+        }
+      },
+      {
+        id: 'airbag', title: '에어백 만들기',
+        desc: '충격량이 8 N·s 이상인 충돌에서, 충돌 시간을 늘려 평균 힘을 30 N 이하로 낮춰 보세요.',
+        hint: '충격량이 같아도 Δt 를 늘리면 평균 힘 F = I ⁄ Δt 는 작아집니다. 에어백과 범퍼가 하는 일입니다.',
+        check: ({ P }) => {
+          if (!(P.v1 > P.v2)) return false;
+          const M = P.m1 + P.m2, w1 = ((P.m1 - P.e * P.m2) * P.v1 + (1 + P.e) * P.m2 * P.v2) / M;
+          const J = Math.abs(P.m1 * (w1 - P.v1));
+          return J >= 8 && J / P.dtc <= 30;
+        }
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
@@ -194,7 +217,7 @@
       barRow(42, p2, C.m2, 'p₂', hl === 'm2' || hl === 'v2' || hl === 'p');
       barRow(60, p1 + p2, '#e6e7ea', '합', hl === 'p');
 
-      if (st.done) D.tag(ctx, '수레가 트랙 끝에 닿았습니다 — ↺ 처음으로', w / 2, 26, '#ffb020', true);
+      if (st.done) D.tag(ctx, '수레가 트랙 끝에 닿았습니다 (↺ 처음으로)', w / 2, 26, '#ffb020', true);
     }
   });
 })();

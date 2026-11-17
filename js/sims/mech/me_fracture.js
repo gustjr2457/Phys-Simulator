@@ -202,7 +202,7 @@
       D.tag(ctx, 'σ = ' + fmt(p.sig, 0) + ' MPa  (σ_y의 ' + fmt(p.sig / p.sy * 100, 0) + '%)',
         cx, cy - ph / 2 - al - 26, C.sig, hl === 'sig');
 
-      if (st.broke) D.tag(ctx, '불안정 파괴 — 멈출 수 없다', cx, cy + ph / 2 + al + 26, '#c4705f', true);
+      if (st.broke) D.tag(ctx, '불안정 파괴 (멈출 수 없다)', cx, cy + ph / 2 + al + 26, '#c4705f', true);
 
       /* ── K – a 선도 ── */
       const gx = w - 232, gy = 56, gw = 196, gh = 150;

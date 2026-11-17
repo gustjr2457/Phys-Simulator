@@ -246,7 +246,7 @@
         D.text(ctx, '진입각 γ = ' + fmt(p.gam, 1) + '°   ·   진입 속도 ' + fmt(p.V0, 1) + ' km/s',
           mx, aTop + 216, { size: 11, color: '#9a9da6' });
         D.text(ctx, '화면 1초 = 실제 10초', mx, aTop + 236, { size: 9.5, color: '#4a4d55' });
-        if (st.landed) D.tag(ctx, '감속 완료 — 최대 ' + fmt(st.maxG, 1) + ' g, ' + fmt(st.maxQ / 1e6, 2) + ' MW/m²',
+        if (st.landed) D.tag(ctx, '감속 완료, 최대 ' + fmt(st.maxG, 1) + ' g, ' + fmt(st.maxQ / 1e6, 2) + ' MW/m²',
           mx + mw / 2, aTop + 264, st.maxG <= 10 ? '#7fb894' : '#c4705f', true);
       }
     }

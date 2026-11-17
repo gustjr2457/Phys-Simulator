@@ -70,6 +70,20 @@
       { name: '무거운 블록(느리게)', set: { k: 20, m: 3.5, A: 1.2 } },
       { name: '크게 당겨서', set: { k: 20, m: 1, A: 2.4 } }
     ],
+    challenges: [
+      {
+        id: 'T2', title: '주기 2초 진동자',
+        desc: '한 번 왕복하는 데 정확히 2초(±0.02 s) 걸리게 만들어 보세요.',
+        hint: 'T = 2π√(m ⁄ k) 입니다. 진폭은 주기와 상관없습니다.',
+        check: ({ P }) => Math.abs(2 * Math.PI / omega(P) - 2) <= .02
+      },
+      {
+        id: 'vmax10', title: '가운데를 10 m/s 로 지나가기',
+        desc: '블록이 가운데(평형 위치)를 지날 때 속력이 10 m/s 를 넘게 해 보세요.',
+        hint: '최대 속력은 v = Aω = A√(k ⁄ m) 입니다. 크게 당기거나, 단단한 스프링에 가벼운 블록을.',
+        check: ({ P }) => P.A * omega(P) >= 10
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;

@@ -78,6 +78,20 @@
       { name: '많은 입자(요동이 작게 보임)', set: { N: 50, rate: 35 } },
       { name: '천천히 섞임', set: { N: 30, rate: 6 } }
     ],
+    challenges: [
+      {
+        id: 'half', title: '반반으로 섞인 순간',
+        desc: '처음에 한쪽에 몰려 있던 입자들이 정확히 반반으로 나뉜 순간을 만들어 보세요 (재생해서 기다리기).',
+        hint: '입자 수가 짝수면 언젠가 반반이 됩니다. 이때 경우의 수 Ω 가 가장 큽니다.',
+        check: ({ P, st }) => st.nLeft * 2 === Math.round(P.N)
+      },
+      {
+        id: 'omega14', title: '경우의 수 100조',
+        desc: '가장 고르게 섞였을 때의 경우의 수가 10¹⁴(100조)를 넘게 해 보세요.',
+        hint: '입자가 조금만 늘어도 경우의 수는 폭발적으로 늘어납니다.',
+        check: ({ P }) => lnOmega(Math.round(P.N), Math.round(P.N / 2)) >= Math.log(1e14)
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;

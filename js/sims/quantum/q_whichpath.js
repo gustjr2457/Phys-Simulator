@@ -52,8 +52,8 @@
         where: '지금까지 스크린에 도착한 전자의 수입니다. 적을 때는 무작위처럼 보이지만, 수백 개가 쌓이면 무늬가 드러납니다.' }
     },
     formulas: [
-      { name: '관측하지 않으면 — 두 경로가 더해진다', tpl: 'P = |ψ₁ + ψ₂|²  →  줄무늬' },
-      { name: '관측하면 — 확률만 더해진다', tpl: 'P = |ψ₁|² + |ψ₂|²  →  두 덩어리' },
+      { name: '관측하지 않으면 두 경로가 더해진다', tpl: 'P = |ψ₁ + ψ₂|²  →  줄무늬' },
+      { name: '관측하면 확률만 더해진다', tpl: 'P = |ψ₁|² + |ψ₂|²  →  두 덩어리' },
       { name: '부분적으로 관측하면', tpl: '{vis} ≈ 1 − {det}' },
       { name: '점 하나하나는 무작위, 쌓이면 확률 그대로', tpl: 'N회 반복 → 분포 ∝ P' }
     ],
@@ -169,7 +169,7 @@
       D.roundRect(ctx, slitX + 14, cy - off - 13, 22, 26, 5); ctx.fill();
       D.roundRect(ctx, slitX + 14, cy + off - 13, 22, 26, 5); ctx.fill();
       ctx.restore();
-      D.text(ctx, on ? '검출기 ON — ' + p.det + '%' : '검출기 OFF', slitX + 25, cy - half - 30,
+      D.text(ctx, on ? '검출기 ON, ' + p.det + '%' : '검출기 OFF', slitX + 25, cy - half - 30,
         { size: 10.5, color: on ? C.det : '#4a4d55', align: 'center', bold: hl === 'det' });
       if (on && fresh) { D.dot(ctx, slitX + 25, cy - off, 16, 'rgba(216,148,158,.35)'); }
 
@@ -191,7 +191,7 @@
       ctx.strokeStyle = 'rgba(167,170,176,.35)'; ctx.lineWidth = 1.5;
       ctx.strokeRect(scrX, cy - half - 20, w - scrX - 24, (half + 20) * 2);
       ctx.restore();
-      D.text(ctx, '스크린 — 점이 하나씩 쌓인다', scrX, cy - half - 28, { size: 10.5, color: '#9a9da6' });
+      D.text(ctx, '스크린 (점이 하나씩 쌓인다)', scrX, cy - half - 28, { size: 10.5, color: '#9a9da6' });
 
       // 쌓인 점
       const sw = w - scrX - 24;
@@ -224,7 +224,7 @@
         D.text(ctx, '무늬 대비 V = ' + fmt(v, 2) + '  (예상 ' + fmt(1 - p.det / 100, 2) + ')',
           24, h - 34, { size: 11, color: hl === 'vis' ? '#fff' : C.vis, bold: hl === 'vis' });
       } else {
-        D.text(ctx, '아직 점이 적어 무작위처럼 보입니다 — 더 쌓아 보세요', 24, h - 34, { size: 11, color: '#6a6e78' });
+        D.text(ctx, '아직 점이 적어 무작위처럼 보입니다. 더 쌓아 보세요', 24, h - 34, { size: 11, color: '#6a6e78' });
       }
       D.tag(ctx, p.det <= 5 ? '어느 쪽인지 묻지 않음 → 줄무늬'
         : p.det >= 95 ? '경로를 전부 알아냄 → 두 덩어리'

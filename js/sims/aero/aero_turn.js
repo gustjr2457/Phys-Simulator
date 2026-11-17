@@ -78,8 +78,8 @@
         where: '기울여 도는 동안의 실속 속도로, <b>속도 막대의 붉은 눈금</b>입니다. 파란 눈금(지금 속도)이 이보다 왼쪽이면 실속합니다.' }
     },
     formulas: [
-      { name: '하중 배수 — 위 성분 L·cosφ가 무게와 같아야', tpl: '{n} = 1 ⁄ cos{phi}' },
-      { name: '선회 반경 — 옆 성분 L·sinφ가 구심력', tpl: '{R} = {V}² ⁄ (g · tan{phi})' },
+      { name: '하중 배수 (위 성분 L·cosφ가 무게와 같아야)', tpl: '{n} = 1 ⁄ cos{phi}' },
+      { name: '선회 반경 (옆 성분 L·sinφ가 구심력)', tpl: '{R} = {V}² ⁄ (g · tan{phi})' },
       { name: '선회율', tpl: '{omega} = g · tan{phi} ⁄ {V}' },
       { name: '선회 중 실속 속도', tpl: '{Vt} = {Vs} · √{n}' }
     ],
@@ -168,9 +168,9 @@
     presets: [
       { name: '표준 선회 (30°)', set: { V: 100, phi: 30, Vs: 50 } },
       { name: '완만한 선회 (15°)', set: { V: 100, phi: 15, Vs: 50 } },
-      { name: '급선회 60° — 2G', set: { V: 100, phi: 60, Vs: 50 } },
+      { name: '급선회 60° (2G)', set: { V: 100, phi: 60, Vs: 50 } },
       { name: '곡예비행 (75°, 약 3.9G)', set: { V: 120, phi: 75, Vs: 40 } },
-      { name: '느린데 급하게 — 실속!', set: { V: 60, phi: 60, Vs: 50 } },
+      { name: '느린데 급하게 (실속!)', set: { V: 60, phi: 60, Vs: 50 } },
       { name: '빠른 제트기 (200 m/s, 30°)', set: { V: 200, phi: 30, Vs: 70 } }
     ],
     challenges: [
@@ -261,7 +261,7 @@
         { size: narrow ? 10 : 10.5, color: C.omega, align: 'right', bold: hl === 'omega' });
 
       /* ── B. 뒤에서 본 비행기와 힘 ── */
-      D.text(ctx, '뒤에서 본 비행기 — 힘의 분해', B.x0 + 4, B.y0 - 10, { size: 11, color: PAL.ink2, bold: true });
+      D.text(ctx, '뒤에서 본 비행기 (힘의 분해)', B.x0 + 4, B.y0 - 10, { size: 11, color: PAL.ink2, bold: true });
       // 화살표 축척: 무게 W 가 k px. 75°에서 옆 성분 k·tan75° ≈ 3.7k 가 판 안에 들어오게
       const gaugeH = narrow ? 30 : 46;
       const bw = B.x1 - B.x0, bh = B.y1 - B.y0 - gaugeH;
@@ -308,7 +308,7 @@
       }
       D.text(ctx, 'L·sinφ → 선회 중심', px + Math.max(Lx, span) + 8, py - 6, { size: 10, color: C.n });
       // 조종사가 실제로 느끼는 무게는 날개가 실제로 낸 양력 — 실속이면 필요한 n 이 아니라 n_eff
-      D.text(ctx, (narrow ? '' : '조종사가 느끼는 무게 ') + '×' + fmt(nE, 2) + ' (' + fmt(nE, 2) + ' G)' + (stall ? (narrow ? '' : ' — 필요 ' + fmt(n, 2) + ' G') : ''),
+      D.text(ctx, (narrow ? '' : '조종사가 느끼는 무게 ') + '×' + fmt(nE, 2) + ' (' + fmt(nE, 2) + ' G)' + (stall ? (narrow ? '' : ', 필요 ' + fmt(n, 2) + ' G') : ''),
         B.x1 - 4, B.y0 + (narrow ? 4 : 8), { size: narrow ? 11 : 12, color: stall ? C.Vs : C.n, align: 'right', bold: true });
 
       /* ── 속도 막대: 지금 속도 V 와 선회 실속 속도 Vₛ′ ── */
@@ -322,7 +322,7 @@
       D.text(ctx, '실속 ' + fmt(Vt, 0), GX(Vt), gy - 12, { size: 10, color: C.Vt, align: 'center', bold: hl === 'Vt' });
       D.text(ctx, 'V ' + fmt(p.V, 0), GX(p.V), gy + 19, { size: 10, color: C.V, align: 'center', bold: hl === 'V' });
       if (!narrow) D.text(ctx, 'm/s', gx1, gy + 19, { size: 9.5, color: PAL.ink3, align: 'right' });
-      if (stall) D.tag(ctx, st.done ? '실속으로 ' + ALT_LIMIT + ' m 추락 — 값을 바꾸면 다시 출발' : '실속! 이 기울기에서는 ' + fmt(Vt, 0) + ' m/s 보다 빨라야',
+      if (stall) D.tag(ctx, st.done ? '실속으로 ' + ALT_LIMIT + ' m 추락. 값을 바꾸면 다시 출발' : '실속! 이 기울기에서는 ' + fmt(Vt, 0) + ' m/s 보다 빨라야',
         (B.x0 + B.x1) / 2, py + k + (narrow ? 20 : 30), C.Vs, true);
     }
   });

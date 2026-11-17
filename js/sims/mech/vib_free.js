@@ -86,6 +86,20 @@
       { name: '감쇠 없음 (c=0)', set: { c: 0 } },
       { name: '무거운 기계', set: { m: 12, k: 300, c: 20 } }
     ],
+    challenges: [
+      {
+        id: 'critical', title: '임계감쇠 (가장 빨리 멈추기)',
+        desc: '감쇠비 ζ 를 1(±0.03)로 맞춰 보세요. 흔들리지 않고 가장 빨리 제자리로 돌아옵니다.',
+        hint: '임계 감쇠계수는 c_c = 2√(mk) 입니다. c 를 이 값에 맞추세요.',
+        check: ({ P }) => Math.abs(zeta(P) - 1) <= .03
+      },
+      {
+        id: 'f2', title: '1초에 두 번 진동',
+        desc: '고유 진동수가 2 Hz(±0.03)가 되게 만들어 보세요.',
+        hint: 'fₙ = √(k ⁄ m) ⁄ 2π 입니다. k ⁄ m ≈ 158 이면 됩니다.',
+        check: ({ P }) => Math.abs(wn(P) / (2 * Math.PI) - 2) <= .03
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;

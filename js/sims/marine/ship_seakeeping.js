@@ -118,8 +118,8 @@
       { name: '공진 (가장 위험)', set: { Hs: 4, Tw: 13, V: 26, mu: 145 } },
       { name: '감속으로 공진 회피', set: { Hs: 4, Tw: 13, V: 4, mu: 145 } },
       { name: '침로 변경으로 회피', set: { Hs: 4, Tw: 13, V: 26, mu: 60 } },
-      { name: '짧은 파도 — 거의 안 흔들림', set: { Hs: 4, Tw: 5, V: 16, mu: 180 } },
-      { name: '긴 너울 — 통째로 들린다', set: { Hs: 4, Tw: 16, V: 10, mu: 180 } },
+      { name: '짧은 파도 (거의 안 흔들림)', set: { Hs: 4, Tw: 5, V: 16, mu: 180 } },
+      { name: '긴 너울 (통째로 들린다)', set: { Hs: 4, Tw: 16, V: 10, mu: 180 } },
       { name: '추파 (뒤에서 따라오는 파도)', set: { Hs: 5, Tw: 10, V: 20, mu: 0 } }
     ],
     challenges: [
@@ -214,7 +214,7 @@
       const gw = Math.min(w - gx - 44, 320), gh = Math.min(h * .34, 150);
       if (gw > 160) {
         D.roundRect(ctx, gx, gy, gw, gh, 6); ctx.fillStyle = 'rgba(255,255,255,.03)'; ctx.fill();
-        D.text(ctx, '응답 곡선 — 고유 주기에서 봉우리', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
+        D.text(ctx, '응답 곡선 (고유 주기에서 봉우리)', gx + 4, gy - 8, { size: 10.5, color: '#6a6e78' });
         const TLO = 2, THI = 20;
         const GX = t => gx + gw * clamp((t - TLO) / (THI - TLO), 0, 1);
         let rmax = 0;

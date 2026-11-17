@@ -246,7 +246,7 @@
       if (!v) return k;
       return interactive
         ? '<span class="term" data-term="' + k + '" style="color:' + v.color + '" tabindex="0" role="button" aria-pressed="false" aria-label="' +
-          v.symbol + ' — ' + v.label + '">' + v.symbol + '</span>'
+          v.symbol + ', ' + v.label + '">' + v.symbol + '</span>'
         : '<span class="term-inline" style="color:' + v.color + '">' + v.symbol + '</span>';
     });
   }
@@ -443,7 +443,7 @@
       const b = node.querySelector('[data-badge]');
       if (b.textContent !== badge) {
         b.textContent = badge;
-        node.querySelector('[data-state]').textContent = ok ? ' — 지금 달성 중' : achieved.has(c.id) ? ' — 달성한 적 있음' : ' — 아직';
+        node.querySelector('[data-state]').textContent = ok ? ', 지금 달성 중' : achieved.has(c.id) ? ', 달성한 적 있음' : ', 아직';
       }
     });
   }
@@ -478,7 +478,7 @@
     $('#simCat').textContent = (TRACK_LABEL[sim.mode] ? TRACK_LABEL[sim.mode] + ' · ' : '') + sim.category;
     $('#simTitle').textContent = sim.title;
     $('#simTag').textContent = sim.tagline;
-    document.title = sim.title + ' — PhysLab';
+    document.title = sim.title + ' · PhysLab';
     cv.setAttribute('aria-label', sim.title + '. ' + sim.tagline);
     buildPanel(); buildGraphs();
     // 크기를 먼저 정하고 그린다 — 주소로 바로 들어오면 첫 그리기 때 캔버스가 아직 0×0 이다

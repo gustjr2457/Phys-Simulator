@@ -117,6 +117,20 @@
       { name: '가까운 궤도 변경', set: { h1: 400, h2: 1000 } },
       { name: '아주 먼 궤도', set: { h1: 400, h2: 40000 } }
     ],
+    challenges: [
+      {
+        id: 'cheap', title: 'Δv 1 km/s 안쪽 전이',
+        desc: '두 번 점화한 Δv 합계가 1 km/s 이하인 궤도 이동을 만들어 보세요.',
+        hint: '두 궤도의 높이 차이가 작을수록 연료가 적게 듭니다.',
+        check: ({ P }) => dv1of(P) + dv2of(P) <= 1000
+      },
+      {
+        id: 'long', title: '6시간 넘게 걸리는 전이',
+        desc: '전이 궤도를 따라 가는 시간이 6시간을 넘게 만들어 보세요.',
+        hint: '전이 시간은 전이 타원의 크기로 정해집니다. 출발 궤도와 목표 궤도를 모두 높게.',
+        check: ({ P }) => ttof(P) >= 6 * 3600
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
@@ -198,7 +212,7 @@
       const names = ['① 출발 원궤도', '② 전이 타원', '③ 목표 궤도 도착'];
       D.text(ctx, names[st.phase], 20, 26, { size: 13, color: ['#68b8b0', '#a98cc4', '#7fb894'][st.phase], bold: true });
       D.text(ctx, '전이 시간 ' + fmt(ttof(p) / 3600, 2) + ' 시간 · 시간 배속 ×' + TS, 20, 46, { size: 10.5, color: hl === 'tt' ? '#fff' : '#4a4d55' });
-      if (st.phase === 2) D.tag(ctx, '목표 궤도 진입 성공 — 원궤도로 안정화되었습니다', w / 2, h - 16, '#7fb894', true);
+      if (st.phase === 2) D.tag(ctx, '목표 궤도 진입 성공. 원궤도로 안정화되었습니다', w / 2, h - 16, '#7fb894', true);
     }
   });
 })();

@@ -268,7 +268,7 @@
         if (f.mag > 1) D.arrow(ctx, X(st.x), Y(st.y), f.ex / f.mag * 24, -f.ey / f.mag * 24,
           { color: C.E, width: 2.2, head: 7, hot: hl === 'E' });
       }
-      D.text(ctx, '노란 점: 시험전하 (+1 nC) — 전기력선을 따라 움직인다', 16, h - 10, { size: 10, color: '#6a6e78' });
+      D.text(ctx, '노란 점: 시험전하 (+1 nC), 전기력선을 따라 움직인다', 16, h - 10, { size: 10, color: '#6a6e78' });
       D.text(ctx, '배경색 = 전위 (붉은 높음 / 파란 낮음) · 흰 점선 = 등전위선', 16, 18, { size: 10, color: '#6a6e78' });
     }
   });

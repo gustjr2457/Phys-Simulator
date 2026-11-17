@@ -68,7 +68,7 @@
     formulas: [
       { name: '하이젠베르크 불확정성 원리', tpl: '{dx} · {dp} ≥ ħ ⁄ 2' },
       { name: '운동량과 파수', tpl: '{dp} = ħ · {sk}' },
-      { name: '파속 — 여러 파장의 합', tpl: '{psi}(x) = Σ A(k) cos(k x)' },
+      { name: '파속 (여러 파장의 합)', tpl: '{psi}(x) = Σ A(k) cos(k x)' },
       { name: '가우시안일 때 등호 성립 (최소 불확정성)', tpl: '{dx} · {dp} = ħ ⁄ 2' }
     ],
 
@@ -114,7 +114,7 @@
       { name: '위치를 좁히면 (Δk 크게)', set: { sk: 2.2, k0: 7, N: 25 } },
       { name: '운동량을 좁히면 (Δk 작게)', set: { sk: .2, k0: 7, N: 15 } },
       { name: '순수한 파동 하나 (N=1)', set: { sk: .8, k0: 7, N: 1 } },
-      { name: '맥놀이 — 두 개만 더하기', set: { sk: 1.2, k0: 7, N: 2 } }
+      { name: '맥놀이 (두 개만 더하기)', set: { sk: 1.2, k0: 7, N: 2 } }
     ],
     challenges: [
       {
@@ -147,7 +147,7 @@
       const amp = Math.min(h * .17, 86);
       const X = xn => px0 + (xn + XW) / (2 * XW) * (px1 - px0);
 
-      D.text(ctx, '위치 공간 — 전자는 어디에 있나', px0, 26, { size: 11.5, color: '#9a9da6' });
+      D.text(ctx, '위치 공간 (전자는 어디에 있나)', px0, 26, { size: 11.5, color: '#9a9da6' });
       D.line(ctx, px0, cy, px1, cy, { color: 'rgba(167,170,176,.25)', dash: [5, 5] });
       for (let xn = -10; xn <= 10; xn += 5) {
         D.line(ctx, X(xn), cy - 4, X(xn), cy + 4, { color: 'rgba(167,170,176,.35)' });
@@ -185,7 +185,7 @@
       ctx.lineTo(px1, cy + amp); ctx.closePath();
       ctx.fillStyle = 'rgba(82,181,145,.20)'; ctx.fill();
       ctx.restore();
-      D.text(ctx, '|ψ|² — 발견할 확률', px0 + 4, cy + amp - 6, { size: 10, color: 'rgba(82,181,145,.9)' });
+      D.text(ctx, '|ψ|² (발견할 확률)', px0 + 4, cy + amp - 6, { size: 10, color: 'rgba(82,181,145,.9)' });
 
       // 파속 ψ
       ctx.save();
@@ -204,12 +204,12 @@
         const yD = cy + amp + 34;
         D.dim(ctx, X(-r.sx), yD, X(r.sx), yD, 'Δx = ' + fmt(r.sx, 2) + ' nm', C.dx, hl === 'dx');
       } else {
-        D.tag(ctx, 'Δx = ∞ — 창 밖까지 끝없이 이어집니다', (px0 + px1) / 2, cy + amp + 34, '#c4705f', true);
+        D.tag(ctx, 'Δx = ∞ (창 밖까지 끝없이 이어집니다)', (px0 + px1) / 2, cy + amp + 34, '#c4705f', true);
       }
 
       /* ── 오른쪽: 운동량 공간 ── */
       const qx0 = w * .68, qx1 = w - 36, qyB = h * .68, qyT = h * .18;
-      D.text(ctx, '운동량 공간 — 어떤 파장을 썼나', qx0, 26, { size: 11.5, color: '#9a9da6' });
+      D.text(ctx, '운동량 공간 (어떤 파장을 썼나)', qx0, 26, { size: 11.5, color: '#9a9da6' });
       D.line(ctx, qx0, qyB, qx1, qyB, { color: 'rgba(167,170,176,.4)', width: 1.5 });
       const kLo = Math.max(0, p.k0 - 7), kHi = p.k0 + 7;
       const K = kk => qx0 + (kk - kLo) / (kHi - kLo) * (qx1 - qx0);
@@ -251,7 +251,7 @@
       D.roundRect(ctx, sx0, sy, clamp(sw * (rt / 3), 3, sw), 13, 5); ctx.fill();
       ctx.restore();
       D.line(ctx, lim, sy - 6, lim, sy + 19, { color: '#fff', width: 2 });
-      D.text(ctx, 'ħ/2 — 이보다 작아질 수 없음', lim + 6, sy - 10, { size: 10, color: '#fff' });
+      D.text(ctx, 'ħ/2 (이보다 작아질 수 없음)', lim + 6, sy - 10, { size: 10, color: '#fff' });
       D.text(ctx, pure ? '측정 불가' : fmt(rt, 2) + ' × ħ/2', sx0 + sw + 10, sy + 12,
         { size: 12, color: pure ? '#c4705f' : '#e6e7ea', bold: true });
     }

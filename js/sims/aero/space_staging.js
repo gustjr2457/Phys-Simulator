@@ -87,7 +87,7 @@
         stages: S, idx: 0, m: S[0].mStart, propLeft: S[0].prop,
         burning: true, phase: 0, tKick: 0, gLoss: 0, mt: 0,
         trail: [], smoke: [], smokeT: 0, debris: [],
-        events: [{ mt: 0, label: '이륙 — 1단 점화' }],
+        events: [{ mt: 0, label: '이륙, 1단 점화' }],
         apogee: 0, done: false, verdict: '', karman: false
       };
     },
@@ -166,7 +166,7 @@
 
       const r2 = Math.hypot(st.x, st.y), h2 = r2 - RE;
       st.apogee = Math.max(st.apogee, h2);
-      if (h2 > 100000 && !st.karman) { st.karman = true; st.events.push({ mt: st.mt, label: '카르만 선 통과 — 우주' }); }
+      if (h2 > 100000 && !st.karman) { st.karman = true; st.events.push({ mt: st.mt, label: '카르만 선 통과 (우주)' }); }
 
       st.trailT = (st.trailT || 0) + dt;
       if (st.trailT > .02) { st.trailT = 0; st.trail.push([st.x, st.y]); if (st.trail.length > 1800) st.trail.shift(); }
@@ -183,13 +183,13 @@
       const ob = orbit(st);
       if (!st.burning && !st.verdict) {
         if (!isFinite(ob.a)) { st.verdict = 'escape'; st.events.push({ mt: st.mt, label: '지구 탈출 궤도' }); }
-        else if (ob.rp - RE > 0) { st.verdict = 'orbit'; st.events.push({ mt: st.mt, label: '궤도 진입 성공 — 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' km' }); }
+        else if (ob.rp - RE > 0) { st.verdict = 'orbit'; st.events.push({ mt: st.mt, label: '궤도 진입 성공, 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' km' }); }
         else st.verdict = 'suborbital';
       }
       if (h2 <= 0 && st.mt > 5) {
         st.done = true;
         if (!st.verdict) st.verdict = 'crash';
-        st.events.push({ mt: st.mt, label: st.verdict === 'orbit' ? '재진입' : '추락 — 궤도 진입 실패' });
+        st.events.push({ mt: st.mt, label: st.verdict === 'orbit' ? '재진입' : '추락 (궤도 진입 실패)' });
       }
       if ((st.verdict === 'orbit' || st.verdict === 'escape') && st.mt > st.events[st.events.length - 1].mt + 6000) st.done = true;
     },
@@ -225,7 +225,7 @@
         label: '궤도 판정', wide: true,
         color: st.verdict === 'orbit' ? '#7fb894' : (st.verdict === 'escape' ? '#a98cc4' : (st.verdict ? '#c4705f' : '#ffb020')),
         value: st.verdict === 'orbit' ? '✔ 궤도 진입 성공 (근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' km)'
-          : st.verdict === 'escape' ? '지구 탈출 궤도 — Δv 과잉'
+          : st.verdict === 'escape' ? '지구 탈출 궤도 (Δv 과잉)'
             : st.verdict === 'crash' ? '✘ 추락'
               : st.verdict ? '✘ 준궤도 — 다시 떨어집니다'
                 : (st.burning ? (st.idx + 1) + '단 연소 중' : '관성 비행')
@@ -248,6 +248,20 @@
       { name: '무거운 탑재체 (30 t)', set: { stages: 2, payload: 30 } },
       { name: '상단도 케로신 (Isp 320)', set: { stages: 2, Isp2: 320 } },
       { name: '구조가 무거우면 (λ 0.82)', set: { stages: 2, lam: .82 } }
+    ],
+    challenges: [
+      {
+        id: 'single', title: '1단 로켓으로 궤도에',
+        desc: '단 하나짜리 로켓으로 궤도 진입에 성공해 보세요. 왜 실제 로켓은 대부분 여러 단일까요?',
+        hint: '탑재체를 가볍게, 구조를 가볍게(λ 크게), 비추력을 높게. 전부 한계까지 몰아야 겨우 됩니다.',
+        check: ({ P, st }) => Math.round(P.stages) === 1 && st.verdict === 'orbit'
+      },
+      {
+        id: 'heavy', title: '15 t 탑재체를 궤도에',
+        desc: '15 t 이상의 탑재체를 궤도에 올려 보세요.',
+        hint: '구조를 가볍게(λ 크게) 하고 상단 비추력을 높이세요. 단을 늘리는 것도 도움이 됩니다.',
+        check: ({ P, st }) => P.payload >= 15 && st.verdict === 'orbit'
+      }
     ],
 
     draw(ctx, st, p, ui) {
@@ -498,9 +512,9 @@
       D.line(ctx, lx, gy - 6, lx, yb + 52, { color: '#7fb894', dash: [4, 4], width: 2 });
       D.text(ctx, '궤도 속도', lx + 4, gy - 10, { size: 9.5, color: '#7fb894' });
 
-      if (st.verdict === 'orbit') D.tag(ctx, '✔ 궤도 진입 성공 — 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' / 원지점 ' + fmt((ob.ra - RE) / 1000, 0) + ' km', w / 2, top + 10, '#7fb894', true);
+      if (st.verdict === 'orbit') D.tag(ctx, '✔ 궤도 진입 성공, 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' / 원지점 ' + fmt((ob.ra - RE) / 1000, 0) + ' km', w / 2, top + 10, '#7fb894', true);
       else if (st.verdict === 'escape') D.tag(ctx, '지구 탈출 궤도', w / 2, top + 10, '#a98cc4', true);
-      else if (st.verdict === 'suborbital') D.tag(ctx, '준궤도 — Δv가 부족해 다시 떨어집니다', w / 2, top + 10, '#c4705f', true);
+      else if (st.verdict === 'suborbital') D.tag(ctx, '준궤도. Δv가 부족해 다시 떨어집니다', w / 2, top + 10, '#c4705f', true);
       if (st.done) D.tag(ctx, '↺ 처음으로', w / 2, top + 34, '#ffb020', true);
     }
   });

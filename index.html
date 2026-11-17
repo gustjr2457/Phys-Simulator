@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PhysLab — 물리 이론의 시각화</title>
+<title>PhysLab · 물리 이론의 시각화</title>
 <meta name="description" content="힘과 운동부터 양자역학, 궤도역학, 선박·기계 공학까지 물리 이론 78가지를 슬라이더로 직접 움직여 보는 시뮬레이터. 공식의 기호를 누르면 화면에서 그 값이 어디에 작용하는지 보여 줍니다.">
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 <!-- 공유 미리보기 — og:image 는 절대 주소여야 메신저·SNS 가 읽는다 (원본: tools/og-image.html) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PhysLab">
 <meta property="og:url" content="https://phys-simulator-shs.vercel.app/">
-<meta property="og:title" content="PhysLab — 물리 이론의 시각화">
+<meta property="og:title" content="PhysLab · 물리 이론의 시각화">
 <meta property="og:description" content="물리 이론 78가지를 슬라이더로 직접 움직여 보는 시뮬레이터. 기초 물리부터 고등 물리, 항공우주·선박·기계 공학까지.">
 <meta property="og:image" content="https://phys-simulator-shs.vercel.app/img/og.png">
 <meta property="og:image:width" content="1200">
@@ -48,22 +48,22 @@
     <span class="gm-ico" aria-hidden="true">☰</span><span id="groupLabel">기초 과정</span><span class="gm-caret">▾</span>
   </button>
   <div class="modes" role="group" aria-label="과정">
-    <button class="mode on" data-mode="concept" data-group="core" title="초급 과정 — 공식 없이 감 잡기">초급</button>
-    <button class="mode" data-mode="basic" data-group="core" title="고등물리 — 물리학Ⅰ">고등물리</button>
-    <button class="mode" data-mode="general" data-group="core" title="일반물리 — 역학 · 유체 · 열 · 전자기 · 파동 · 상대성">일반물리</button>
-    <button class="mode" data-mode="exp" data-group="modern" title="유명한 실험 — 이론이 실제로 어떻게 증명됐는지">실험실</button>
-    <button class="mode" data-mode="quantum" data-group="modern" title="양자역학 — 미시세계">양자역학</button>
-    <button class="mode" data-mode="astro" data-group="modern" title="천문학 — 별빛 읽기 · 별의 일생 · 우주의 크기 · 외계행성">천문학</button>
-    <button class="mode" data-mode="aero" data-group="applied" title="항공우주공학 — 비행역학 · 궤도역학 · 로켓 추진 · 재진입">항공우주</button>
-    <button class="mode" data-mode="marine" data-group="applied" title="선박공학(자율운항시스템공학) — 저항·추진 · 복원성 · 내항성 · 운항 제어">선박</button>
-    <button class="mode" data-mode="mech" data-group="applied" title="기계공학 — 고체역학 · 파괴역학 · 열공학 · 진동공학">기계</button>
-    <button class="mode" data-mode="adv" data-group="applied" title="공학응용 — 분야 공통 계측·신호">공학응용</button>
+    <button class="mode on" data-mode="concept" data-group="core" title="초급 과정 (공식 없이 감 잡기)">초급</button>
+    <button class="mode" data-mode="basic" data-group="core" title="고등물리 (물리학Ⅰ)">고등물리</button>
+    <button class="mode" data-mode="general" data-group="core" title="일반물리 (역학 · 유체 · 열 · 전자기 · 파동 · 상대성)">일반물리</button>
+    <button class="mode" data-mode="exp" data-group="modern" title="유명한 실험 (이론이 실제로 어떻게 증명됐는지)">실험실</button>
+    <button class="mode" data-mode="quantum" data-group="modern" title="양자역학 (미시세계)">양자역학</button>
+    <button class="mode" data-mode="astro" data-group="modern" title="천문학 (별빛 읽기 · 별의 일생 · 우주의 크기 · 외계행성)">천문학</button>
+    <button class="mode" data-mode="aero" data-group="applied" title="항공우주공학 (비행역학 · 궤도역학 · 로켓 추진 · 재진입)">항공우주</button>
+    <button class="mode" data-mode="marine" data-group="applied" title="선박공학, 자율운항시스템공학 (저항·추진 · 복원성 · 내항성 · 운항 제어)">선박</button>
+    <button class="mode" data-mode="mech" data-group="applied" title="기계공학 (고체역학 · 파괴역학 · 열공학 · 진동공학)">기계</button>
+    <button class="mode" data-mode="adv" data-group="applied" title="공학응용 (분야 공통 계측·신호)">공학응용</button>
   </div>
   <button id="btnFormulaIndex" class="formula-index-btn" title="등록된 모든 시뮬레이션의 공식을 트랙별로 모아봅니다"><span aria-hidden="true">Σ</span><span class="fi-text"> 전체 공식 모음</span></button>
   <nav id="simlist" aria-label="이 과정의 시뮬레이션"></nav>
   <footer class="nav-foot">
     <p><b>Space</b> 재생/정지 · <b>R</b> 처음으로</p>
-    <p>공식의 <span class="mini-term">기호</span>에 마우스를 올려보세요.</p>
+    <p>공식의 <span class="mini-term">기호</span>를 누르면 화면 어디에서 작용하는지 알려줍니다.</p>
   </footer>
 </aside>
 

@@ -1,5 +1,5 @@
 /* [기계공학·열공학] 열전도와 열저항 — Q = ΔT / ΣR, R = L/kA, R = 1/hA
-   열은 전류처럼 흐른다. 전압차가 온도차, 전류가 열流, 저항이 열저항이고 — 층이
+   열은 전류처럼 흐른다. 전압차가 온도차, 전류가 열 흐름, 저항이 열저항이고 — 층이
    여러 개면 저항이 직렬로 더해진다. 단열재를 두껍게 해도 효과가 금방 둔해지는
    이유(외부 대류 저항이 남아 있다), 그리고 바람이 불면 왜 급격히 식는지를
    뜨거운 커피 한 잔으로 확인한다. 열교환기·보온재·엔진 냉각 설계의 출발점. */
@@ -33,20 +33,20 @@
       { key: 'hout', symbol: 'h', label: '외부 대류계수', unit: 'W/m²K', min: 3, max: 50, step: 1, value: 10, color: C.hout, dec: 0,
         where: '컵 표면과 <b>공기 사이의 열 전달</b> 정도입니다. 무풍 5 · 실내 10 · 선풍기 25 · 강풍 50. 바람이 불면 이 값이 커져 대류 저항 1/hA가 작아집니다 — 그래서 호호 불면 빨리 식습니다.' },
       { key: 'Tout', symbol: 'T_∞', label: '주변 온도', unit: '°C', min: -10, max: 30, step: 1, value: 20, color: C.Tout, dec: 0, reset: true,
-        where: '<b>바깥 공기 온도</b>(화면 오른쪽 끝 기준선)입니다. 온도차 ΔT가 열流를 직접 결정하므로, 추운 곳에서는 모든 것이 빨리 식습니다.' }
+        where: '<b>바깥 공기 온도</b>(화면 오른쪽 끝 기준선)입니다. 온도차 ΔT가 열 흐름을 직접 결정하므로, 추운 곳에서는 모든 것이 빨리 식습니다.' }
     ],
     vars: {
       T: { symbol: 'T', label: '커피 온도', unit: '°C', color: C.T,
         where: '컵 안의 <b>현재 온도</b>입니다(온도계와 온도 분포선의 왼쪽 높이). 지수적으로 주변 온도에 가까워집니다.' },
       R: { symbol: 'R', label: '총 열저항', unit: 'K/W', color: C.R,
         where: '단열층 저항과 외부 대류 저항의 <b>직렬 합</b>입니다. 화면 아래 저항 회로도에서 두 토막의 길이 비가 그 비중입니다.' },
-      Q: { symbol: 'Q', label: '열流', unit: 'W', color: C.Q,
+      Q: { symbol: 'Q', label: '열 흐름', unit: 'W', color: C.Q,
         where: '지금 <b>밖으로 빠져나가는 열의 양</b>(주황 화살표의 굵기)입니다. 모든 층을 같은 양이 통과합니다 — 직렬이니까요.' },
       tau: { symbol: 'τ', label: '시간상수', unit: '분', color: C.tau,
         where: '처음 온도차의 63%가 사라지는 데 걸리는 시간입니다. τ = R·C로, <b>열저항과 열용량의 곱</b>입니다. 보온병의 성능이 바로 이 값입니다.' }
     },
     formulas: [
-      { name: '열流 (푸리에 + 뉴턴 냉각)', tpl: '{Q} = ({T} − {Tout}) ⁄ {R}' },
+      { name: '열 흐름 (푸리에 + 뉴턴 냉각)', tpl: '{Q} = ({T} − {Tout}) ⁄ {R}' },
       { name: '열저항은 직렬로 더해진다', tpl: '{R} = {ins}⁄({k}A) + 1⁄({hout}A)' },
       { name: '식는 속도 (시간상수)', tpl: '{tau} = {R} · C' },
       { name: '온도 변화', tpl: '{T} = {Tout} + ({T}₀ − {Tout})·e^(−t⁄{tau})' }
@@ -218,11 +218,11 @@
       D.line(ctx, cupX - 10, TY(p.Tout), px2 + 10, TY(p.Tout), { color: C.Tout, dash: [4, 5], hot: hl === 'Tout' });
       D.text(ctx, 'T_∞ = ' + fmt(p.Tout, 0) + '°C', px2 + 12, TY(p.Tout) + 4,
         { size: 10, color: hl === 'Tout' ? '#fff' : C.Tout, bold: hl === 'Tout' });
-      D.text(ctx, '온도 분포 — 저항이 큰 층에서 많이 떨어진다', cupX - 10, tTop - 7, { size: 10, color: '#6a6e78' });
+      D.text(ctx, '온도 분포 (저항이 큰 층에서 많이 떨어진다)', cupX - 10, tTop - 7, { size: 10, color: '#6a6e78' });
       D.text(ctx, '단열층', (px0 + px1) / 2, tTop + tH + 14, { size: 9, color: C.ins, align: 'center' });
       D.text(ctx, '대류 경계층', (px1 + px2) / 2, tTop + tH + 14, { size: 9, color: C.hout, align: 'center' });
 
-      /* ── 열流 화살표 ── */
+      /* ── 열 흐름 화살표 ── */
       const aw = clamp(1.6 + Q * .9, 1.6, 8);
       for (let i = 0; i < 3; i++) {
         const ay = cupTop + cupH * (.25 + i * .25);

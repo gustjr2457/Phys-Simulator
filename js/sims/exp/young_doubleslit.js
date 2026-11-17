@@ -125,6 +125,20 @@
       { name: '슬릿을 더 좁혀서(무늬가 크게 넓어짐)', set: { slits: 2, lambda: 550, d: 120, rate: 60 } },
       { name: '광자 하나씩 뜸하게(핵심 실험)', set: { slits: 2, lambda: 550, d: 300, rate: 4 } }
     ],
+    challenges: [
+      {
+        id: 'wide', title: '무늬 간격 5 mm',
+        desc: '두 슬릿에서 줄무늬 간격이 5 mm 를 넘게 만들어 보세요.',
+        hint: 'Δy = λL ⁄ d 입니다. 파장을 길게(빨간빛), 슬릿 간격을 좁게.',
+        check: ({ P }) => Math.round(P.slits) >= 2 && fringeSpacingMM(P) >= 5
+      },
+      {
+        id: 'one-by-one', title: '광자를 하나씩',
+        desc: '두 슬릿을 열어 둔 채 광원을 아주 어둡게(초당 5개 이하) 해 보세요. 광자가 하나씩 와도 줄무늬가 쌓이는지 지켜보세요.',
+        hint: '광자 하나하나는 무작위로 떨어지지만, 많이 모이면 간섭무늬가 나타납니다.',
+        check: ({ P }) => Math.round(P.slits) >= 2 && P.rate <= 5
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;

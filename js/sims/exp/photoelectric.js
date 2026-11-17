@@ -96,6 +96,20 @@
       { name: '자외선에 가까운 짧은 파장(빠른 전자)', set: { phi: 2.3, lambda: 380, I: 1 } },
       { name: '일함수가 큰 금속(백금)', set: { phi: 5.6, lambda: 380, I: 1.5 } }
     ],
+    challenges: [
+      {
+        id: 'red', title: '빨간빛으로 전자 꺼내기',
+        desc: '파장 650 nm 이상인 빨간빛으로 전자가 튀어나오게 해 보세요.',
+        hint: '빛의 세기가 아니라 금속을 바꿔야 합니다. 일함수가 광자 에너지(1240 ⁄ λ eV)보다 작아야 합니다.',
+        check: ({ P }) => P.lambda >= 650 && willEmit(P)
+      },
+      {
+        id: 'fast', title: '초속 700 km 전자',
+        desc: '튀어나오는 전자의 최대 속력이 700 km/s 를 넘게 해 보세요.',
+        hint: '전자가 받는 에너지는 hf − φ 입니다. 파장을 짧게, 일함수를 작게.',
+        check: ({ P }) => willEmit(P) && vMax_kms(P) >= 700
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
@@ -138,7 +152,7 @@
       });
 
       if (!emit) {
-        D.tag(ctx, '광자 에너지가 부족 — 전자가 전혀 안 나옴', plateX + 130, cy - plateH / 2 - 10, '#6a6e78', true);
+        D.tag(ctx, '광자 에너지가 부족해 전자가 전혀 안 나옴', plateX + 130, cy - plateH / 2 - 10, '#6a6e78', true);
       } else {
         D.text(ctx, '전자 최대 속력 ≈ ' + fmt(vMax_kms(p), 0) + ' km/s', plateX + 130, cy + plateH / 2 + 26, { size: 11, color: C.KEmax, align: 'center' });
       }

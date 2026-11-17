@@ -221,7 +221,7 @@
 
       /* ── 거리 사다리 ── */
       const lx = 44, ly = h - 118, lw = Math.min(w - 88, 540);
-      D.text(ctx, '우주 거리 사다리 — 각 방법이 닿는 범위', lx, ly - 10, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '우주 거리 사다리 (각 방법이 닿는 범위)', lx, ly - 10, { size: 10.5, color: '#6a6e78' });
       const LO = 0, HI = Math.log10(4e9);
       const LX = pc => lx + lw * clamp((Math.log10(Math.max(pc, 1)) - LO) / (HI - LO), 0, 1);
       LADDER.forEach((rung, i) => {

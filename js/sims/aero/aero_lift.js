@@ -98,6 +98,20 @@
       { name: '고고도 순항', set: { alt: 11000, V: 220, a: 3 } },
       { name: '무거운 기체', set: { m: 5000 } }
     ],
+    challenges: [
+      {
+        id: 'level', title: '수평 비행 (양력 = 무게)',
+        desc: '실속하지 않으면서 양력이 무게와 같아지게(L/W = 1 ± 0.02) 만들어 보세요. 오르지도 내려가지도 않습니다.',
+        hint: '양력 L = ½ρV²S·C_L 입니다. 지금은 양력이 무게보다 훨씬 커서 위로 솟습니다. 속도나 받음각을 줄여 보세요.',
+        check: ({ P }) => P.a <= ALPHA_STALL && Math.abs(.5 * rhoOf(P.alt) * P.V * P.V * P.S * CLof(P.a) / (P.m * 9.81) - 1) <= .02
+      },
+      {
+        id: 'high', title: '고도 10 km 수평 비행',
+        desc: '고도 10 km 이상에서 실속 없이 수평 비행(L/W = 1 ± 0.03)을 해 보세요.',
+        hint: '높이 올라가면 공기 밀도 ρ 가 낮아져 양력이 줄어듭니다. 더 빨리 날아야 합니다.',
+        check: ({ P }) => P.alt >= 10000 && P.a <= ALPHA_STALL && Math.abs(.5 * rhoOf(P.alt) * P.V * P.V * P.S * CLof(P.a) / (P.m * 9.81) - 1) <= .03
+      }
+    ],
 
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
@@ -336,7 +350,7 @@
       D.arrow(ctx, cx, cy + 16, 0, clamp(W / 1000 * FS, 6, 190),
         { color: C.W, width: 4, hot: hl === 'm', label: 'mg = ' + fmt(W / 1000, 1) + ' kN', lx: -58 });
 
-      if (stall) D.tag(ctx, '⚠ 실속 (STALL) — 윗면 흐름 박리 · 역류 · 후류 와류', cx, cy - 150, '#c4705f', true);
+      if (stall) D.tag(ctx, '⚠ 실속 (STALL), 윗면 흐름 박리 · 역류 · 후류 와류', cx, cy - 150, '#c4705f', true);
 
       /* ── 오른쪽: C_L 곡선 ──────────────────── */
       const px = w * .62, py = 56, pw = w - px - 34, ph = h * .5;

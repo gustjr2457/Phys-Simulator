@@ -16,7 +16,7 @@
     mode: 'basic',
     category: '역학과 에너지',
     title: '뉴턴 운동 제2법칙',
-    sub: 'F = ma',
+    sub: 'ΣF = ma',
     tagline: '같은 힘으로 밀어도 질량이 크면 왜 천천히 빨라질까요? 힘·질량·마찰을 직접 바꿔 보세요.',
 
     params: [
@@ -30,7 +30,8 @@
     vars: {
       a: { symbol: 'a', label: '가속도', unit: 'm/s²', color: C.a,
         where: '상자 위쪽 <b>노란 화살표</b>입니다. 알짜힘을 질량으로 나눈 값이며, 속도(파란 화살표)를 매초 이만큼 바꿉니다.' },
-      Fnet: { symbol: 'F', label: '알짜힘', unit: 'N', color: '#e6e7ea',
+      // 미는 힘 F 와 구별해야 "F = F − f" 로 읽히지 않는다 — 힘들을 모두 더한 것이라 ΣF
+      Fnet: { symbol: 'ΣF', label: '알짜힘', unit: 'N', color: '#e6e7ea',
         where: '화면 위쪽 <b>알짜힘 막대</b>입니다. 미는 힘에서 마찰력을 뺀 나머지로, 이것이 0이면 속도는 변하지 않습니다.' },
       f: { symbol: 'f', label: '마찰력', unit: 'N', color: C.f,
         where: '운동을 방해하는 <b>빨간 화살표</b>. 항상 운동 방향의 반대쪽을 향합니다.' },
@@ -69,7 +70,7 @@
         { label: '가속도 a', value: a, unit: 'm/s²', color: C.a },
         { label: '속도 v', value: st.v, unit: 'm/s', color: C.v },
         { label: '마찰력 f = μmg', value: f, unit: 'N', color: C.f },
-        { label: '알짜힘 F − f', value: moving ? p.F - f : 0, unit: 'N' },
+        { label: '알짜힘 ΣF = F − f', value: moving ? p.F - f : 0, unit: 'N' },
         { label: '이동 거리', value: st.x, unit: 'm' },
         { label: '상태', value: moving ? '가속 중' : '정지 (힘 부족)', color: moving ? '#7fb894' : '#c4705f' }
       ];
@@ -86,6 +87,20 @@
       { name: '무거운 상자', set: { F: 20, m: 10, mu: .2 } },
       { name: '얼음판 (μ=0)', set: { F: 10, m: 4, mu: 0 } },
       { name: '꿈쩍 않는 경우', set: { F: 8, m: 8, mu: .5 } }
+    ],
+    challenges: [
+      {
+        id: 'a5', title: '가속도 5 m/s² 만들기',
+        desc: '상자가 미끄러지면서 가속도가 5 m/s²(±0.05)가 되게 힘·질량·마찰을 맞춰 보세요.',
+        hint: 'a = ΣF ⁄ m = (F − μmg) ⁄ m 입니다. 마찰이 없으면 F = 5m 이면 됩니다.',
+        check: ({ P }) => { const f = friction(P); return P.F > f && Math.abs((P.F - f) / P.m - 5) <= .05; }
+      },
+      {
+        id: 'balance', title: '겨우 버티는 상자',
+        desc: '10 N 이상으로 밀면서, 미는 힘이 최대 정지 마찰력과 거의 같게(차이 0.3 N 이하) 만들어 보세요. 알짜힘이 0 에 가까워집니다.',
+        hint: '최대 정지 마찰력은 μmg 입니다. 질량 5 kg, μ = 0.2 이면 약 9.8 N 입니다.',
+        check: ({ P }) => P.F >= 10 && Math.abs(P.F - friction(P)) <= .3
+      }
     ],
 
     draw(ctx, st, p, ui) {
@@ -149,14 +164,14 @@
       // 알짜힘 막대
       const bx = 22, bw = Math.min(240, w * .3), byy = 22;
       const maxF = 60;
-      D.text(ctx, '알짜힘 = 미는 힘 − 마찰력', bx, byy - 8, { size: 11, color: hl === 'Fnet' ? '#fff' : '#6a6e78', bold: hl === 'Fnet' });
+      D.text(ctx, '알짜힘 ΣF = 미는 힘 F − 마찰력 f', bx, byy - 8, { size: 11, color: hl === 'Fnet' ? '#fff' : '#6a6e78', bold: hl === 'Fnet' });
       const fShown = moving ? f : Math.min(f, p.F);
       D.bar(ctx, bx, byy, bw, 10, p.F, maxF, C.F, null, hl === 'F');
       D.text(ctx, '미는 힘 ' + fmt(p.F, 0) + ' N', bx + bw + 8, byy + 9, { size: 11, color: C.F, bold: hl === 'F' });
       D.bar(ctx, bx, byy + 16, bw, 10, fShown, maxF, C.f, null, hl === 'f' || hl === 'mu');
       D.text(ctx, '마찰력 ' + fmt(fShown, 1) + ' N', bx + bw + 8, byy + 25, { size: 11, color: C.f, bold: hl === 'f' || hl === 'mu' });
       D.bar(ctx, bx, byy + 32, bw, 12, moving ? p.F - f : 0, maxF, '#e6e7ea', null, hl === 'Fnet');
-      D.text(ctx, '알짜힘 ' + fmt(moving ? p.F - f : 0, 1) + ' N', bx + bw + 8, byy + 42, { size: 12, color: '#e6e7ea', bold: true });
+      D.text(ctx, '알짜힘 ΣF ' + fmt(moving ? p.F - f : 0, 1) + ' N', bx + bw + 8, byy + 42, { size: 12, color: '#e6e7ea', bold: true });
 
       if (!moving) D.tag(ctx, '미는 힘 ≤ 최대 정지 마찰력 → 정지', w / 2, h - 18, C.f, hl === 'mu' || hl === 'f');
     }

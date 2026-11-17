@@ -58,7 +58,7 @@
       { name: '수소형 원자의 에너지 준위', tpl: '{E}ₙ = −13.6 {Z}² ⁄ n²  [eV]' },
       { name: '방출되는 광자의 에너지', tpl: 'Δ{E} = {E}(nᵢ) − {E}(n_f) = h{f}' },
       { name: '파장으로 바꾸면', tpl: '{lam} = hc ⁄ Δ{E} = 1240 ⁄ Δ{E}[eV]   nm' },
-      { name: '보어의 양자 조건 — 원 둘레의 정상파', tpl: '2π{r} = n · {lamb}' }
+      { name: '보어의 양자 조건 (원 둘레의 정상파)', tpl: '2π{r} = n · {lamb}' }
     ],
 
     init(p) { return { ph: 0, fly: -9, lines: [] }; },
@@ -109,8 +109,8 @@
     presets: [
       { name: '수소 빨간 선 (656 nm)', set: { Z: 1, ni: 3, nf: 2 } },
       { name: '수소 청록 선 (486 nm)', set: { Z: 1, ni: 4, nf: 2 } },
-      { name: '라이먼 — 자외선', set: { Z: 1, ni: 2, nf: 1 } },
-      { name: '파셴 — 적외선', set: { Z: 1, ni: 4, nf: 3 } },
+      { name: '라이먼 (자외선)', set: { Z: 1, ni: 2, nf: 1 } },
+      { name: '파셴 (적외선)', set: { Z: 1, ni: 4, nf: 3 } },
       { name: '헬륨 이온 (Z=2)', set: { Z: 2, ni: 3, nf: 2 } }
     ],
     challenges: [
@@ -147,7 +147,7 @@
       const EY = e => botY - (e - Emin) / (0 - Emin) * (botY - top);
       D.text(ctx, '에너지 준위 (eV)', lx, top - 20, { size: 11, color: hl === 'E' ? '#fff' : '#9a9da6', bold: hl === 'E' });
       D.line(ctx, lx - 6, EY(0), lx + lw + 10, EY(0), { color: 'rgba(167,170,176,.45)', dash: [4, 4] });
-      D.text(ctx, '0 — 자유 전자', lx + lw + 14, EY(0) + 4, { size: 9.5, color: '#6a6e78' });
+      D.text(ctx, '0 (자유 전자)', lx + lw + 14, EY(0) + 4, { size: 9.5, color: '#6a6e78' });
       for (let n = 1; n <= 7; n++) {
         const e = En(n, Z), y = EY(e);
         const isI = n === ni, isF = n === nf;
@@ -183,7 +183,7 @@
         a === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.closePath(); ctx.stroke(); ctx.restore();
-      D.text(ctx, '전자의 정상파 — 둘레에 ' + ni + '개', ox, oy - orad - 24, { size: 10.5, color: C.nf, align: 'center' });
+      D.text(ctx, '전자의 정상파, 둘레에 ' + ni + '개', ox, oy - orad - 24, { size: 10.5, color: C.nf, align: 'center' });
       D.text(ctx, '2πr = ' + ni + 'λ', ox, oy - orad - 10, { size: 10, color: '#6a6e78', align: 'center' });
 
       /* ── 날아가는 광자 ── */
@@ -238,7 +238,7 @@
         D.tag(ctx, fmt(L, 0) + ' nm', x, sy - 20, col, true);
       } else {
         const left = L < 380;
-        D.tag(ctx, (left ? '◀ 자외선 ' : '적외선 ▶ ') + fmt(L, 0) + ' nm — 눈에 안 보임',
+        D.tag(ctx, (left ? '◀ 자외선 ' : '적외선 ▶ ') + fmt(L, 0) + ' nm (눈에 안 보임)',
           left ? sx + 90 : sx + sw - 90, sy - 20, '#9a9da6', true);
       }
 

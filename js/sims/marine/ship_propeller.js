@@ -203,7 +203,7 @@
       D.arrow(ctx, cx + R + 16, cy, clamp(18 + T / 1e5, 18, 70), 0,
         { color: C.T, width: 4, head: 10, hot: hl === 'T' });
       D.tag(ctx, 'T = ' + fmt(T / 1000, 0) + ' kN', cx + R + 60, cy - 24, C.T, hl === 'T');
-      if (cav) D.tag(ctx, '캐비테이션 발생 — 침식·소음·추력 손실', cx, cy + R + 50, '#c4705f', true);
+      if (cav) D.tag(ctx, '캐비테이션 발생 (침식·소음·추력 손실)', cx, cy + R + 50, '#c4705f', true);
 
       /* ── 성능 곡선 ── */
       const gx = Math.min(w - 280, cx + R + 110), gy = sea + 24;
@@ -233,7 +233,7 @@
 
       /* ── 캐비테이션 선도 ── */
       const bx = 48, by = h - 76, bw = Math.min(w - 96, 440);
-      D.text(ctx, '캐비테이션 선도 — 추력 하중 τ 가 한계 τ_c 를 넘으면 발생', bx, by - 10,
+      D.text(ctx, '캐비테이션 선도 (추력 하중 τ 가 한계 τ_c 를 넘으면 발생)', bx, by - 10,
         { size: 10.5, color: '#6a6e78' });
       D.roundRect(ctx, bx, by, bw, 13, 6); ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       const tc = tauCrit(p), tau = tauOf(p);

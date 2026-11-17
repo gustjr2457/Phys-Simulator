@@ -141,7 +141,7 @@
       /* ── 왼쪽: 행성 기준 쌍곡선 ── */
       const lx = w * .26, cy = h * .36;
       const pr = clamp(w * .022, 12, 24);
-      D.text(ctx, '행성 기준 — 속력은 그대로, 방향만 꺾인다', lx, cy - h * .25,
+      D.text(ctx, '행성 기준 (속력은 그대로, 방향만 꺾인다)', lx, cy - h * .25,
         { size: 11, color: '#6a6e78', align: 'center' });
       // 행성
       ctx.save(); if (hl === 'pl') { ctx.shadowColor = q.c; ctx.shadowBlur = 20; }
@@ -193,7 +193,7 @@
       /* ── 오른쪽: 태양 기준 속도 삼각형 ── */
       const rx = w * .72, ry = cy;
       const ar = Math.min(w * .20, h * .22);
-      D.text(ctx, '태양 기준 — 속도가 통째로 달라진다', rx, ry - h * .25,
+      D.text(ctx, '태양 기준 (속도가 통째로 달라진다)', rx, ry - h * .25,
         { size: 11, color: '#6a6e78', align: 'center' });
       const SS = ar / Math.max(s.so, s.si, q.V + p.vinf) * .9;
       const ox = rx - ar * .5, oy = ry + ar * .4;

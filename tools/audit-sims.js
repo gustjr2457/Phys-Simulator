@@ -7,6 +7,9 @@
    격자     기본값·프리셋 값이 min + k·step 위에 있는가. 슬라이더(input range)는 손잡이만 격자에 맞추고
             값은 그대로 두므로, 격자 밖의 값은 사용자가 손잡이를 건드리는 순간 다른 값으로 튄다.
    과제     기본값으로 열자마자 이미 참인 도전 과제 — 사용자가 한 일이 없는데 "달성 중"으로 보인다
+   달성     과제마다 슬라이더 범위 안에서 참이 되는 값 조합이 실제로 있는가 — 프리셋·격자 위 무작위 값으로 찾고,
+            못 찾으면 시뮬레이션을 돌려(시간이 지나야 참이 되는 과제) 찾는다. 마지막으로 tools/challenge-witness.json 의 예시 값
+   공식     공식 템플릿의 {기호}가 모두 params/vars 에 있는가
    극한     기본값 · 전부 최소 · 전부 최대 · 각 프리셋으로 init → 6초 step → readouts 에서 예외가 없는가
    정의 안 됨  측정값이 NaN/Infinity 인 경우 (화면에 "—"). 참고 — 이유 문구를 붙였는지 보는 용도
    격자·범위·과제·극한 중 하나라도 걸리면 종료 코드 1.
@@ -16,7 +19,30 @@ const asJson = process.argv.includes('--json');
 const { PS } = loadPS();
 const DT = 1 / 480;
 
-const out = { range: [], grid: [], challengeTrue: [], errors: [], nonFinite: [] };
+const out = { range: [], grid: [], challengeTrue: [], unreachable: [], formula: [], errors: [], nonFinite: [], reached: 0 };
+const WITNESS = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, 'challenge-witness.json'), 'utf8'));
+// 결과가 실행마다 같도록 시드 고정 난수
+let seed = 20261117;
+const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const onGridRandom = p => { const step = p.step || 1, n = Math.floor((p.max - p.min) / step + 1e-9); return +(p.min + step * Math.floor(rnd() * (n + 1))).toFixed(10); };
+const safe = (c, P, st) => { try { return !!c.check({ P, st, t: st.t }); } catch (e) { return false; } };
+// 과제가 참이 되는 값 조합 찾기: ① 값만으로(초기 상태) ② 시뮬레이션을 돌려서
+function reachable(sim, c) {
+  const sets = (sim.presets || []).map(pr => Object.assign(defaults(sim), pr.set));
+  for (let i = 0; i < 4000; i++) { const P = {}; sim.params.forEach(p => P[p.key] = onGridRandom(p)); sets.push(P); }
+  for (const P of sets) { const st = sim.init(P); st.t = 0; if (safe(c, P, st)) return { how: '값', P }; }
+  const w = WITNESS[sim.id + '/' + c.id];
+  const runs = (w ? [Object.assign(defaults(sim), w)] : []).concat(sets.slice(0, (sim.presets || []).length + 30));
+  for (const P of runs) {
+    const st = sim.init(P); st.t = 0;
+    for (let i = 1; i <= 150 * 480 && !st.done; i++) {
+      sim.step(st, P, DT); st.t += DT;
+      if (i % 240 === 0 && safe(c, P, st)) return { how: '실행 ' + st.t.toFixed(0) + '초', P };
+    }
+    if (safe(c, P, st)) return { how: '실행 끝', P };
+  }
+  return null;
+}
 const onGrid = (v, p) => {
   const step = p.step || 1, k = (v - p.min) / step;
   return Math.abs(k - Math.round(k)) < 1e-6;
@@ -45,6 +71,13 @@ for (const sim of PS.sims) {
       const P = defaults(sim), st = sim.init(P); st.t = 0;
       if (c.check({ P, st, t: 0 })) out.challengeTrue.push(`${sim.id} ${c.id} (${c.title})`);
     } catch (e) { out.errors.push(`${sim.id} 과제 ${c.id}: ${e.message}`); }
+    const r = reachable(sim, c);
+    if (r) out.reached++; else out.unreachable.push(`${sim.id} ${c.id} (${c.title})`);
+  });
+
+  // 공식 템플릿의 기호
+  (sim.formulas || []).forEach(f => {
+    for (const m of f.tpl.matchAll(/\{(\w+)\}/g)) if (!(sim.vars || {})[m[1]]) out.formula.push(`${sim.id} "${f.name}": {${m[1]}} 가 params/vars 에 없다`);
   });
 
   // 극한 실행
@@ -62,11 +95,12 @@ for (const sim of PS.sims) {
   }
 }
 
-const bad = out.range.length + out.grid.length + out.challengeTrue.length + out.errors.length;
+const bad = out.range.length + out.grid.length + out.challengeTrue.length + out.unreachable.length + out.formula.length + out.errors.length;
 if (asJson) console.log(JSON.stringify(out, null, 1));
 else {
   const sec = (t, a) => { console.log(`\n${t} — ${a.length}`); a.forEach(x => console.log('  ' + x)); };
   sec('범위 밖', out.range); sec('격자 밖', out.grid); sec('열자마자 참인 과제', out.challengeTrue);
+  sec(`달성할 수 없는 과제 (달성 가능 ${out.reached}개)`, out.unreachable); sec('공식의 없는 기호', out.formula);
   sec('극한 실행 예외', out.errors); sec('정의 안 되는 측정값 (참고)', out.nonFinite);
   console.log(`\n시뮬레이션 ${PS.sims.length}종 — ${bad ? '고칠 것 ' + bad + '건' : '통과'}`);
 }

@@ -52,7 +52,7 @@
         where: '단위 면적이 <b>1초에 받는 에너지</b>입니다. 전기장 진폭의 <b>제곱</b>에 비례합니다.' }
     },
     formulas: [
-      { name: '빛의 속력 — 맥스웰이 계산해 낸 값', tpl: 'c = 1 ⁄ √(ε₀μ₀) = {lam}·f' },
+      { name: '빛의 속력 (맥스웰이 계산해 낸 값)', tpl: 'c = 1 ⁄ √(ε₀μ₀) = {lam}·f' },
       { name: '전기장과 자기장의 비', tpl: '{E} ⁄ {B} = c' },
       { name: '광자 한 알의 에너지', tpl: '{ph} = h·f' },
       { name: '세기 (포인팅 벡터의 평균)', tpl: '{S} = ½ε₀c{E0}²' }
@@ -204,7 +204,7 @@
 
       /* ── 스펙트럼 띠 ── */
       const sx = 48, sy = h - 112, sw = Math.min(w - 96, 520);
-      D.text(ctx, '전자기 스펙트럼 — 전부 같은 파동, 진동수만 다르다', sx, sy - 10, { size: 10.5, color: '#6a6e78' });
+      D.text(ctx, '전자기 스펙트럼 (전부 같은 파동, 진동수만 다르다)', sx, sy - 10, { size: 10.5, color: '#6a6e78' });
       const LO = 4, HI = 23;
       const SX = ff => sx + sw * clamp((Math.log10(ff) - LO) / (HI - LO), 0, 1);
       BANDS.forEach((bd, i) => {

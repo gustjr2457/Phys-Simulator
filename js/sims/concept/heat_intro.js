@@ -111,7 +111,7 @@
         const dir = diff > 0 ? 1 : -1;
         D.arrow(ctx, midx - dir * 46, cy - bh / 2 - 34, dir * 70, 0, { color: C.k, width: 4, hot: hl === 'k', label: '열 흐름' });
       } else {
-        D.tag(ctx, '열평형 — 더 이상 흐르지 않음', midx, cy - bh / 2 - 34, '#7fb894', true);
+        D.tag(ctx, '열평형 (더 이상 흐르지 않음)', midx, cy - bh / 2 - 34, '#7fb894', true);
       }
     }
   });

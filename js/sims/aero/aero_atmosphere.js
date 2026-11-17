@@ -28,7 +28,7 @@
 
   PS.register({
     id: 'aero-atmosphere', mode: 'aero', category: '비행역학',
-    title: '표준 대기 — 높이 올라가면 공기는?',
+    title: '표준 대기 (높이 올라가면 공기는?)',
     sub: 'p = p₀(T/T₀)^(g/LR),  ρ = p/RT',
     tagline: '높이 올라갈수록 기온·기압·공기 밀도가 어떻게 줄어드는지, 풍선이 왜 부풀어 오르는지 같은 높이 눈금 위에서 봅니다.',
 
@@ -51,9 +51,9 @@
         where: '땅에서 묶은 <b>보라색 풍선</b>이 처음보다 몇 배로 부풀었는지입니다. 바깥 기압이 낮을수록 커집니다.' }
     },
     formulas: [
-      { name: '기온 — 1 km마다 L만큼 (대류권)', tpl: '{T} = {T0} − {L}·{h}' },
-      { name: '기압 — 머리 위 공기의 무게', tpl: '{p} = p₀ ({T} ⁄ {T0})^(g ⁄ {L}R)' },
-      { name: '밀도 — 기체의 상태 방정식', tpl: '{rho} = {p} ⁄ (R{T})' },
+      { name: '기온 (대류권에서 1 km마다 L만큼)', tpl: '{T} = {T0} − {L}·{h}' },
+      { name: '기압 (머리 위 공기의 무게)', tpl: '{p} = p₀ ({T} ⁄ {T0})^(g ⁄ {L}R)' },
+      { name: '밀도 (기체의 상태 방정식)', tpl: '{rho} = {p} ⁄ (R{T})' },
       { name: '풍선 부피 (같은 공기)', tpl: '{V} = (p₀ ⁄ {p}) · ({T} ⁄ {T0})' }
     ],
 
@@ -105,7 +105,7 @@
       '공기가 묽으면 날개의 양력도, 엔진이 빨아들이는 산소도 줄어듭니다. 그래서 비행기 성능표와 고도계는 모두 이 <b>표준 대기</b>를 기준으로 맞춥니다.'
     ],
     presets: [
-      { name: '표준 대기 — 땅(해면)', set: { h: 0, T0: 15, L: 6.5 } },
+      { name: '표준 대기 (땅, 해면)', set: { h: 0, T0: 15, L: 6.5 } },
       { name: '에베레스트 꼭대기 (8.8 km)', set: { h: 8.8, T0: 15, L: 6.5 } },
       { name: '여객기 순항 (11 km)', set: { h: 11, T0: 15, L: 6.5 } },
       { name: '기상 관측 풍선 (20 km)', set: { h: 20, T0: 15, L: 6.5 } },
@@ -185,7 +185,7 @@
         { size: 10.5, color: hotR ? C.rho : PAL.ink2, bold: hotR });
 
       /* ── 곡선판 ── */
-      D.text(ctx, narrow ? '땅 = 100 %' : '높이에 따른 변화 — 땅(해면) = 100 %', px0, top - 14, { size: 10.5, color: PAL.ink2 });
+      D.text(ctx, narrow ? '땅 = 100 %' : '높이에 따른 변화 (땅, 해면 = 100 %)', px0, top - 14, { size: 10.5, color: PAL.ink2 });
       [0, .5, 1].forEach(f => {
         D.line(ctx, PX(f), top, PX(f), GY, { color: 'rgba(167,170,176,' + (f === 1 ? .28 : .12) + ')', dash: f === 1 ? null : [2, 4] });
         D.text(ctx, f === 1 ? '100 %' : fmt(f * 100, 0), PX(f), GY + 16, { size: 9.5, color: PAL.ink3, align: 'center' });

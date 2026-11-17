@@ -62,7 +62,7 @@
         where: '지금 속도와 침로를 유지하면 두 배가 <b>가장 가까워졌을 때의 거리</b>입니다. 이 값이 안전 반경보다 작으면 회피해야 합니다.' }
     },
     formulas: [
-      { name: 'LOS 유도 — 목표 침로', tpl: 'χ_d = α_p + atan(−{e} ⁄ {look})' },
+      { name: 'LOS 유도 (목표 침로)', tpl: 'χ_d = α_p + atan(−{e} ⁄ {look})' },
       { name: '횡방향 오차는 지수적으로 0으로', tpl: '{e}(t) → 0' },
       { name: '최근접 거리와 시간', tpl: 'TCPA = −(r·v_rel) ⁄ |v_rel|²' },
       { name: '회피 판단', tpl: '{cpa} < {Rs} 이고 TCPA > 0  →  우현 변침' }
@@ -271,7 +271,7 @@
       }
 
       /* ── 상태 ── */
-      D.tag(ctx, st.avoid ? '충돌 회피 작동 — 우현 ' + fmt(st.off, 0) + '° 변침' : 'LOS 항로 추종 중',
+      D.tag(ctx, st.avoid ? '충돌 회피 작동, 우현 ' + fmt(st.off, 0) + '° 변침' : 'LOS 항로 추종 중',
         w * .5, 30, st.avoid ? '#c4705f' : '#7fb894', true);
       D.text(ctx, '최근접 기록 ' + fmt(st.minD < 1e8 ? st.minD : 0, 0) + ' m  /  안전 반경 ' + fmt(p.Rs, 0) + ' m',
         24, h - 30, { size: 11, color: st.minD >= p.Rs ? '#7fb894' : '#c4705f' });

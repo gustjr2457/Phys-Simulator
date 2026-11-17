@@ -115,7 +115,7 @@
 
       const r2 = Math.hypot(st.x, st.y), h2 = r2 - RE;
       st.apogee = Math.max(st.apogee, h2);
-      if (h2 > 100000 && !st.karman) { st.karman = true; st.events.push({ mt: st.mt, label: '카르만 선 통과 — 우주' }); }
+      if (h2 > 100000 && !st.karman) { st.karman = true; st.events.push({ mt: st.mt, label: '카르만 선 통과 (우주)' }); }
 
       // 자취
       st.trailT = (st.trailT || 0) + dt;
@@ -138,16 +138,16 @@
         // 탈출 여부는 에너지로 판단한다 (수직 발사는 e≈1이지만 탈출이 아니다)
         if (!isFinite(ob.a)) {
           st.verdict = 'escape';
-          st.events.push({ mt: st.mt, label: '지구 탈출 궤도 — Δv 과잉' });
+          st.events.push({ mt: st.mt, label: '지구 탈출 궤도 (Δv 과잉)' });
         } else if (ob.rp - RE > 0) {
           st.verdict = 'orbit';
-          st.events.push({ mt: st.mt, label: '궤도 진입 성공 — 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' km' });
+          st.events.push({ mt: st.mt, label: '궤도 진입 성공, 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' km' });
         } else st.verdict = 'suborbital';
       }
       if (h2 <= 0 && st.mt > 5) {
         st.done = true;
         if (!st.verdict) st.verdict = 'crash';
-        st.events.push({ mt: st.mt, label: st.verdict === 'orbit' ? '재진입' : '추락 — 궤도 진입 실패' });
+        st.events.push({ mt: st.mt, label: st.verdict === 'orbit' ? '재진입' : '추락 (궤도 진입 실패)' });
       }
       // 궤도에 안착했으면 한 바퀴쯤 보여주고 멈춘다
       if ((st.verdict === 'orbit' || st.verdict === 'escape') && st.mt > st.events[st.events.length - 1].mt + 7000) st.done = true;
@@ -212,6 +212,20 @@
       { name: '현실적인 1단 (Δv 부족)', set: { Isp: 300, lam: .85, TW: 1.5, kick: 90 } },
       { name: '고추력 (손실 감소)', set: { Isp: 450, lam: .90, TW: 2, kick: 96 } },
       { name: '탈출 궤도 (Δv 과잉)', set: { Isp: 450, lam: .95, TW: 1.5, kick: 90 } }
+    ],
+    challenges: [
+      {
+        id: 'kerosene', title: '케로신 엔진으로 궤도에',
+        desc: '비추력 310 s 이하(케로신 엔진 수준)로 궤도 진입에 성공해 보세요.',
+        hint: 'Δv = Isp·g₀·ln(m₀ ⁄ m_f) 입니다. 비추력이 낮으면 추진제 비율 λ 를 크게 해서 질량비를 키우세요.',
+        check: ({ P, st }) => P.Isp <= 310 && st.verdict === 'orbit'
+      },
+      {
+        id: 'light', title: '연료를 덜 싣고 궤도에',
+        desc: '추진제 질량비 λ 를 0.88 이하로 줄이고도 궤도 진입에 성공해 보세요.',
+        hint: 'λ 가 조금만 줄어도 ln(m₀ ⁄ m_f) 는 크게 줄어듭니다. 남은 Δv 로 아슬아슬하게.',
+        check: ({ P, st }) => P.lam <= .88 + 1e-9 && st.verdict === 'orbit'
+      }
     ],
 
     draw(ctx, st, p, ui) {
@@ -301,7 +315,7 @@
         ctx.restore();
         const ky2 = yAtLeft(kr);
         if (isFinite(ky2) && ky2 > top + 6 && ky2 < bot)
-          if (ky2 > top + 110) D.text(ctx, '카르만 선 100 km — 우주의 경계', LBL + 4, ky2 - 6, { size: 10.5, color: '#68b8b0' });
+          if (ky2 > top + 110) D.text(ctx, '카르만 선 100 km (우주의 경계)', LBL + 4, ky2 - 6, { size: 10.5, color: '#68b8b0' });
       }
 
       /* ── 비행 자취 ── */
@@ -427,9 +441,9 @@
       D.line(ctx, lx, gyy - 5, lx, gyy + 80, { color: '#7fb894', dash: [4, 4], width: 2 });
       D.text(ctx, '궤도 속도', lx + 4, gyy - 9, { size: 9.5, color: '#7fb894' });
 
-      if (st.verdict === 'orbit') D.tag(ctx, '✔ 궤도 진입 성공 — 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' / 원지점 ' + fmt((ob.ra - RE) / 1000, 0) + ' km', w / 2, top + 10, '#7fb894', true);
-      else if (st.verdict === 'escape') D.tag(ctx, '지구 탈출 궤도 — 돌아오지 않습니다', w / 2, top + 10, '#a98cc4', true);
-      else if (st.verdict === 'suborbital') D.tag(ctx, '준궤도 — 근지점이 지면 아래입니다. 다시 떨어집니다', w / 2, top + 10, '#c4705f', true);
+      if (st.verdict === 'orbit') D.tag(ctx, '✔ 궤도 진입 성공, 근지점 ' + fmt((ob.rp - RE) / 1000, 0) + ' / 원지점 ' + fmt((ob.ra - RE) / 1000, 0) + ' km', w / 2, top + 10, '#7fb894', true);
+      else if (st.verdict === 'escape') D.tag(ctx, '지구 탈출 궤도 (돌아오지 않습니다)', w / 2, top + 10, '#a98cc4', true);
+      else if (st.verdict === 'suborbital') D.tag(ctx, '준궤도. 근지점이 지면 아래라 다시 떨어집니다', w / 2, top + 10, '#c4705f', true);
       if (st.done) D.tag(ctx, '↺ 처음으로', w / 2, top + 34, '#ffb020', true);
     }
   });
