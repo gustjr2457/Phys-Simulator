@@ -46,13 +46,14 @@ function loadApp() {
       W.console.error = (...a) => { W.__errs.push(a.map(x => x && x.stack ? x.stack.split('\n')[0] : String(x)).join(' ')); ce(...a); };
       W.addEventListener('error', e => W.__errs.push('error: ' + e.message));
       W.addEventListener('unhandledrejection', e => W.__errs.push('rejection: ' + e.reason));
-      setTimeout(() => res(W), 300);
+      // 앱은 시뮬레이션 본체를 열 때만 불러온다 — 점검은 78종 전부가 필요하다
+      setTimeout(() => W.eval('PS.loadAll()').then(() => res(W)), 300);
     };
     document.body.appendChild(f);
   });
 }
 
-/* fillText 를 가로채 글자 상자를 모은다. D.tag 안에서 그린 글자는 불투명 배경이 있다(덮는다). */
+/* fillText 를 가로채 글자 상자를 모은다. D.tag 글자는 늘 헤일로를 두르므로 가독성(대비) 검사에서는 빼고, 겹침은 센다. */
 function instrument(PS, ctx) {
   const rec = [];
   let inTag = 0;
@@ -106,7 +107,7 @@ function overlaps(rec) {
   const hits = [];
   for (let j = 1; j < rec.length; j++) {
     const B = rec[j];
-    if (B.tag || B.a < .35) continue;                       // 나중 것이 불투명 태그면 덮는다 / 아주 흐린 글자는 장식
+    if (B.a < .35) continue;                                // 아주 흐린 글자는 장식 (태그도 이제 상자가 없어 겹치면 안 읽힌다)
     for (let i = 0; i < j; i++) {
       const A = rec[i];
       if (A.a < .35) continue;
@@ -144,7 +145,7 @@ async function stress(W, PS) {
           sim.readouts(st, P); sim.sample && sim.sample(st, P);
           for (const h0 of [null, hl]) {
             ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, w, h);
-            ctx.__labels = w < 600 ? [] : null;
+            ctx.__labels = [];
             sim.draw(ctx, st, P, { w, h, hl: h0, playing: true }); result.total.draws++;
           }
         }
@@ -206,7 +207,7 @@ async function run() {
             for (const hl of hls) {
               ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, w, h);
               const I = instrument(PS, ctx);
-              ctx.__labels = w < 600 ? [] : null;   // 앱과 같은 조건
+              ctx.__labels = [];   // 앱과 같은 조건
               try { sim.draw(ctx, st, P, { w, h, hl, playing: true }); } finally { I.restore(); }
               S.draws++;
               for (const o of overlaps(I.rec)) (S.overlaps[sim.id] = S.overlaps[sim.id] || new Set()).add(o);

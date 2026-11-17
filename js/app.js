@@ -15,6 +15,14 @@
   const $ = s => document.querySelector(s);
   const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h !== undefined) e.innerHTML = h; return e; };
   const D = PS.D, fmt = PS.fmt;
+  const svg = body => '<svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false">' + body + '</svg>';
+  const ICON = {
+    play: svg('<path class="f" d="M5 3.2v9.6L12.6 8z"/>'),
+    pause: svg('<path class="f" d="M4.5 3h2.5v10H4.5zM9 3h2.5v10H9z"/>'),
+    now: svg('<circle class="f" cx="8" cy="8" r="3.5"/>'),     // 지금 달성 중
+    done: svg('<path d="M3.5 8.5l3 3 6-7"/>'),                 // 달성한 적 있음
+    idle: svg('<circle cx="8" cy="8" r="2.5"/>')                // 아직
+  };
 
   let sim = null;      // 현재 시뮬레이션 정의
   let P = {};          // 파라미터 값
@@ -146,7 +154,7 @@
     get(k, d) { try { const v = localStorage.getItem('physlab.' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem('physlab.' + k, JSON.stringify(v)); } catch (e) { /* 저장 못 해도 진행 */ } }
   };
-  const idFromHash = () => { const m = location.hash.match(/^#\/([\w-]+)/); return m && PS.byId[m[1]] ? m[1] : null; };
+  const idFromHash = () => { const m = location.hash.match(/^#\/([\w-]+)/); return m && PS.catById[m[1]] ? m[1] : null; };
   function setUrl(id, push) {
     if (idFromHash() === id) return;
     history[push ? 'pushState' : 'replaceState'](null, '', '#/' + id);
@@ -193,7 +201,7 @@
     lastModeOf[group] = m;
     syncTabs();
     buildNav();
-    const first = PS.sims.find(s => (s.mode || 'basic') === mode);
+    const first = PS.catalog.find(s => s.mode === mode);
     load(lastOf[mode] || (first && first.id), true);
     $('#simlist').scrollTop = 0;
   }
@@ -201,7 +209,7 @@
   function buildNav() {
     const list = $('#simlist'), groups = {};
     list.innerHTML = '';
-    const inMode = PS.sims.filter(s => (s.mode || 'basic') === mode);
+    const inMode = PS.catalog.filter(s => s.mode === mode);
     if (!inMode.length) {
       list.appendChild(el('div', 'simlist-empty', '이 트랙은 아직 콘텐츠를 채우는 중입니다.<br>먼저 다른 트랙을 둘러봐 주세요.'));
       return;
@@ -210,10 +218,12 @@
     Object.keys(groups).forEach(cat => {
       list.appendChild(el('div', 'nav-group', cat));
       groups[cat].forEach(s => {
-        const b = el('button', 'nav-item', s.title + '<small>' + s.sub + '</small>');
+        const b = el('button', 'nav-item', s.title + '<small>' + TS.plainSubs(s.sub) + '</small>');
         b.type = 'button';
         b.dataset.id = s.id;
         b.onclick = () => load(s.id, true);
+        // 가리키거나 포커스가 가면 미리 받아 둔다 — 누를 때는 이미 와 있다
+        b.onpointerenter = b.onfocus = () => { PS.load(s.id).catch(() => {}); };
         list.appendChild(b);
       });
     });
@@ -230,7 +240,7 @@
   // 트랙별로 등록된 시뮬레이션이 하나도 없으면 탭에 '준비 중' 표시
   function markEmptyModes() {
     const has = {};
-    PS.sims.forEach(s => { has[s.mode || 'basic'] = true; });
+    PS.catalog.forEach(s => { has[s.mode] = true; });
     document.querySelectorAll('.mode').forEach(b => {
       b.classList.toggle('empty', !has[b.dataset.mode]);
     });
@@ -240,14 +250,15 @@
   // 공식 렌더링: "{a}" → 색이 있는 항.
   // vars 를 인자로 받는 버전(전체 공식 모음처럼 "지금 열려 있지 않은" 시뮬레이션의 공식용)과
   // 현재 sim.vars 를 쓰는 버전(우측 패널의 누를 수 있는 공식용).
+  // 조판은 js/typeset.js — 변수만 이탤릭, a ⁄ b 는 쌓인 분수, √ 는 근호
   function renderFormulaWithVars(tpl, vars, interactive) {
-    return tpl.replace(/\{(\w+)\}/g, (m, k) => {
+    return TS.typeset(tpl, k => {
       const v = vars[k];
       if (!v) return k;
       return interactive
         ? '<span class="term" data-term="' + k + '" style="color:' + v.color + '" tabindex="0" role="button" aria-pressed="false" aria-label="' +
-          v.symbol + ', ' + v.label + '">' + v.symbol + '</span>'
-        : '<span class="term-inline" style="color:' + v.color + '">' + v.symbol + '</span>';
+          String(v.symbol).replace(/_/g, ' ') + ', ' + v.label + '">' + TS.symbol(v.symbol) + '</span>'
+        : '<span class="term-inline" style="color:' + v.color + '">' + TS.symbol(v.symbol) + '</span>';
     });
   }
   function renderFormula(tpl) { return renderFormulaWithVars(tpl, sim.vars, true); }
@@ -262,8 +273,8 @@
     }
     box.style.borderLeftColor = v.color;
     box.innerHTML =
-      '<div class="ti-title"><span class="ti-sym" style="color:' + v.color + '">' + v.symbol + '</span>' +
-      '<b>' + v.label + '</b>' + (v.unit ? '<span class="ti-hint">(' + v.unit + ')</span>' : '') + '</div>' +
+      '<span class="ti-title"><span class="ti-sym" style="color:' + v.color + '">' + TS.symbol(v.symbol) + '</span>' +
+      '<b>' + v.label + '</b>' + (v.unit ? '<span class="ti-hint">(' + v.unit + ')</span>' : '') + '</span>' +
       (v.where || '');
   }
 
@@ -303,7 +314,7 @@
       const c = el('div', 'ctrl'); c.dataset.key = p.key;
       const top = el('div', 'ctrl-top');
       top.innerHTML =
-        '<span class="ctrl-sym" style="color:' + p.color + '">' + (p.symbol || p.key) + '</span>' +
+        '<span class="ctrl-sym" style="color:' + p.color + '">' + TS.symbol(p.symbol || p.key) + '</span>' +
         '<span class="ctrl-label">' + p.label + '</span>' +
         '<span class="ctrl-val" data-v>' + fmt(P[p.key], p.dec) + '</span>' +
         '<span class="ctrl-unit">' + (p.unit || '') + '</span>';
@@ -358,27 +369,37 @@
   }
 
   // 측정값 — 매 프레임 불리므로 바뀐 칸만 DOM 에 쓴다
-  let roSig = '';
+  // 표: 이름 | 값(오른쪽 정렬, 등폭) | 단위. 문장으로 된 값(wide)은 이름 아래 한 줄을 통째로 쓴다.
+  let roSig = '', roCells = [];
   function updateReadouts() {
-    const box = $('#readouts');
+    const body = $('#readouts').tBodies[0];
     const rows = sim.readouts(st, P);
-    const sig = sim.id + '|' + rows.map(r => r.label).join('|');
+    const sig = sim.id + '|' + rows.map(r => r.label + (r.wide ? '*' : '')).join('|');
     if (sig !== roSig) {
-      roSig = sig;
-      box.innerHTML = '';
+      roSig = sig; roCells = [];
+      body.innerHTML = '';
       rows.forEach(r => {
-        const d = el('div', 'ro' + (r.wide ? ' wide' : ''));
-        d.innerHTML = '<div class="rl">' + r.label + '</div><div class="rv" data-v>—</div>';
-        box.appendChild(d);
+        if (r.wide) {
+          const h = el('tr', 'wide-head'), th = el('th', null, r.label);
+          th.colSpan = 3; th.scope = 'row'; h.appendChild(th);
+          const tr = el('tr', 'wide'), td = el('td'); td.colSpan = 3; tr.appendChild(td);
+          body.appendChild(h); body.appendChild(tr);
+          roCells.push({ v: td, u: null });
+        } else {
+          const tr = el('tr'), th = el('th', null, r.label), v = el('td', 'rv'), u = el('td', 'ru');
+          th.scope = 'row'; tr.appendChild(th); tr.appendChild(v); tr.appendChild(u);
+          body.appendChild(tr);
+          roCells.push({ v, u });
+        }
       });
     }
     rows.forEach((r, i) => {
-      const v = box.children[i].querySelector('[data-v]');
-      const html = (typeof r.value === 'number' ? fmt(r.value, r.dec) : r.value) +
-        (r.unit ? '<span class="ru">' + r.unit + '</span>' : '');
+      const c = roCells[i], num = typeof r.value === 'number';
+      const html = num ? fmt(r.value, r.dec) : String(r.value);
       const color = r.color || 'var(--tx)';
-      if (v._html !== html) { v.innerHTML = html; v._html = html; }
-      if (v._color !== color) { v.style.color = color; v._color = color; }
+      if (c.v._html !== html) { c.v.innerHTML = html; c.v._html = html; if (c.u) c.v.classList.toggle('txt', !num); }
+      if (c.v._color !== color) { c.v.style.color = color; c.v._color = color; }
+      if (c.u) { const u = r.unit || ''; if (c.u._u !== u) { c.u.textContent = u; c.u._u = u; } }
     });
   }
 
@@ -405,7 +426,7 @@
       list.forEach(c => {
         const d = el('div', 'challenge');
         d.innerHTML =
-          '<div class="ch-head"><span class="ch-badge" data-badge aria-hidden="true">·</span><b>' + c.title + '</b>' +
+          '<div class="ch-head"><span class="ch-badge" data-badge>' + ICON.idle + '</span><b>' + c.title + '</b>' +
           '<span class="sr-only" data-state></span></div>' +
           '<div class="ch-desc">' + c.desc + '</div>' +
           (c.hint ? '<button type="button" class="ch-hint-btn" data-hintbtn aria-expanded="false">힌트 보기</button>' +
@@ -439,10 +460,10 @@
       }
       node.classList.toggle('ch-ok', ok);
       node.classList.toggle('ch-done-ever', achieved.has(c.id) && !ok);
-      const badge = ok ? '●' : (achieved.has(c.id) ? '✔' : '·');
+      const badge = ok ? 'now' : (achieved.has(c.id) ? 'done' : 'idle');
       const b = node.querySelector('[data-badge]');
-      if (b.textContent !== badge) {
-        b.textContent = badge;
+      if (b.dataset.s !== badge) {
+        b.dataset.s = badge; b.innerHTML = ICON[badge];
         node.querySelector('[data-state]').textContent = ok ? ', 지금 달성 중' : achieved.has(c.id) ? ', 달성한 적 있음' : ', 아직';
       }
     });
@@ -452,12 +473,11 @@
   function loadEmpty() {
     sim = null; st = null; playing = false;
     markCurrent();
-    $('#simCat').className = 'chip';
     $('#simCat').textContent = '준비 중';
     $('#simTitle').textContent = '이 트랙은 아직 준비 중입니다';
     $('#simTag').textContent = '다른 트랙에서 먼저 둘러봐 주세요. 곧 채워질 예정입니다.';
     $('#formulas').innerHTML = ''; $('#controls').innerHTML = ''; $('#presets').innerHTML = '';
-    $('#readouts').innerHTML = ''; $('#notes').innerHTML = '';
+    $('#readouts').tBodies[0].innerHTML = ''; roSig = ''; $('#notes').innerHTML = '';
     $('#challenges').innerHTML = ''; $('#questRoom').classList.add('hidden'); challengeSig = '';
     graphCanvases.forEach(g => ro.unobserve(g.canvas)); graphCanvases = []; $('#graphs').innerHTML = '';
     D.bg(ctx, W, H);
@@ -465,16 +485,32 @@
     syncPlay();
   }
 
-  // push: 사용자가 직접 고른 것이면 방문 기록에 남겨 뒤로 가기가 되게 한다
+  // push: 사용자가 직접 고른 것이면 방문 기록에 남겨 뒤로 가기가 되게 한다.
+  // 본체를 아직 안 받았으면 받아 온 뒤에 연다. 그사이 다른 것을 누르면 늦게 도착한 앞의 것은 버린다(loadTok).
+  let loadTok = 0;
   function load(id, push) {
-    if (!id) { loadEmpty(); return; }
+    if (!id) { loadEmpty(); return Promise.resolve(); }
+    const tok = ++loadTok;
+    document.documentElement.classList.add('is-loading');
+    return PS.load(id).then(() => {
+      if (tok !== loadTok) return;
+      document.documentElement.classList.remove('is-loading');
+      show(id, push);
+    }, err => {
+      if (tok !== loadTok) return;
+      document.documentElement.classList.remove('is-loading');
+      console.error(err);
+      $('#simTitle').textContent = '불러오지 못했습니다';
+      $('#simTag').textContent = '네트워크를 확인한 뒤 다시 눌러 주세요.';
+    });
+  }
+  function show(id, push) {
     sim = PS.byId[id];
     st = null;   // 이전 시뮬레이션의 상태를 새 시뮬레이션이 그리지 않게 — reset() 전까지 draw() 는 건너뛴다
     P = {}; sim.params.forEach(p => P[p.key] = p.value);
     pinned = null; hl = null;
     lastOf[sim.mode || 'basic'] = id;
     markCurrent();
-    $('#simCat').className = 'chip' + (groupOf(sim.mode || 'basic') === 'applied' ? ' adv' : '');
     $('#simCat').textContent = (TRACK_LABEL[sim.mode] ? TRACK_LABEL[sim.mode] + ' · ' : '') + sim.category;
     $('#simTitle').textContent = sim.title;
     $('#simTag').textContent = sim.tagline;
@@ -506,16 +542,17 @@
 
   // 과정(mode)을 가리지 않고 특정 시뮬레이션으로 바로 이동 (전체 공식 모음 · 주소 · 처음 열기)
   function switchToSim(id, push) {
-    const s = PS.byId[id];
-    if (!s) return;
-    mode = s.mode || 'basic';
+    const s = PS.catById[id];
+    if (!s) return Promise.resolve();
+    mode = s.mode;
     group = groupOf(mode);
     lastModeOf[group] = mode;
     syncTabs();
     buildNav();
-    load(id, push);
-    const cur = document.querySelector('.nav-item.on');
-    if (cur) cur.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    return load(id, push).then(() => {
+      const cur = document.querySelector('.nav-item.on');
+      if (cur) cur.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
   }
 
   function sample() {
@@ -527,7 +564,8 @@
   function syncPlay() {
     $('.stage').classList.toggle('is-paused', !playing);   // RUN 표시등
     $('#playLabel').textContent = playing ? '일시정지' : '재생';
-    $('#btnPlay').querySelector('.ico').textContent = playing ? '❚❚' : '▶';
+    const ico = $('#btnPlay').querySelector('.ico'), k = playing ? 'pause' : 'play';
+    if (ico.dataset.s !== k) { ico.dataset.s = k; ico.innerHTML = ICON[k]; }
   }
 
   /* ── 7. 모달 ────────────────────────────────────
@@ -562,13 +600,13 @@
     const wrap = $('#formulaListWrap');
     wrap.innerHTML = '';
     GROUPS.forEach(g => {
-      if (!PS.sims.some(s => g.modes.indexOf(s.mode || 'basic') >= 0)) return;
+      if (!PS.catalog.some(s => g.modes.indexOf(s.mode) >= 0)) return;
       wrap.appendChild(el('div', 'fx-group-title', g.label));
       g.modes.forEach(buildTrackBox);
     });
 
     function buildTrackBox(trackMode) {
-      const inTrack = PS.sims.filter(s => (s.mode || 'basic') === trackMode);
+      const inTrack = PS.catalog.filter(s => s.mode === trackMode);
       if (!inTrack.length) return;
       const trackBox = el('div', 'fx-track');
       trackBox.appendChild(el('h3', 'fx-track-title', TRACK_LABEL[trackMode] || trackMode));
@@ -583,13 +621,15 @@
           simBox.setAttribute('aria-label', s.title + ' 열기');
           simBox.dataset.search = [s.title, s.sub, cat].concat((s.formulas || []).map(f => f.name + ' ' + f.tpl)).join(' ').toLowerCase();
           simBox.appendChild(el('div', 'fx-sim-head',
-            '<b>' + s.title + '</b><span class="fx-sub">' + s.sub + '</span><span class="fx-jump" aria-hidden="true">열기 →</span>'));
+            '<b>' + s.title + '</b><span class="fx-sub">' + TS.plainSubs(s.sub) + '</span><span class="fx-jump" aria-hidden="true">열기 →</span>'));
+          const fl = el('div', 'fx-formulas');
           (s.formulas || []).forEach(f => {
             const fRow = el('div', 'fx-formula');
             fRow.appendChild(el('div', 'fx-fname', f.name));
             fRow.appendChild(el('div', 'fx-fbody', renderFormulaWithVars(f.tpl, s.vars || {}, false)));
-            simBox.appendChild(fRow);
+            fl.appendChild(fRow);
           });
+          simBox.appendChild(fl);
           const open = () => { closeModal($('#formulaModal')); switchToSim(s.id, true); };
           simBox.onclick = open;
           simBox.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } };
@@ -639,7 +679,7 @@
     const box = $('#groupList');
     box.innerHTML = '';
     GROUPS.forEach(g => {
-      const n = PS.sims.filter(s => g.modes.indexOf(s.mode || 'basic') >= 0).length;
+      const n = PS.catalog.filter(s => g.modes.indexOf(s.mode) >= 0).length;
       const subs = g.modes.map(m => TRACK_LABEL[m] || m).join(' · ');
       const card = el('button', 'group-card', '');
       card.type = 'button';
@@ -674,7 +714,7 @@
     D.bg(ctx, W, H);
     tctx.clearRect(0, 0, W, H);
     ctx.__text = tctx;
-    ctx.__labels = W < 600 ? [] : null;   // 폰처럼 좁은 무대에서만 라벨 충돌 회피 (core.js avoidLabels)
+    ctx.__labels = [];   // 라벨 충돌 회피 (core.js avoidLabels) — 태그에 상자가 없어 모든 폭에서 켠다
     // 시뮬레이션 하나의 예외가 앱 전체 루프를 멈추지 않게 한다 (같은 오류는 한 번만 알린다)
     try { sim.draw(ctx, st, P, { w: W, h: H, hl: hl, playing: playing }); drawError = null; }
     catch (e) { if (drawError !== e.message) { drawError = e.message; console.error(sim.id + ' draw:', e); } }
@@ -752,14 +792,20 @@
     b.onclick = () => { if (mode !== b.dataset.mode) setMode(b.dataset.mode); };
   });
 
+  if (document.fonts) {
+    document.fonts.ready.then(() => draw());
+    document.fonts.addEventListener('loadingdone', () => draw());
+  }
+
   /* ── 시작 ── */
   setSpeed(Math.min(2, Math.max(.1, +store.get('speed', 1) || 1)));
   markEmptyModes();
   // 주소에 시뮬레이션이 없으면(링크로 처음 들어온 경우) 늘 첫 화면 — 기초 물리학 › 힘이란 무엇인가? 에서 시작한다.
   // 마지막으로 본 것을 되살리면 남에게 받은 링크도 엉뚱한 이론에서 열린다. 특정 시뮬레이션은 #/id 로 연다.
-  const startId = idFromHash() || PS.sims[0].id;
+  const startId = idFromHash() || PS.catalog[0].id;
   requestAnimationFrame(frame);   // 루프를 먼저 — 첫 시뮬레이션을 여는 중 문제가 생겨도 앱은 살아 있다
-  switchToSim(startId, false);
+  switchToSim(startId, false).then(startChecks);
+  function startChecks() {
 
   /* 점검용: ?advance=초 — 시작하자마자 그만큼 진행한 장면을 멈춘 채로 그린다.
      headless 브라우저는 애니메이션 프레임을 거의 돌리지 않아서, 자동 점검(tools/daily-check.js)이
@@ -777,5 +823,7 @@
     }
     playing = false; syncPlay();
     draw(); glowFrame(10);
+  }
+  document.documentElement.dataset.ready = '';   // 점검 도구가 "첫 화면이 다 그려졌다"를 아는 표시
   }
 })();

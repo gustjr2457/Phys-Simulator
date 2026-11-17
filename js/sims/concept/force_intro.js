@@ -101,7 +101,7 @@
     draw(ctx, st, p, ui) {
       const w = ui.w, h = ui.h, hl = ui.hl;
       const V = PS.view(w, h, { x0: -3.6, x1: 3.6, y0: -2.6, y1: 2.6, pad: 26 });
-      D.grid(ctx, w, h, 34);
+      // 장식 격자는 그리지 않는다 — 이 화면의 길이는 축척이 없는 개념 그림이다
 
       // 지나온 자취
       if (st.trail.length > 1) {

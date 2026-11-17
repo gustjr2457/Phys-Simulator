@@ -350,7 +350,8 @@
       D.arrow(ctx, cx, cy + 16, 0, clamp(W / 1000 * FS, 6, 190),
         { color: C.W, width: 4, hot: hl === 'm', label: 'mg = ' + fmt(W / 1000, 1) + ' kN', lx: -58 });
 
-      if (stall) D.tag(ctx, '⚠ 실속 (STALL), 윗면 흐름 박리 · 역류 · 후류 와류', cx, cy - 150, '#c4705f', true);
+      // 실속 중에는 "아랫면: 느림 → 압력 높음" 줄이 비므로 그 자리에 — 위쪽은 공기 밀도 줄과 겹친다(상자 없는 라벨)
+      if (stall) D.tag(ctx, '⚠ 실속 (STALL), 윗면 흐름 박리 · 역류 · 후류 와류', lx0, cy + chord * .56, '#c4705f', true, 'left');
 
       /* ── 오른쪽: C_L 곡선 ──────────────────── */
       const px = w * .62, py = 56, pw = w - px - 34, ph = h * .5;

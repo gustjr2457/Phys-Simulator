@@ -64,7 +64,11 @@ git status --porcelain
 - 끝나는 시뮬레이션은 `st.done = true`.
 
 **등록**
-- `index.html` 의 `<script>` 를 **같은 소분류(category) 파일들 바로 뒤**에 넣는다 (소분류는 연달아 있어야 소제목이 한 번 나온다). 새 소분류면 그 과정의 맨 끝에.
+- `tools/sims.json` 의 `files` 에 새 파일 경로를 **같은 소분류(category) 파일들 바로 뒤**에 넣는다 (소분류는 연달아 있어야 소제목이 한 번 나온다). 새 소분류면 그 과정의 맨 끝에.
+- `node tools/build.js` — 색인(`js/catalog.js`)과 `index.html` 의 `?v=` 를 다시 만든다. 앱은 첫 화면에서 색인만 받고 본체는 열 때 불러오며,
+  배포본은 js·css 를 1년 캐시하므로 이것을 잊으면 새 시뮬레이션이 목록에 안 나오거나 옛 파일이 보인다. (`test-sims` 가 잊으면 실패시킨다)
+- 공식 템플릿: 분수는 `a ⁄ b`(쌓인 분수로 조판), 근호 `√(…)`, 위첨자 `^(…)`, 아래첨자 `_x`. 변수만 이탤릭으로 자동 조판된다(`js/typeset.js`).
+- 값 라벨 `D.tag` 는 상자가 없다(글자 + 헤일로). 겹치면 읽히지 않으니 자리를 띄운다 — 관문의 겹침 검사가 태그도 센다.
 - `README.md` 해당 과정 절에 한 줄 설명을 추가하고, 개요의 종 수를 고친다.
 
 ## 3. 물리 검증 — 기준 3 (애니메이션이 맞는가)
@@ -124,7 +128,7 @@ node tools/daily-check.js <id>
 **통과했을 때**
 1. backlog 의 항목을 `상태: 완료 YYYY-MM-DD` 로.
 2. `tools/daily/log.md` 맨 위(구분선 아래)에 기록 추가 — 관문 결과, 화면 확인에서 본 것·고친 것.
-3. 커밋 — 이 날 바꾼 파일만 명시적으로 `git add`(시뮬레이션·index.html·README·tests·backlog·log). 캡처(shots/)는 넣지 않는다.
+3. 커밋 — 이 날 바꾼 파일만 명시적으로 `git add`(시뮬레이션·tools/sims.json·js/catalog.js·index.html·README·tests·backlog·log). 캡처(shots/)는 넣지 않는다.
    ```
    feat(daily): <제목> — 매일 이론 추가
 

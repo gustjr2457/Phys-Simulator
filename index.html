@@ -19,9 +19,10 @@
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/motion.css">
+<!-- 한글 UI: IBM Plex Sans KR · 숫자: IBM Plex Mono · 수식: STIX Two Text -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=eeceb830">
+<link rel="stylesheet" href="css/motion.css?v=567593f3">
 <script>
 /* 모션 단계 — 기본은 c(여운). 비교용으로 ?motion=off|a|b 를 붙이면 그 단계로 본다 (css/motion.css 참고) */
 (function () {
@@ -38,14 +39,11 @@
 
 <aside id="nav" aria-label="시뮬레이션 목록">
   <div class="brand">
-    <div class="logo">Φ</div>
-    <div>
-      <h1>PhysLab</h1>
-      <p>물리 이론의 시각화</p>
-    </div>
+    <h1>PhysLab</h1>
+    <p>물리 이론의 시각화</p>
   </div>
   <button id="btnGroupMenu" class="group-menu-btn" title="분야 선택">
-    <span class="gm-ico" aria-hidden="true">☰</span><span id="groupLabel">기초 과정</span><span class="gm-caret">▾</span>
+    <span class="gm-ico"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"/></svg></span><span id="groupLabel">기초 과정</span><span class="gm-caret"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4.5 6.5 8 10l3.5-3.5"/></svg></span>
   </button>
   <div class="modes" role="group" aria-label="과정">
     <button class="mode on" data-mode="concept" data-group="core" title="초급 과정 (공식 없이 감 잡기)">초급</button>
@@ -59,7 +57,7 @@
     <button class="mode" data-mode="mech" data-group="applied" title="기계공학 (고체역학 · 파괴역학 · 열공학 · 진동공학)">기계</button>
     <button class="mode" data-mode="adv" data-group="applied" title="공학응용 (분야 공통 계측·신호)">공학응용</button>
   </div>
-  <button id="btnFormulaIndex" class="formula-index-btn" title="등록된 모든 시뮬레이션의 공식을 트랙별로 모아봅니다"><span aria-hidden="true">Σ</span><span class="fi-text"> 전체 공식 모음</span></button>
+  <button id="btnFormulaIndex" class="formula-index-btn" title="등록된 모든 시뮬레이션의 공식을 트랙별로 모아봅니다"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M12 3H4l4.5 5L4 13h8"/></svg><span class="fi-text">전체 공식 모음</span></button>
   <nav id="simlist" aria-label="이 과정의 시뮬레이션"></nav>
   <footer class="nav-foot">
     <p><b>Space</b> 재생/정지 · <b>R</b> 처음으로</p>
@@ -70,7 +68,7 @@
 <main id="main">
   <header id="head">
     <div>
-      <span class="chip" id="simCat"></span>
+      <span id="simCat"></span>
       <h2 id="simTitle"></h2>
       <p id="simTag"></p>
     </div>
@@ -86,8 +84,8 @@
       <canvas id="cvText" aria-hidden="true"></canvas>
     </div>
     <div class="stage-bar">
-      <button id="btnPlay" class="btn primary" aria-keyshortcuts="Space"><span class="ico" aria-hidden="true">▶</span><span id="playLabel" class="btn-text">재생</span></button>
-      <button id="btnReset" class="btn" aria-keyshortcuts="R"><span class="ico" aria-hidden="true">↺</span><span class="btn-text">처음으로</span></button>
+      <button id="btnPlay" class="btn primary" aria-keyshortcuts="Space"><span class="ico"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path class="f" d="M5 3.2v9.6L12.6 8z"/></svg></span><span id="playLabel" class="btn-text">재생</span></button>
+      <button id="btnReset" class="btn" aria-keyshortcuts="R"><span class="ico"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 8a5 5 0 1 0 1.5-3.6"/><path d="M3 2.5v2.5h2.5"/></svg></span><span class="btn-text">처음으로</span></button>
       <label class="speed">
         <span class="speed-word">속도</span> <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1">
         <b id="speedVal">1.0×</b>
@@ -96,32 +94,30 @@
     </div>
   </section>
 
+  <!-- 공식 — 무대 바로 아래에 가로로. 기호를 가리키거나 누르면 아래 줄에 그 기호가 화면 어디에서 작용하는지 -->
+  <section id="cardFormula" class="formula-bar" aria-label="공식">
+    <div id="formulas"></div>
+    <div id="termInfo" class="term-info" aria-live="polite"></div>
+  </section>
+
   <section id="graphs"></section>
 
   <section id="questRoom" class="quest-room hidden" aria-labelledby="questTitle">
-    <div class="quest-head"><span class="quest-icon" aria-hidden="true">◎</span><h3 id="questTitle">문제방</h3><span class="quest-sub">이 시뮬레이션의 도전 과제</span></div>
+    <div class="quest-head"><span class="quest-icon"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.5"/><circle cx="8" cy="8" r="2"/></svg></span><h3 id="questTitle">문제방</h3><span class="quest-sub">이 시뮬레이션의 도전 과제</span></div>
     <div id="challenges" class="quest-list"></div>
   </section>
 </main>
 
 <aside id="panel">
-  <section class="card" id="cardFormula">
-    <h3>공식</h3>
-    <div id="formulas"></div>
-  </section>
-
   <section class="card" id="cardControls">
     <h3>값 바꿔보기</h3>
     <div id="controls"></div>
     <div id="presets" class="presets"></div>
-    <div id="termInfo" class="term-info">
-      <span class="ti-hint">공식의 기호나 위 슬라이더에 마우스를 올리면, 그 값이 화면 어디에서 작용하는지 여기에 알려줍니다.</span>
-    </div>
   </section>
 
   <section class="card" id="cardReadouts">
     <h3>측정값</h3>
-    <div id="readouts" class="readouts" aria-live="off"></div>
+    <table id="readouts" class="readouts" aria-live="off"><tbody></tbody></table>
   </section>
 
   <section class="card" id="cardNotes">
@@ -134,7 +130,7 @@
   <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="groupModalTitle">
     <div class="modal-head">
       <h2 id="groupModalTitle">분야 선택</h2>
-      <button id="btnCloseGroups" class="modal-close" title="닫기 (Esc)" aria-label="닫기">✕</button>
+      <button id="btnCloseGroups" class="modal-close" title="닫기 (Esc)" aria-label="닫기"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <div class="modal-body" id="groupList"></div>
   </div>
@@ -143,9 +139,9 @@
 <div id="formulaModal" class="modal-overlay hidden">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="formulaModalTitle">
     <div class="modal-head">
-      <h2 id="formulaModalTitle">Σ 전체 공식 모음</h2>
+      <h2 id="formulaModalTitle"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M12 3H4l4.5 5L4 13h8"/></svg>전체 공식 모음</h2>
       <input type="search" id="formulaSearch" placeholder="공식 이름, 시뮬레이션 이름으로 검색…" autocomplete="off" aria-label="공식 검색">
-      <button id="btnCloseFormulas" class="modal-close" title="닫기 (Esc)" aria-label="닫기">✕</button>
+      <button id="btnCloseFormulas" class="modal-close" title="닫기 (Esc)" aria-label="닫기"><svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <div id="formulaListWrap" class="modal-body"></div>
   </div>
@@ -154,111 +150,10 @@
 <!-- 화면 읽기 프로그램용 알림 (과제 달성 등) -->
 <div id="announcer" class="sr-only" aria-live="polite"></div>
 
-<script src="js/core.js"></script>
-
-<!-- ═══ 기초 과정 ═══ -->
-<!-- 초급 · 개념 -->
-<script src="js/sims/concept/force_intro.js"></script>
-<script src="js/sims/concept/energy_intro.js"></script>
-<script src="js/sims/concept/heat_intro.js"></script>
-<script src="js/sims/concept/entropy_intro.js"></script>
-<script src="js/sims/concept/wave_intro.js"></script>
-<script src="js/sims/concept/light_intro.js"></script>
-<script src="js/sims/concept/atom_intro.js"></script>
-<script src="js/sims/concept/particle_intro.js"></script>
-<script src="js/sims/concept/gravity_compare.js"></script>
-<script src="js/sims/concept/gravity_time.js"></script>
-<script src="js/sims/concept/compact_objects.js"></script>
-
-<!-- 고등물리 · 물리학Ⅰ -->
-<script src="js/sims/kinematics.js"></script>
-<script src="js/sims/newton.js"></script>
-<script src="js/sims/momentum.js"></script>
-<script src="js/sims/energy.js"></script>
-<script src="js/sims/b_projectile.js"></script>
-<script src="js/sims/b_massenergy.js"></script>
-<script src="js/sims/b_heatengine.js"></script>
-<script src="js/sims/induction.js"></script>
-<script src="js/sims/b_semiconductor.js"></script>
-<script src="js/sims/wave.js"></script>
-<script src="js/sims/refraction.js"></script>
-
-<!-- 일반물리 -->
-<script src="js/sims/general/rotation.js"></script>
-<script src="js/sims/general/shm.js"></script>
-<script src="js/sims/general/g_coriolis.js"></script>
-<script src="js/sims/general/g_pendulum.js"></script>
-<script src="js/sims/general/g_bernoulli.js"></script>
-<script src="js/sims/general/thermo1.js"></script>
-<script src="js/sims/general/entropy2.js"></script>
-<script src="js/sims/general/g_efield.js"></script>
-<script src="js/sims/general/g_lorentz.js"></script>
-<script src="js/sims/general/g_emwave.js"></script>
-<script src="js/sims/general/lens.js"></script>
-<script src="js/sims/general/g_diffraction.js"></script>
-<script src="js/sims/general/g_doppler.js"></script>
-<script src="js/sims/general/g_standingwave.js"></script>
-<script src="js/sims/general/relativity.js"></script>
-
-<!-- ═══ 실험과 현대물리 ═══ -->
-<!-- 유명한 실험 -->
-<script src="js/sims/exp/young_doubleslit.js"></script>
-<script src="js/sims/exp/photoelectric.js"></script>
-<script src="js/sims/exp/rutherford_scattering.js"></script>
-<script src="js/sims/exp/dark_matter.js"></script>
-
-<!-- 양자역학 -->
-<script src="js/sims/quantum/q_debroglie.js"></script>
-<script src="js/sims/quantum/q_box.js"></script>
-<script src="js/sims/quantum/q_spectrum.js"></script>
-<script src="js/sims/quantum/q_uncertainty.js"></script>
-<script src="js/sims/quantum/q_tunnel.js"></script>
-<script src="js/sims/quantum/q_whichpath.js"></script>
-
-<!-- 천문학 -->
-<script src="js/sims/astro/as_blackbody.js"></script>
-<script src="js/sims/astro/as_telescope.js"></script>
-<script src="js/sims/astro/as_hr.js"></script>
-<script src="js/sims/astro/as_parallax.js"></script>
-<script src="js/sims/astro/as_hubble.js"></script>
-<script src="js/sims/astro/as_exoplanet.js"></script>
-
-<!-- ═══ 공학 응용 ═══ -->
-<!-- 항공우주공학 -->
-<script src="js/sims/aero/aero_lift.js"></script>
-<script src="js/sims/aero/aero_drag.js"></script>
-<script src="js/sims/aero/aero_mach.js"></script>
-<script src="js/sims/aero/aero_atmosphere.js"></script>
-<script src="js/sims/aero/aero_turn.js"></script>
-<script src="js/sims/aero/space_orbit.js"></script>
-<script src="js/sims/aero/space_hohmann.js"></script>
-<script src="js/sims/aero/aero_swingby.js"></script>
-<script src="js/sims/aero/space_rocket.js"></script>
-<script src="js/sims/aero/space_staging.js"></script>
-<script src="js/sims/aero/aero_reentry.js"></script>
-
-<!-- 선박공학 (자율운항시스템공학) -->
-<script src="js/sims/marine/ship_resistance.js"></script>
-<script src="js/sims/marine/ship_propeller.js"></script>
-<script src="js/sims/marine/ship_stability.js"></script>
-<script src="js/sims/marine/ship_seakeeping.js"></script>
-<script src="js/sims/marine/ship_autopilot.js"></script>
-<script src="js/sims/marine/ship_los.js"></script>
-
-<!-- 기계공학 -->
-<script src="js/sims/mech/me_stress.js"></script>
-<script src="js/sims/mech/me_beam.js"></script>
-<script src="js/sims/mech/me_fracture.js"></script>
-<script src="js/sims/mech/me_thermal.js"></script>
-<script src="js/sims/mech/vib_free.js"></script>
-<script src="js/sims/mech/vib_forced.js"></script>
-
-
-
-<!-- 공학응용 · 공통 계측 -->
-<script src="js/sims/adv/sensor_strain.js"></script>
-<script src="js/sims/adv/sensor_response.js"></script>
-
-<script src="js/app.js"></script>
+<script src="js/core.js?v=19f4b73f"></script>
+<!-- 시뮬레이션 색인 — 목록·공식 모음용. 본체(js/sims/**)는 열 때 불러온다 (core.js PS.load, tools/build.js) -->
+<script src="js/catalog.js?v=8c216f73"></script>
+<script src="js/typeset.js?v=7cf413bf"></script>
+<script src="js/app.js?v=728ef2c3"></script>
 </body>
 </html>

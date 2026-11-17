@@ -3,9 +3,9 @@
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const ROOT = path.join(__dirname, '..', '..');
 
+// core.js 다음에 tools/sims.json 순서대로 (브라우저는 js/catalog.js 색인을 보고 필요할 때 불러온다)
 function simFiles() {
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  return [...html.matchAll(/<script src="(js\/[^"?]+)(?:\?[^"]*)?"><\/script>/g)].map(m => m[1]).filter(f => f !== 'js/app.js');
+  return ['js/core.js'].concat(JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/sims.json'), 'utf8')).files);
 }
 
 function loadPS() {

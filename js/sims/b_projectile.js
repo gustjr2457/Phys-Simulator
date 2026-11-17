@@ -188,7 +188,11 @@
         { color: C.v0, width: hl === 'v0' ? 3 : 2.4, hot: hl === 'v0', label: 'v₀', lx: -14, ly: -6 });
 
       // 최고 높이 · 사거리 — 실제로 지나간 뒤에 나타난다
-      if (st.apex) D.dim(ctx, X(R / 2), GY, X(R / 2), Y(H), 'H = ' + fmt(H, 1) + ' m', C.H, hl === 'H');
+      // H 라벨은 치수선 아래쪽 땅 가까이 — 가운데에 두면 꼭대기를 지나는 공의 g·v 라벨과 겹친다
+      if (st.apex) {
+        D.dim(ctx, X(R / 2), GY, X(R / 2), Y(H), null, C.H, hl === 'H');
+        D.tag(ctx, 'H = ' + fmt(H, 1) + ' m', X(R / 2) + 6, GY - 14, C.H, hl === 'H', 'left');
+      }
       if (st.done) D.dim(ctx, X0, GY + 30, X(R), GY + 30, 'R = ' + fmt(R, 1) + ' m', C.R, hl === 'R');
 
       // 공과 그림자

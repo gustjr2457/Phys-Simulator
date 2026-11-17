@@ -141,10 +141,8 @@
 
       // 레일
       D.line(ctx, V.X(-LIM), gy, V.X(LIM), gy, { color: 'rgba(167,170,176,.5)', width: 3 });
-      for (let m = -10; m <= 10; m += 2) {
-        D.line(ctx, V.X(m), gy, V.X(m), gy + 6, { color: 'rgba(167,170,176,.25)' });
-        D.text(ctx, m + '', V.X(m), gy + 19, { size: 9.5, color: '#4a4d55', align: 'center' });
-      }
+      // 레일 아래 눈금자 — 실제 축척(m). 단위 없는 숫자만 있던 눈금을 대신한다
+      D.ruler(ctx, V, { x0: -10, x1: 10, y: gy + 1, unit: 'm', below: true });
 
       const cart = (x, m, v, col, colv, name, hotM, hotV) => {
         const wpx = V.S(2 * half(m)), hpx = 26 + m * 2.4;

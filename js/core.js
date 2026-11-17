@@ -45,6 +45,35 @@ const PS = (function () {
     byId[def.id] = def;
   }
 
+  /* 색인과 필요할 때 불러오기.
+     첫 화면에서 78개 파일을 다 받지 않는다 — 목록·전체 공식 모음은 색인(js/catalog.js, tools/build.js 가 만든다)만으로
+     그리고, 시뮬레이션 본체는 열 때 <script> 로 불러온다. 주소의 ?v= 는 파일 내용의 해시라 바뀌면 새로 받는다. */
+  const catalog = [];
+  const catById = Object.create(null);
+  const loading = Object.create(null);
+  function setCatalog(list) { list.forEach(e => { catalog.push(e); catById[e.id] = e; }); }
+  function load(id) {
+    if (byId[id]) return Promise.resolve(byId[id]);
+    if (loading[id]) return loading[id];
+    const e = catById[id];
+    if (!e) return Promise.reject(new Error('없는 시뮬레이션: ' + id));
+    return (loading[id] = new Promise((res, rej) => {
+      const s = document.createElement('script');
+      s.src = e.file + '?v=' + e.v;
+      s.onload = () => byId[id] ? res(byId[id]) : rej(new Error(e.file + ' 가 ' + id + ' 를 등록하지 않았다'));
+      s.onerror = () => { delete loading[id]; s.remove(); rej(new Error(e.file + ' 를 불러오지 못했다')); };
+      document.head.appendChild(s);
+    }));
+  }
+  // 점검 도구용 — 전부 불러온 뒤 색인 순서대로 sims 를 맞춘다 (불러온 순서는 제각각이다)
+  function loadAll() {
+    return Promise.all(catalog.map(e => load(e.id))).then(() => {
+      const order = catalog.map(e => byId[e.id]);
+      sims.length = 0; order.forEach(s => sims.push(s));
+      return sims;
+    });
+  }
+
   const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
   const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -94,9 +123,9 @@ const PS = (function () {
     return [dx / tr.a, dy / tr.d];
   }
 
-  /* 좁은 캔버스(폰)용 라벨 충돌 회피.
-     데스크톱 배치로 짠 라벨들이 폭 430px 남짓에서 서로 부딪히는 것을 막는다.
-     앱이 무대 캔버스에서만, 논리 폭이 600 미만일 때만 ctx.__labels 를 켠다 — 데스크톱 그림은 그대로다.
+  /* 라벨 충돌 회피.
+     처음에는 폭 430px 남짓의 폰에서만 켰다. 값 라벨(D.tag)에서 불투명 상자를 걷어낸 뒤로는 겹친 글자를
+     덮어 줄 것이 없어서, 앱이 무대 캔버스의 모든 폭에서 ctx.__labels 를 켠다.
      새 라벨이 앞서 그린 라벨과 겹치면 위아래로 한 줄씩(최대 두 줄) 비켜 보고, 빈자리가 없으면 그대로 둔다. */
   function avoidLabels(ctx, x0, x1, y0, y1, t) {
     const L = ctx.__labels;
@@ -142,10 +171,24 @@ const PS = (function () {
     return g;
   }
 
+  // 캔버스 글꼴 — 화면 UI 와 같은 글꼴 (index.html 이 Google Fonts 에서 불러온다. app.js 가 로드 뒤 다시 그린다)
+  const SANS = '"IBM Plex Sans KR","Malgun Gothic",sans-serif', MONO = '"IBM Plex Mono",Consolas,monospace';
+  // 헤일로 — 무대 배경색 윤곽. 어두운 바탕에서는 보이지 않고, 선·면 위에서만 글자 둘레를 파내 읽히게 한다
+  function halo(g, t, x, y, wdt) {
+    g.save();
+    g.shadowColor = 'transparent'; g.shadowBlur = 0;
+    g.lineJoin = 'round'; g.lineWidth = wdt; g.strokeStyle = 'rgba(10,11,12,.86)';
+    g.strokeText(t, x, y);
+    g.restore();
+  }
+
   const D = {
     bg(ctx, w, h) { ctx.clearRect(0, 0, w, h); },
 
-    grid(ctx, w, h, step, color) {
+    /* 장식 격자는 기본으로 그리지 않는다 — 단위 없는 격자는 길이를 읽게 하지 못하고 그림만 어지럽힌다.
+       길이 축이 있으면 D.ruler(실제 축척 눈금자)를 쓴다. force 를 줄 때만 그린다. */
+    grid(ctx, w, h, step, color, force) {
+      if (!force) return;
       ctx.save();
       ctx.strokeStyle = color || 'rgba(255,255,255,.035)';
       ctx.lineWidth = 1;
@@ -187,32 +230,31 @@ const PS = (function () {
       ctx.restore();
     },
 
-    /* 배경이 있는 작은 라벨 */
+    /* 값 라벨 — 상자 없이 글자와 헤일로만. 화살표·선 위에 놓여도 헤일로가 둘레를 파내 읽힌다.
+       자리(가운데 기준·좌우 정렬·가장자리 밀어 넣기·충돌 회피)는 예전 상자 라벨과 같다. */
     tag(ctx, text, x, y, color, hot, align) {
       const g = textTarget(ctx);
-      g.font = (hot ? 'bold ' : '') + '12px "Malgun Gothic",sans-serif';
-      const w = g.measureText(text).width + 12;
-      const h = 19;
+      g.font = (hot ? '600 ' : '500 ') + '12px ' + SANS;
+      const w = g.measureText(text).width + 4;
+      const h = 15;
       let tx = x - w / 2;
       if (align === 'left') tx = x;
       if (align === 'right') tx = x - w;
       const k = keepIn(ctx, x, y, tx, tx + w, y - h / 2, y + h / 2);
       tx += k[0]; y += k[1];
       y += avoidLabels(ctx, tx, tx + w, y - h / 2, y + h / 2, text);
-      const a0 = g.globalAlpha;
-      D.roundRect(g, tx, y - h / 2, w, h, 6);
-      g.fillStyle = 'rgba(13,14,16,.88)'; g.fill();
-      g.strokeStyle = color; g.globalAlpha = a0 * (hot ? 1 : .5); g.lineWidth = 1; g.stroke();
-      g.globalAlpha = a0;
-      g.fillStyle = color; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText(text, tx + w / 2, y + .5);
+      g.textAlign = 'left'; g.textBaseline = 'middle';
+      halo(g, text, tx + 2, y + .5, 4);
+      g.fillStyle = color;
+      if (hot) { g.shadowColor = color; g.shadowBlur = 8; }
+      g.fillText(text, tx + 2, y + .5);
       g.restore();
     },
 
     text(ctx, t, x, y, o) {
       o = o || {};
       const g = textTarget(ctx);
-      g.font = (o.bold ? 'bold ' : '') + (o.size || 12) + 'px ' + (o.mono ? 'Consolas,monospace' : '"Malgun Gothic",sans-serif');
+      g.font = (o.bold ? '600 ' : '') + (o.size || 12) + 'px ' + (o.mono ? MONO : SANS);
       g.fillStyle = o.color || '#9a9da6';
       g.textAlign = o.align || 'left';
       g.textBaseline = o.base || 'alphabetic';
@@ -226,13 +268,7 @@ const PS = (function () {
       }
       // 헤일로 — 글자 층에서 밝은 글자는 무대 배경색 윤곽을 두른다. 어두운 바탕에서는 보이지 않고,
       // 밝은 막대·면 위에서만 글자 둘레를 파내 읽히게 한다 (지도 라벨과 같은 방식).
-      if (ctx.__text && o.halo !== false && isLight(g.fillStyle)) {
-        g.save();
-        g.shadowColor = 'transparent'; g.shadowBlur = 0;
-        g.lineJoin = 'round'; g.lineWidth = 3; g.strokeStyle = 'rgba(10,11,12,.82)';
-        g.strokeText(t, x, y);
-        g.restore();
-      }
+      if (ctx.__text && o.halo !== false && isLight(g.fillStyle)) halo(g, t, x, y, 3);
       g.fillText(t, x, y);
       g.restore();
     },
@@ -277,17 +313,40 @@ const PS = (function () {
 
     /* 가로 막대그래프 (에너지·운동량 비교용) */
     bar(ctx, x, y, w, h, v, max, color, label, hot) {
-      D.roundRect(ctx, x, y, w, h, 4);
+      D.roundRect(ctx, x, y, w, h, 2);
       ctx.fillStyle = 'rgba(255,255,255,.05)'; ctx.fill();
       const f = max > 0 ? clamp(Math.abs(v) / max, 0, 1) : 0;
       if (f > 0.002) {
         ctx.save();
         if (hot) { ctx.shadowColor = color; ctx.shadowBlur = 12; }
-        D.roundRect(ctx, x, y, w * f, h, 4);
+        D.roundRect(ctx, x, y, w * f, h, 2);
         ctx.fillStyle = color; ctx.globalAlpha = hot ? 1 : .85; ctx.fill();
         ctx.restore();
       }
       if (label) D.text(ctx, label, x, y - 5, { size: 11, color: hot ? '#fff' : color, bold: hot });
+    },
+
+    /* 눈금자 — PS.view 의 실제 축척으로 길이를 읽게 한다 (장식 격자 대신).
+       V: PS.view 결과, o: { x0, x1 (세계 좌표 범위), y (픽셀 기준선), unit, color, k (단위 환산: 세계 1 = k unit) }
+       눈금 간격은 1·2·5×10ⁿ 중 화면에서 60px 이상 벌어지는 가장 작은 것. 오른쪽 끝에 "한 눈금 1 m". */
+    ruler(ctx, V, o) {
+      const k = o.k || 1, unit = o.unit || 'm', col = o.color || 'rgba(167,170,176,.55)';
+      const raw = 60 / (V.k / k);
+      const p = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 5, 10].map(m => m * p).find(v => v >= raw);
+      const a = Math.ceil(o.x0 * k / step) * step, b = o.x1 * k;
+      ctx.save();
+      ctx.strokeStyle = col; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(V.X(o.x0), o.y + .5); ctx.lineTo(V.X(o.x1), o.y + .5);
+      for (let v = a; v <= b + 1e-9; v += step) { const x = Math.round(V.X(v / k)) + .5; ctx.moveTo(x, o.y); ctx.lineTo(x, o.y + 5); }
+      ctx.stroke();
+      ctx.restore();
+      const dec = step < 1 ? Math.min(3, Math.ceil(-Math.log10(step))) : 0;
+      for (let v = a; v <= b + 1e-9; v += step)
+        D.text(ctx, fmt(v, dec), V.X(v / k), o.y + 16, { size: 10, color: PAL.ink3, align: 'center' });
+      // 단위 표기 — 기본은 기준선 위 오른쪽 끝, below 면 숫자 줄 아래(기준선 위에 물체가 지나가는 화면)
+      if (o.label !== false) D.text(ctx, '한 눈금 ' + fmt(step, dec) + ' ' + unit, V.X(o.x1), o.below ? o.y + 31 : o.y - 6, { size: 10, color: PAL.ink3, align: 'right' });
+      return step;
     },
 
     /* 코일 스프링 */
@@ -416,12 +475,14 @@ const PS = (function () {
     const X = t => L + ((t - x0) / (xmax - x0)) * pw;
     const Y = v => T + ph - ((v - ymin) / (ymax - ymin)) * ph;
 
-    // 격자 + 축
+    // 보조선 + 축 (그래프는 상자 대신 축선이 테두리 역할을 한다)
     ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(255,255,255,.05)'; ctx.lineWidth = 1;
     ctx.beginPath();
-    for (let i = 0; i <= 4; i++) { const y = T + ph * i / 4; ctx.moveTo(L, y); ctx.lineTo(L + pw, y); }
+    for (let i = 0; i < 4; i++) { const y = T + ph * i / 4; ctx.moveTo(L, y); ctx.lineTo(L + pw, y); }
     ctx.stroke();
+    ctx.strokeStyle = 'rgba(167,170,176,.35)';
+    ctx.beginPath(); ctx.moveTo(L + .5, T); ctx.lineTo(L + .5, T + ph + .5); ctx.lineTo(L + pw, T + ph + .5); ctx.stroke();
     if (ymin < 0 && ymax > 0) {
       ctx.strokeStyle = 'rgba(255,255,255,.22)';
       ctx.beginPath(); ctx.moveTo(L, Y(0)); ctx.lineTo(L + pw, Y(0)); ctx.stroke();
@@ -454,5 +515,5 @@ const PS = (function () {
     });
   }
 
-  return { register, sims, byId, view, D, drawGraph, fmt, clamp, lerp, PAL };
+  return { register, sims, byId, catalog, catById, setCatalog, load, loadAll, view, D, drawGraph, fmt, clamp, lerp, PAL };
 })();

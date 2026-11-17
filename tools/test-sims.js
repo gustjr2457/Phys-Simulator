@@ -116,6 +116,9 @@ if (args.includes('--list')) {
 }
 const report = { sims: PS.sims.length, smoke: {}, nonFinite: {}, lintWarn: {}, physics: {}, strict: strictId, fail: [], presetNames: {} };
 if (strictId && PS.byId[strictId]) report.presetNames[strictId] = (PS.byId[strictId].presets || []).map(p => p.name);
+// 색인(js/catalog.js)·?v= 가 지금 파일들과 맞는가 — 아니면 배포본이 옛 목록이나 캐시된 옛 파일을 보여 준다
+try { require('child_process').execFileSync(process.execPath, [path.join(__dirname, 'build.js'), '--check'], { stdio: 'pipe' }); }
+catch (e) { report.fail.push('색인·버전: ' + String(e.stdout || e.message).trim()); }
 for (const sim of PS.sims) {
   const sm = smoke(PS, sim);
   if (sm.errs.length) { report.smoke[sim.id] = sm.errs; report.fail.push(`스모크 ${sim.id}: ${sm.errs[0]}`); }
