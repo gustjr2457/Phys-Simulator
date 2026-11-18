@@ -80,12 +80,12 @@
     },
 
     graphs: [
-      { title: '속도에 따른 동압 (지금 고도와 해면)', xKey: 'vv', xUnit: 'm/s', xMin: 10, xMax: 100, y0: 0,
-        series: [{ key: 'dpk', label: 'Δp 지금 고도 (kPa)', color: C.dp }, { key: 'dp0', label: '해면 (kPa)', color: PAL.ink3 }] }
+      { title: '속도에 따른 동압 (지금 고도와 해면)', xKey: 'vv', now: 'V', xUnit: 'm/s', xMin: 10, xMax: 100, y0: 0,
+        series: [{ key: 'dpk', now: 'dpnow', label: 'Δp 지금 고도 (kPa)', color: C.dp }, { key: 'dp0', label: '해면 (kPa)', color: PAL.ink3 }] }
     ],
     sample(st, p) {
       const vv = 10 + 90 * st.sw;
-      return { vv, dpk: .5 * isa(p.h).rho * vv * vv / 1000, dp0: .5 * RHO0 * vv * vv / 1000 };
+      return { vv, dpk: .5 * isa(p.h).rho * vv * vv / 1000, dp0: .5 * RHO0 * vv * vv / 1000, V: p.V, dpnow: dpOf(p) / 1000 };
     },
 
     readouts(st, p) {

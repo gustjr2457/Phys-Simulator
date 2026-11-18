@@ -50,18 +50,20 @@
       { name: '실속 속도', tpl: 'V_s = √( 2{m}g ⁄ ({rho}{S}·C_Lmax) )' }
     ],
 
-    init(p) { return { flow: 0 }; },
-    step(st, p, dt) { st.flow += p.V * dt * .02; },
+    init(p) { return { flow: 0, sw: 0 }; },
+    step(st, p, dt) { st.flow += p.V * dt * .02; st.sw = (st.sw + dt / 6) % 1; },   // 그래프: 6초마다 받음각 −4→24° 를 훑는다
 
     graphs: [
-      { title: '받음각 – 양력계수 (C_L 곡선)', xKey: 'a', xUnit: '°', xMin: -4, xMax: 24,
-        series: [{ key: 'CL', label: 'C_L', color: C.CL }] },
-      { title: '받음각 – 양력', xKey: 'a', xUnit: '°', xMin: -4, xMax: 24, y0: 0,
-        series: [{ key: 'L', label: 'L (kN)', color: C.L }, { key: 'W', label: '무게 (kN)', color: C.W }] }
+      { title: '받음각 – 양력계수 (C_L 곡선)', xKey: 'aa', now: 'a', xUnit: '°', xMin: -4, xMax: 24,
+        series: [{ key: 'CL', now: 'CLnow', label: 'C_L', color: C.CL }] },
+      { title: '받음각 – 양력', xKey: 'aa', now: 'a', xUnit: '°', xMin: -4, xMax: 24, y0: 0,
+        series: [{ key: 'L', now: 'Lnow', label: 'L (kN)', color: C.L }, { key: 'W', label: '무게 (kN)', color: C.W }] }
     ],
     sample(st, p) {
       const rho = rhoOf(p.alt), q = .5 * rho * p.V * p.V;
-      return { a: p.a, CL: CLof(p.a), L: q * p.S * CLof(p.a) / 1000, W: p.m * 9.81 / 1000 };
+      const aa = -4 + 28 * st.sw;
+      return { aa, CL: CLof(aa), L: q * p.S * CLof(aa) / 1000, W: p.m * 9.81 / 1000,
+        a: p.a, CLnow: CLof(p.a), Lnow: q * p.S * CLof(p.a) / 1000 };
     },
 
     readouts(st, p) {

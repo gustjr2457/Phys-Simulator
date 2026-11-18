@@ -10,6 +10,9 @@
               E: '#68b8b0', V: '#a98cc4', F: '#c08098' };
   const K = 8.988e9;              // 쿨롱 상수
   const SCALE = 1 / 100;          // 화면 1 px = 1 cm
+  // 시험전하 +1 nC, 질량 0.2 g (스티로폼 공 정도) — 몇 초에 걸쳐 움직여 경로가 보이게. 예전 2×10⁻¹¹ kg 은
+  // 가속도가 10⁶ m/s² 라 첫 걸음(1/480 초)에 화면 밖으로 나가 경로도 에너지 그래프도 보이지 않았다.
+  const QT = 1e-9, MT = 2e-4;
 
   const pos = p => [[-p.d / 2, 0], [p.d / 2, 0]];     // 두 전하 위치 [cm]
   // 전기장 [N/C] / 전위 [V] — 위치는 cm, 전하는 nC
@@ -64,11 +67,18 @@
     init(p) { return { x: 0, y: p.y0, vx: 0, vy: 0, trail: [], gone: false, done: false }; },
     step(st, p, dt) {
       if (st.gone) return;
-      const f = field(p, st.x, st.y);
-      // 시험전하 +1 nC, 질량은 보기 좋은 값으로 (경로 모양은 전기력선과 같다)
-      const m = 2e-11;
-      st.vx += f.ex * 1e-9 / m * dt; st.vy += f.ey * 1e-9 / m * dt;
-      st.x += st.vx * dt * 100; st.y += st.vy * dt * 100;
+      // 전하 가까이에서는 힘이 급하게 바뀌므로 잘게 나눠 계산한다 (한 조각에 거리의 2 % 이하로 움직이게).
+      // 반 걸음씩 속도를 고치는 방식(리프프로그)이라 에너지 합이 오래 보존된다.
+      const P0 = pos(p), rmin = Math.max(.3, Math.min(Math.hypot(st.x - P0[0][0], st.y - P0[0][1]), Math.hypot(st.x - P0[1][0], st.y - P0[1][1])));
+      const n = Math.min(400, 1 + Math.ceil(Math.hypot(st.vx, st.vy) * 100 * dt / (.02 * rmin)));
+      const hs = dt / n, k = QT / MT;
+      let f = field(p, st.x, st.y);
+      for (let i = 0; i < n; i++) {
+        st.vx += f.ex * k * hs / 2; st.vy += f.ey * k * hs / 2;
+        st.x += st.vx * hs * 100; st.y += st.vy * hs * 100;
+        f = field(p, st.x, st.y);
+        st.vx += f.ex * k * hs / 2; st.vy += f.ey * k * hs / 2;
+      }
       if (st.trail.length === 0 || Math.hypot(st.x - st.trail[st.trail.length - 1][0], st.y - st.trail[st.trail.length - 1][1]) > .25)
         st.trail.push([st.x, st.y]);
       if (st.trail.length > 600) st.trail.shift();
@@ -87,9 +97,8 @@
     }],
     sample(st, p) {
       const f = field(p, st.x, st.y);
-      const m = 2e-11;
-      const KE = .5 * m * (st.vx * st.vx + st.vy * st.vy) * 1e9;    // nJ
-      const PE = 1e-9 * f.v * 1e9;
+      const KE = .5 * MT * (st.vx * st.vx + st.vy * st.vy) * 1e9;   // nJ
+      const PE = QT * f.v * 1e9;
       return { KE: KE, PE: PE, TOT: KE + PE };
     },
 

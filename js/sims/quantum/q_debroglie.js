@@ -49,14 +49,17 @@
       { name: '파동성이 드러나는 조건', tpl: '{lam} ≳ 물체(또는 구멍)의 크기' }
     ],
 
-    init() { return { ph: 0 }; },
-    step(st, p, dt) { st.ph += dt * 2; },
+    init() { return { ph: 0, sw: 0 }; },
+    step(st, p, dt) { st.ph += dt * 2; st.sw = (st.sw + dt / 6) % 1; },   // 그래프: 6초마다 속도 지수 −2→8 을 훑는다
 
     graphs: [{
-      title: '속도 지수 – 파장 지수 (기울기 −1인 직선)', xKey: 'vexp', xUnit: '', xMin: -2, xMax: 7,
-      series: [{ key: 'lexp', label: 'log₁₀ λ (m)', color: C.lam }]
+      title: '속도 지수 – 파장 지수 (기울기 −1인 직선)', xKey: 'vv', now: 'vexp', xUnit: '', xMin: -2, xMax: 8,
+      series: [{ key: 'lexp', now: 'lnow', label: 'log₁₀ λ (m)', color: C.lam }]
     }],
-    sample(st, p) { return { vexp: p.vexp, lexp: Math.log10(lamOf(p)) }; },
+    sample(st, p) {
+      const vv = -2 + 10 * st.sw;
+      return { vv, lexp: Math.log10(lamOf(Object.assign({}, p, { vexp: vv }))), vexp: p.vexp, lnow: Math.log10(lamOf(p)) };
+    },
 
     readouts(st, p) {
       const o = objOf(p), v = Math.pow(10, p.vexp), lam = lamOf(p);

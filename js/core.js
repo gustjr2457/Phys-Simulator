@@ -476,6 +476,14 @@ const PS = (function () {
         if (typeof v === 'number' && isFinite(v)) { ymin = Math.min(ymin, v); ymax = Math.max(ymax, v); }
       });
     });
+    // "지금" 표시 — 가로축을 훑어 곡선을 그리는 그래프에서 지금 슬라이더 값이 곡선 어디에 있는지.
+    // g.now: 표본에서 지금 x 값의 키, s.now: 그 계열의 지금 y 값 키. 가장 최근 표본의 값을 쓴다.
+    const lastS = hist[hist.length - 1];
+    const nowX = g.now && lastS && typeof lastS[g.now] === 'number' && isFinite(lastS[g.now]) ? lastS[g.now] : null;
+    if (nowX !== null) g.series.forEach(s => {
+      const v = s.now && lastS[s.now];
+      if (typeof v === 'number' && isFinite(v)) { ymin = Math.min(ymin, v); ymax = Math.max(ymax, v); }
+    });
     if (!isFinite(ymin)) { ymin = 0; ymax = 1; }
     if (g.y0 !== undefined) ymin = Math.min(ymin, g.y0);
     if (Math.abs(ymax - ymin) < 1e-6) { ymax = ymin + 1; }
@@ -522,6 +530,21 @@ const PS = (function () {
       const last = hist[hist.length - 1];
       if (last && typeof last[s.key] === 'number') D.dot(ctx, X(xOf(last)), Y(last[s.key]), 3, s.color, hot);
     });
+
+    if (nowX !== null) {
+      const xv = clamp(X(nowX), L, L + pw);
+      D.line(ctx, xv, T, xv, T + ph, { color: rgba('ink2', .45), dash: [3, 3] });
+      D.text(ctx, '지금', xv, T + 8, { size: 9, color: PAL.ink2, align: xv > L + pw - 20 ? 'right' : xv < L + 20 ? 'left' : 'center', keep: false });
+      g.series.forEach(s => {
+        const v = s.now && lastS[s.now];
+        if (typeof v !== 'number' || !isFinite(v)) return;
+        ctx.save();
+        ctx.beginPath(); ctx.arc(xv, Y(v), 4.5, 0, 7);
+        ctx.fillStyle = PAL.stage; ctx.fill();
+        ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.stroke();
+        ctx.restore();
+      });
+    }
   }
 
   return { register, sims, byId, catalog, catById, setCatalog, load, loadAll, view, D, drawGraph, fmt, clamp, lerp, PAL, rgba };

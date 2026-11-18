@@ -36,16 +36,19 @@
       { name: '바닥–첫 들뜬 준위 간격', tpl: 'E₂ − E₁ = 3h² ⁄ ( 8m{L}² )' }
     ],
 
-    init(p) { return { ph: 0 }; },
-    step(st, p, dt) { st.ph += dt * .3 * p.n * p.n; },
+    init(p) { return { ph: 0, sw: 0 }; },
+    step(st, p, dt) { st.ph += dt * .3 * p.n * p.n; st.sw = (st.sw + dt / 6) % 1; },   // 그래프: 6초마다 n 1→6, L 0.2→2 nm 를 훑는다
 
     graphs: [
-      { title: '양자수 n – 에너지', xKey: 'n', xUnit: '', xMin: 1, xMax: 6, y0: 0,
-        series: [{ key: 'E', label: 'Eₙ (eV)', color: C.E }] },
-      { title: '상자 크기 – 바닥 에너지 E₁', xKey: 'L', xUnit: 'nm', xMin: .2, xMax: 2, y0: 0,
-        series: [{ key: 'E1', label: 'E₁ (eV)', color: C.L }] }
+      { title: '양자수 n – 에너지 (n² 에 비례)', xKey: 'nn', now: 'n', xUnit: '', xMin: 1, xMax: 6, y0: 0,
+        series: [{ key: 'E', now: 'Enow', label: 'Eₙ (eV)', color: C.E }] },
+      { title: '상자 크기 – 바닥 에너지 E₁ (L² 에 반비례)', xKey: 'LL', now: 'L', xUnit: 'nm', xMin: .2, xMax: 2, y0: 0,
+        series: [{ key: 'E1', now: 'E1now', label: 'E₁ (eV)', color: C.L }] }
     ],
-    sample(st, p) { return { n: p.n, L: p.L, E: En(p.n, p.L), E1: En(1, p.L) }; },
+    sample(st, p) {
+      const nn = 1 + 5 * st.sw, LL = .2 + 1.8 * st.sw;
+      return { nn, E: En(nn, p.L), LL, E1: En(1, LL), n: p.n, Enow: En(p.n, p.L), L: p.L, E1now: En(1, p.L) };
+    },
 
     readouts(st, p) {
       const ok = p.off < .05;

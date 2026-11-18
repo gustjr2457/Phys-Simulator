@@ -61,9 +61,10 @@
       { name: '보어의 양자 조건 (원 둘레의 정상파)', tpl: '2π{r} = n · {lamb}' }
     ],
 
-    init(p) { return { ph: 0, fly: -9, lines: [] }; },
+    init(p) { return { ph: 0, fly: -9, lines: [], sw: 0 }; },
     step(st, p, dt) {
       st.ph += dt * 1.4;
+      st.sw = (st.sw + dt / 6) % 1;                       // 그래프: 6초마다 n 1→7 을 훑는다
       // 설정이 바뀌면 광자를 다시 날린다
       const key = Math.round(p.Z) + '|' + Math.round(p.ni) + '|' + nfOf(p);
       if (key !== st.key) {
@@ -74,10 +75,13 @@
     },
 
     graphs: [{
-      title: '준위 n – 에너지 (위로 갈수록 0에 수렴)', xKey: 'n', xUnit: '', xMin: 1, xMax: 7,
-      series: [{ key: 'En', label: 'Eₙ (eV)', color: C.E }]
+      title: '준위 n – 에너지 (위로 갈수록 0에 수렴)', xKey: 'nn', now: 'n', xUnit: '', xMin: 1, xMax: 7,
+      series: [{ key: 'En', now: 'Enow', label: 'Eₙ (eV)', color: C.E }]
     }],
-    sample(st, p) { return { n: Math.round(p.ni), En: En(Math.round(p.ni), p.Z) }; },
+    sample(st, p) {
+      const nn = 1 + 6 * st.sw, n = Math.round(p.ni);
+      return { nn, En: En(nn, p.Z), n, Enow: En(n, p.Z) };
+    },
 
     readouts(st, p) {
       const ni = Math.round(p.ni), nf = nfOf(p), dE = dEOf(p), L = lamOf(p);

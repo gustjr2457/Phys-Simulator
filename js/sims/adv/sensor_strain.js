@@ -58,15 +58,15 @@
     },
 
     graphs: [
-      { title: '교정 곡선과 ADC 한계 (하중 0 → 30 N 을 훑음)', xKey: 'ff', xUnit: 'N', xMin: 0, xMax: 30, y0: 0,
-        series: [{ key: 'adc', label: 'ADC가 읽는 값 (V)', color: C.Vout }, { key: 'lim', label: '한계 5 V', color: PAL.rust }] },
+      { title: '교정 곡선과 ADC 한계 (하중 0 → 30 N 을 훑음)', xKey: 'ff', now: 'fnow', xUnit: 'N', xMin: 0, xMax: 30, y0: 0,
+        series: [{ key: 'adc', now: 'vnow', label: 'ADC가 읽는 값 (V)', color: C.Vout }, { key: 'lim', label: '한계 5 V', color: PAL.rust }] },
       { title: '보의 변형률 분포 (고정단 0 → 끝 150 mm)', xKey: 'xx', xUnit: 'mm', xMin: 0, xMax: 150,
         series: [{ key: 'ex', label: '윗면 늘어남 (μɛ)', color: C.eps }, { key: 'exb', label: '아랫면 줄어듦', color: PAL.rust }] }
     ],
     sample(st, p) {
       const ff = FMAX * st.sw, xx = 150 * st.sw;
       const ex = strainAt(st.F, xx / 1000) * 1e6;
-      return { ff, adc: Math.min(vbridge(ff, p) * p.A, ADC), lim: ADC, xx, ex, exb: -ex };
+      return { ff, adc: Math.min(vbridge(ff, p) * p.A, ADC), lim: ADC, xx, ex, exb: -ex, fnow: st.F, vnow: Math.min(vbridge(st.F, p) * p.A, ADC) };
     },
 
     readouts(st, p) {

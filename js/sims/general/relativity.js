@@ -41,10 +41,11 @@
     },
 
     graphs: [{
-      title: 'γ(로런츠 인자) – 시간', xmin: 6, window: 10, y0: 0,
-      series: [{ key: 'gamma', label: 'γ', color: C.gamma }]
+      // γ(β) 곡선은 무대 오른쪽 아래에 이미 있으므로, 그래프는 두 시계가 벌어지는 모습을 보여 준다
+      title: '두 시계가 잰 시간 (우주선 시계의 기울기 = 1/γ)', xmin: 6, window: 12, y0: 0,
+      series: [{ key: 'tref', label: 'Δt 기준 시계', color: PS.PAL.ink2 }, { key: 'tau', label: 'Δτ 우주선 시계', color: PS.PAL.violet }]
     }],
-    sample(st, p) { return { gamma: gammaOf(p.beta) }; },
+    sample(st, p) { return { tref: st.t, tau: st.dtau }; },
 
     readouts(st, p) {
       const g = gammaOf(p.beta);

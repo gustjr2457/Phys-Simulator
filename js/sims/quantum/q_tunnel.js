@@ -53,16 +53,19 @@
       { name: '확률 보존', tpl: '{T} + {R} = 1' }
     ],
 
-    init() { return { ph: 0 }; },
-    step(st, p, dt) { st.ph += dt * 2.2; },
+    init() { return { ph: 0, sw: 0 }; },
+    step(st, p, dt) { st.ph += dt * 2.2; st.sw = (st.sw + dt / 6) % 1; },   // 그래프: 6초마다 두께 0.05→1.5 nm, 에너지 0.2→10 eV 를 훑는다
 
     graphs: [
-      { title: '장벽 두께 – 투과 확률 (지수적 감소)', xKey: 'd', xUnit: 'nm', xMin: .05, xMax: 1.5, y0: 0,
-        series: [{ key: 'T', label: 'T', color: C.T }] },
-      { title: '입자 에너지 – 투과 확률', xKey: 'E', xUnit: 'eV', xMin: .2, xMax: 10, y0: 0,
-        series: [{ key: 'T2', label: 'T', color: C.E }] }
+      { title: '장벽 두께 – 투과 확률 (지수적 감소)', xKey: 'dd', now: 'd', xUnit: 'nm', xMin: .05, xMax: 1.5, y0: 0,
+        series: [{ key: 'T', now: 'Tnow', label: 'T', color: C.T }] },
+      { title: '입자 에너지 – 투과 확률', xKey: 'EE', now: 'E', xUnit: 'eV', xMin: .2, xMax: 10, y0: 0,
+        series: [{ key: 'T2', now: 'Tnow', label: 'T', color: C.E }] }
     ],
-    sample(st, p) { const T = Tof(p); return { d: p.d, E: p.E, T: T, T2: T }; },
+    sample(st, p) {
+      const dd = .05 + 1.45 * st.sw, EE = .2 + 9.8 * st.sw;
+      return { dd, T: Tof(Object.assign({}, p, { d: dd })), EE, T2: Tof(Object.assign({}, p, { E: EE })), d: p.d, E: p.E, Tnow: Tof(p) };
+    },
 
     readouts(st, p) {
       const T = Tof(p), under = p.E < p.V;

@@ -77,10 +77,14 @@
     },
 
     graphs: [{
-      title: '관측 비율 – 무늬 대비 (V ≈ 1 − f)', xKey: 'det', xUnit: '%', xMin: 0, xMax: 100, y0: 0,
-      series: [{ key: 'vis', label: '측정된 가시도', color: C.vis }]
+      title: '관측 비율 – 무늬 대비 (V ≈ 1 − f, 동그라미는 지금 잰 값)', xKey: 'ff', now: 'det', xUnit: '%', xMin: 0, xMax: 100, y0: 0,
+      series: [{ key: 'th', now: 'vis', label: '예상 1 − f (동그라미: 측정된 가시도)', color: C.vis }]
     }],
-    sample(st, p) { return st.hits > 300 ? { det: p.det, vis: visOf(st) } : null; },
+    // 곡선은 6초마다 0→100 % 를 훑는 예상값, 지금 잰 가시도는 300개 넘게 쌓인 뒤 동그라미로
+    sample(st, p) {
+      const ff = 100 * ((st.t / 6) % 1);
+      return { ff, th: 1 - ff / 100, det: p.det, vis: st.hits > 300 ? visOf(st) : null };
+    },
 
     readouts(st, p) {
       const v = visOf(st);

@@ -72,14 +72,18 @@
       { name: '가우시안일 때 등호 성립 (최소 불확정성)', tpl: '{dx} · {dp} = ħ ⁄ 2' }
     ],
 
-    init() { return { ph: 0 }; },
-    step(st, p, dt) { st.ph += dt * 1.6; },
+    init() { return { ph: 0, sw: 0 }; },
+    step(st, p, dt) { st.ph += dt * 1.6; st.sw = (st.sw + dt / 6) % 1; },   // 그래프: 6초마다 Δk 0.15→2.5 를 훑는다
 
     graphs: [{
-      title: '섞는 범위 Δk – 위치 폭 Δx (반비례)', xKey: 'sk', xUnit: '/nm', xMin: .15, xMax: 2.5, y0: 0,
-      series: [{ key: 'dx', label: 'Δx (nm)', color: C.dx }]
+      title: '섞는 범위 Δk – 위치 폭 Δx (반비례, 파동 수가 적으면 무늬가 되풀이되어 다시 커짐)', xKey: 'kk', now: 'sk', xUnit: '/nm', xMin: .15, xMax: 2.5, y0: 0,
+      series: [{ key: 'dx', now: 'dxnow', label: 'Δx, 지금 N개로 (nm)', color: C.dx }, { key: 'dxi', label: '무한히 많이 섞으면 1/(√2·Δk)', color: PS.PAL.ink3 }]
     }],
-    sample(st, p) { const r = packet(p); return { sk: p.sk, dx: r.sx }; },
+    sample(st, p) {
+      const kk = .15 + 2.35 * st.sw;
+      // 연속 가우시안: 진폭 폭 Δk → 확률 |A|² 의 폭 Δk/√2 → Δx = 1/(2·Δk/√2) = 1/(√2·Δk)
+      return { kk, dx: packet(Object.assign({}, p, { sk: kk })).sx, dxi: 1 / (Math.SQRT2 * kk), sk: p.sk, dxnow: packet(p).sx };
+    },
 
     readouts(st, p) {
       const r = packet(p), N = Math.round(p.N);
