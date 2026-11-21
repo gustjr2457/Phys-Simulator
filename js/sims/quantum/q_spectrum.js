@@ -13,7 +13,10 @@
   const SERIES = { 1: '라이먼 계열 (자외선)', 2: '발머 계열 (가시광선)', 3: '파셴 계열 (적외선)', 4: '브래킷 계열', 5: '푼트 계열' };
 
   // 파장(nm) → 눈에 보이는 색
+  // 380 nm 아래(자외선)도 null — 예전에는 아래 'nm < 490' 갈래로 빠져 색을 돌려주는 바람에, 라이먼 계열 같은 자외선 선을
+  // 가시광선 띠 왼쪽 캔버스 밖에 그리고 "◀ 자외선 (눈에 안 보임)" 안내는 띄우지 못했다
   function rgb(nm) {
+    if (!(nm >= 380)) return null;
     let r = 0, g = 0, b = 0;
     if (nm >= 380 && nm < 440) { r = (440 - nm) / 60; b = 1; }
     else if (nm < 490) { g = (nm - 440) / 50; b = 1; }
@@ -139,7 +142,7 @@
     ],
 
     draw(ctx, st, p, ui) {
-      const w = ui.w, h = ui.h, hl = ui.hl;
+      const w = ui.w, h = ui.h, hl = ui.hl, narrow = w < 600;
       const Z = Math.round(p.Z), ni = Math.round(p.ni), nf = nfOf(p);
       const dE = dEOf(p), L = lamOf(p), col = rgb(L) || '#7a7e87';
       const visible = !!rgb(L);
@@ -151,7 +154,9 @@
       const EY = e => botY - (e - Emin) / (0 - Emin) * (botY - top);
       D.text(ctx, '에너지 준위 (eV)', lx, top - 20, { size: 11, color: hl === 'E' ? '#fff' : '#9a9da6', bold: hl === 'E' });
       D.line(ctx, lx - 6, EY(0), lx + lw + 10, EY(0), { color: 'rgba(167,170,176,.45)', dash: [4, 4] });
-      D.text(ctx, '0 (자유 전자)', lx + lw + 14, EY(0) + 4, { size: 9.5, color: '#6a6e78' });
+      // 좁은 화면에서는 오른쪽 글자가 정상파 제목·ΔE 와 겹치므로 다른 준위 이름처럼 왼쪽에 짧게
+      if (narrow) D.text(ctx, 'n=∞', lx - 6, EY(0) + 4, { size: 9.5, color: '#6a6e78', align: 'right' });
+      else D.text(ctx, '0 (자유 전자)', lx + lw + 14, EY(0) + 4, { size: 9.5, color: '#6a6e78' });
       for (let n = 1; n <= 7; n++) {
         const e = En(n, Z), y = EY(e);
         const isI = n === ni, isF = n === nf;
@@ -187,8 +192,10 @@
         a === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.closePath(); ctx.stroke(); ctx.restore();
-      D.text(ctx, '전자의 정상파, 둘레에 ' + ni + '개', ox, oy - orad - 24, { size: 10.5, color: C.nf, align: 'center' });
-      D.text(ctx, '2πr = ' + ni + 'λ', ox, oy - orad - 10, { size: 10, color: '#6a6e78', align: 'center' });
+      // 좁은 화면에서는 위쪽이 에너지 사다리 글자와 겹치므로 원 아래에 둔다
+      const cy1 = narrow ? oy + orad + 22 : oy - orad - 24, cy2 = narrow ? oy + orad + 35 : oy - orad - 10;
+      D.text(ctx, '전자의 정상파, 둘레에 ' + ni + '개', ox, cy1, { size: 10.5, color: C.nf, align: 'center' });
+      D.text(ctx, '2πr = ' + ni + 'λ', ox, cy2, { size: 10, color: '#6a6e78', align: 'center' });
 
       /* ── 날아가는 광자 ── */
       const age = st.t - st.fly;
