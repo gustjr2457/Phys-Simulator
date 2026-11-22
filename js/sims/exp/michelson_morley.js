@@ -22,7 +22,11 @@
     // t∥ − t⊥ 는 아주 가까운 두 수의 차라 정리한 식으로: (2L/c)·(1/(1−β²) − 1/√(1−β²)) = (2L/c)·(1 − √(1−β²))/(1−β²)
     const dt = (2 * L / c) * (b2 / (1 + Math.sqrt(1 - b2))) / (1 - b2);
     const dN = 2 * c * dt / (p.lam * 1e-9);
-    return { tpar, tper, dt, dN };
+    // 바람이 없을 때 왕복 2L/c 보다 늦는 만큼 — 두 시간은 10억분의 몇까지 같아 ns 로는 구별되지 않으므로 따로 본다.
+    // 빼지 않고 정리한 식으로 (t∥ − 2L/c = (2L/c)·β²/(1−β²),  t⊥ − 2L/c = (2L/c)·β²/(√(1−β²)·(1+√(1−β²))))
+    const t0 = 2 * L / c, sq = Math.sqrt(1 - b2);
+    const xpar = t0 * b2 / (1 - b2), xper = t0 * b2 / (sq * (1 + sq));
+    return { tpar, tper, dt, dN, t0, xpar, xper };
   }
   // 장치를 θ(°) 돌렸을 때 에테르 가설이 예측하는 무늬 이동 (처음 자리 기준, 무늬 개수)
   const shiftAt = (dN, th) => dN / 2 * (1 - Math.cos(2 * th * RAD));
@@ -41,13 +45,14 @@
       { key: 'lam', symbol: 'λ', label: '빛의 파장', unit: 'nm', min: 400, max: 700, step: 10, value: 550, color: C.lam, dec: 0,
         where: '오른쪽(폰에서는 아래) <b>청록 줄무늬</b>의 간격을 정합니다. 시간 차가 같아도 파장이 짧을수록 무늬가 더 많이 밀립니다.' },
       { key: 'world', symbol: '', label: '어느 세계를 볼까', unit: '', min: 0, max: 1, step: 1, value: 0, color: C.world, dec: 0,
-        where: '<b>0 = 실제 자연</b>(1887년에 본 결과, 빛은 어느 방향으로나 같은 빠르기) / <b>1 = 에테르 가설</b>(빛이 에테르 바람에 밀린다고 가정한 세계).' }
+        names: ['실제 자연', '에테르 가설'],
+        where: '왼쪽 끝 = <b>실제 자연</b>(1887년에 본 결과, 빛은 어느 방향으로나 같은 빠르기), 오른쪽 끝 = <b>에테르 가설</b>(빛이 에테르 바람에 밀린다고 가정한 세계). 장치 그림 왼쪽 위에 지금 어느 세계인지 나옵니다.' }
     ],
     vars: {
       tpar: { symbol: 't∥', label: '바람과 나란한 팔 왕복 시간 (에테르 가설)', unit: 'ns', color: C.tpar,
-        where: '팔이 바람 방향과 나란할 때 빛이 갔다 오는 시간입니다. 그 순간 그 팔이 <b>초록색</b>으로 바뀝니다.' },
+        where: '팔이 바람 방향과 나란할 때 빛이 갔다 오는 시간입니다. 그 순간 그 팔이 <b>초록색</b>으로 바뀝니다. 측정값에는 바람이 없을 때(2L/c)보다 늦는 만큼이 나옵니다.' },
       tper: { symbol: 't⊥', label: '바람을 가로지르는 팔 왕복 시간 (에테르 가설)', unit: 'ns', color: C.tper,
-        where: '팔이 바람 방향과 직각일 때 빛이 갔다 오는 시간입니다. 그 순간 그 팔이 <b>주황색</b>으로 바뀝니다.' },
+        where: '팔이 바람 방향과 직각일 때 빛이 갔다 오는 시간입니다. 그 순간 그 팔이 <b>주황색</b>으로 바뀝니다. 2L/c 보다 늦는 만큼이 나란한 팔의 절반입니다.' },
       dt: { symbol: 'Δt', label: '두 팔의 왕복 시간 차', unit: 'fs', color: C.dt,
         where: '에테르 가설에서 두 빛이 돌아오는 시간의 차이입니다. 1 fs(펨토초)는 1000조분의 1초로, 측정값 목록에 나옵니다.' },
       dN: { symbol: 'ΔN', label: '90° 돌릴 때 예측한 무늬 이동', unit: '개', color: C.dN,
@@ -68,7 +73,8 @@
 
     graphs: [
       { title: '장치 각도에 따른 간섭무늬 이동', xKey: 'ang', xUnit: '°', xMin: 0, xMax: 360, y0: 0,
-        series: [{ key: 'sp', label: '에테르 가설의 예측 (무늬 개수)', color: C.dN }, { key: 'so', label: '이 화면에 보이는 무늬 이동', color: PAL.sage }] }
+        // 보이는 이동(초록 실선)을 먼저, 예측(노란 점선)을 위에 — 에테르 세계에서 둘이 겹쳐도 둘 다 보이게
+        series: [{ key: 'so', label: '보이는 무늬 이동', color: PAL.sage }, { key: 'sp', label: '에테르 가설의 예측 (점선)', color: C.dN, dash: [6, 5] }] }
     ],
     sample(st, p) {
       const T = times(p), s = shiftAt(T.dN, st.th);
@@ -78,14 +84,15 @@
     readouts(st, p) {
       const T = times(p), s = shiftAt(T.dN, st.th), eth = p.world >= 1;
       return [
-        { label: '장치를 돌린 각도 θ', value: st.th, unit: '°', dec: 0 },
-        { label: '바람과 나란한 팔 왕복 시간 t∥ (가설)', value: T.tpar * 1e9, unit: 'ns', color: C.tpar, dec: 4 },
-        { label: '바람을 가로지르는 팔 왕복 시간 t⊥ (가설)', value: T.tper * 1e9, unit: 'ns', color: C.tper, dec: 4 },
-        { label: '두 팔의 시간 차 Δt (가설)', value: T.dt * 1e15, unit: 'fs', color: C.dt, dec: 4 },
-        { label: '90° 돌릴 때 예측한 무늬 이동 ΔN', value: T.dN, unit: '개', color: C.dN, dec: 3 },
-        { label: '지금 각도에서 예측한 무늬 이동', value: s, unit: '개', color: C.dN, dec: 3 },
-        { label: '이 화면에 보이는 무늬 이동', value: eth ? s : 0, unit: '개', color: PAL.sage, dec: 3 },
-        { label: '1887년 실제 관측', value: '0.02개보다 작음 (예측의 20분의 1 아래)', unit: '' },
+        { label: '장치 각도 θ', value: st.th, unit: '°', dec: 0 },
+        { label: '2L/c (바람 0)', value: T.t0 * 1e9, unit: 'ns', dec: 4 },
+        { label: 't∥ − 2L/c', value: T.xpar * 1e15, unit: 'fs', color: C.tpar, dec: 3 },
+        { label: 't⊥ − 2L/c', value: T.xper * 1e15, unit: 'fs', color: C.tper, dec: 3 },
+        { label: 'Δt = t∥ − t⊥', value: T.dt * 1e15, unit: 'fs', color: C.dt, dec: 4 },
+        { label: 'ΔN (90° 최대)', value: T.dN, unit: '개', color: C.dN, dec: 3 },
+        { label: '지금 예측', value: s, unit: '개', color: C.dN, dec: 3 },
+        { label: '보이는 이동', value: eth ? s : 0, unit: '개', color: PAL.sage, dec: 3 },
+        { label: '1887년 실제 관측', wide: true, value: '0.02개보다 작음 (예측의 20분의 1 아래)', unit: '' },
         { label: '읽는 법', wide: true, color: eth ? C.dN : PAL.sage,
           value: eth ? '에테르가 있다면 장치를 돌릴 때 무늬가 최대 ' + fmt(T.dN, 2) + '개 밀려야 한다. 실제 실험에서는 이렇게 움직이지 않았다'
                      : '장치를 돌려도 무늬가 그대로다. 빛은 방향과 상관없이 같은 빠르기로 오가고, 에테르 바람은 없다' }
@@ -121,7 +128,7 @@
       },
       {
         id: 'big', title: '에테르 세계에서 크게',
-        desc: '에테르 가설의 세계(1)로 바꾸고, 무늬가 2개 넘게 밀리도록 만들어 보세요. 실제 실험이었다면 놓칠 수 없는 크기입니다.',
+        desc: '"어느 세계를 볼까"를 에테르 가설로 바꾸고, 무늬가 2개 넘게 밀리도록 만들어 보세요. 실제 실험이었다면 놓칠 수 없는 크기입니다.',
         hint: '속도를 60 km/s 가까이 올리고 팔을 길게, 파장은 짧게 해 보세요.',
         check: ({ P }) => P.world >= 1 && times(P).dN >= 2
       }
@@ -228,11 +235,13 @@
       const sPred = shiftAt(T.dN, st.th), sShow = eth ? sPred : 0;
       ctx.save();
       ctx.beginPath(); ctx.rect(fx0, fy0, pw, fy1 - fy0); ctx.clip();
-      for (let x = fx0; x < fx1; x += 2) {
-        const I = Math.pow(Math.cos(Math.PI * ((x + 1 - xc) / per - sShow)), 2);
-        ctx.fillStyle = PS.rgba('teal', .06 + .8 * I);
-        ctx.fillRect(x, fy0, 2, fy1 - fy0);
+      // 2px 띠를 이어 칠하면 화면 배율에 따라 띠 사이에 가는 세로줄이 생겨, 그라디언트 하나로 칠한다
+      const gI = ctx.createLinearGradient(fx0, 0, fx1, 0), NS = Math.max(24, Math.ceil(pw / 3));
+      for (let i = 0; i <= NS; i++) {
+        const x = fx0 + pw * i / NS, I = Math.pow(Math.cos(Math.PI * ((x - xc) / per - sShow)), 2);
+        gI.addColorStop(i / NS, PS.rgba('teal', .06 + .8 * I));
       }
+      ctx.fillStyle = gI; ctx.fillRect(fx0, fy0, pw, fy1 - fy0);
       ctx.restore();
       D.poly(ctx, [[fx0, fy0], [fx1, fy0], [fx1, fy1], [fx0, fy1]], { stroke: hl === 'lam' ? C.lam : PS.rgba('ink3', .6), width: hl === 'lam' ? 2 : 1, hot: hl === 'lam' });
       // 처음 자리(가운데 밝은 무늬가 처음 있던 곳)

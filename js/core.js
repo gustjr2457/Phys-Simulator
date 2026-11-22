@@ -517,6 +517,7 @@ const PS = (function () {
       ctx.strokeStyle = s.color; ctx.lineWidth = hot ? 2.6 : 1.8;
       ctx.lineJoin = 'round';
       ctx.shadowColor = s.color; ctx.shadowBlur = hot ? 12 : 5;   // 곡선은 늘 은은하게 빛나고, 강조되면 더 밝게
+      if (s.dash) ctx.setLineDash(s.dash);                           // 두 곡선이 겹칠 수 있을 때 위의 것을 점선으로 — 아래 선이 비쳐 보인다
       ctx.beginPath();
       let started = false;
       hist.forEach((p, i) => {

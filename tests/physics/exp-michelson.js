@@ -12,22 +12,25 @@ const dtApprox = (L, vk) => L * (vk * 1e3) ** 2 / (c ** 3);   // s
 
 module.exports = [
   { name: '손 계산 — L = 11 m, v = 30 km/s, λ = 550 nm: ΔN = 2·11·(3×10⁴)² ÷ (550×10⁻⁹ · c²) = 0.4006', set: { L: 11, v: 30, lam: 550, world: 0 }, run: .1,
-    check: ({ ro, near }) => near(ro('90° 돌릴 때 예측한 무늬 이동 ΔN'), 1.98e10 / (550e-9 * c * c), .01) || near(ro('90° 돌릴 때 예측한 무늬 이동 ΔN'), .40056, .002) },
+    check: ({ ro, near }) => near(ro('ΔN (90° 최대)'), 1.98e10 / (550e-9 * c * c), .01) || near(ro('ΔN (90° 최대)'), .40056, .002) },
   { name: '바람이 없을 때 팔 왕복 시간 2L/c — L = 11 m 에서 73.387 ns (v = 0 이면 t∥ = t⊥, Δt = 0, ΔN = 0)', set: { L: 11, v: 0 }, run: .1,
-    check: ({ ro, near }) => near(ro('바람과 나란한 팔 왕복 시간 t∥ (가설)'), 22 / c * 1e9, 1e-6) || near(ro('바람을 가로지르는 팔 왕복 시간 t⊥ (가설)'), 22 / c * 1e9, 1e-6)
-      || near(ro('두 팔의 시간 차 Δt (가설)'), 0, .01, 1e-9) || near(ro('90° 돌릴 때 예측한 무늬 이동 ΔN'), 0, .01, 1e-9) },
+    check: ({ ro, near }) => near(ro('2L/c (바람 0)'), 22 / c * 1e9, 1e-6) || near(ro('t∥ − 2L/c'), 0, .01, 1e-12) || near(ro('t⊥ − 2L/c'), 0, .01, 1e-12)
+      || near(ro('Δt = t∥ − t⊥'), 0, .01, 1e-9) || near(ro('ΔN (90° 최대)'), 0, .01, 1e-9) },
+  { name: '2L/c 보다 늦는 만큼 — 나란한 팔 ≈ 2Lv²/c³ = 0.7348 fs, 가로 팔 ≈ Lv²/c³ = 0.3674 fs (나란한 팔이 두 배)', set: { L: 11, v: 30 }, run: .1,
+    check: ({ ro, near }) => near(ro('t∥ − 2L/c'), 2 * dtApprox(11, 30) * 1e15, .001) || near(ro('t⊥ − 2L/c'), dtApprox(11, 30) * 1e15, .001)
+      || near(ro('t∥ − 2L/c') - ro('t⊥ − 2L/c'), ro('Δt = t∥ − t⊥'), 1e-6) },
   { name: '시간 차 Δt ≈ Lv²/c³ — L = 11 m, v = 30 km/s 에서 0.367 fs', set: { L: 11, v: 30 }, run: .1,
-    check: ({ ro, near }) => near(ro('두 팔의 시간 차 Δt (가설)'), dtApprox(11, 30) * 1e15, .001) },
+    check: ({ ro, near }) => near(ro('Δt = t∥ − t⊥'), dtApprox(11, 30) * 1e15, .001) },
   { name: '1881년 첫 실험 — L = 1.2 m, λ = 550 nm: 예측 약 0.044개 (작아서 확신하기 어려웠다)', set: { L: 1.2, v: 30, lam: 550 }, run: .1,
-    check: ({ ro, near }) => near(ro('90° 돌릴 때 예측한 무늬 이동 ΔN'), dNapprox(1.2, 30, 550), .002) },
+    check: ({ ro, near }) => near(ro('ΔN (90° 최대)'), dNapprox(1.2, 30, 550), .002) },
   { name: '극단값 — L = 15 m, v = 60 km/s, λ = 400 nm: ΔN ≈ 3.004개', set: { L: 15, v: 60, lam: 400, world: 1 }, run: .1,
-    check: ({ ro, near }) => near(ro('90° 돌릴 때 예측한 무늬 이동 ΔN'), dNapprox(15, 60, 400), .002) },
+    check: ({ ro, near }) => near(ro('ΔN (90° 최대)'), dNapprox(15, 60, 400), .002) },
   { name: '회전(15°/s) — 6초 뒤(θ = 90°) 예측 이동 = 보이는 이동 = ΔN (에테르 세계)', set: { L: 11, v: 30, lam: 550, world: 1 }, run: 6,
-    check: ({ ro, near }) => near(ro('장치를 돌린 각도 θ'), 90, .001) || near(ro('지금 각도에서 예측한 무늬 이동'), dNapprox(11, 30, 550), .002)
-      || near(ro('이 화면에 보이는 무늬 이동'), dNapprox(11, 30, 550), .002) },
+    check: ({ ro, near }) => near(ro('장치 각도 θ'), 90, .001) || near(ro('지금 예측'), dNapprox(11, 30, 550), .002)
+      || near(ro('보이는 이동'), dNapprox(11, 30, 550), .002) },
   { name: '회전 — 3초 뒤 θ = 45° 에서 예측 이동 = ΔN/2', set: { L: 11, v: 30, lam: 550, world: 1 }, run: 3,
-    check: ({ ro, near }) => near(ro('지금 각도에서 예측한 무늬 이동'), dNapprox(11, 30, 550) / 2, .002) },
+    check: ({ ro, near }) => near(ro('지금 예측'), dNapprox(11, 30, 550) / 2, .002) },
   { name: '실제 자연(world 0) — 10초 돌린 뒤(θ = 150°)에도 보이는 무늬 이동 0, 예측값은 (ΔN/2)(1 − cos 300°) = 0.25 ΔN', set: { L: 11, v: 30, lam: 550, world: 0 }, run: 10,
-    check: ({ ro, near }) => near(ro('이 화면에 보이는 무늬 이동'), 0, .01, 1e-12) || near(ro('장치를 돌린 각도 θ'), 150, .001)
-      || near(ro('지금 각도에서 예측한 무늬 이동'), .25 * dNapprox(11, 30, 550), .002) || near(ro('90° 돌릴 때 예측한 무늬 이동 ΔN'), dNapprox(11, 30, 550), .002) }
+    check: ({ ro, near }) => near(ro('보이는 이동'), 0, .01, 1e-12) || near(ro('장치 각도 θ'), 150, .001)
+      || near(ro('지금 예측'), .25 * dNapprox(11, 30, 550), .002) || near(ro('ΔN (90° 최대)'), dNapprox(11, 30, 550), .002) }
 ];

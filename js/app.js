@@ -313,20 +313,24 @@
     sim.params.forEach(p => {
       const c = el('div', 'ctrl'); c.dataset.key = p.key;
       const top = el('div', 'ctrl-top');
+      // symbol: '' 은 "기호 없음"(고르기 슬라이더) — 키 이름(영어)이 기호 자리에 나오지 않게
+      const sym = p.symbol === '' ? '' : (p.symbol || p.key);
+      // names: 고르기 슬라이더는 0·1 같은 숫자 대신 이름을 보여 준다 (예: ['실제 자연', '에테르 가설'])
+      const vText = () => { const nm = p.names && p.names[Math.round(P[p.key])]; return nm !== undefined && nm !== null ? nm : fmt(P[p.key], p.dec); };
       top.innerHTML =
-        '<span class="ctrl-sym" style="color:' + p.color + '">' + TS.symbol(p.symbol || p.key) + '</span>' +
+        '<span class="ctrl-sym" style="color:' + p.color + '">' + TS.symbol(sym) + '</span>' +
         '<span class="ctrl-label">' + p.label + '</span>' +
-        '<span class="ctrl-val" data-v>' + fmt(P[p.key], p.dec) + '</span>' +
+        '<span class="ctrl-val" data-v>' + vText() + '</span>' +
         '<span class="ctrl-unit">' + (p.unit || '') + '</span>';
       const r = el('input'); r.type = 'range';
       r.min = p.min; r.max = p.max; r.step = p.step; r.value = P[p.key];
       r.style.setProperty('--c', p.color);
-      r.setAttribute('aria-label', p.label + ' (' + (p.symbol || p.key) + ')');
-      const valueText = () => fmt(P[p.key], p.dec) + (p.unit ? ' ' + p.unit : '');
+      r.setAttribute('aria-label', p.label + (sym ? ' (' + sym + ')' : ''));
+      const valueText = () => vText() + (p.unit ? ' ' + p.unit : '');
       r.setAttribute('aria-valuetext', valueText());
       r.oninput = () => {
         P[p.key] = parseFloat(r.value);
-        top.querySelector('[data-v]').textContent = fmt(P[p.key], p.dec);
+        top.querySelector('[data-v]').textContent = vText();
         r.setAttribute('aria-valuetext', valueText());
         if (restartIfEnded()) return;
         if (p.reset) reset(); else draw();

@@ -22,7 +22,8 @@
 
     params: [
       { key: 'kind', symbol: '', label: '파동의 종류', unit: '', min: 0, max: 1, step: 1, value: 0, color: C.medium, reset: true, dec: 0,
-        where: '<b>0 = 횡파</b>(흔들리는 방향이 나아가는 방향과 수직, 밧줄, 물결, 빛) / <b>1 = 종파</b>(흔들리는 방향이 나아가는 방향과 같음, 소리, 용수철).' },
+        names: ['횡파', '종파'],
+        where: '왼쪽 끝 = <b>횡파</b>(흔들리는 방향이 나아가는 방향과 수직, 밧줄, 물결, 빛), 오른쪽 끝 = <b>종파</b>(흔들리는 방향이 나아가는 방향과 같음, 소리, 용수철).' },
       { key: 'speed', symbol: 'v', label: '파동의 속력', unit: '', min: 0.3, max: 2.2, step: .1, value: 1, color: C.speed, dec: 1,
         where: '무늬(파동)가 오른쪽으로 <b>나아가는 빠르기</b>입니다. 소리보다 빛이 훨씬 빠른 것처럼, 파동마다 속력이 다릅니다.' },
       { key: 'amp', symbol: 'A', label: '흔들림의 크기', unit: '', min: 0.2, max: 1.2, step: .1, value: .8, color: C.amp, dec: 1,
