@@ -42,6 +42,7 @@
   "js/sims/exp/photoelectric.js",
   "js/sims/exp/michelson_morley.js",
   "js/sims/exp/rutherford_scattering.js",
+  "js/sims/exp/millikan_oildrop.js",
   "js/sims/exp/dark_matter.js",
   "js/sims/quantum/q_debroglie.js",
   "js/sims/quantum/q_box.js",

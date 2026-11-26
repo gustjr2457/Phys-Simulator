@@ -12,5 +12,8 @@
   "b-projectile/target": { "v0": 18, "th": 33, "g": 9.8 },
   "g-pendulum/three": { "L": 2.25, "g": 9.8 },
   "q-debroglie/microscope": { "obj": 1, "vexp": 8 },
-  "aero-turn/tight": { "V": 99, "phi": 75, "Vs": 50 }
+  "aero-turn/tight": { "V": 99, "phi": 75, "Vs": 50 },
+  "space-orbit/T2h": { "h": 1700, "vr": 1 },
+  "exp-millikan/stop": { "r": 1, "n": 3, "V": 384 },
+  "exp-millikan/single": { "r": 0.5, "n": 1, "V": 144 }
 }
