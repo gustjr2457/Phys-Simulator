@@ -81,6 +81,7 @@
   "js/sims/mech/vib_forced.js",
   "js/sims/adv/sensor_strain.js",
   "js/sims/adv/sensor_pitot.js",
+  "js/sims/adv/sensor_radar.js",
   "js/sims/adv/sensor_response.js",
   "js/sims/adv/nav_gps.js",
   "js/sims/adv/nav_fusion.js"
